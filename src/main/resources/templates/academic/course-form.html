@@ -1,0 +1,169 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+  <head>
+    <meta charset="utf-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta
+      name="viewport"
+      content="width=device-width, initial-scale=1, shrink-to-fit=no"
+    />
+    <title>Personal - Sistema de Gestión Escolar</title>
+
+    <link
+      th:href="@{/vendor/fontawesome-free/css/all.min.css}"
+      rel="stylesheet"
+      type="text/css"
+    />
+    <link
+      href="https://fonts.googleapis.com/css?family=Nunito:200,200i,300,300i,400,400i,600,600i,700,700i,800,800i,900,900i"
+      rel="stylesheet"
+    />
+    <link th:href="@{/css/sb-admin-2.min.css}" rel="stylesheet" />
+  </head>
+
+  <body id="page-top">
+    <div id="wrapper">
+      <div th:replace="~{fragments/sb-admin-sidebar :: sidebar}"></div>
+
+      <div id="content-wrapper" class="d-flex flex-column">
+        <div id="content">
+          <div th:replace="~{fragments/sb-admin-topbar :: topbar}"></div>
+
+          <div class="container-fluid">
+            <div
+              class="d-sm-flex align-items-center justify-content-between mb-4"
+            >
+              <h1 class="h3 mb-0 text-gray-800">Gestión de Personal</h1>
+              <a
+                th:href="@{/staff/new}"
+                class="d-none d-sm-inline-block btn btn-sm btn-primary shadow-sm"
+              >
+                <i class="fas fa-plus fa-sm text-white-50"></i> Agregar Personal
+              </a>
+            </div>
+
+            <div class="card shadow mb-4">
+              <div class="card-header py-3">
+                <h6 class="m-0 font-weight-bold text-primary">
+                  Lista de Personal
+                </h6>
+              </div>
+              <div class="card-body">
+                <div class="table-responsive">
+                  <table
+                    class="table table-bordered"
+                    width="100%"
+                    cellspacing="0"
+                  >
+                    <thead>
+                      <tr>
+                        <th>ID</th>
+                        <th>Nombre Completo</th>
+                        <th>DNI</th>
+                        <th>Cargo</th>
+                        <th>Correo Electrónico</th>
+                        <th>Teléfono</th>
+                        <th>Acciones</th>
+                      </tr>
+                    </thead>
+                    <tbody>
+                      <tr th:each="staff : ${staffList.content}">
+                        <td th:text="${staff.id}">1</td>
+                        <td th:text="${staff.fullName}">Jane Smith</td>
+                        <td th:text="${staff.dni}">87654321</td>
+                        <td th:text="${staff.jobTitle}">Profesor</td>
+                        <td th:text="${staff.email}">jane@example.com</td>
+                        <td th:text="${staff.phoneNumber}">555-1234</td>
+                        <td>
+                          <a
+                            th:href="@{/staff/edit/{id}(id=${staff.id})}"
+                            class="btn btn-info btn-sm"
+                          >
+                            <i class="fas fa-edit"></i> Editar
+                          </a>
+                          <a
+                            data-toggle="modal"
+                            data-target="#deleteModal"
+                            th:href="@{/staff/delete/{id}(id=${staff.id})}"
+                            class="btn btn-danger btn-sm delete-btn"
+                            th:data-url="@{/staff/delete/{id}(id=${staff.id})}"
+                          >
+                            <i class="fas fa-trash"></i> Eliminar
+                          </a>
+                        </td>
+                      </tr>
+                      <tr th:if="${staffList.empty}">
+                        <td colspan="7" class="text-center text-muted">
+                          No se encontró personal.
+                        </td>
+                      </tr>
+                    </tbody>
+                  </table>
+                </div>
+
+                <!-- Pagination -->
+                <div
+                  th:if="${staffList.totalPages > 1}"
+                  class="d-flex justify-content-center mt-4"
+                >
+                  <nav aria-label="Page navigation">
+                    <ul class="pagination">
+                      <li
+                        class="page-item"
+                        th:classappend="${staffList.first} ? 'disabled'"
+                      >
+                        <a
+                          class="page-link"
+                          th:href="@{/staff(page=${staffList.number - 1}, size=${staffList.size})}"
+                          >Anterior</a
+                        >
+                      </li>
+                      <li class="page-item disabled">
+                        <span
+                          class="page-link"
+                          th:text="'Página ' + ${staffList.number + 1} + ' de ' + ${staffList.totalPages}"
+                        ></span>
+                      </li>
+                      <li
+                        class="page-item"
+                        th:classappend="${staffList.last} ? 'disabled'"
+                      >
+                        <a
+                          class="page-link"
+                          th:href="@{/staff(page=${staffList.number + 1}, size=${staffList.size})}"
+                          >Siguiente</a
+                        >
+                      </li>
+                    </ul>
+                  </nav>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div th:replace="~{fragments/sb-admin-footer :: footer}"></div>
+      </div>
+    </div>
+
+    <a class="scroll-to-top rounded" href="#page-top"
+      ><i class="fas fa-angle-up"></i
+    ></a>
+    <div th:replace="~{fragments/sb-admin-topbar :: logoutModal}"></div>
+    <div th:replace="~{fragments/delete-modal :: deleteModal}"></div>
+
+    <script th:src="@{/vendor/jquery/jquery.min.js}"></script>
+    <script th:src="@{/vendor/bootstrap/js/bootstrap.bundle.min.js}"></script>
+    <script th:src="@{/vendor/jquery-easing/jquery.easing.min.js}"></script>
+    <script th:src="@{/js/sb-admin-2.min.js}"></script>
+
+    <script>
+      $(document).ready(function () {
+        $(".delete-btn").on("click", function () {
+          var deleteUrl = $(this).data("url");
+          $("#confirmDeleteBtn").attr("href", deleteUrl);
+        });
+      });
+    </script>
+  </body>
+</html>

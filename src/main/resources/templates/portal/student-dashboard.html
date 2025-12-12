@@ -1,0 +1,99 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+  <head>
+    <meta charset="UTF-8" />
+    <title>Portal de Estudiantes</title>
+    <link rel="stylesheet" th:href="@{/css/styles.css}" />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap"
+      rel="stylesheet"
+    />
+  </head>
+  <body>
+    <div class="dashboard-layout">
+      <aside
+        class="sidebar"
+        style="background: linear-gradient(135deg, #4f46e5 0%, #4338ca 100%)"
+      >
+        <div class="sidebar-logo" style="color: white">
+          <span>📚 Student Portal</span>
+        </div>
+        <nav>
+          <a
+            th:href="@{/portal/student}"
+            class="nav-link active"
+            style="color: white; background: rgba(255, 255, 255, 0.1)"
+            >Overview</a
+          >
+          <a
+            th:href="@{/portal/grades}"
+            class="nav-link"
+            style="color: rgba(255, 255, 255, 0.8)"
+            >My Grades</a
+          >
+          <a href="#" class="nav-link" style="color: rgba(255, 255, 255, 0.8)"
+            >Horarios</a
+          >
+          <a
+            th:href="@{/logout}"
+            class="nav-link"
+            style="color: rgba(255, 255, 255, 0.8); margin-top: auto"
+            >Logout</a
+          >
+        </nav>
+      </aside>
+
+      <main class="main-content">
+        <div class="header">
+          <h2>¡Bienvenido de nuevo, Estudiante!</h2>
+          <span class="badge" style="background: #e0e7ff; color: #4338ca"
+            >Fall Semester 2025</span
+          >
+        </div>
+
+        <div class="stats-grid">
+          <div class="stat-card">
+            <h3>Promedio</h3>
+            <p class="value">3.8</p>
+          </div>
+          <div class="stat-card">
+            <h3>Asistencia</h3>
+            <p class="value">95%</p>
+          </div>
+          <div class="stat-card">
+            <h3>Tareas</h3>
+            <p class="value">2 Pending</p>
+          </div>
+        </div>
+
+        <div class="card glass" style="margin-top: 2rem; padding: 1.5rem">
+          <h3>Clases de Hoy</h3>
+          <ul style="list-style: none; padding: 0; margin-top: 1rem">
+            <li
+              style="
+                padding: 1rem;
+                border-bottom: 1px solid #eee;
+                display: flex;
+                justify-content: space-between;
+              "
+            >
+              <span>08:00 AM - Mathematics via Room 101</span>
+              <span style="font-weight: 600; color: #4338ca">Mr. Smith</span>
+            </li>
+            <li
+              style="
+                padding: 1rem;
+                border-bottom: 1px solid #eee;
+                display: flex;
+                justify-content: space-between;
+              "
+            >
+              <span>10:00 AM - Physics via Lab 2</span>
+              <span style="font-weight: 600; color: #4338ca">Ms. Johnson</span>
+            </li>
+          </ul>
+        </div>
+      </main>
+    </div>
+  </body>
+</html>

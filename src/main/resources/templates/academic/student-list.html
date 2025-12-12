@@ -1,0 +1,192 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+  <head>
+    <meta charset="utf-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta
+      name="viewport"
+      content="width=device-width, initial-scale=1, shrink-to-fit=no"
+    />
+    <title>Estudiantes - Sistema de Gestión Escolar</title>
+
+    <!-- Custom fonts -->
+    <link
+      th:href="@{/vendor/fontawesome-free/css/all.min.css}"
+      rel="stylesheet"
+      type="text/css"
+    />
+    <link
+      href="https://fonts.googleapis.com/css?family=Nunito:200,200i,300,300i,400,400i,600,600i,700,700i,800,800i,900,900i"
+      rel="stylesheet"
+    />
+
+    <!-- Custom styles -->
+    <link th:href="@{/css/sb-admin-2.min.css}" rel="stylesheet" />
+  </head>
+
+  <body id="page-top">
+    <!-- Page Wrapper -->
+    <div id="wrapper">
+      <!-- Sidebar -->
+      <div th:replace="~{fragments/sb-admin-sidebar :: sidebar}"></div>
+
+      <!-- Content Wrapper -->
+      <div id="content-wrapper" class="d-flex flex-column">
+        <!-- Main Content -->
+        <div id="content">
+          <!-- Topbar -->
+          <div th:replace="~{fragments/sb-admin-topbar :: topbar}"></div>
+
+          <!-- Begin Page Content -->
+          <div class="container-fluid">
+            <!-- Page Heading -->
+            <div
+              class="d-sm-flex align-items-center justify-content-between mb-4"
+            >
+              <h1 class="h3 mb-0 text-gray-800">Gestión de Estudiantes</h1>
+              <a
+                th:href="@{/students/new}"
+                class="d-none d-sm-inline-block btn btn-sm btn-primary shadow-sm"
+              >
+                <i class="fas fa-plus fa-sm text-white-50"></i> Agregar
+                Estudiante
+              </a>
+            </div>
+
+            <!-- DataTales -->
+            <div class="card shadow mb-4">
+              <div class="card-header py-3">
+                <h6 class="m-0 font-weight-bold text-primary">
+                  Lista de Estudiantes
+                </h6>
+              </div>
+              <div class="card-body">
+                <div class="table-responsive">
+                  <table
+                    class="table table-bordered"
+                    width="100%"
+                    cellspacing="0"
+                  >
+                    <thead>
+                      <tr>
+                        <th>ID</th>
+                        <th>Nombre Completo</th>
+                        <th>DNI</th>
+                        <th>Matrícula</th>
+                        <th>Correo Electrónico</th>
+                        <th>Acciones</th>
+                      </tr>
+                    </thead>
+                    <tbody>
+                      <tr th:each="student : ${students.content}">
+                        <td th:text="${student.id}">1</td>
+                        <td th:text="${student.fullName}">John Doe</td>
+                        <td th:text="${student.dni}">12345678</td>
+                        <td th:text="${student.registrationNumber}">REG001</td>
+                        <td th:text="${student.email}">john@example.com</td>
+                        <td>
+                          <a
+                            th:href="@{/students/edit/{id}(id=${student.id})}"
+                            class="btn btn-info btn-sm"
+                          >
+                            <i class="fas fa-edit"></i> Editar
+                          </a>
+                          <a
+                            href="#"
+                            class="btn btn-danger btn-sm delete-btn"
+                            data-toggle="modal"
+                            data-target="#deleteModal"
+                            th:data-url="@{/students/delete/{id}(id=${student.id})}"
+                          >
+                            <i class="fas fa-trash"></i> Eliminar
+                          </a>
+                        </td>
+                      </tr>
+                      <tr th:if="${students.empty}">
+                        <td colspan="6" class="text-center text-muted">
+                          No se encontraron estudiantes.
+                        </td>
+                      </tr>
+                    </tbody>
+                  </table>
+                </div>
+
+                <!-- Pagination -->
+                <div
+                  th:if="${students.totalPages > 1}"
+                  class="d-flex justify-content-center mt-4"
+                >
+                  <nav aria-label="Page navigation">
+                    <ul class="pagination">
+                      <li
+                        class="page-item"
+                        th:classappend="${students.first} ? 'disabled'"
+                      >
+                        <a
+                          class="page-link"
+                          th:href="@{/students(page=${students.number - 1}, size=${students.size})}"
+                          >Anterior</a
+                        >
+                      </li>
+                      <li class="page-item disabled">
+                        <span
+                          class="page-link"
+                          th:text="'Página ' + ${students.number + 1} + ' de ' + ${students.totalPages}"
+                        ></span>
+                      </li>
+                      <li
+                        class="page-item"
+                        th:classappend="${students.last} ? 'disabled'"
+                      >
+                        <a
+                          class="page-link"
+                          th:href="@{/students(page=${students.number + 1}, size=${students.size})}"
+                          >Siguiente</a
+                        >
+                      </li>
+                    </ul>
+                  </nav>
+                </div>
+              </div>
+            </div>
+          </div>
+          <!-- /.container-fluid -->
+        </div>
+        <!-- End of Main Content -->
+
+        <!-- Footer -->
+        <div th:replace="~{fragments/sb-admin-footer :: footer}"></div>
+      </div>
+      <!-- End of Content Wrapper -->
+    </div>
+    <!-- End of Page Wrapper -->
+
+    <!-- Scroll to Top Button-->
+    <a class="scroll-to-top rounded" href="#page-top">
+      <i class="fas fa-angle-up"></i>
+    </a>
+
+    <!-- Logout Modal-->
+    <div th:replace="~{fragments/sb-admin-topbar :: logoutModal}"></div>
+    <div th:replace="~{fragments/delete-modal :: deleteModal}"></div>
+
+    <!-- Bootstrap core JavaScript-->
+    <script th:src="@{/vendor/jquery/jquery.min.js}"></script>
+    <script th:src="@{/vendor/bootstrap/js/bootstrap.bundle.min.js}"></script>
+
+    <!-- Core plugin JavaScript-->
+    <script th:src="@{/vendor/jquery-easing/jquery.easing.min.js}"></script>
+
+    <!-- Custom scripts for all pages-->
+    <script th:src="@{/js/sb-admin-2.min.js}"></script>
+
+    <script>
+      $(document).ready(function () {
+        $(".delete-btn").on("click", function () {
+          var deleteUrl = $(this).data("url");
+          $("#confirmDeleteBtn").attr("href", deleteUrl);
+        });
+      });
+    </script>
+  </body>
+</html>

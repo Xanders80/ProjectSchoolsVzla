@@ -1,0 +1,168 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+  <head>
+    <meta charset="utf-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta
+      name="viewport"
+      content="width=device-width, initial-scale=1, shrink-to-fit=no"
+    />
+    <title>Configuración - Sistema de Gestión Escolar</title>
+
+    <!-- Custom fonts -->
+    <link
+      th:href="@{/vendor/fontawesome-free/css/all.min.css}"
+      rel="stylesheet"
+      type="text/css"
+    />
+    <link
+      href="https://fonts.googleapis.com/css?family=Nunito:200,200i,300,300i,400,400i,600,600i,700,700i,800,800i,900,900i"
+      rel="stylesheet"
+    />
+
+    <!-- Custom styles -->
+    <link th:href="@{/css/sb-admin-2.min.css}" rel="stylesheet" />
+  </head>
+
+  <body id="page-top">
+    <!-- Page Wrapper -->
+    <div id="wrapper">
+      <!-- Sidebar -->
+      <div th:replace="~{fragments/sb-admin-sidebar :: sidebar}"></div>
+
+      <!-- Content Wrapper -->
+      <div id="content-wrapper" class="d-flex flex-column">
+        <!-- Main Content -->
+        <div id="content">
+          <!-- Topbar -->
+          <div th:replace="~{fragments/sb-admin-topbar :: topbar}"></div>
+
+          <!-- Begin Page Content -->
+          <div class="container-fluid">
+            <!-- Page Heading -->
+            <h1 class="h3 mb-4 text-gray-800">Configuración</h1>
+
+            <div
+              th:if="${success}"
+              class="alert alert-success alert-dismissible fade show"
+              role="alert"
+            >
+              <span th:text="${success}"></span>
+              <button
+                type="button"
+                class="close"
+                data-dismiss="alert"
+                aria-label="Close"
+              >
+                <span aria-hidden="true">&times;</span>
+              </button>
+            </div>
+            <div
+              th:if="${error}"
+              class="alert alert-danger alert-dismissible fade show"
+              role="alert"
+            >
+              <span th:text="${error}"></span>
+              <button
+                type="button"
+                class="close"
+                data-dismiss="alert"
+                aria-label="Close"
+              >
+                <span aria-hidden="true">&times;</span>
+              </button>
+            </div>
+
+            <div class="row">
+              <div class="col-lg-6">
+                <!-- Change Password Card -->
+                <div class="card shadow mb-4">
+                  <div class="card-header py-3">
+                    <h6 class="m-0 font-weight-bold text-primary">
+                      Cambiar Contraseña
+                    </h6>
+                  </div>
+                  <div class="card-body">
+                    <form
+                      th:action="@{/settings/change-password}"
+                      method="post"
+                    >
+                      <div class="form-group">
+                        <label>Contraseña Actual</label>
+                        <input
+                          type="password"
+                          class="form-control"
+                          name="currentPassword"
+                          required
+                        />
+                      </div>
+                      <div class="form-group">
+                        <label>Nueva Contraseña</label>
+                        <input
+                          type="password"
+                          class="form-control"
+                          name="newPassword"
+                          required
+                        />
+                      </div>
+                      <div class="form-group">
+                        <label>Confirmar Nueva Contraseña</label>
+                        <input
+                          type="password"
+                          class="form-control"
+                          name="confirmPassword"
+                          required
+                        />
+                      </div>
+                      <button type="submit" class="btn btn-warning btn-block">
+                        Cambiar Contraseña
+                      </button>
+                    </form>
+                  </div>
+                </div>
+              </div>
+
+              <div class="col-lg-6">
+                <div class="card shadow mb-4">
+                  <div class="card-header py-3">
+                    <h6 class="m-0 font-weight-bold text-primary">
+                      Otras Configuraciones
+                    </h6>
+                  </div>
+                  <div class="card-body">
+                    <p>Próximamente más opciones de configuración...</p>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+          <!-- /.container-fluid -->
+        </div>
+        <!-- End of Main Content -->
+
+        <!-- Footer -->
+        <div th:replace="~{fragments/sb-admin-footer :: footer}"></div>
+      </div>
+      <!-- End of Content Wrapper -->
+    </div>
+    <!-- End of Page Wrapper -->
+
+    <!-- Scroll to Top Button-->
+    <a class="scroll-to-top rounded" href="#page-top">
+      <i class="fas fa-angle-up"></i>
+    </a>
+
+    <!-- Logout Modal-->
+    <div th:replace="~{fragments/sb-admin-topbar :: logoutModal}"></div>
+
+    <!-- Bootstrap core JavaScript-->
+    <script th:src="@{/vendor/jquery/jquery.min.js}"></script>
+    <script th:src="@{/vendor/bootstrap/js/bootstrap.bundle.min.js}"></script>
+
+    <!-- Core plugin JavaScript-->
+    <script th:src="@{/vendor/jquery-easing/jquery.easing.min.js}"></script>
+
+    <!-- Custom scripts for all pages-->
+    <script th:src="@{/js/sb-admin-2.min.js}"></script>
+  </body>
+</html>
