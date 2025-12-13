@@ -7,7 +7,7 @@
       name="viewport"
       content="width=device-width, initial-scale=1, shrink-to-fit=no"
     />
-    <title>Formulario de Estudiante - Sistema de Gestión Escolar</title>
+    <title>Formulario de Sección - Sistema de Gestión Escolar</title>
 
     <link
       th:href="@{/vendor/fontawesome-free/css/all.min.css}"
@@ -30,18 +30,18 @@
           <div th:replace="~{fragments/sb-admin-topbar :: topbar}"></div>
 
           <div class="container-fluid">
-            <h1 class="h3 mb-4 text-gray-800">Formulario de Estudiante</h1>
+            <h1 class="h3 mb-4 text-gray-800">Formulario de Sección</h1>
 
             <div class="card shadow mb-4">
               <div class="card-header py-3">
                 <h6 class="m-0 font-weight-bold text-primary">
-                  Información del Estudiante
+                  Información de la Sección
                 </h6>
               </div>
               <div class="card-body">
                 <form
-                  th:action="@{/students/save}"
-                  th:object="${student}"
+                  th:action="@{/sections/save}"
+                  th:object="${section}"
                   method="post"
                 >
                   <input type="hidden" th:field="*{id}" />
@@ -49,162 +49,84 @@
                   <div class="row">
                     <div class="col-md-6">
                       <div class="form-group">
-                        <label>Nombre</label>
+                        <label>Nombre de la Sección (ej. Grupo A)</label>
                         <input
                           type="text"
-                          th:field="*{firstName}"
+                          th:field="*{name}"
                           class="form-control"
-                          th:classappend="${#fields.hasErrors('firstName')} ? 'is-invalid' : ''"
                           required
                         />
-                        <div
-                          class="invalid-feedback"
-                          th:if="${#fields.hasErrors('firstName')}"
-                          th:errors="*{firstName}"
-                        >
-                          Error
-                        </div>
                       </div>
                     </div>
                     <div class="col-md-6">
                       <div class="form-group">
-                        <label>Apellido</label>
+                        <label>Periodo Académico (ej. 2025-1)</label>
                         <input
                           type="text"
-                          th:field="*{lastName}"
+                          th:field="*{term}"
                           class="form-control"
-                          th:classappend="${#fields.hasErrors('lastName')} ? 'is-invalid' : ''"
                           required
                         />
-                        <div
-                          class="invalid-feedback"
-                          th:if="${#fields.hasErrors('lastName')}"
-                          th:errors="*{lastName}"
-                        >
-                          Error
-                        </div>
                       </div>
                     </div>
                   </div>
 
                   <div class="row">
-                    <div class="col-md-6">
+                    <div class="col-md-4">
                       <div class="form-group">
-                        <label>DNI</label>
-                        <input
-                          type="text"
-                          th:field="*{dni}"
+                        <label>Curso</label>
+                        <select
+                          th:field="*{course.id}"
                           class="form-control"
-                          th:classappend="${#fields.hasErrors('dni')} ? 'is-invalid' : ''"
                           required
-                        />
-                        <div
-                          class="invalid-feedback"
-                          th:if="${#fields.hasErrors('dni')}"
-                          th:errors="*{dni}"
                         >
-                          Error
-                        </div>
+                          <option value="">Seleccionar Curso</option>
+                          <option
+                            th:each="course : ${courses}"
+                            th:value="${course.id}"
+                            th:text="${course.code + ' - ' + course.name}"
+                          >
+                            Course
+                          </option>
+                        </select>
                       </div>
                     </div>
-                    <div class="col-md-6">
+                    <div class="col-md-4">
                       <div class="form-group">
-                        <label>Número de Matrícula</label>
-                        <input
-                          type="text"
-                          th:field="*{registrationNumber}"
-                          class="form-control"
-                          th:classappend="${#fields.hasErrors('registrationNumber')} ? 'is-invalid' : ''"
-                          required
-                        />
-                        <div
-                          class="invalid-feedback"
-                          th:if="${#fields.hasErrors('registrationNumber')}"
-                          th:errors="*{registrationNumber}"
-                        >
-                          Error
-                        </div>
+                        <label>Profesor Asignado</label>
+                        <select th:field="*{teacher.id}" class="form-control">
+                          <option value="">Seleccionar Profesor</option>
+                          <option
+                            th:each="teacher : ${teachers}"
+                            th:value="${teacher.id}"
+                            th:text="${teacher.fullName}"
+                          >
+                            Teacher
+                          </option>
+                        </select>
                       </div>
                     </div>
-                  </div>
-
-                  <div class="row">
-                    <div class="col-md-6">
+                    <div class="col-md-4">
                       <div class="form-group">
-                        <label>Fecha de Inscripción</label>
-                        <input
-                          type="date"
-                          th:field="*{enrollmentDate}"
-                          class="form-control"
-                          th:classappend="${#fields.hasErrors('enrollmentDate')} ? 'is-invalid' : ''"
-                          required
-                        />
-                        <div
-                          class="invalid-feedback"
-                          th:if="${#fields.hasErrors('enrollmentDate')}"
-                          th:errors="*{enrollmentDate}"
-                        >
-                          Error
-                        </div>
+                        <label>Aula Asignada</label>
+                        <select th:field="*{room.id}" class="form-control">
+                          <option value="">Seleccionar Aula</option>
+                          <option
+                            th:each="room : ${rooms}"
+                            th:value="${room.id}"
+                            th:text="${room.building?.name + ' - ' + room.roomNumber}"
+                          >
+                            Room
+                          </option>
+                        </select>
                       </div>
                     </div>
-                    <div class="col-md-6">
-                      <!-- Empty or maybe move Email here? For now just keeping layout balanced-ish -->
-                    </div>
-                  </div>
-
-                  <div class="row">
-                    <div class="col-md-6">
-                      <div class="form-group">
-                        <label>Correo Electrónico</label>
-                        <input
-                          type="email"
-                          th:field="*{email}"
-                          class="form-control"
-                          th:classappend="${#fields.hasErrors('email')} ? 'is-invalid' : ''"
-                        />
-                        <div
-                          class="invalid-feedback"
-                          th:if="${#fields.hasErrors('email')}"
-                          th:errors="*{email}"
-                        >
-                          Error
-                        </div>
-                      </div>
-                    </div>
-                    <div class="col-md-6">
-                      <div class="form-group">
-                        <label>Número de Teléfono</label>
-                        <input
-                          type="text"
-                          th:field="*{phoneNumber}"
-                          class="form-control"
-                          th:classappend="${#fields.hasErrors('phoneNumber')} ? 'is-invalid' : ''"
-                        />
-                        <div
-                          class="invalid-feedback"
-                          th:if="${#fields.hasErrors('phoneNumber')}"
-                          th:errors="*{phoneNumber}"
-                        >
-                          Error
-                        </div>
-                      </div>
-                    </div>
-                  </div>
-
-                  <div class="form-group">
-                    <label>Dirección</label>
-                    <textarea
-                      th:field="*{address}"
-                      class="form-control"
-                      rows="3"
-                    ></textarea>
                   </div>
 
                   <button type="submit" class="btn btn-primary">
-                    <i class="fas fa-save"></i> Guardar Estudiante
+                    <i class="fas fa-save"></i> Guardar Sección
                   </button>
-                  <a th:href="@{/students}" class="btn btn-secondary">
+                  <a th:href="@{/sections}" class="btn btn-secondary">
                     <i class="fas fa-times"></i> Cancelar
                   </a>
                 </form>

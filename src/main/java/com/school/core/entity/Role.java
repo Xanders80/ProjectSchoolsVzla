@@ -14,58 +14,35 @@
  * THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS" AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT HOLDER OR CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-package com.school.academic.entity;
+package com.school.core.entity;
 
-import jakarta.persistence.Column;
-import jakarta.persistence.Entity;
-import jakarta.persistence.EntityListeners;
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.GenerationType;
-import jakarta.persistence.Id;
-import jakarta.persistence.Table;
-import jakarta.validation.constraints.Max;
-import jakarta.validation.constraints.Min;
-import jakarta.validation.constraints.NotBlank;
-import jakarta.validation.constraints.NotNull;
-import jakarta.validation.constraints.Size;
+import jakarta.persistence.*;
+import java.time.LocalDateTime;
 
 @Entity
-@Table(name = "courses")
+@Table(name = "roles")
 @EntityListeners(com.school.core.listener.AuditEntityListener.class)
-public class Course {
+public class Role {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @NotBlank(message = "El código del curso es obligatorio")
-    @Size(min = 3, max = 10, message = "El código debe tener entre 3 y 10 caracteres")
     @Column(unique = true, nullable = false)
-    private String code; // e.g. MATH101
-
-    @NotBlank(message = "El nombre del curso es obligatorio")
-    @Size(min = 3, max = 100, message = "El nombre debe tener entre 3 y 100 caracteres")
-    @Column(nullable = false)
     private String name;
 
-    @Size(max = 500, message = "La descripción no puede exceder los 500 caracteres")
+    @Column(nullable = false)
     private String description;
 
-    @NotNull(message = "Los créditos son obligatorios")
-    @Min(value = 1, message = "Mínimo 1 crédito")
-    @Max(value = 10, message = "Máximo 10 créditos")
-    private Integer credits;
+    private boolean enabled = true;
+    private LocalDateTime createdAt = LocalDateTime.now();
 
-    @NotNull(message = "El grado es obligatorio")
-    @Min(value = 1, message = "Grado mínimo 1")
-    @Max(value = 12, message = "Grado máximo 12")
-    private Integer gradeLevel; // 1 to 12
+    public Role() {
+    }
 
-    public Course() {
-        /*
-         * Default constructor required by JPA and other frameworks that create entity
-         * instances via reflection; intentionally left empty to avoid side effects.
-         */
+    public Role(String name, String description) {
+        this.name = name;
+        this.description = description;
     }
 
     public Long getId() {
@@ -74,14 +51,6 @@ public class Course {
 
     public void setId(Long id) {
         this.id = id;
-    }
-
-    public String getCode() {
-        return code;
-    }
-
-    public void setCode(String code) {
-        this.code = code;
     }
 
     public String getName() {
@@ -100,19 +69,19 @@ public class Course {
         this.description = description;
     }
 
-    public Integer getCredits() {
-        return credits;
+    public boolean isEnabled() {
+        return enabled;
     }
 
-    public void setCredits(Integer credits) {
-        this.credits = credits;
+    public void setEnabled(boolean enabled) {
+        this.enabled = enabled;
     }
 
-    public Integer getGradeLevel() {
-        return gradeLevel;
+    public LocalDateTime getCreatedAt() {
+        return createdAt;
     }
 
-    public void setGradeLevel(Integer gradeLevel) {
-        this.gradeLevel = gradeLevel;
+    public void setCreatedAt(LocalDateTime createdAt) {
+        this.createdAt = createdAt;
     }
 }

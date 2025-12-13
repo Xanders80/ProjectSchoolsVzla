@@ -1,0 +1,156 @@
+<!DOCTYPE html>
+<html
+  xmlns:th="http://www.thymeleaf.org"
+  xmlns:sec="http://www.thymeleaf.org/extras/spring-security"
+>
+  <head>
+    <meta charset="utf-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta
+      name="viewport"
+      content="width=device-width, initial-scale=1, shrink-to-fit=no"
+    />
+    <title>SB Admin 2 - Sidebar</title>
+  </head>
+  <body>
+    <!-- Sidebar -->
+    <ul
+      class="navbar-nav bg-gradient-primary sidebar sidebar-dark accordion"
+      id="accordionSidebar"
+      th:fragment="sidebar"
+    >
+      <!-- Sidebar - Brand -->
+      <a
+        class="sidebar-brand d-flex align-items-center justify-content-center"
+        href="/"
+      >
+        <div class="sidebar-brand-icon rotate-n-15">
+          <i class="fas fa-school"></i>
+        </div>
+        <div class="sidebar-brand-text mx-3">Sistema Escolar</div>
+      </a>
+
+      <!-- Divider -->
+      <hr class="sidebar-divider my-0" />
+
+      <!-- Nav Item - Dashboard -->
+      <li class="nav-item active">
+        <a class="nav-link" href="/">
+          <i class="fas fa-fw fa-tachometer-alt"></i>
+          <span>Panel Principal</span>
+        </a>
+      </li>
+
+      <!-- Divider -->
+      <hr class="sidebar-divider" />
+
+      <!-- Heading -->
+      <div class="sidebar-heading">Gestión</div>
+
+      <!-- Nav Item - Academic -->
+      <li class="nav-item">
+        <a
+          class="nav-link collapsed"
+          href="#"
+          data-toggle="collapse"
+          data-target="#collapseAcademic"
+          aria-expanded="true"
+          aria-controls="collapseAcademic"
+        >
+          <i class="fas fa-fw fa-graduation-cap"></i>
+          <span>Académico</span>
+        </a>
+        <div
+          id="collapseAcademic"
+          class="collapse"
+          aria-labelledby="headingAcademic"
+          data-parent="#accordionSidebar"
+        >
+          <div class="bg-white py-2 collapse-inner rounded">
+            <h6 class="collapse-header">Gestión Académica:</h6>
+            <a class="collapse-item" href="/students">Estudiantes</a>
+            <a class="collapse-item" href="/courses">Cursos</a>
+            <a class="collapse-item" href="/sections">Secciones</a>
+          </div>
+        </div>
+      </li>
+
+      <!-- Nav Item - Infrastructure -->
+      <li class="nav-item">
+        <a
+          class="nav-link collapsed"
+          href="#"
+          data-toggle="collapse"
+          data-target="#collapseInfra"
+          aria-expanded="true"
+          aria-controls="collapseInfra"
+        >
+          <i class="fas fa-fw fa-building"></i>
+          <span>Infraestructura</span>
+        </a>
+        <div
+          id="collapseInfra"
+          class="collapse"
+          aria-labelledby="headingInfra"
+          data-parent="#accordionSidebar"
+        >
+          <div class="bg-white py-2 collapse-inner rounded">
+            <h6 class="collapse-header">Gestión de Infra:</h6>
+            <a class="collapse-item" href="/infra/buildings">Edificios</a>
+            <a class="collapse-item" href="/infra/rooms">Salas</a>
+          </div>
+        </div>
+      </li>
+
+      <!-- Nav Item - Schedule -->
+      <li class="nav-item">
+        <a class="nav-link" href="/schedules">
+          <i class="fas fa-fw fa-calendar"></i>
+          <span>Horarios</span>
+        </a>
+      </li>
+
+      <!-- Divider -->
+      <hr class="sidebar-divider" />
+
+      <!-- Heading -->
+      <div class="sidebar-heading">Administración</div>
+
+      <!-- Nav Item - Admin -->
+      <li class="nav-item" sec:authorize="hasRole('ADMIN')">
+        <a
+          class="nav-link collapsed"
+          href="#"
+          data-toggle="collapse"
+          data-target="#collapseAdmin"
+          aria-expanded="true"
+          aria-controls="collapseAdmin"
+        >
+          <i class="fas fa-fw fa-cogs"></i>
+          <span>Administración</span>
+        </a>
+        <div
+          id="collapseAdmin"
+          class="collapse"
+          aria-labelledby="headingAdmin"
+          data-parent="#accordionSidebar"
+        >
+          <div class="bg-white py-2 collapse-inner rounded">
+            <h6 class="collapse-header">Opciones Admin:</h6>
+            <a class="collapse-item" href="/admin/users">Usuarios</a>
+            <a class="collapse-item" href="/admin/roles">Roles</a>
+          </div>
+        </div>
+      </li>
+
+      <!-- Divider -->
+      <hr class="sidebar-divider d-none d-md-block" />
+
+      <!-- Sidebar Toggler (Sidebar) -->
+      <div class="text-center d-none d-md-inline">
+        <button class="rounded-circle border-0" id="sidebarToggle"></button>
+      </div>
+    </ul>
+    <!-- End of Sidebar -->
+  </body>
+</html>
