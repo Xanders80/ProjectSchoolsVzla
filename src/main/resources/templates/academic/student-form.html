@@ -7,7 +7,7 @@
       name="viewport"
       content="width=device-width, initial-scale=1, shrink-to-fit=no"
     />
-    <title>Formulario de Sección - Sistema de Gestión Escolar</title>
+    <title>Formulario de Estudiante - Sistema de Gestión Escolar</title>
 
     <link
       th:href="@{/vendor/fontawesome-free/css/all.min.css}"
@@ -30,18 +30,18 @@
           <div th:replace="~{fragments/sb-admin-topbar :: topbar}"></div>
 
           <div class="container-fluid">
-            <h1 class="h3 mb-4 text-gray-800">Formulario de Sección</h1>
+            <h1 class="h3 mb-4 text-gray-800">Formulario de Estudiante</h1>
 
             <div class="card shadow mb-4">
               <div class="card-header py-3">
                 <h6 class="m-0 font-weight-bold text-primary">
-                  Información de la Sección
+                  Información del Estudiante
                 </h6>
               </div>
               <div class="card-body">
                 <form
-                  th:action="@{/sections/save}"
-                  th:object="${section}"
+                  th:action="@{/students/save}"
+                  th:object="${student}"
                   method="post"
                 >
                   <input type="hidden" th:field="*{id}" />
@@ -49,10 +49,10 @@
                   <div class="row">
                     <div class="col-md-6">
                       <div class="form-group">
-                        <label>Nombre de la Sección (ej. Grupo A)</label>
+                        <label>Nombre</label>
                         <input
                           type="text"
-                          th:field="*{name}"
+                          th:field="*{firstName}"
                           class="form-control"
                           required
                         />
@@ -60,10 +60,10 @@
                     </div>
                     <div class="col-md-6">
                       <div class="form-group">
-                        <label>Periodo Académico (ej. 2025-1)</label>
+                        <label>Apellido</label>
                         <input
                           type="text"
-                          th:field="*{term}"
+                          th:field="*{lastName}"
                           class="form-control"
                           required
                         />
@@ -72,61 +72,91 @@
                   </div>
 
                   <div class="row">
-                    <div class="col-md-4">
+                    <div class="col-md-6">
                       <div class="form-group">
-                        <label>Curso</label>
-                        <select
-                          th:field="*{course.id}"
+                        <label>DNI</label>
+                        <input
+                          type="text"
+                          th:field="*{dni}"
                           class="form-control"
                           required
-                        >
-                          <option value="">Seleccionar Curso</option>
-                          <option
-                            th:each="course : ${courses}"
-                            th:value="${course.id}"
-                            th:text="${course.code + ' - ' + course.name}"
-                          >
-                            Course
-                          </option>
-                        </select>
+                        />
                       </div>
                     </div>
-                    <div class="col-md-4">
+                    <div class="col-md-6">
                       <div class="form-group">
-                        <label>Profesor Asignado</label>
-                        <select th:field="*{teacher.id}" class="form-control">
-                          <option value="">Seleccionar Profesor</option>
-                          <option
-                            th:each="teacher : ${teachers}"
-                            th:value="${teacher.id}"
-                            th:text="${teacher.fullName}"
-                          >
-                            Teacher
-                          </option>
-                        </select>
+                        <label>Correo Electrónico</label>
+                        <input
+                          type="email"
+                          th:field="*{email}"
+                          class="form-control"
+                          required
+                        />
                       </div>
                     </div>
-                    <div class="col-md-4">
+                  </div>
+
+                  <div class="row">
+                    <div class="col-md-6">
                       <div class="form-group">
-                        <label>Aula Asignada</label>
-                        <select th:field="*{room.id}" class="form-control">
-                          <option value="">Seleccionar Aula</option>
-                          <option
-                            th:each="room : ${rooms}"
-                            th:value="${room.id}"
-                            th:text="${room.building?.name + ' - ' + room.roomNumber}"
-                          >
-                            Room
-                          </option>
-                        </select>
+                        <label>Teléfono</label>
+                        <input
+                          type="text"
+                          th:field="*{phoneNumber}"
+                          class="form-control"
+                        />
+                      </div>
+                    </div>
+                    <div class="col-md-6">
+                      <div class="form-group">
+                        <label>Fecha de Nacimiento</label>
+                        <input
+                          type="date"
+                          th:field="*{birthDate}"
+                          class="form-control"
+                        />
+                      </div>
+                    </div>
+                  </div>
+
+                  <div class="form-group">
+                    <label>Dirección</label>
+                    <textarea
+                      th:field="*{address}"
+                      class="form-control"
+                      rows="3"
+                    ></textarea>
+                  </div>
+
+                  <div class="row">
+                    <div class="col-md-6">
+                      <div class="form-group">
+                        <label>Número de Registro</label>
+                        <input
+                          type="text"
+                          th:field="*{registrationNumber}"
+                          class="form-control"
+                          required
+                        />
+                      </div>
+                    </div>
+                    <div class="col-md-6">
+                      <div class="form-group">
+                        <label>Fecha de Inscripción</label>
+                        <input
+                          type="date"
+                          th:field="*{enrollmentDate}"
+                          class="form-control"
+                          required
+                        />
                       </div>
                     </div>
                   </div>
 
                   <button type="submit" class="btn btn-primary">
-                    <i class="fas fa-save"></i> Guardar Sección
+                    <i class="fas fa-save"></i> Guardar Estudiante
                   </button>
-                  <a th:href="@{/sections}" class="btn btn-secondary">
+                  <a th:href="@{/students}" class="btn btn-secondary">
                     <i class="fas fa-times"></i> Cancelar
                   </a>
                 </form>

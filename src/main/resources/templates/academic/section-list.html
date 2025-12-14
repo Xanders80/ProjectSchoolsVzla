@@ -7,7 +7,7 @@
       name="viewport"
       content="width=device-width, initial-scale=1, shrink-to-fit=no"
     />
-    <title>Cursos - Sistema de Gestión Escolar</title>
+    <title>Secciones - Sistema de Gestión Escolar</title>
 
     <link
       th:href="@{/vendor/fontawesome-free/css/all.min.css}"
@@ -33,19 +33,19 @@
             <div
               class="d-sm-flex align-items-center justify-content-between mb-4"
             >
-              <h1 class="h3 mb-0 text-gray-800">Gestión de Cursos</h1>
+              <h1 class="h3 mb-0 text-gray-800">Gestión de Secciones</h1>
               <a
-                th:href="@{/courses/new}"
+                th:href="@{/sections/new}"
                 class="d-none d-sm-inline-block btn btn-sm btn-primary shadow-sm"
               >
-                <i class="fas fa-plus fa-sm text-white-50"></i> Agregar Curso
+                <i class="fas fa-plus fa-sm text-white-50"></i> Agregar Sección
               </a>
             </div>
 
             <div class="card shadow mb-4">
               <div class="card-header py-3">
                 <h6 class="m-0 font-weight-bold text-primary">
-                  Lista de Cursos
+                  Lista de Secciones
                 </h6>
               </div>
               <div class="card-body">
@@ -58,29 +58,29 @@
                     <thead>
                       <tr>
                         <th>ID</th>
-                        <th>Código</th>
                         <th>Nombre</th>
-                        <th>Créditos</th>
-                        <th>Nivel de Grado</th>
-                        <th>Descripción</th>
+                        <th>Periodo</th>
+                        <th>Curso</th>
+                        <th>Profesor</th>
+                        <th>Aula</th>
                         <th>Acciones</th>
                       </tr>
                     </thead>
                     <tbody>
-                      <tr th:each="course : ${courses.content}">
-                        <td th:text="${course.id}">1</td>
-                        <td th:text="${course.code}">CS101</td>
-                        <td th:text="${course.name}">
-                          Introduction to Programming
-                        </td>
-                        <td th:text="${course.credits}">3</td>
-                        <td th:text="${course.gradeLevel}">1</td>
-                        <td th:text="${course.description}">
-                          Basic programming concepts
+                      <tr th:each="section : ${sections.content}">
+                        <td th:text="${section.id}">1</td>
+                        <td th:text="${section.name}">Grupo A</td>
+                        <td th:text="${section.term}">2025-1</td>
+                        <td th:text="${section.course?.name}">Curso</td>
+                        <td th:text="${section.teacher?.fullName}">Profesor</td>
+                        <td
+                          th:text="${section.room?.building?.name + ' - ' + section.room?.roomNumber}"
+                        >
+                          Aula
                         </td>
                         <td>
                           <a
-                            th:href="@{/courses/edit/{id}(id=${course.id})}"
+                            th:href="@{/sections/edit/{id}(id=${section.id})}"
                             class="btn btn-info btn-sm"
                           >
                             <i class="fas fa-edit"></i> Editar
@@ -90,15 +90,15 @@
                             class="btn btn-danger btn-sm delete-btn"
                             data-toggle="modal"
                             data-target="#deleteModal"
-                            th:data-url="@{/courses/delete/{id}(id=${course.id})}"
+                            th:data-url="@{/sections/delete/{id}(id=${section.id})}"
                           >
                             <i class="fas fa-trash"></i> Eliminar
                           </a>
                         </td>
                       </tr>
-                      <tr th:if="${courses.empty}">
+                      <tr th:if="${sections.empty}">
                         <td colspan="7" class="text-center text-muted">
-                          No se encontraron cursos.
+                          No se encontraron secciones.
                         </td>
                       </tr>
                     </tbody>
@@ -107,34 +107,34 @@
 
                 <!-- Pagination -->
                 <div
-                  th:if="${courses.totalPages > 1}"
+                  th:if="${sections.totalPages > 1}"
                   class="d-flex justify-content-center mt-4"
                 >
                   <nav aria-label="Page navigation">
                     <ul class="pagination">
                       <li
                         class="page-item"
-                        th:classappend="${courses.first} ? 'disabled'"
+                        th:classappend="${sections.first} ? 'disabled'"
                       >
                         <a
                           class="page-link"
-                          th:href="@{/courses(page=${courses.number - 1}, size=${courses.size})}"
+                          th:href="@{/sections(page=${sections.number - 1}, size=${sections.size})}"
                           >Anterior</a
                         >
                       </li>
                       <li class="page-item disabled">
                         <span
                           class="page-link"
-                          th:text="'Página ' + ${courses.number + 1} + ' de ' + ${courses.totalPages}"
+                          th:text="'Página ' + ${sections.number + 1} + ' de ' + ${sections.totalPages}"
                         ></span>
                       </li>
                       <li
                         class="page-item"
-                        th:classappend="${courses.last} ? 'disabled'"
+                        th:classappend="${sections.last} ? 'disabled'"
                       >
                         <a
                           class="page-link"
-                          th:href="@{/courses(page=${courses.number + 1}, size=${courses.size})}"
+                          th:href="@{/sections(page=${sections.number + 1}, size=${sections.size})}"
                           >Siguiente</a
                         >
                       </li>
