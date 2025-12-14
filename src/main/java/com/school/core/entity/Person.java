@@ -35,6 +35,7 @@ public abstract class Person {
     @Size(max = 255, message = "La dirección no puede tener más de 255 caracteres")
     private String address;
 
+    @org.springframework.format.annotation.DateTimeFormat(pattern = "yyyy-MM-dd")
     private LocalDate birthDate;
 
     public String getFullName() {

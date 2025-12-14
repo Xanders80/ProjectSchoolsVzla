@@ -21,6 +21,7 @@ import com.school.core.repository.RoleRepository;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
+import org.springframework.lang.NonNull;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -67,7 +68,7 @@ public class RoleController {
     }
 
     @PostMapping
-    public String createRole(@ModelAttribute Role role, RedirectAttributes redirectAttributes) {
+    public String createRole(@ModelAttribute @NonNull Role role, RedirectAttributes redirectAttributes) {
         try {
             roleRepository.save(role);
             redirectAttributes.addFlashAttribute(SUCCESS_MESSAGE, "Rol creado exitosamente.");
@@ -78,7 +79,7 @@ public class RoleController {
     }
 
     @GetMapping("/edit/{id}")
-    public String showEditForm(@PathVariable Long id, Model model, RedirectAttributes redirectAttributes) {
+    public String showEditForm(@PathVariable @NonNull Long id, Model model, RedirectAttributes redirectAttributes) {
         Optional<Role> roleOpt = roleRepository.findById(id);
         if (roleOpt.isPresent()) {
             model.addAttribute("role", roleOpt.get());
@@ -103,7 +104,7 @@ public class RoleController {
     }
 
     @PostMapping("/delete/{id}")
-    public String deleteRole(@PathVariable Long id, RedirectAttributes redirectAttributes) {
+    public String deleteRole(@PathVariable @NonNull Long id, RedirectAttributes redirectAttributes) {
         try {
             if (roleRepository.existsById(id)) {
                 roleRepository.deleteById(id);
