@@ -12,6 +12,7 @@ import org.springframework.web.bind.annotation.*;
 @RequestMapping("/students")
 public class StudentController {
 
+    private static final String STUDENT_FORM_VIEW = "academic/student-form";
     private final AcademicService academicService;
 
     public StudentController(AcademicService academicService) {
@@ -32,14 +33,14 @@ public class StudentController {
     @GetMapping("/new")
     public String newStudentForm(Model model) {
         model.addAttribute("student", new Student());
-        return "academic/student-form";
+        return STUDENT_FORM_VIEW;
     }
 
     @PostMapping("/save")
     public String saveStudent(@jakarta.validation.Valid @ModelAttribute @NonNull Student student,
             org.springframework.validation.BindingResult result, Model model) {
         if (result.hasErrors()) {
-            return "academic/student-form";
+            return STUDENT_FORM_VIEW;
         }
         academicService.saveStudent(student);
         return "redirect:/students";
@@ -52,7 +53,7 @@ public class StudentController {
         // is risky but acceptable for prototype
         model.addAttribute("student",
                 service.getStudentById(id).orElseThrow(() -> new IllegalArgumentException("Invalid student Id:" + id)));
-        return "academic/student-form";
+        return STUDENT_FORM_VIEW;
     }
 
     @GetMapping("/delete/{id}")

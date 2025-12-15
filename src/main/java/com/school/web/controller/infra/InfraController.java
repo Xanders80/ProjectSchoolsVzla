@@ -13,6 +13,8 @@ import org.springframework.web.bind.annotation.*;
 @RequestMapping("/infra")
 public class InfraController {
 
+    private static final String BUILDING_FORM_VIEW = "infra/building-form";
+    private static final String ROOM_FORM_VIEW = "infra/room-form";
     private final InfraService infraService;
 
     public InfraController(InfraService infraService) {
@@ -29,7 +31,7 @@ public class InfraController {
     @GetMapping("/buildings/new")
     public String newBuildingForm(Model model) {
         model.addAttribute("building", new Building());
-        return "infra/building-form";
+        return BUILDING_FORM_VIEW;
     }
 
     @PostMapping("/buildings/save")
@@ -56,7 +58,7 @@ public class InfraController {
     public String newRoomForm(Model model) {
         model.addAttribute("room", new Room());
         model.addAttribute("buildings", infraService.getAllBuildings());
-        return "infra/room-form";
+        return ROOM_FORM_VIEW;
     }
 
     @PostMapping("/rooms/save")
@@ -75,7 +77,7 @@ public class InfraController {
     public String editBuildingForm(@PathVariable @NonNull Long id, Model model) {
         model.addAttribute("building", infraService.getBuildingById(id)
                 .orElseThrow(() -> new IllegalArgumentException("Invalid building Id:" + id)));
-        return "infra/building-form";
+        return BUILDING_FORM_VIEW;
     }
 
     @GetMapping("/rooms/edit/{id}")
@@ -83,6 +85,6 @@ public class InfraController {
         model.addAttribute("room",
                 infraService.getRoomById(id).orElseThrow(() -> new IllegalArgumentException("Invalid room Id:" + id)));
         model.addAttribute("buildings", infraService.getAllBuildings());
-        return "infra/room-form";
+        return ROOM_FORM_VIEW;
     }
 }

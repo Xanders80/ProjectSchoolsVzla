@@ -16,21 +16,18 @@
 
 package com.school.academic.entity;
 
-import jakarta.persistence.Column;
-import jakarta.persistence.Entity;
-import jakarta.persistence.EntityListeners;
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.GenerationType;
-import jakarta.persistence.Id;
-import jakarta.persistence.Table;
-import jakarta.validation.constraints.Max;
-import jakarta.validation.constraints.Min;
-import jakarta.validation.constraints.NotBlank;
-import jakarta.validation.constraints.NotNull;
-import jakarta.validation.constraints.Size;
+import com.school.academic.validation.ValidationGroups;
+import jakarta.persistence.*;
+import jakarta.validation.constraints.*;
+import java.time.LocalDateTime;
+import java.util.Objects;
 
 @Entity
-@Table(name = "courses")
+@Table(name = "courses",
+       indexes = {
+           @Index(name = "idx_course_code", columnList = "code", unique = true),
+           @Index(name = "idx_course_grade_level", columnList = "gradeLevel")
+       })
 @EntityListeners(com.school.core.listener.AuditEntityListener.class)
 public class Course {
 
@@ -38,28 +35,38 @@ public class Course {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @NotBlank(message = "El código del curso es obligatorio")
-    @Size(min = 3, max = 10, message = "El código debe tener entre 3 y 10 caracteres")
-    @Column(unique = true, nullable = false)
-    private String code; // e.g. MATH101
+    @NotBlank(message = "El código del curso es obligatorio", groups = {ValidationGroups.Create.class, ValidationGroups.Update.class})
+    @Size(min = 3, max = 10, message = "El código debe tener entre 3 y 10 caracteres", groups = {ValidationGroups.Create.class, ValidationGroups.Update.class})
+    @Pattern(regexp = "^[A-Z0-9]+$", message = "El código solo puede contener letras mayúsculas y números", groups = {ValidationGroups.Create.class, ValidationGroups.Update.class})
+    @Column(name = "code", unique = true, nullable = false, length = 10)
+    private String code;
 
-    @NotBlank(message = "El nombre del curso es obligatorio")
-    @Size(min = 3, max = 100, message = "El nombre debe tener entre 3 y 100 caracteres")
-    @Column(nullable = false)
+    @Column(name = "previous_code", length = 10)
+    private String previousCode;
+
+    @Column(name = "code_changed_at")
+    private LocalDateTime codeChangedAt;
+
+    @NotBlank(message = "El nombre del curso es obligatorio", groups = {ValidationGroups.Create.class, ValidationGroups.Update.class})
+    @Size(min = 3, max = 100, message = "El nombre debe tener entre 3 y 100 caracteres", groups = {ValidationGroups.Create.class, ValidationGroups.Update.class})
+    @Column(name = "name", nullable = false, length = 100)
     private String name;
 
-    @Size(max = 500, message = "La descripción no puede exceder los 500 caracteres")
+    @Size(max = 500, message = "La descripción no puede exceder los 500 caracteres", groups = {ValidationGroups.Create.class, ValidationGroups.Update.class})
+    @Column(name = "description", length = 500)
     private String description;
 
-    @NotNull(message = "Los créditos son obligatorios")
-    @Min(value = 1, message = "Mínimo 1 crédito")
-    @Max(value = 10, message = "Máximo 10 créditos")
+    @NotNull(message = "Los créditos son obligatorios", groups = ValidationGroups.Create.class)
+    @Min(value = 1, message = "Mínimo 1 crédito", groups = {ValidationGroups.Create.class, ValidationGroups.Update.class})
+    @Max(value = 10, message = "Máximo 10 créditos", groups = {ValidationGroups.Create.class, ValidationGroups.Update.class})
+    @Column(name = "credits", nullable = false)
     private Integer credits;
 
-    @NotNull(message = "El grado es obligatorio")
-    @Min(value = 1, message = "Grado mínimo 1")
-    @Max(value = 12, message = "Grado máximo 12")
-    private Integer gradeLevel; // 1 to 12
+    @NotNull(message = "El grado es obligatorio", groups = ValidationGroups.Create.class)
+    @Min(value = 1, message = "Grado mínimo 1", groups = {ValidationGroups.Create.class, ValidationGroups.Update.class})
+    @Max(value = 12, message = "Grado máximo 12", groups = {ValidationGroups.Create.class, ValidationGroups.Update.class})
+    @Column(name = "grade_level", nullable = false)
+    private Integer gradeLevel;
 
     public Course() {
         /*
@@ -81,7 +88,20 @@ public class Course {
     }
 
     public void setCode(String code) {
-        this.code = code;
+        String newValue = code != null ? code.trim().toUpperCase() : null;
+        if (this.code != null && !Objects.equals(this.code, newValue)) {
+            this.previousCode = this.code;
+            this.codeChangedAt = LocalDateTime.now();
+        }
+        this.code = newValue;
+    }
+
+    public String getPreviousCode() {
+        return previousCode;
+    }
+
+    public LocalDateTime getCodeChangedAt() {
+        return codeChangedAt;
     }
 
     public String getName() {
@@ -114,5 +134,22 @@ public class Course {
 
     public void setGradeLevel(Integer gradeLevel) {
         this.gradeLevel = gradeLevel;
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (!(o instanceof Course course)) return false;
+        return Objects.equals(id, course.id) && Objects.equals(code, course.code);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(id, code);
+    }
+
+    @Override
+    public String toString() {
+        return "Course{id=" + id + ", code='" + code + "', name='" + name + "'}";
     }
 }

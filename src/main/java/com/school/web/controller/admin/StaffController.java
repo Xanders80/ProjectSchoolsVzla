@@ -13,6 +13,7 @@ import org.springframework.web.bind.annotation.*;
 @RequestMapping("/staff")
 public class StaffController {
 
+    private static final String STAFF_FORM_VIEW = "admin/staff-form";
     private final StaffService staffService;
 
     public StaffController(StaffService staffService) {
@@ -33,7 +34,7 @@ public class StaffController {
     public String newStaffForm(Model model) {
         model.addAttribute("staff", new Staff());
         model.addAttribute("roles", Role.values());
-        return "admin/staff-form";
+        return STAFF_FORM_VIEW;
     }
 
     @PostMapping("/save")
@@ -41,7 +42,7 @@ public class StaffController {
             org.springframework.validation.BindingResult result, Model model) {
         if (result.hasErrors()) {
             model.addAttribute("roles", Role.values());
-            return "admin/staff-form";
+            return STAFF_FORM_VIEW;
         }
         staffService.saveStaff(staff);
         return "redirect:/staff";
@@ -51,7 +52,7 @@ public class StaffController {
     public String editStaffForm(@PathVariable @NonNull Long id, Model model) {
         model.addAttribute("staff", staffService.getStaffById(id).orElseThrow());
         model.addAttribute("roles", Role.values());
-        return "admin/staff-form";
+        return STAFF_FORM_VIEW;
     }
 
     @GetMapping("/delete/{id}")

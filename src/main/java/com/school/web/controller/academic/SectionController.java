@@ -14,6 +14,7 @@ import org.springframework.web.bind.annotation.*;
 @RequestMapping("/sections")
 public class SectionController {
 
+    private static final String SECTION_FORM_VIEW = "academic/section-form";
     private final SectionRepository sectionRepository;
     private final CourseRepository courseRepository;
     private final StaffService staffService;
@@ -41,7 +42,7 @@ public class SectionController {
     public String newSectionForm(Model model) {
         model.addAttribute("section", new Section());
         populateDropdowns(model);
-        return "academic/section-form";
+        return SECTION_FORM_VIEW;
     }
 
     @PostMapping("/save")
@@ -49,7 +50,7 @@ public class SectionController {
             org.springframework.validation.BindingResult result, Model model) {
         if (result.hasErrors()) {
             populateDropdowns(model);
-            return "academic/section-form";
+            return SECTION_FORM_VIEW;
         }
         sectionRepository.save(section);
         return "redirect:/sections";
@@ -59,7 +60,7 @@ public class SectionController {
     public String editSectionForm(@PathVariable @NonNull Long id, Model model) {
         model.addAttribute("section", sectionRepository.findById(id).orElseThrow());
         populateDropdowns(model);
-        return "academic/section-form";
+        return SECTION_FORM_VIEW;
     }
 
     @GetMapping("/delete/{id}")

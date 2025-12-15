@@ -27,6 +27,7 @@ import org.springframework.web.bind.annotation.*;
 @RequestMapping("/courses")
 public class CourseController {
 
+    private static final String COURSE_FORM_VIEW = "academic/course-form";
     private final CourseRepository courseRepository;
 
     public CourseController(CourseRepository courseRepository) {
@@ -46,14 +47,14 @@ public class CourseController {
     @GetMapping("/new")
     public String newCourseForm(Model model) {
         model.addAttribute("course", new Course());
-        return "academic/course-form";
+        return COURSE_FORM_VIEW;
     }
 
     @PostMapping("/save")
     public String saveCourse(@jakarta.validation.Valid @ModelAttribute @NonNull Course course,
             org.springframework.validation.BindingResult result, Model model) {
         if (result.hasErrors()) {
-            return "academic/course-form";
+            return COURSE_FORM_VIEW;
         }
         courseRepository.save(course);
         return "redirect:/courses";
@@ -62,7 +63,7 @@ public class CourseController {
     @GetMapping("/edit/{id}")
     public String editCourseForm(@PathVariable @NonNull Long id, Model model) {
         model.addAttribute("course", courseRepository.findById(id).orElseThrow());
-        return "academic/course-form";
+        return COURSE_FORM_VIEW;
     }
 
     @GetMapping("/delete/{id}")

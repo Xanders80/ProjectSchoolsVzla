@@ -1,23 +1,37 @@
 package com.school.infra.entity;
 
+import com.school.academic.validation.ValidationGroups;
+import jakarta.persistence.*;
+import jakarta.validation.constraints.*;
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
-
-import jakarta.persistence.CascadeType;
-import jakarta.persistence.Entity;
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.GenerationType;
-import jakarta.persistence.Id;
-import jakarta.persistence.OneToMany;
-import jakarta.persistence.Table;
+import java.util.Objects;
 
 @Entity
-@Table(name = "buildings")
+@Table(name = "buildings",
+       indexes = {
+           @Index(name = "idx_building_name", columnList = "name")
+       })
+@EntityListeners(com.school.core.listener.AuditEntityListener.class)
 public class Building {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
+
+    @NotBlank(message = "El nombre del edificio es obligatorio", groups = {ValidationGroups.Create.class, ValidationGroups.Update.class})
+    @Size(min = 2, max = 100, message = "El nombre debe tener entre 2 y 100 caracteres", groups = {ValidationGroups.Create.class, ValidationGroups.Update.class})
+    @Column(name = "name", nullable = false, length = 100)
     private String name;
+
+    @Column(name = "previous_name", length = 100)
+    private String previousName;
+
+    @Column(name = "name_changed_at")
+    private LocalDateTime nameChangedAt;
+
+    @Size(max = 200, message = "La dirección no puede exceder los 200 caracteres", groups = {ValidationGroups.Create.class, ValidationGroups.Update.class})
+    @Column(name = "address", length = 200)
     private String address;
 
     @OneToMany(mappedBy = "building", cascade = CascadeType.ALL)
@@ -27,9 +41,43 @@ public class Building {
     public Long getId() { return id; }
     public void setId(Long id) { this.id = id; }
     public String getName() { return name; }
-    public void setName(String name) { this.name = name; }
+    public void setName(String name) {
+        String newValue = name != null ? name.trim() : null;
+        if (this.name != null && !Objects.equals(this.name, newValue)) {
+            this.previousName = this.name;
+            this.nameChangedAt = LocalDateTime.now();
+        }
+        this.name = newValue;
+    }
+
+    public String getPreviousName() {
+        return previousName;
+    }
+
+    public LocalDateTime getNameChangedAt() {
+        return nameChangedAt;
+    }
     public String getAddress() { return address; }
-    public void setAddress(String address) { this.address = address; }
+    public void setAddress(String address) {
+        this.address = address != null ? address.trim() : null;
+    }
     public List<Room> getRooms() { return rooms; }
     public void setRooms(List<Room> rooms) { this.rooms = rooms; }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (!(o instanceof Building building)) return false;
+        return Objects.equals(id, building.id);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(id);
+    }
+
+    @Override
+    public String toString() {
+        return "Building{id=" + id + ", name='" + name + "'}";
+    }
 }

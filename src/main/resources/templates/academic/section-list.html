@@ -30,28 +30,31 @@
           <div th:replace="~{fragments/sb-admin-topbar :: topbar}"></div>
 
           <div class="container-fluid">
-            <div
-              class="d-sm-flex align-items-center justify-content-between mb-4"
-            >
-              <h1 class="h3 mb-0 text-gray-800">Gestión de Secciones</h1>
-              <a
-                th:href="@{/sections/new}"
-                class="d-none d-sm-inline-block btn btn-sm btn-primary shadow-sm"
-              >
-                <i class="fas fa-plus fa-sm text-white-50"></i> Agregar Sección
+            <div class="d-sm-flex align-items-center justify-content-between mb-4">
+              <h1 class="h3 mb-0 text-gray-800">Lista de Secciones</h1>
+              <a th:href="@{/sections/new}" class="btn btn-primary">
+                <i class="fas fa-plus"></i> Agregar Nueva Sección
               </a>
+            </div>
+
+            <div th:if="${successMessage}" class="alert alert-success">
+              <span th:text="${successMessage}"></span>
+            </div>
+            <div th:if="${errorMessage}" class="alert alert-danger">
+              <span th:text="${errorMessage}"></span>
             </div>
 
             <div class="card shadow mb-4">
               <div class="card-header py-3">
                 <h6 class="m-0 font-weight-bold text-primary">
-                  Lista de Secciones
+                  Secciones del Sistema
                 </h6>
               </div>
               <div class="card-body">
                 <div class="table-responsive">
                   <table
                     class="table table-bordered"
+                    id="dataTable"
                     width="100%"
                     cellspacing="0"
                   >
@@ -81,19 +84,23 @@
                         <td>
                           <a
                             th:href="@{/sections/edit/{id}(id=${section.id})}"
-                            class="btn btn-info btn-sm"
+                            class="btn btn-sm btn-warning"
                           >
                             <i class="fas fa-edit"></i> Editar
                           </a>
-                          <a
-                            href="#"
-                            class="btn btn-danger btn-sm delete-btn"
-                            data-toggle="modal"
-                            data-target="#deleteModal"
-                            th:data-url="@{/sections/delete/{id}(id=${section.id})}"
+                          <form
+                            th:action="@{/sections/delete/{id}(id=${section.id})}"
+                            method="post"
+                            style="display: inline"
                           >
-                            <i class="fas fa-trash"></i> Eliminar
-                          </a>
+                            <button
+                              type="submit"
+                              class="btn btn-sm btn-danger"
+                              onclick="return confirm('¿Está seguro de eliminar esta sección?')"
+                            >
+                              <i class="fas fa-trash"></i> Eliminar
+                            </button>
+                          </form>
                         </td>
                       </tr>
                       <tr th:if="${sections.empty}">
@@ -108,35 +115,44 @@
                 <!-- Pagination -->
                 <div
                   th:if="${sections.totalPages > 1}"
-                  class="d-flex justify-content-center mt-4"
+                  class="d-flex justify-content-center"
                 >
                   <nav aria-label="Page navigation">
                     <ul class="pagination">
                       <li
                         class="page-item"
-                        th:classappend="${sections.first} ? 'disabled'"
+                        th:classappend="${sections.number == 0} ? 'disabled'"
                       >
                         <a
                           class="page-link"
-                          th:href="@{/sections(page=${sections.number - 1}, size=${sections.size})}"
-                          >Anterior</a
+                          th:href="@{/sections(page=${sections.number - 1}, size=10)}"
+                          aria-label="Previous"
                         >
-                      </li>
-                      <li class="page-item disabled">
-                        <span
-                          class="page-link"
-                          th:text="'Página ' + ${sections.number + 1} + ' de ' + ${sections.totalPages}"
-                        ></span>
+                          <span aria-hidden="true">&laquo;</span>
+                        </a>
                       </li>
                       <li
                         class="page-item"
-                        th:classappend="${sections.last} ? 'disabled'"
+                        th:each="i : ${#numbers.sequence(0, sections.totalPages - 1)}"
+                        th:classappend="${i == sections.number} ? 'active'"
                       >
                         <a
                           class="page-link"
-                          th:href="@{/sections(page=${sections.number + 1}, size=${sections.size})}"
-                          >Siguiente</a
+                          th:href="@{/sections(page=${i}, size=10)}"
+                          th:text="${i + 1}"
+                        ></a>
+                      </li>
+                      <li
+                        class="page-item"
+                        th:classappend="${sections.number == sections.totalPages - 1} ? 'disabled'"
+                      >
+                        <a
+                          class="page-link"
+                          th:href="@{/sections(page=${sections.number + 1}, size=10)}"
+                          aria-label="Next"
                         >
+                          <span aria-hidden="true">&raquo;</span>
+                        </a>
                       </li>
                     </ul>
                   </nav>
@@ -160,14 +176,10 @@
     <script th:src="@{/vendor/bootstrap/js/bootstrap.bundle.min.js}"></script>
     <script th:src="@{/vendor/jquery-easing/jquery.easing.min.js}"></script>
     <script th:src="@{/js/sb-admin-2.min.js}"></script>
-
-    <script>
-      $(document).ready(function () {
-        $(".delete-btn").on("click", function () {
-          var deleteUrl = $(this).data("url");
-          $("#deleteForm").attr("action", deleteUrl);
-        });
-      });
-    </script>
+    <script th:src="@{/vendor/datatables/jquery.dataTables.min.js}"></script>
+    <script
+      th:src="@{/vendor/datatables/dataTables.bootstrap4.min.js}"
+    ></script>
+    <script th:src="@{/js/demo/datatables-demo.js}"></script>
   </body>
 </html>

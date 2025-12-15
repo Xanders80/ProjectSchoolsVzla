@@ -30,28 +30,31 @@
           <div th:replace="~{fragments/sb-admin-topbar :: topbar}"></div>
 
           <div class="container-fluid">
-            <div
-              class="d-sm-flex align-items-center justify-content-between mb-4"
-            >
-              <h1 class="h3 mb-0 text-gray-800">Gestión de Personal</h1>
-              <a
-                th:href="@{/staff/new}"
-                class="d-none d-sm-inline-block btn btn-sm btn-primary shadow-sm"
-              >
-                <i class="fas fa-plus fa-sm text-white-50"></i> Agregar Personal
+            <div class="d-sm-flex align-items-center justify-content-between mb-4">
+              <h1 class="h3 mb-0 text-gray-800">Lista de Personal</h1>
+              <a th:href="@{/staff/new}" class="btn btn-primary">
+                <i class="fas fa-plus"></i> Agregar Nuevo Personal
               </a>
+            </div>
+
+            <div th:if="${successMessage}" class="alert alert-success">
+              <span th:text="${successMessage}"></span>
+            </div>
+            <div th:if="${errorMessage}" class="alert alert-danger">
+              <span th:text="${errorMessage}"></span>
             </div>
 
             <div class="card shadow mb-4">
               <div class="card-header py-3">
                 <h6 class="m-0 font-weight-bold text-primary">
-                  Lista de Personal
+                  Personal del Sistema
                 </h6>
               </div>
               <div class="card-body">
                 <div class="table-responsive">
                   <table
                     class="table table-bordered"
+                    id="dataTable"
                     width="100%"
                     cellspacing="0"
                   >
@@ -77,19 +80,23 @@
                         <td>
                           <a
                             th:href="@{/staff/edit/{id}(id=${staff.id})}"
-                            class="btn btn-info btn-sm"
+                            class="btn btn-sm btn-warning"
                           >
                             <i class="fas fa-edit"></i> Editar
                           </a>
-                          <a
-                            data-toggle="modal"
-                            data-target="#deleteModal"
-                            th:href="@{/staff/delete/{id}(id=${staff.id})}"
-                            class="btn btn-danger btn-sm delete-btn"
-                            th:data-url="@{/staff/delete/{id}(id=${staff.id})}"
+                          <form
+                            th:action="@{/staff/delete/{id}(id=${staff.id})}"
+                            method="post"
+                            style="display: inline"
                           >
-                            <i class="fas fa-trash"></i> Eliminar
-                          </a>
+                            <button
+                              type="submit"
+                              class="btn btn-sm btn-danger"
+                              onclick="return confirm('¿Está seguro de eliminar este personal?')"
+                            >
+                              <i class="fas fa-trash"></i> Eliminar
+                            </button>
+                          </form>
                         </td>
                       </tr>
                       <tr th:if="${staffList.empty}">
@@ -104,35 +111,44 @@
                 <!-- Pagination -->
                 <div
                   th:if="${staffList.totalPages > 1}"
-                  class="d-flex justify-content-center mt-4"
+                  class="d-flex justify-content-center"
                 >
                   <nav aria-label="Page navigation">
                     <ul class="pagination">
                       <li
                         class="page-item"
-                        th:classappend="${staffList.first} ? 'disabled'"
+                        th:classappend="${staffList.number == 0} ? 'disabled'"
                       >
                         <a
                           class="page-link"
-                          th:href="@{/staff(page=${staffList.number - 1}, size=${staffList.size})}"
-                          >Anterior</a
+                          th:href="@{/staff(page=${staffList.number - 1}, size=10)}"
+                          aria-label="Previous"
                         >
-                      </li>
-                      <li class="page-item disabled">
-                        <span
-                          class="page-link"
-                          th:text="'Página ' + ${staffList.number + 1} + ' de ' + ${staffList.totalPages}"
-                        ></span>
+                          <span aria-hidden="true">&laquo;</span>
+                        </a>
                       </li>
                       <li
                         class="page-item"
-                        th:classappend="${staffList.last} ? 'disabled'"
+                        th:each="i : ${#numbers.sequence(0, staffList.totalPages - 1)}"
+                        th:classappend="${i == staffList.number} ? 'active'"
                       >
                         <a
                           class="page-link"
-                          th:href="@{/staff(page=${staffList.number + 1}, size=${staffList.size})}"
-                          >Siguiente</a
+                          th:href="@{/staff(page=${i}, size=10)}"
+                          th:text="${i + 1}"
+                        ></a>
+                      </li>
+                      <li
+                        class="page-item"
+                        th:classappend="${staffList.number == staffList.totalPages - 1} ? 'disabled'"
+                      >
+                        <a
+                          class="page-link"
+                          th:href="@{/staff(page=${staffList.number + 1}, size=10)}"
+                          aria-label="Next"
                         >
+                          <span aria-hidden="true">&raquo;</span>
+                        </a>
                       </li>
                     </ul>
                   </nav>
@@ -156,14 +172,10 @@
     <script th:src="@{/vendor/bootstrap/js/bootstrap.bundle.min.js}"></script>
     <script th:src="@{/vendor/jquery-easing/jquery.easing.min.js}"></script>
     <script th:src="@{/js/sb-admin-2.min.js}"></script>
-
-    <script>
-      $(document).ready(function () {
-        $(".delete-btn").on("click", function () {
-          var deleteUrl = $(this).data("url");
-          $("#confirmDeleteBtn").attr("href", deleteUrl);
-        });
-      });
-    </script>
+    <script th:src="@{/vendor/datatables/jquery.dataTables.min.js}"></script>
+    <script
+      th:src="@{/vendor/datatables/dataTables.bootstrap4.min.js}"
+    ></script>
+    <script th:src="@{/js/demo/datatables-demo.js}"></script>
   </body>
 </html>

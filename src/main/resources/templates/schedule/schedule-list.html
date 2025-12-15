@@ -30,45 +30,34 @@
           <div th:replace="~{fragments/sb-admin-topbar :: topbar}"></div>
 
           <div class="container-fluid">
-            <div
-              class="d-sm-flex align-items-center justify-content-between mb-4"
-            >
-              <h1 class="h3 mb-0 text-gray-800">Gestión de Horarios</h1>
-              <a
-                th:href="@{/schedules/new}"
-                class="d-none d-sm-inline-block btn btn-sm btn-primary shadow-sm"
-              >
-                <i class="fas fa-plus fa-sm text-white-50"></i> Agregar Horario
+            <div class="d-sm-flex align-items-center justify-content-between mb-4">
+              <h1 class="h3 mb-0 text-gray-800">Lista de Horarios</h1>
+              <a th:href="@{/schedules/new}" class="btn btn-primary">
+                <i class="fas fa-plus"></i> Agregar Nuevo Horario
               </a>
             </div>
 
-            <div
-              th:if="${error}"
-              class="alert alert-danger alert-dismissible fade show"
-              role="alert"
-            >
-              <i class="fas fa-exclamation-triangle"></i>
+            <div th:if="${successMessage}" class="alert alert-success">
+              <span th:text="${successMessage}"></span>
+            </div>
+            <div th:if="${errorMessage}" class="alert alert-danger">
+              <span th:text="${errorMessage}"></span>
+            </div>
+            <div th:if="${error}" class="alert alert-danger">
               <span th:text="${error}"></span>
-              <button
-                type="button"
-                class="close"
-                data-dismiss="alert"
-                aria-label="Cerrar"
-              >
-                <span aria-hidden="true">&times;</span>
-              </button>
             </div>
 
             <div class="card shadow mb-4">
               <div class="card-header py-3">
                 <h6 class="m-0 font-weight-bold text-primary">
-                  Entradas de Horario
+                  Horarios del Sistema
                 </h6>
               </div>
               <div class="card-body">
                 <div class="table-responsive">
                   <table
                     class="table table-bordered"
+                    id="dataTable"
                     width="100%"
                     cellspacing="0"
                   >
@@ -96,23 +85,27 @@
                         <td>
                           <a
                             th:href="@{/schedules/edit/{id}(id=${entry.id})}"
-                            class="btn btn-info btn-sm"
+                            class="btn btn-sm btn-warning"
                           >
                             <i class="fas fa-edit"></i> Editar
                           </a>
-                          <a
-                            data-toggle="modal"
-                            data-target="#deleteModal"
-                            th:href="@{/schedules/delete/{id}(id=${entry.id})}"
-                            class="btn btn-danger btn-sm delete-btn"
-                            th:data-url="@{/schedules/delete/{id}(id=${entry.id})}"
+                          <form
+                            th:action="@{/schedules/delete/{id}(id=${entry.id})}"
+                            method="post"
+                            style="display: inline"
                           >
-                            <i class="fas fa-trash"></i> Eliminar
-                          </a>
+                            <button
+                              type="submit"
+                              class="btn btn-sm btn-danger"
+                              onclick="return confirm('¿Está seguro de eliminar este horario?')"
+                            >
+                              <i class="fas fa-trash"></i> Eliminar
+                            </button>
+                          </form>
                         </td>
                       </tr>
                       <tr th:if="${#lists.isEmpty(scheduleEntries)}">
-                        <td colspan="4" class="text-center text-muted">
+                        <td colspan="5" class="text-center text-muted">
                           No se encontraron horarios.
                         </td>
                       </tr>
@@ -138,14 +131,10 @@
     <script th:src="@{/vendor/bootstrap/js/bootstrap.bundle.min.js}"></script>
     <script th:src="@{/vendor/jquery-easing/jquery.easing.min.js}"></script>
     <script th:src="@{/js/sb-admin-2.min.js}"></script>
-
-    <script>
-      $(document).ready(function () {
-        $(".delete-btn").on("click", function () {
-          var deleteUrl = $(this).data("url");
-          $("#confirmDeleteBtn").attr("href", deleteUrl);
-        });
-      });
-    </script>
+    <script th:src="@{/vendor/datatables/jquery.dataTables.min.js}"></script>
+    <script
+      th:src="@{/vendor/datatables/dataTables.bootstrap4.min.js}"
+    ></script>
+    <script th:src="@{/js/demo/datatables-demo.js}"></script>
   </body>
 </html>

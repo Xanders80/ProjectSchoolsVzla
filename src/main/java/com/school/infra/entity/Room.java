@@ -1,33 +1,93 @@
 package com.school.infra.entity;
 
+import com.school.academic.validation.ValidationGroups;
 import jakarta.persistence.*;
+import jakarta.validation.constraints.*;
+import java.time.LocalDateTime;
+import java.util.Objects;
 
 @Entity
-@Table(name = "rooms")
+@Table(name = "rooms",
+       indexes = {
+           @Index(name = "idx_room_number", columnList = "roomNumber"),
+           @Index(name = "idx_room_building", columnList = "building_id"),
+           @Index(name = "idx_room_type", columnList = "type")
+       })
+@EntityListeners(com.school.core.listener.AuditEntityListener.class)
 public class Room {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @Column(nullable = false)
+    @NotBlank(message = "El número de aula es obligatorio", groups = {ValidationGroups.Create.class, ValidationGroups.Update.class})
+    @Size(min = 1, max = 20, message = "El número de aula debe tener entre 1 y 20 caracteres", groups = {ValidationGroups.Create.class, ValidationGroups.Update.class})
+    @Pattern(regexp = "^[A-Z0-9-]+$", message = "El número de aula solo puede contener letras mayúsculas, números y guiones", groups = {ValidationGroups.Create.class, ValidationGroups.Update.class})
+    @Column(name = "room_number", nullable = false, length = 20)
     private String roomNumber;
 
-    private Integer capacity;
-    private String type; // CLASSROOM, LAB, OFFICE
+    @Column(name = "previous_room_number", length = 20)
+    private String previousRoomNumber;
 
+    @Column(name = "room_number_changed_at")
+    private LocalDateTime roomNumberChangedAt;
+
+    @Min(value = 1, message = "La capacidad mínima es 1", groups = {ValidationGroups.Create.class, ValidationGroups.Update.class})
+    @Max(value = 500, message = "La capacidad máxima es 500", groups = {ValidationGroups.Create.class, ValidationGroups.Update.class})
+    @Column(name = "capacity")
+    private Integer capacity;
+
+    @Pattern(regexp = "^(CLASSROOM|LAB|OFFICE|AUDITORIUM|LIBRARY)$", message = "El tipo debe ser: CLASSROOM, LAB, OFFICE, AUDITORIUM o LIBRARY", groups = {ValidationGroups.Create.class, ValidationGroups.Update.class})
+    @Column(name = "type", length = 20)
+    private String type;
+
+    @NotNull(message = "El edificio es obligatorio", groups = ValidationGroups.Create.class)
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "building_id")
+    @JoinColumn(name = "building_id", foreignKey = @ForeignKey(name = "fk_room_building"))
     private Building building;
 
     public Room() {}
     public Long getId() { return id; }
     public void setId(Long id) { this.id = id; }
     public String getRoomNumber() { return roomNumber; }
-    public void setRoomNumber(String roomNumber) { this.roomNumber = roomNumber; }
+    public void setRoomNumber(String roomNumber) {
+        String newValue = roomNumber != null ? roomNumber.trim().toUpperCase() : null;
+        if (this.roomNumber != null && !Objects.equals(this.roomNumber, newValue)) {
+            this.previousRoomNumber = this.roomNumber;
+            this.roomNumberChangedAt = LocalDateTime.now();
+        }
+        this.roomNumber = newValue;
+    }
+
+    public String getPreviousRoomNumber() {
+        return previousRoomNumber;
+    }
+
+    public LocalDateTime getRoomNumberChangedAt() {
+        return roomNumberChangedAt;
+    }
     public Integer getCapacity() { return capacity; }
     public void setCapacity(Integer capacity) { this.capacity = capacity; }
     public String getType() { return type; }
-    public void setType(String type) { this.type = type; }
+    public void setType(String type) {
+        this.type = type != null ? type.trim().toUpperCase() : null;
+    }
     public Building getBuilding() { return building; }
     public void setBuilding(Building building) { this.building = building; }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (!(o instanceof Room room)) return false;
+        return Objects.equals(id, room.id) && Objects.equals(roomNumber, room.roomNumber);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(id, roomNumber);
+    }
+
+    @Override
+    public String toString() {
+        return "Room{id=" + id + ", roomNumber='" + roomNumber + "', type='" + type + "'}";
+    }
 }

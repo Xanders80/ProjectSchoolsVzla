@@ -29,6 +29,7 @@ import org.springframework.web.bind.annotation.*;
 @RequestMapping("/admin/users")
 public class UserController {
 
+    private static final String USER_FORM_VIEW = "admin/user-form";
     private final UserRepository userRepository;
     private final PasswordEncoder passwordEncoder;
 
@@ -52,7 +53,7 @@ public class UserController {
     public String newUserForm(Model model) {
         model.addAttribute("user", new User());
         model.addAttribute("roles", Role.values());
-        return "admin/user-form";
+        return USER_FORM_VIEW;
     }
 
     @PostMapping("/save")
@@ -61,7 +62,7 @@ public class UserController {
             @RequestParam(required = false) String password) {
         if (result.hasErrors()) {
             model.addAttribute("roles", Role.values());
-            return "admin/user-form";
+            return USER_FORM_VIEW;
         }
         if (user.getId() == null && password != null && !password.isEmpty()) {
             user.setPassword(passwordEncoder.encode(password));
@@ -76,7 +77,7 @@ public class UserController {
     public String editUserForm(@PathVariable @NonNull Long id, Model model) {
         model.addAttribute("user", userRepository.findById(id).orElseThrow());
         model.addAttribute("roles", Role.values());
-        return "admin/user-form";
+        return USER_FORM_VIEW;
     }
 
     @GetMapping("/delete/{id}")
