@@ -1,7 +1,6 @@
 package com.school.web.controller.auth;
 
 import org.springframework.stereotype.Controller;
-
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestParam;
@@ -17,6 +16,9 @@ public class AuthController {
 
     @org.springframework.beans.factory.annotation.Autowired
     private com.school.core.service.UserService userService;
+
+    @org.springframework.beans.factory.annotation.Autowired
+    private com.school.core.validation.InputSanitizer inputSanitizer;
 
     @GetMapping("/register")
     public String showRegisterPage(org.springframework.ui.Model model) {
@@ -39,14 +41,20 @@ public class AuthController {
             @RequestParam(required = false) String relationship,
             RedirectAttributes redirectAttributes) {
 
+        // Sanitizar entradas
+        firstName = inputSanitizer.sanitizeForDatabase(firstName);
+        lastName = inputSanitizer.sanitizeForDatabase(lastName);
+        email = inputSanitizer.sanitizeForDatabase(email);
+        username = inputSanitizer.sanitizeForDatabase(username);
+
         if (!password.equals(confirmPassword)) {
             redirectAttributes.addFlashAttribute("error", "Las contraseñas no coinciden");
             return "redirect:/register?error";
         }
 
         try {
-            userService.registerNewUserWithType(firstName, lastName, email, username, password, 
-                userType, dni, phoneNumber, address, relationship);
+            userService.registerNewUserWithType(firstName, lastName, email, username, password,
+                    userType, dni, phoneNumber, address, relationship);
             redirectAttributes.addFlashAttribute("success", "Cuenta creada exitosamente. Por favor inicie sesión.");
             return "redirect:/login";
         } catch (RuntimeException e) {
@@ -81,13 +89,9 @@ public class AuthController {
         String token = java.util.UUID.randomUUID().toString();
         userService.createPasswordResetTokenForUser(user, token);
 
-        // Simulación de envío de correo
-        System.out.println("--------------------------------------------------------------");
-        System.out.println("SIMULACIÓN DE EMAIL DE RECUPERACIÓN");
-        System.out.println("Para: " + email);
-        System.out.println("Token: " + token);
-        System.out.println("Enlace: http://localhost:8080/reset-password?token=" + token);
-        System.out.println("--------------------------------------------------------------");
+        // Log seguro sin exponer tokens
+        org.slf4j.LoggerFactory.getLogger(AuthController.class)
+                .info("Password reset requested for user: {}", email.replaceAll("@.*", "@***"));
 
         redirectAttributes.addFlashAttribute("success",
                 "Se ha enviado un enlace de recuperación a su correo electrónico (Revise la consola del servidor).");

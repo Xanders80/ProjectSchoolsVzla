@@ -30,7 +30,12 @@
           <div th:replace="~{fragments/sb-admin-topbar :: topbar}"></div>
 
           <div class="container-fluid">
-            <h1 class="h3 mb-4 text-gray-800">Formulario de Sección</h1>
+            <div class="d-sm-flex align-items-center justify-content-between mb-4">
+              <h1 class="h3 mb-0 text-gray-800" th:text="${section.id != null ? 'Editar Sección' : 'Nueva Sección'}">Sección</h1>
+              <a th:href="@{/sections}" class="btn btn-secondary">
+                <i class="fas fa-arrow-left"></i> Volver
+              </a>
+            </div>
 
             <div class="card shadow mb-4">
               <div class="card-header py-3">

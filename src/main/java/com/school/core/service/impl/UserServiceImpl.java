@@ -149,6 +149,7 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
+    @org.springframework.cache.annotation.Cacheable(value = "users", key = "#email")
     public Optional<User> findByEmail(String email) {
         return userRepository.findByEmail(email);
     }
