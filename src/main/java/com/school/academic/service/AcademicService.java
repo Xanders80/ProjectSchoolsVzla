@@ -68,4 +68,8 @@ public class AcademicService {
     public long countStudents() {
         return studentRepository.count();
     }
+
+    public java.util.List<Student> getAllStudents() {
+        return studentRepository.findAll();
+    }
 }

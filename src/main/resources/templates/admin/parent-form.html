@@ -1,0 +1,230 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+  <head>
+    <meta charset="utf-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta
+      name="viewport"
+      content="width=device-width, initial-scale=1, shrink-to-fit=no"
+    />
+    <title>Representante - Sistema de Gestión Escolar</title>
+
+    <link
+      th:href="@{/vendor/fontawesome-free/css/all.min.css}"
+      rel="stylesheet"
+      type="text/css"
+    />
+    <link
+      href="https://fonts.googleapis.com/css?family=Nunito:200,200i,300,300i,400,400i,600,600i,700,700i,800,800i,900,900i"
+      rel="stylesheet"
+    />
+    <link th:href="@{/css/sb-admin-2.min.css}" rel="stylesheet" />
+  </head>
+
+  <body id="page-top">
+    <div id="wrapper">
+      <div th:replace="~{fragments/sb-admin-sidebar :: sidebar}"></div>
+
+      <div id="content-wrapper" class="d-flex flex-column">
+        <div id="content">
+          <div th:replace="~{fragments/sb-admin-topbar :: topbar}"></div>
+
+          <div class="container-fluid">
+            <div class="d-sm-flex align-items-center justify-content-between mb-4">
+              <h1 class="h3 mb-0 text-gray-800" th:text="${parent.id != null ? 'Editar Representante' : 'Nuevo Representante'}">Representante</h1>
+              <a th:href="@{/parents}" class="btn btn-secondary">
+                <i class="fas fa-arrow-left"></i> Volver
+              </a>
+            </div>
+
+            <div class="card shadow mb-4">
+              <div class="card-header py-3">
+                <h6 class="m-0 font-weight-bold text-primary">
+                  Información del Representante
+                </h6>
+              </div>
+              <div class="card-body">
+                <form th:action="@{/parents/save}" th:object="${parent}" method="post">
+                  <input type="hidden" th:field="*{id}" />
+                  
+                  <div class="row">
+                    <div class="col-md-6">
+                      <div class="form-group">
+                        <label for="firstName">Nombre *</label>
+                        <input
+                          type="text"
+                          class="form-control"
+                          th:field="*{firstName}"
+                          th:classappend="${#fields.hasErrors('firstName')} ? 'is-invalid'"
+                          required
+                        />
+                        <div th:if="${#fields.hasErrors('firstName')}" class="invalid-feedback">
+                          <span th:errors="*{firstName}"></span>
+                        </div>
+                      </div>
+                    </div>
+                    <div class="col-md-6">
+                      <div class="form-group">
+                        <label for="lastName">Apellido *</label>
+                        <input
+                          type="text"
+                          class="form-control"
+                          th:field="*{lastName}"
+                          th:classappend="${#fields.hasErrors('lastName')} ? 'is-invalid'"
+                          required
+                        />
+                        <div th:if="${#fields.hasErrors('lastName')}" class="invalid-feedback">
+                          <span th:errors="*{lastName}"></span>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+
+                  <div class="row">
+                    <div class="col-md-6">
+                      <div class="form-group">
+                        <label for="dni">DNI *</label>
+                        <input
+                          type="text"
+                          class="form-control"
+                          th:field="*{dni}"
+                          th:classappend="${#fields.hasErrors('dni')} ? 'is-invalid'"
+                          required
+                        />
+                        <div th:if="${#fields.hasErrors('dni')}" class="invalid-feedback">
+                          <span th:errors="*{dni}"></span>
+                        </div>
+                      </div>
+                    </div>
+                    <div class="col-md-6">
+                      <div class="form-group">
+                        <label for="relationship">Relación *</label>
+                        <select
+                          class="form-control"
+                          th:field="*{relationship}"
+                          th:classappend="${#fields.hasErrors('relationship')} ? 'is-invalid'"
+                          required
+                        >
+                          <option value="">Seleccionar relación</option>
+                          <option value="Padre">Padre</option>
+                          <option value="Madre">Madre</option>
+                          <option value="Tutor">Tutor</option>
+                          <option value="Abuelo">Abuelo</option>
+                          <option value="Abuela">Abuela</option>
+                          <option value="Tío">Tío</option>
+                          <option value="Tía">Tía</option>
+                          <option value="Otro">Otro</option>
+                        </select>
+                        <div th:if="${#fields.hasErrors('relationship')}" class="invalid-feedback">
+                          <span th:errors="*{relationship}"></span>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+
+                  <div class="row">
+                    <div class="col-md-6">
+                      <div class="form-group">
+                        <label for="email">Email *</label>
+                        <input
+                          type="email"
+                          class="form-control"
+                          th:field="*{email}"
+                          th:classappend="${#fields.hasErrors('email')} ? 'is-invalid'"
+                          required
+                        />
+                        <div th:if="${#fields.hasErrors('email')}" class="invalid-feedback">
+                          <span th:errors="*{email}"></span>
+                        </div>
+                      </div>
+                    </div>
+                    <div class="col-md-6">
+                      <div class="form-group">
+                        <label for="phoneNumber">Teléfono</label>
+                        <input
+                          type="text"
+                          class="form-control"
+                          th:field="*{phoneNumber}"
+                          th:classappend="${#fields.hasErrors('phoneNumber')} ? 'is-invalid'"
+                        />
+                        <div th:if="${#fields.hasErrors('phoneNumber')}" class="invalid-feedback">
+                          <span th:errors="*{phoneNumber}"></span>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+
+                  <div class="form-group">
+                    <label for="birthDate">Fecha de Nacimiento</label>
+                    <input
+                      type="date"
+                      class="form-control"
+                      th:field="*{birthDate}"
+                      th:classappend="${#fields.hasErrors('birthDate')} ? 'is-invalid'"
+                    />
+                    <div th:if="${#fields.hasErrors('birthDate')}" class="invalid-feedback">
+                      <span th:errors="*{birthDate}"></span>
+                    </div>
+                  </div>
+
+                  <div class="form-group">
+                    <label for="address">Dirección</label>
+                    <textarea
+                      class="form-control"
+                      th:field="*{address}"
+                      rows="3"
+                      th:classappend="${#fields.hasErrors('address')} ? 'is-invalid'"
+                    ></textarea>
+                    <div th:if="${#fields.hasErrors('address')}" class="invalid-feedback">
+                      <span th:errors="*{address}"></span>
+                    </div>
+                  </div>
+
+                  <div class="form-group">
+                    <label>Estudiantes Asociados</label>
+                    <div class="row">
+                      <div class="col-md-12">
+                        <div th:each="student : ${students}" class="form-check form-check-inline">
+                          <input
+                            class="form-check-input"
+                            type="checkbox"
+                            th:field="*{children}"
+                            th:value="${student.id}"
+                          />
+                          <label class="form-check-label" th:text="${student.fullName}">
+                            Student Name
+                          </label>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+
+                  <div class="form-group">
+                    <button type="submit" class="btn btn-primary">
+                      <i class="fas fa-save"></i> Guardar
+                    </button>
+                    <a th:href="@{/parents}" class="btn btn-secondary ml-2">
+                      <i class="fas fa-times"></i> Cancelar
+                    </a>
+                  </div>
+                </form>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div th:replace="~{fragments/sb-admin-footer :: footer}"></div>
+      </div>
+    </div>
+
+    <a class="scroll-to-top rounded" href="#page-top">
+      <i class="fas fa-angle-up"></i>
+    </a>
+    <div th:replace="~{fragments/sb-admin-topbar :: logoutModal}"></div>
+
+    <script th:src="@{/vendor/jquery/jquery.min.js}"></script>
+    <script th:src="@{/vendor/bootstrap/js/bootstrap.bundle.min.js}"></script>
+    <script th:src="@{/vendor/jquery-easing/jquery.easing.min.js}"></script>
+    <script th:src="@{/js/sb-admin-2.min.js}"></script>
+  </body>
+</html>

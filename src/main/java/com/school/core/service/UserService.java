@@ -6,6 +6,8 @@ import java.util.Optional;
 
 public interface UserService {
     User registerNewUser(String firstName, String lastName, String email, String username, String password);
+    User registerNewUserWithType(String firstName, String lastName, String email, String username, String password, 
+        String userType, String dni, String phoneNumber, String address, String relationship);
     Optional<User> findByEmail(String email);
     void createPasswordResetTokenForUser(User user, String token);
     Optional<PasswordResetToken> getPasswordResetToken(String token);

@@ -53,6 +53,16 @@
                 </div>
 
                 <form class="user" th:action="@{/register}" method="post">
+                  <div class="form-group">
+                    <select class="form-control form-control-user" name="userType" id="userType" required onchange="toggleFields()">
+                      <option value="">Seleccionar Tipo de Usuario</option>
+                      <option value="STUDENT">Estudiante</option>
+                      <option value="PARENT">Representante</option>
+                      <option value="TEACHER">Profesor</option>
+                      <option value="STAFF">Personal Administrativo</option>
+                    </select>
+                  </div>
+                  
                   <div class="form-group row">
                     <div class="col-sm-6 mb-3 mb-sm-0">
                       <input
@@ -73,24 +83,71 @@
                       />
                     </div>
                   </div>
-                  <div class="form-group">
-                    <input
-                      type="email"
-                      class="form-control form-control-user"
-                      name="email"
-                      placeholder="Correo Electrónico"
-                      required
-                    />
+                  
+                  <div class="form-group row">
+                    <div class="col-sm-6 mb-3 mb-sm-0">
+                      <input
+                        type="email"
+                        class="form-control form-control-user"
+                        name="email"
+                        placeholder="Correo Electrónico"
+                        required
+                      />
+                    </div>
+                    <div class="col-sm-6">
+                      <input
+                        type="text"
+                        class="form-control form-control-user"
+                        name="dni"
+                        placeholder="DNI"
+                        required
+                      />
+                    </div>
                   </div>
+                  
+                  <div class="form-group row">
+                    <div class="col-sm-6 mb-3 mb-sm-0">
+                      <input
+                        type="text"
+                        class="form-control form-control-user"
+                        name="username"
+                        placeholder="Usuario"
+                        required
+                      />
+                    </div>
+                    <div class="col-sm-6">
+                      <input
+                        type="text"
+                        class="form-control form-control-user"
+                        name="phoneNumber"
+                        placeholder="Teléfono"
+                      />
+                    </div>
+                  </div>
+                  
                   <div class="form-group">
                     <input
                       type="text"
                       class="form-control form-control-user"
-                      name="username"
-                      placeholder="Usuario"
-                      required
+                      name="address"
+                      placeholder="Dirección"
                     />
                   </div>
+                  
+                  <div class="form-group" id="relationshipField" style="display: none;">
+                    <select class="form-control form-control-user" name="relationship">
+                      <option value="">Seleccionar Relación</option>
+                      <option value="Padre">Padre</option>
+                      <option value="Madre">Madre</option>
+                      <option value="Tutor">Tutor</option>
+                      <option value="Abuelo">Abuelo</option>
+                      <option value="Abuela">Abuela</option>
+                      <option value="Tío">Tío</option>
+                      <option value="Tía">Tía</option>
+                      <option value="Otro">Otro</option>
+                    </select>
+                  </div>
+                  
                   <div class="form-group row">
                     <div class="col-sm-6 mb-3 mb-sm-0">
                       <input
@@ -145,5 +202,20 @@
 
     <!-- Custom scripts for all pages-->
     <script th:src="@{/js/sb-admin-2.min.js}"></script>
+    
+    <script>
+      function toggleFields() {
+        const userType = document.getElementById('userType').value;
+        const relationshipField = document.getElementById('relationshipField');
+        
+        if (userType === 'PARENT') {
+          relationshipField.style.display = 'block';
+          relationshipField.querySelector('select').required = true;
+        } else {
+          relationshipField.style.display = 'none';
+          relationshipField.querySelector('select').required = false;
+        }
+      }
+    </script>
   </body>
 </html>

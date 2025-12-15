@@ -19,7 +19,8 @@ public class AuthController {
     private com.school.core.service.UserService userService;
 
     @GetMapping("/register")
-    public String showRegisterPage() {
+    public String showRegisterPage(org.springframework.ui.Model model) {
+        model.addAttribute("userTypes", com.school.core.enums.Role.values());
         return "register";
     }
 
@@ -31,6 +32,11 @@ public class AuthController {
             @RequestParam String username,
             @RequestParam String password,
             @RequestParam String confirmPassword,
+            @RequestParam String userType,
+            @RequestParam(required = false) String dni,
+            @RequestParam(required = false) String phoneNumber,
+            @RequestParam(required = false) String address,
+            @RequestParam(required = false) String relationship,
             RedirectAttributes redirectAttributes) {
 
         if (!password.equals(confirmPassword)) {
@@ -39,7 +45,8 @@ public class AuthController {
         }
 
         try {
-            userService.registerNewUser(firstName, lastName, email, username, password);
+            userService.registerNewUserWithType(firstName, lastName, email, username, password, 
+                userType, dni, phoneNumber, address, relationship);
             redirectAttributes.addFlashAttribute("success", "Cuenta creada exitosamente. Por favor inicie sesión.");
             return "redirect:/login";
         } catch (RuntimeException e) {
