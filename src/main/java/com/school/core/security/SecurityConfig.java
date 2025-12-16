@@ -60,7 +60,7 @@ public class SecurityConfig {
                                                                 .sessionRegistry(sessionRegistry())))
                                 .authorizeHttpRequests(auth -> auth
                                                 .requestMatchers("/css/**", "/js/**", "/images/**", "/vendor/**",
-                                                                "/webjars/**")
+                                                                "/webjars/**", "/favicon.ico", "/error/**")
                                                 .permitAll()
                                                 .requestMatchers("/login", "/register", "/forgot-password", "/404")
                                                 .permitAll()
