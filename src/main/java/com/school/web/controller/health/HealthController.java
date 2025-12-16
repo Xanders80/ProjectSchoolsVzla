@@ -25,8 +25,9 @@ public class HealthController {
     }
 
     @GetMapping("/student/{studentId}")
-    public String viewHealthProfile(@PathVariable Long studentId, Model model) {
-        model.addAttribute("student", academicService.getStudentById(studentId).orElseThrow());
+    public String viewHealthProfile(@PathVariable @org.springframework.lang.NonNull Long studentId, Model model) {
+        model.addAttribute("student", 
+                academicService.getStudentById(studentId).orElseThrow(() -> new IllegalArgumentException("Invalid student Id:" + studentId)));
         model.addAttribute("medicalRecord", healthService.getOrCreateMedicalRecord(studentId));
         model.addAttribute("vaccines", healthService.getVaccinesByStudentId(studentId));
         model.addAttribute("newVaccine", new Vaccine());
@@ -34,33 +35,39 @@ public class HealthController {
     }
 
     @PostMapping("/student/{studentId}/record")
-    public String updateMedicalRecord(@PathVariable Long studentId,
-            @ModelAttribute("medicalRecord") MedicalRecord medicalRecord,
-            RedirectAttributes redirectAttributes) {
+    public String updateMedicalRecord(@PathVariable @org.springframework.lang.NonNull Long studentId,
+            @Valid @ModelAttribute("medicalRecord") @org.springframework.lang.NonNull MedicalRecord medicalRecord,
+            BindingResult result, Model model) {
+        if (result.hasErrors()) {
+            model.addAttribute("student", 
+                    academicService.getStudentById(studentId).orElseThrow(() -> new IllegalArgumentException("Invalid student Id:" + studentId)));
+            model.addAttribute("vaccines", healthService.getVaccinesByStudentId(studentId));
+            model.addAttribute("newVaccine", new Vaccine());
+            return "health/profile";
+        }
         healthService.saveMedicalRecord(studentId, medicalRecord);
-        redirectAttributes.addFlashAttribute("successMessage", "Ficha médica actualizada correctamente.");
         return "redirect:/health/student/" + studentId;
     }
 
     @PostMapping("/student/{studentId}/vaccine")
-    public String addVaccine(@PathVariable Long studentId,
-            @Valid @ModelAttribute("newVaccine") Vaccine vaccine,
-            BindingResult result,
-            RedirectAttributes redirectAttributes) {
+    public String addVaccine(@PathVariable @org.springframework.lang.NonNull Long studentId,
+            @Valid @ModelAttribute("newVaccine") @org.springframework.lang.NonNull Vaccine vaccine,
+            BindingResult result, Model model) {
         if (result.hasErrors()) {
-            redirectAttributes.addFlashAttribute("errorMessage", "Error al guardar vacuna. Verifique los campos.");
-            return "redirect:/health/student/" + studentId;
+            model.addAttribute("student", 
+                    academicService.getStudentById(studentId).orElseThrow(() -> new IllegalArgumentException("Invalid student Id:" + studentId)));
+            model.addAttribute("medicalRecord", healthService.getOrCreateMedicalRecord(studentId));
+            model.addAttribute("vaccines", healthService.getVaccinesByStudentId(studentId));
+            return "health/profile";
         }
         healthService.addVaccine(studentId, vaccine);
-        redirectAttributes.addFlashAttribute("successMessage", "Vacuna registrada.");
         return "redirect:/health/student/" + studentId;
     }
 
     @RequestMapping(value = "/vaccine/delete/{id}", method = { RequestMethod.POST, RequestMethod.DELETE })
-    public String deleteVaccine(@PathVariable Long id, @RequestParam Long studentId,
-            RedirectAttributes redirectAttributes) {
+    public String deleteVaccine(@PathVariable @org.springframework.lang.NonNull Long id, 
+            @RequestParam @org.springframework.lang.NonNull Long studentId) {
         healthService.deleteVaccine(id);
-        redirectAttributes.addFlashAttribute("successMessage", "Vacuna eliminada.");
         return "redirect:/health/student/" + studentId;
     }
 }

@@ -69,8 +69,17 @@ public class FinanceService {
         return studentFeeRepository.findAll();
     }
 
+    public org.springframework.data.domain.Page<StudentFee> getAllFees(
+            @org.springframework.lang.NonNull org.springframework.data.domain.Pageable pageable) {
+        return studentFeeRepository.findAll(pageable);
+    }
+
     public Optional<StudentFee> getFeeById(@org.springframework.lang.NonNull Long id) {
         return studentFeeRepository.findById(id);
+    }
+
+    public void deleteFee(@org.springframework.lang.NonNull Long id) {
+        studentFeeRepository.deleteById(id);
     }
 
     // Helper to get all students for dropdowns

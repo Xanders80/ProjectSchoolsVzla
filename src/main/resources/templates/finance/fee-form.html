@@ -30,20 +30,40 @@
           <div th:replace="~{fragments/sb-admin-topbar :: topbar}"></div>
 
           <div class="container-fluid">
-            <h1 class="h3 mb-4 text-gray-800">Registrar Nuevo Cobro</h1>
+            <div
+              class="d-sm-flex align-items-center justify-content-between mb-4"
+            >
+              <h1
+                class="h3 mb-0 text-gray-800"
+                th:text="${fee.id != null ? 'Editar Cobro' : 'Nuevo Cobro'}"
+              >
+                Cobro
+              </h1>
+              <a th:href="@{/finance/fees}" class="btn btn-secondary">
+                <i class="fas fa-arrow-left"></i> Volver
+              </a>
+            </div>
 
             <div class="card shadow mb-4">
               <div class="card-header py-3">
                 <h6 class="m-0 font-weight-bold text-primary">
-                  Detalles de la Obligación Financiera
+                  Información del Cobro
                 </h6>
               </div>
               <div class="card-body">
                 <form
-                  th:action="@{/finance/fees/save}"
+                  th:action="@{/finance/fees}"
                   th:object="${fee}"
                   method="post"
                 >
+                  <!-- CSRF Token -->
+                  <input
+                    type="hidden"
+                    th:name="${_csrf.parameterName}"
+                    th:value="${_csrf.token}"
+                  />
+
+                  <input type="hidden" th:field="*{id}" />
                   <div class="form-row">
                     <div class="form-group col-md-6">
                       <label for="student">Estudiante</label>
@@ -97,14 +117,12 @@
 
                   <!-- Status defaults to PENDING in backend/constructor, so hidden here if not editing -->
 
-                  <div class="form-group mt-3">
-                    <button type="submit" class="btn btn-primary">
-                      <i class="fas fa-save"></i> Guardar
-                    </button>
-                    <a th:href="@{/finance/fees}" class="btn btn-secondary">
-                      <i class="fas fa-times"></i> Cancelar
-                    </a>
-                  </div>
+                  <button type="submit" class="btn btn-primary">
+                    <i class="fas fa-save"></i> Guardar Cobro
+                  </button>
+                  <a th:href="@{/finance/fees}" class="btn btn-secondary">
+                    <i class="fas fa-times"></i> Cancelar
+                  </a>
                 </form>
               </div>
             </div>

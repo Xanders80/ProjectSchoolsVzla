@@ -33,30 +33,17 @@
             <div
               class="d-sm-flex align-items-center justify-content-between mb-4"
             >
-              <h1 class="h3 mb-0 text-gray-800">Gestión de Cobros (Fees)</h1>
-              <a
-                th:href="@{/finance/fees/new}"
-                class="d-none d-sm-inline-block btn btn-sm btn-primary shadow-sm"
-              >
-                <i class="fas fa-plus fa-sm text-white-50"></i> Nuevo Cobro
+              <h1 class="h3 mb-0 text-gray-800">Lista de Cobros</h1>
+              <a th:href="@{/finance/fees/new}" class="btn btn-primary">
+                <i class="fas fa-plus"></i> Agregar Nuevo Cobro
               </a>
             </div>
 
-            <div
-              th:if="${success}"
-              class="alert alert-success alert-dismissible fade show"
-              role="alert"
-            >
-              <i class="fas fa-check-circle"></i>
-              <span th:text="${success}"></span>
-              <button
-                type="button"
-                class="close"
-                data-dismiss="alert"
-                aria-label="Cerrar"
-              >
-                <span aria-hidden="true">&times;</span>
-              </button>
+            <div th:if="${successMessage}" class="alert alert-success">
+              <span th:text="${successMessage}"></span>
+            </div>
+            <div th:if="${errorMessage}" class="alert alert-danger">
+              <span th:text="${errorMessage}"></span>
             </div>
 
             <div class="card shadow mb-4">
@@ -85,7 +72,7 @@
                       </tr>
                     </thead>
                     <tbody>
-                      <tr th:each="fee : ${fees}">
+                      <tr th:each="fee : ${fees.content}">
                         <td th:text="${fee.id}">1</td>
                         <td
                           th:text="${fee.student.firstName + ' ' + fee.student.lastName}"
@@ -101,11 +88,17 @@
                                 (${fee.status.name() == 'PAID'} ? 'success' :
                                 (${fee.status.name() == 'PENDING'} ? 'warning' :
                                 (${fee.status.name() == 'OVERDUE'} ? 'danger' : 'info')))"
-                            th:text="${fee.status.displayName}"
+                            th:text="${fee.status}"
                             >PENDIENTE</span
                           >
                         </td>
                         <td>
+                          <a
+                            th:href="@{/finance/fees/edit/{id}(id=${fee.id})}"
+                            class="btn btn-sm btn-warning"
+                          >
+                            <i class="fas fa-edit"></i> Editar
+                          </a>
                           <a
                             th:href="@{/finance/payments/new(feeId=${fee.id})}"
                             class="btn btn-success btn-sm"
@@ -113,15 +106,70 @@
                           >
                             <i class="fas fa-money-bill-wave"></i> Pagar
                           </a>
+                          <a
+                            href="#"
+                            class="btn btn-sm btn-danger"
+                            data-toggle="modal"
+                            data-target="#deleteModal"
+                            th:data-url="@{/finance/fees/delete/{id}(id=${fee.id})}"
+                          >
+                            <i class="fas fa-trash"></i> Eliminar
+                          </a>
                         </td>
                       </tr>
-                      <tr th:if="${#lists.isEmpty(fees)}">
+                      <tr th:if="${fees.empty}">
                         <td colspan="7" class="text-center text-muted">
-                          No hay cobros registrados.
+                          No se encontraron cobros.
                         </td>
                       </tr>
                     </tbody>
                   </table>
+                </div>
+
+                <!-- Pagination -->
+                <div
+                  th:if="${fees.totalPages > 1}"
+                  class="d-flex justify-content-center"
+                >
+                  <nav aria-label="Page navigation">
+                    <ul class="pagination">
+                      <li
+                        class="page-item"
+                        th:classappend="${fees.number == 0} ? 'disabled'"
+                      >
+                        <a
+                          class="page-link"
+                          th:href="@{/finance/fees(page=${fees.number - 1}, size=10)}"
+                          aria-label="Previous"
+                        >
+                          <span aria-hidden="true">&laquo;</span>
+                        </a>
+                      </li>
+                      <li
+                        class="page-item"
+                        th:each="i : ${#numbers.sequence(0, fees.totalPages - 1)}"
+                        th:classappend="${i == fees.number} ? 'active'"
+                      >
+                        <a
+                          class="page-link"
+                          th:href="@{/finance/fees(page=${i}, size=10)}"
+                          th:text="${i + 1}"
+                        ></a>
+                      </li>
+                      <li
+                        class="page-item"
+                        th:classappend="${fees.number == fees.totalPages - 1} ? 'disabled'"
+                      >
+                        <a
+                          class="page-link"
+                          th:href="@{/finance/fees(page=${fees.number + 1}, size=10)}"
+                          aria-label="Next"
+                        >
+                          <span aria-hidden="true">&raquo;</span>
+                        </a>
+                      </li>
+                    </ul>
+                  </nav>
                 </div>
               </div>
             </div>
@@ -136,6 +184,7 @@
       ><i class="fas fa-angle-up"></i
     ></a>
     <div th:replace="~{fragments/sb-admin-topbar :: logoutModal}"></div>
+    <div th:replace="~{fragments/delete-modal :: deleteModal}"></div>
 
     <script th:src="@{/vendor/jquery/jquery.min.js}"></script>
     <script th:src="@{/vendor/bootstrap/js/bootstrap.bundle.min.js}"></script>

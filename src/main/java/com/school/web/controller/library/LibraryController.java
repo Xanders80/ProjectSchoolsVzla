@@ -41,36 +41,25 @@ public class LibraryController {
     }
 
     @PostMapping("/books")
-    public String saveBook(@Valid @ModelAttribute Book book, BindingResult result,
-            RedirectAttributes redirectAttributes) {
+    public String saveBook(@Valid @ModelAttribute @org.springframework.lang.NonNull Book book, 
+            BindingResult result, Model model) {
         if (result.hasErrors()) {
             return "library/book-form";
         }
-        try {
-            libraryService.saveBook(book);
-            redirectAttributes.addFlashAttribute("successMessage", "Libro guardado exitosamente.");
-        } catch (Exception e) {
-            redirectAttributes.addFlashAttribute("errorMessage", "Error al guardar el libro: " + e.getMessage());
-            return "library/book-form";
-        }
+        libraryService.saveBook(book);
         return "redirect:/library/books";
     }
 
     @GetMapping("/books/edit/{id}")
-    public String editBookForm(@PathVariable Long id, Model model) {
-        libraryService.getBookById(id).ifPresent(book -> model.addAttribute("book", book));
+    public String editBookForm(@PathVariable @org.springframework.lang.NonNull Long id, Model model) {
+        model.addAttribute("book", 
+                libraryService.getBookById(id).orElseThrow(() -> new IllegalArgumentException("Invalid book Id:" + id)));
         return "library/book-form";
     }
 
-    // Books
     @RequestMapping(value = "/books/delete/{id}", method = { RequestMethod.POST, RequestMethod.DELETE })
-    public String deleteBook(@PathVariable Long id, RedirectAttributes redirectAttributes) {
-        try {
-            libraryService.deleteBook(id);
-            redirectAttributes.addFlashAttribute("successMessage", "Libro eliminado exitosamente.");
-        } catch (Exception e) {
-            redirectAttributes.addFlashAttribute("errorMessage", "Error al eliminar el libro: " + e.getMessage());
-        }
+    public String deleteBook(@PathVariable @org.springframework.lang.NonNull Long id) {
+        libraryService.deleteBook(id);
         return "redirect:/library/books";
     }
 
@@ -96,27 +85,16 @@ public class LibraryController {
 
     @PostMapping("/loans")
     public String createLoan(
-            @RequestParam Long bookId,
-            @RequestParam Long userId,
-            @RequestParam String dueDate,
-            RedirectAttributes redirectAttributes) {
-        try {
-            libraryService.borrowBook(bookId, userId, java.time.LocalDate.parse(dueDate));
-            redirectAttributes.addFlashAttribute("successMessage", "Préstamo registrado correctamente.");
-        } catch (Exception e) {
-            redirectAttributes.addFlashAttribute("errorMessage", "Error al registrar préstamo: " + e.getMessage());
-        }
+            @RequestParam @org.springframework.lang.NonNull Long bookId,
+            @RequestParam @org.springframework.lang.NonNull Long userId,
+            @RequestParam @org.springframework.lang.NonNull String dueDate) {
+        libraryService.borrowBook(bookId, userId, java.time.LocalDate.parse(dueDate));
         return "redirect:/library/loans";
     }
 
     @PostMapping("/loans/return/{id}")
-    public String returnBook(@PathVariable Long id, RedirectAttributes redirectAttributes) {
-        try {
-            libraryService.returnBook(id);
-            redirectAttributes.addFlashAttribute("successMessage", "Libro devuelto correctamente.");
-        } catch (Exception e) {
-            redirectAttributes.addFlashAttribute("errorMessage", "Error al devolver libro: " + e.getMessage());
-        }
+    public String returnBook(@PathVariable @org.springframework.lang.NonNull Long id) {
+        libraryService.returnBook(id);
         return "redirect:/library/loans";
     }
 }

@@ -29,12 +29,9 @@
             <div
               class="d-sm-flex align-items-center justify-content-between mb-4"
             >
-              <h1 class="h3 mb-0 text-gray-800">Catálogo de Libros</h1>
-              <a
-                th:href="@{/library/books/new}"
-                class="d-none d-sm-inline-block btn btn-sm btn-primary shadow-sm"
-              >
-                <i class="fas fa-plus fa-sm text-white-50"></i> Nuevo Libro
+              <h1 class="h3 mb-0 text-gray-800">Lista de Libros</h1>
+              <a th:href="@{/library/books/new}" class="btn btn-primary">
+                <i class="fas fa-plus"></i> Agregar Nuevo Libro
               </a>
             </div>
 
@@ -51,7 +48,9 @@
 
             <div class="card shadow mb-4">
               <div class="card-header py-3">
-                <h6 class="m-0 font-weight-bold text-primary">Listado</h6>
+                <h6 class="m-0 font-weight-bold text-primary">
+                  Libros del Sistema
+                </h6>
               </div>
               <div class="card-body">
                 <div class="table-responsive">
@@ -72,7 +71,7 @@
                       </tr>
                     </thead>
                     <tbody>
-                      <tr th:each="book : ${books}">
+                      <tr th:each="book : ${books.content}">
                         <td th:text="${book.title}">Title</td>
                         <td th:text="${book.author}">Author</td>
                         <td th:text="${book.isbn}">ISBN</td>
@@ -82,30 +81,81 @@
                             th:class="'badge badge-' +
                                                 (${book.status.name() == 'AVAILABLE'} ? 'success' :
                                                 (${book.status.name() == 'BORROWED'} ? 'warning' : 'danger'))"
-                            th:text="${book.status.displayName}"
+                            th:text="${book.status}"
                             >Status</span
                           >
                         </td>
                         <td>
                           <a
                             th:href="@{/library/books/edit/{id}(id=${book.id})}"
-                            class="btn btn-info btn-circle btn-sm"
+                            class="btn btn-sm btn-warning"
                           >
-                            <i class="fas fa-edit"></i>
+                            <i class="fas fa-edit"></i> Editar
                           </a>
                           <a
                             href="#"
-                            class="btn btn-danger btn-circle btn-sm"
+                            class="btn btn-sm btn-danger"
                             data-toggle="modal"
                             data-target="#deleteModal"
                             th:data-url="@{/library/books/delete/{id}(id=${book.id})}"
                           >
-                            <i class="fas fa-trash"></i>
+                            <i class="fas fa-trash"></i> Eliminar
                           </a>
+                        </td>
+                      </tr>
+                      <tr th:if="${books.empty}">
+                        <td colspan="6" class="text-center text-muted">
+                          No se encontraron libros.
                         </td>
                       </tr>
                     </tbody>
                   </table>
+                </div>
+
+                <!-- Pagination -->
+                <div
+                  th:if="${books.totalPages > 1}"
+                  class="d-flex justify-content-center"
+                >
+                  <nav aria-label="Page navigation">
+                    <ul class="pagination">
+                      <li
+                        class="page-item"
+                        th:classappend="${books.number == 0} ? 'disabled'"
+                      >
+                        <a
+                          class="page-link"
+                          th:href="@{/library/books(page=${books.number - 1}, size=10)}"
+                          aria-label="Previous"
+                        >
+                          <span aria-hidden="true">&laquo;</span>
+                        </a>
+                      </li>
+                      <li
+                        class="page-item"
+                        th:each="i : ${#numbers.sequence(0, books.totalPages - 1)}"
+                        th:classappend="${i == books.number} ? 'active'"
+                      >
+                        <a
+                          class="page-link"
+                          th:href="@{/library/books(page=${i}, size=10)}"
+                          th:text="${i + 1}"
+                        ></a>
+                      </li>
+                      <li
+                        class="page-item"
+                        th:classappend="${books.number == books.totalPages - 1} ? 'disabled'"
+                      >
+                        <a
+                          class="page-link"
+                          th:href="@{/library/books(page=${books.number + 1}, size=10)}"
+                          aria-label="Next"
+                        >
+                          <span aria-hidden="true">&raquo;</span>
+                        </a>
+                      </li>
+                    </ul>
+                  </nav>
                 </div>
               </div>
             </div>

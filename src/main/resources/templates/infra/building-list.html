@@ -69,7 +69,7 @@
                       </tr>
                     </thead>
                     <tbody>
-                      <tr th:each="building : ${buildings}">
+                      <tr th:each="building : ${buildings.content}">
                         <td th:text="${building.id}">1</td>
                         <td th:text="${building.name}">Main Building</td>
                         <td th:text="${building.address}">123 School St</td>
@@ -91,13 +91,59 @@
                           </a>
                         </td>
                       </tr>
-                      <tr th:if="${#lists.isEmpty(buildings)}">
-                        <td colspan="5" class="text-center text-muted">
+                      <tr th:if="${buildings.empty}">
+                        <td colspan="4" class="text-center text-muted">
                           No se encontraron edificios.
                         </td>
                       </tr>
                     </tbody>
                   </table>
+                </div>
+
+                <!-- Pagination -->
+                <div
+                  th:if="${buildings.totalPages > 1}"
+                  class="d-flex justify-content-center"
+                >
+                  <nav aria-label="Page navigation">
+                    <ul class="pagination">
+                      <li
+                        class="page-item"
+                        th:classappend="${buildings.number == 0} ? 'disabled'"
+                      >
+                        <a
+                          class="page-link"
+                          th:href="@{/infra/buildings(page=${buildings.number - 1}, size=10)}"
+                          aria-label="Previous"
+                        >
+                          <span aria-hidden="true">&laquo;</span>
+                        </a>
+                      </li>
+                      <li
+                        class="page-item"
+                        th:each="i : ${#numbers.sequence(0, buildings.totalPages - 1)}"
+                        th:classappend="${i == buildings.number} ? 'active'"
+                      >
+                        <a
+                          class="page-link"
+                          th:href="@{/infra/buildings(page=${i}, size=10)}"
+                          th:text="${i + 1}"
+                        ></a>
+                      </li>
+                      <li
+                        class="page-item"
+                        th:classappend="${buildings.number == buildings.totalPages - 1} ? 'disabled'"
+                      >
+                        <a
+                          class="page-link"
+                          th:href="@{/infra/buildings(page=${buildings.number + 1}, size=10)}"
+                          aria-label="Next"
+                        >
+                          <span aria-hidden="true">&raquo;</span>
+                        </a>
+                      </li>
+                    </ul>
+                  </nav>
                 </div>
               </div>
             </div>

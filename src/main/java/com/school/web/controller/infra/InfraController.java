@@ -23,8 +23,13 @@ public class InfraController {
 
     // Building Routes
     @GetMapping("/buildings")
-    public String listBuildings(Model model) {
-        model.addAttribute("buildings", infraService.getAllBuildings());
+    public String listBuildings(Model model,
+            @RequestParam(defaultValue = "0") int page,
+            @RequestParam(defaultValue = "10") int size) {
+        org.springframework.data.domain.Pageable pageable = org.springframework.data.domain.PageRequest.of(page, size,
+                org.springframework.data.domain.Sort.by(org.springframework.data.domain.Sort.Direction.DESC, "id"));
+        org.springframework.data.domain.Page<Building> buildingPage = infraService.getAllBuildings(pageable);
+        model.addAttribute("buildings", buildingPage);
         return "infra/building-list";
     }
 
@@ -35,9 +40,20 @@ public class InfraController {
     }
 
     @PostMapping("/buildings")
-    public String saveBuilding(@ModelAttribute @NonNull Building building) {
+    public String saveBuilding(@jakarta.validation.Valid @ModelAttribute @NonNull Building building,
+            org.springframework.validation.BindingResult result, Model model) {
+        if (result.hasErrors()) {
+            return BUILDING_FORM_VIEW;
+        }
         infraService.saveBuilding(building);
         return "redirect:/infra/buildings";
+    }
+
+    @GetMapping("/buildings/edit/{id}")
+    public String editBuildingForm(@PathVariable @NonNull Long id, Model model) {
+        model.addAttribute("building", infraService.getBuildingById(id)
+                .orElseThrow(() -> new IllegalArgumentException("Invalid building Id:" + id)));
+        return BUILDING_FORM_VIEW;
     }
 
     @RequestMapping(value = "/buildings/delete/{id}", method = { RequestMethod.POST, RequestMethod.DELETE })
@@ -48,9 +64,14 @@ public class InfraController {
 
     // Room Routes
     @GetMapping("/rooms")
-    public String listRooms(Model model) {
-        model.addAttribute("rooms", infraService.getAllRooms());
-        model.addAttribute("buildings", infraService.getAllBuildings()); // For filtering if needed
+    public String listRooms(Model model,
+            @RequestParam(defaultValue = "0") int page,
+            @RequestParam(defaultValue = "10") int size) {
+        org.springframework.data.domain.Pageable pageable = org.springframework.data.domain.PageRequest.of(page, size,
+                org.springframework.data.domain.Sort.by(org.springframework.data.domain.Sort.Direction.DESC, "id"));
+        org.springframework.data.domain.Page<Room> roomPage = infraService.getAllRooms(pageable);
+        model.addAttribute("rooms", roomPage);
+        model.addAttribute("buildings", infraService.getAllBuildings());
         return "infra/room-list";
     }
 
@@ -62,22 +83,14 @@ public class InfraController {
     }
 
     @PostMapping("/rooms")
-    public String saveRoom(@ModelAttribute @NonNull Room room) {
+    public String saveRoom(@jakarta.validation.Valid @ModelAttribute @NonNull Room room,
+            org.springframework.validation.BindingResult result, Model model) {
+        if (result.hasErrors()) {
+            model.addAttribute("buildings", infraService.getAllBuildings());
+            return ROOM_FORM_VIEW;
+        }
         infraService.saveRoom(room);
         return "redirect:/infra/rooms";
-    }
-
-    @RequestMapping(value = "/rooms/delete/{id}", method = { RequestMethod.POST, RequestMethod.DELETE })
-    public String deleteRoom(@PathVariable @NonNull Long id) {
-        infraService.deleteRoom(id);
-        return "redirect:/infra/rooms";
-    }
-
-    @GetMapping("/buildings/edit/{id}")
-    public String editBuildingForm(@PathVariable @NonNull Long id, Model model) {
-        model.addAttribute("building", infraService.getBuildingById(id)
-                .orElseThrow(() -> new IllegalArgumentException("Invalid building Id:" + id)));
-        return BUILDING_FORM_VIEW;
     }
 
     @GetMapping("/rooms/edit/{id}")
@@ -86,5 +99,11 @@ public class InfraController {
                 infraService.getRoomById(id).orElseThrow(() -> new IllegalArgumentException("Invalid room Id:" + id)));
         model.addAttribute("buildings", infraService.getAllBuildings());
         return ROOM_FORM_VIEW;
+    }
+
+    @RequestMapping(value = "/rooms/delete/{id}", method = { RequestMethod.POST, RequestMethod.DELETE })
+    public String deleteRoom(@PathVariable @NonNull Long id) {
+        infraService.deleteRoom(id);
+        return "redirect:/infra/rooms";
     }
 }

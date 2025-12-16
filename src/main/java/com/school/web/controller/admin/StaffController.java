@@ -26,7 +26,8 @@ public class StaffController {
             @RequestParam(defaultValue = "10") int size) {
         org.springframework.data.domain.Pageable pageable = org.springframework.data.domain.PageRequest.of(page, size,
                 org.springframework.data.domain.Sort.by(org.springframework.data.domain.Sort.Direction.DESC, "id"));
-        model.addAttribute("staffList", staffService.getAllStaff(pageable));
+        org.springframework.data.domain.Page<Staff> staffPage = staffService.getAllStaff(pageable);
+        model.addAttribute("staffList", staffPage);
         return "admin/staff-list";
     }
 
@@ -50,7 +51,8 @@ public class StaffController {
 
     @GetMapping("/edit/{id}")
     public String editStaffForm(@PathVariable @NonNull Long id, Model model) {
-        model.addAttribute("staff", staffService.getStaffById(id).orElseThrow());
+        model.addAttribute("staff", 
+                staffService.getStaffById(id).orElseThrow(() -> new IllegalArgumentException("Invalid staff Id:" + id)));
         model.addAttribute("roles", Role.values());
         return STAFF_FORM_VIEW;
     }

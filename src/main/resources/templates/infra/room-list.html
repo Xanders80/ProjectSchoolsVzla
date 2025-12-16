@@ -71,7 +71,7 @@
                       </tr>
                     </thead>
                     <tbody>
-                      <tr th:each="room : ${rooms}">
+                      <tr th:each="room : ${rooms.content}">
                         <td th:text="${room.id}">1</td>
                         <td th:text="${room.roomNumber}">101</td>
                         <td th:text="${room.type}">Classroom</td>
@@ -95,13 +95,59 @@
                           </a>
                         </td>
                       </tr>
-                      <tr th:if="${#lists.isEmpty(rooms)}">
+                      <tr th:if="${rooms.empty}">
                         <td colspan="6" class="text-center text-muted">
                           No se encontraron aulas.
                         </td>
                       </tr>
                     </tbody>
                   </table>
+                </div>
+
+                <!-- Pagination -->
+                <div
+                  th:if="${rooms.totalPages > 1}"
+                  class="d-flex justify-content-center"
+                >
+                  <nav aria-label="Page navigation">
+                    <ul class="pagination">
+                      <li
+                        class="page-item"
+                        th:classappend="${rooms.number == 0} ? 'disabled'"
+                      >
+                        <a
+                          class="page-link"
+                          th:href="@{/infra/rooms(page=${rooms.number - 1}, size=10)}"
+                          aria-label="Previous"
+                        >
+                          <span aria-hidden="true">&laquo;</span>
+                        </a>
+                      </li>
+                      <li
+                        class="page-item"
+                        th:each="i : ${#numbers.sequence(0, rooms.totalPages - 1)}"
+                        th:classappend="${i == rooms.number} ? 'active'"
+                      >
+                        <a
+                          class="page-link"
+                          th:href="@{/infra/rooms(page=${i}, size=10)}"
+                          th:text="${i + 1}"
+                        ></a>
+                      </li>
+                      <li
+                        class="page-item"
+                        th:classappend="${rooms.number == rooms.totalPages - 1} ? 'disabled'"
+                      >
+                        <a
+                          class="page-link"
+                          th:href="@{/infra/rooms(page=${rooms.number + 1}, size=10)}"
+                          aria-label="Next"
+                        >
+                          <span aria-hidden="true">&raquo;</span>
+                        </a>
+                      </li>
+                    </ul>
+                  </nav>
                 </div>
               </div>
             </div>
