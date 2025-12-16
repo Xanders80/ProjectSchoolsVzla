@@ -1,0 +1,148 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+  <head>
+    <meta charset="utf-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta
+      name="viewport"
+      content="width=device-width, initial-scale=1, shrink-to-fit=no"
+    />
+    <title>Gestión de Cobros - Sistema Escolar</title>
+
+    <link
+      th:href="@{/vendor/fontawesome-free/css/all.min.css}"
+      rel="stylesheet"
+      type="text/css"
+    />
+    <link
+      href="https://fonts.googleapis.com/css?family=Nunito:200,200i,300,300i,400,400i,600,600i,700,700i,800,800i,900,900i"
+      rel="stylesheet"
+    />
+    <link th:href="@{/css/sb-admin-2.min.css}" rel="stylesheet" />
+  </head>
+
+  <body id="page-top">
+    <div id="wrapper">
+      <div th:replace="~{fragments/sb-admin-sidebar :: sidebar}"></div>
+
+      <div id="content-wrapper" class="d-flex flex-column">
+        <div id="content">
+          <div th:replace="~{fragments/sb-admin-topbar :: topbar}"></div>
+
+          <div class="container-fluid">
+            <div
+              class="d-sm-flex align-items-center justify-content-between mb-4"
+            >
+              <h1 class="h3 mb-0 text-gray-800">Gestión de Cobros (Fees)</h1>
+              <a
+                th:href="@{/finance/fees/new}"
+                class="d-none d-sm-inline-block btn btn-sm btn-primary shadow-sm"
+              >
+                <i class="fas fa-plus fa-sm text-white-50"></i> Nuevo Cobro
+              </a>
+            </div>
+
+            <div
+              th:if="${success}"
+              class="alert alert-success alert-dismissible fade show"
+              role="alert"
+            >
+              <i class="fas fa-check-circle"></i>
+              <span th:text="${success}"></span>
+              <button
+                type="button"
+                class="close"
+                data-dismiss="alert"
+                aria-label="Cerrar"
+              >
+                <span aria-hidden="true">&times;</span>
+              </button>
+            </div>
+
+            <div class="card shadow mb-4">
+              <div class="card-header py-3">
+                <h6 class="m-0 font-weight-bold text-primary">
+                  Listado de Obligaciones
+                </h6>
+              </div>
+              <div class="card-body">
+                <div class="table-responsive">
+                  <table
+                    class="table table-bordered"
+                    id="dataTable"
+                    width="100%"
+                    cellspacing="0"
+                  >
+                    <thead>
+                      <tr>
+                        <th>ID</th>
+                        <th>Estudiante</th>
+                        <th>Descripción</th>
+                        <th>Vencimiento</th>
+                        <th>Monto</th>
+                        <th>Estado</th>
+                        <th>Acciones</th>
+                      </tr>
+                    </thead>
+                    <tbody>
+                      <tr th:each="fee : ${fees}">
+                        <td th:text="${fee.id}">1</td>
+                        <td
+                          th:text="${fee.student.firstName + ' ' + fee.student.lastName}"
+                        >
+                          Juan Perez
+                        </td>
+                        <td th:text="${fee.description}">Matrícula 2025</td>
+                        <td th:text="${fee.dueDate}">2025-03-01</td>
+                        <td th:text="${fee.amount}">100.00</td>
+                        <td>
+                          <span
+                            th:class="'badge badge-' +
+                                (${fee.status.name() == 'PAID'} ? 'success' :
+                                (${fee.status.name() == 'PENDING'} ? 'warning' :
+                                (${fee.status.name() == 'OVERDUE'} ? 'danger' : 'info')))"
+                            th:text="${fee.status.displayName}"
+                            >PENDIENTE</span
+                          >
+                        </td>
+                        <td>
+                          <a
+                            th:href="@{/finance/payments/new(feeId=${fee.id})}"
+                            class="btn btn-success btn-sm"
+                            th:if="${fee.status.name() != 'PAID'}"
+                          >
+                            <i class="fas fa-money-bill-wave"></i> Pagar
+                          </a>
+                        </td>
+                      </tr>
+                      <tr th:if="${#lists.isEmpty(fees)}">
+                        <td colspan="7" class="text-center text-muted">
+                          No hay cobros registrados.
+                        </td>
+                      </tr>
+                    </tbody>
+                  </table>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div th:replace="~{fragments/sb-admin-footer :: footer}"></div>
+      </div>
+    </div>
+
+    <a class="scroll-to-top rounded" href="#page-top"
+      ><i class="fas fa-angle-up"></i
+    ></a>
+    <div th:replace="~{fragments/sb-admin-topbar :: logoutModal}"></div>
+
+    <script th:src="@{/vendor/jquery/jquery.min.js}"></script>
+    <script th:src="@{/vendor/bootstrap/js/bootstrap.bundle.min.js}"></script>
+    <script th:src="@{/vendor/jquery-easing/jquery.easing.min.js}"></script>
+    <script th:src="@{/js/sb-admin-2.min.js}"></script>
+    <script th:src="@{/vendor/datatables/jquery.dataTables.min.js}"></script>
+    <script th:src="@{/vendor/datatables/dataTables.bootstrap4.min.js}"></script>
+    <script th:src="@{/js/demo/datatables-demo.js}"></script>
+  </body>
+</html>

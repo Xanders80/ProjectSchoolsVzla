@@ -32,58 +32,76 @@ import org.springframework.security.web.authentication.UsernamePasswordAuthentic
 @EnableWebSecurity
 public class SecurityConfig {
 
-    @Autowired
-    private RateLimitingFilter rateLimitingFilter;
+        @Autowired
+        private RateLimitingFilter rateLimitingFilter;
 
-    @Bean
-    public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
-        http
-                .headers(headers -> headers
-                        .frameOptions(frameOptions -> frameOptions.deny())
-                        .contentTypeOptions(contentTypeOptions -> {})
-                        .httpStrictTransportSecurity(hsts -> hsts
-                                .maxAgeInSeconds(31536000)
-                                .includeSubDomains(true))
-                        .contentSecurityPolicy(csp -> csp
-                                .policyDirectives("default-src 'self'; script-src 'self'; style-src 'self' 'unsafe-inline'; img-src 'self' data:; font-src 'self'; object-src 'none'; base-uri 'self'")))
-                .addFilterBefore(rateLimitingFilter, UsernamePasswordAuthenticationFilter.class)
-                .csrf(csrf -> csrf
-                        .csrfTokenRepository(org.springframework.security.web.csrf.CookieCsrfTokenRepository.withHttpOnlyFalse()))
-                .sessionManagement(session -> session
-                        .sessionConcurrency(concurrency -> concurrency
-                                .maximumSessions(1)
-                                .maxSessionsPreventsLogin(false)
-                                .sessionRegistry(sessionRegistry())))
-                .authorizeHttpRequests(auth -> auth
-                        .requestMatchers("/css/**", "/js/**", "/images/**", "/vendor/**", "/webjars/**").permitAll()
-                        .requestMatchers("/login", "/register", "/forgot-password", "/404").permitAll()
-                        .requestMatchers("/h2-console/**").permitAll()
-                        .requestMatchers("/swagger-ui/**", "/v3/api-docs/**").permitAll()
-                        .requestMatchers("/actuator/health").permitAll()
-                        .requestMatchers("/actuator/**").hasRole("ADMIN")
-                        .requestMatchers("/admin/**").hasRole("ADMIN")
-                        .anyRequest().authenticated())
-                .formLogin(login -> login
-                        .loginPage("/login")
-                        .defaultSuccessUrl("/", true)
-                        .permitAll())
-                .logout(logout -> logout
-                        .logoutUrl("/logout")
-                        .logoutSuccessUrl("/login?logout")
-                        .invalidateHttpSession(true)
-                        .deleteCookies("JSESSIONID")
-                        .permitAll());
+        @Bean
+        public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
+                http
+                                .headers(headers -> headers
+                                                .frameOptions(frameOptions -> frameOptions.deny())
+                                                .contentTypeOptions(contentTypeOptions -> {
+                                                })
+                                                .httpStrictTransportSecurity(hsts -> hsts
+                                                                .maxAgeInSeconds(31536000)
+                                                                .includeSubDomains(true))
+                                                .contentSecurityPolicy(csp -> csp
+                                                                .policyDirectives(
+                                                                                "default-src 'self'; script-src 'self'; style-src 'self' 'unsafe-inline'; img-src 'self' data:; font-src 'self'; object-src 'none'; base-uri 'self'")))
+                                .addFilterBefore(rateLimitingFilter, UsernamePasswordAuthenticationFilter.class)
+                                .csrf(csrf -> csrf
+                                                .csrfTokenRepository(
+                                                                org.springframework.security.web.csrf.CookieCsrfTokenRepository
+                                                                                .withHttpOnlyFalse()))
+                                .sessionManagement(session -> session
+                                                .sessionConcurrency(concurrency -> concurrency
+                                                                .maximumSessions(1)
+                                                                .maxSessionsPreventsLogin(false)
+                                                                .sessionRegistry(sessionRegistry())))
+                                .authorizeHttpRequests(auth -> auth
+                                                .requestMatchers("/css/**", "/js/**", "/images/**", "/vendor/**",
+                                                                "/webjars/**")
+                                                .permitAll()
+                                                .requestMatchers("/login", "/register", "/forgot-password", "/404")
+                                                .permitAll()
+                                                .requestMatchers("/h2-console/**").permitAll()
+                                                .requestMatchers("/swagger-ui/**", "/v3/api-docs/**").permitAll()
+                                                .requestMatchers("/actuator/health").permitAll()
+                                                .requestMatchers("/actuator/health").permitAll()
+                                                .requestMatchers("/actuator/**").hasRole("ADMIN")
+                                                .requestMatchers("/admin/**").hasRole("ADMIN")
+                                                .requestMatchers("/library/**").hasAnyRole("ADMIN", "STAFF")
+                                                .requestMatchers("/messages/**").authenticated()
+                                                .requestMatchers("/notifications/broadcast").hasRole("ADMIN")
+                                                .requestMatchers("/notifications/broadcast").hasRole("ADMIN")
+                                                .requestMatchers("/notifications/**").authenticated()
+                                                .requestMatchers("/reports/**").hasAnyRole("ADMIN", "DIRECTOR")
+                                                .requestMatchers("/health/**").hasAnyRole("ADMIN", "DIRECTOR")
+                                                .requestMatchers("/hr/**").hasAnyRole("ADMIN", "DIRECTOR")
+                                                .requestMatchers("/bi/**").hasAnyRole("ADMIN", "DIRECTOR")
+                                                .requestMatchers("/portal/**").hasAnyRole("PARENT", "ADMIN")
+                                                .anyRequest().authenticated())
+                                .formLogin(login -> login
+                                                .loginPage("/login")
+                                                .defaultSuccessUrl("/", true)
+                                                .permitAll())
+                                .logout(logout -> logout
+                                                .logoutUrl("/logout")
+                                                .logoutSuccessUrl("/login?logout")
+                                                .invalidateHttpSession(true)
+                                                .deleteCookies("JSESSIONID")
+                                                .permitAll());
 
-        return http.build();
-    }
+                return http.build();
+        }
 
-    @Bean
-    public SessionRegistry sessionRegistry() {
-        return new SessionRegistryImpl();
-    }
+        @Bean
+        public SessionRegistry sessionRegistry() {
+                return new SessionRegistryImpl();
+        }
 
-    @Bean
-    public PasswordEncoder passwordEncoder() {
-        return new BCryptPasswordEncoder();
-    }
+        @Bean
+        public PasswordEncoder passwordEncoder() {
+                return new BCryptPasswordEncoder();
+        }
 }

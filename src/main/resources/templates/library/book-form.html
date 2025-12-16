@@ -1,0 +1,142 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+  <head>
+    <meta charset="utf-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta
+      name="viewport"
+      content="width=device-width, initial-scale=1, shrink-to-fit=no"
+    />
+    <title>Biblioteca - Formulario Libro</title>
+    <link
+      th:href="@{/vendor/fontawesome-free/css/all.min.css}"
+      rel="stylesheet"
+      type="text/css"
+    />
+    <link
+      href="https://fonts.googleapis.com/css?family=Nunito:200,200i,300,300i,400,400i,600,600i,700,700i,800,800i,900,900i"
+      rel="stylesheet"
+    />
+    <link th:href="@{/css/sb-admin-2.min.css}" rel="stylesheet" />
+  </head>
+  <body id="page-top">
+    <div id="wrapper">
+      <div th:replace="~{fragments/sb-admin-sidebar :: sidebar}"></div>
+      <div id="content-wrapper" class="d-flex flex-column">
+        <div id="content">
+          <div th:replace="~{fragments/sb-admin-topbar :: topbar}"></div>
+          <div class="container-fluid">
+            <h1
+              class="h3 mb-4 text-gray-800"
+              th:text="${book.id == null ? 'Nuevo Libro' : 'Editar Libro'}"
+            >
+              Formulario
+            </h1>
+
+            <div class="card shadow mb-4">
+              <div class="card-body">
+                <form
+                  th:action="@{/library/books}"
+                  th:object="${book}"
+                  method="post"
+                >
+                  <input type="hidden" th:field="*{id}" />
+
+                  <div class="form-group">
+                    <label for="title">Título</label>
+                    <input
+                      type="text"
+                      class="form-control"
+                      th:field="*{title}"
+                      th:errorclass="is-invalid"
+                    />
+                    <div
+                      class="invalid-feedback"
+                      th:if="${#fields.hasErrors('title')}"
+                      th:errors="*{title}"
+                    >
+                      Error
+                    </div>
+                  </div>
+
+                  <div class="form-group">
+                    <label for="author">Autor</label>
+                    <input
+                      type="text"
+                      class="form-control"
+                      th:field="*{author}"
+                      th:errorclass="is-invalid"
+                    />
+                    <div
+                      class="invalid-feedback"
+                      th:if="${#fields.hasErrors('author')}"
+                      th:errors="*{author}"
+                    >
+                      Error
+                    </div>
+                  </div>
+
+                  <div class="form-row">
+                    <div class="form-group col-md-6">
+                      <label for="isbn">ISBN</label>
+                      <input
+                        type="text"
+                        class="form-control"
+                        th:field="*{isbn}"
+                        th:errorclass="is-invalid"
+                      />
+                      <div
+                        class="invalid-feedback"
+                        th:if="${#fields.hasErrors('isbn')}"
+                        th:errors="*{isbn}"
+                      >
+                        Error
+                      </div>
+                    </div>
+                    <div class="form-group col-md-6">
+                      <label for="category">Categoría</label>
+                      <input
+                        type="text"
+                        class="form-control"
+                        th:field="*{category}"
+                        th:errorclass="is-invalid"
+                      />
+                      <div
+                        class="invalid-feedback"
+                        th:if="${#fields.hasErrors('category')}"
+                        th:errors="*{category}"
+                      >
+                        Error
+                      </div>
+                    </div>
+                  </div>
+
+                  <div class="form-group">
+                    <label for="status">Estado</label>
+                    <select class="form-control" th:field="*{status}">
+                      <option
+                        th:each="s : ${T(com.school.library.enums.BookStatus).values()}"
+                        th:value="${s}"
+                        th:text="${s.displayName}"
+                      ></option>
+                    </select>
+                  </div>
+
+                  <button type="submit" class="btn btn-primary">Guardar</button>
+                  <a th:href="@{/library/books}" class="btn btn-secondary"
+                    >Cancelar</a
+                  >
+                </form>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div th:replace="~{fragments/sb-admin-footer :: footer}"></div>
+      </div>
+    </div>
+    <script th:src="@{/vendor/jquery/jquery.min.js}"></script>
+    <script th:src="@{/vendor/bootstrap/js/bootstrap.bundle.min.js}"></script>
+    <script th:src="@{/vendor/jquery-easing/jquery.easing.min.js}"></script>
+    <script th:src="@{/js/sb-admin-2.min.js}"></script>
+  </body>
+</html>

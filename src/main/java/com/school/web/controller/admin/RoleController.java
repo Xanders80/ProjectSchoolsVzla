@@ -103,7 +103,7 @@ public class RoleController {
         return REDIRECT_ROLES;
     }
 
-    @PostMapping("/delete/{id}")
+    @RequestMapping(value = "/delete/{id}", method = { RequestMethod.POST, RequestMethod.DELETE })
     public String deleteRole(@PathVariable @NonNull Long id, RedirectAttributes redirectAttributes) {
         try {
             if (roleRepository.existsById(id)) {

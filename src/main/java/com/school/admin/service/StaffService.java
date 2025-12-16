@@ -25,6 +25,10 @@ public class StaffService {
         return staffRepository.findAll(pageable);
     }
 
+    public List<Staff> getAllStaff() {
+        return staffRepository.findAll();
+    }
+
     public org.springframework.data.domain.Page<Staff> getTeachers(org.springframework.data.domain.Pageable pageable) {
         return staffRepository.findByJobTitle(Role.TEACHER, pageable);
     }

@@ -30,7 +30,9 @@
           <div th:replace="~{fragments/sb-admin-topbar :: topbar}"></div>
 
           <div class="container-fluid">
-            <div class="d-sm-flex align-items-center justify-content-between mb-4">
+            <div
+              class="d-sm-flex align-items-center justify-content-between mb-4"
+            >
               <h1 class="h3 mb-0 text-gray-800">Lista de Representantes</h1>
               <a th:href="@{/parents/new}" class="btn btn-primary">
                 <i class="fas fa-plus"></i> Agregar Nuevo Representante
@@ -79,7 +81,11 @@
                         <td th:text="${parent.relationship}">Padre</td>
                         <td th:text="${parent.email}">john@example.com</td>
                         <td th:text="${parent.phoneNumber}">555-1234</td>
-                        <td th:text="${parent.birthDate != null ? #temporals.format(parent.birthDate, 'dd/MM/yyyy') : 'N/A'}">01/01/1980</td>
+                        <td
+                          th:text="${parent.birthDate != null ? #temporals.format(parent.birthDate, 'dd/MM/yyyy') : 'N/A'}"
+                        >
+                          01/01/1980
+                        </td>
                         <td th:text="${#sets.size(parent.children)}">2</td>
                         <td>
                           <a
@@ -88,19 +94,15 @@
                           >
                             <i class="fas fa-edit"></i> Editar
                           </a>
-                          <form
-                            th:action="@{/parents/delete/{id}(id=${parent.id})}"
-                            method="post"
-                            style="display: inline"
+                          <a
+                            href="#"
+                            class="btn btn-sm btn-danger"
+                            data-toggle="modal"
+                            data-target="#deleteModal"
+                            th:data-url="@{/parents/delete/{id}(id=${parent.id})}"
                           >
-                            <button
-                              type="submit"
-                              class="btn btn-sm btn-danger"
-                              onclick="return confirm('¿Está seguro de eliminar este representante?')"
-                            >
-                              <i class="fas fa-trash"></i> Eliminar
-                            </button>
-                          </form>
+                            <i class="fas fa-trash"></i> Eliminar
+                          </a>
                         </td>
                       </tr>
                       <tr th:if="${parents.empty}">
@@ -176,7 +178,18 @@
     <script th:src="@{/vendor/jquery-easing/jquery.easing.min.js}"></script>
     <script th:src="@{/js/sb-admin-2.min.js}"></script>
     <script th:src="@{/vendor/datatables/jquery.dataTables.min.js}"></script>
-    <script th:src="@{/vendor/datatables/dataTables.bootstrap4.min.js}"></script>
+    <script
+      th:src="@{/vendor/datatables/dataTables.bootstrap4.min.js}"
+    ></script>
     <script th:src="@{/js/demo/datatables-demo.js}"></script>
+    <div th:replace="~{fragments/delete-modal :: deleteModal}"></div>
+    <script>
+      $("#deleteModal").on("show.bs.modal", function (event) {
+        var button = $(event.relatedTarget);
+        var url = button.data("url");
+        var modal = $(this);
+        modal.find("#deleteForm").attr("action", url);
+      });
+    </script>
   </body>
 </html>

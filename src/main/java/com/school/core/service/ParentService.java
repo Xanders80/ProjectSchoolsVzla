@@ -47,4 +47,8 @@ public class ParentService {
     public Page<Parent> searchByName(String name, Pageable pageable) {
         return parentRepository.findByNameContaining(name, pageable);
     }
+
+    public Optional<Parent> getParentByUserId(Long userId) {
+        return parentRepository.findByUserId(userId);
+    }
 }

@@ -38,7 +38,7 @@ public class ScheduleController {
         return "schedule/schedule-form";
     }
 
-    @PostMapping("/save")
+    @PostMapping
     public String saveSchedule(@ModelAttribute ScheduleEntry scheduleEntry, RedirectAttributes redirectAttributes) {
         try {
             scheduleService.saveSchedule(scheduleEntry);
@@ -58,7 +58,7 @@ public class ScheduleController {
         return "schedule/schedule-form";
     }
 
-    @GetMapping("/delete/{id}")
+    @RequestMapping(value = "/delete/{id}", method = { RequestMethod.POST, RequestMethod.DELETE })
     public String deleteSchedule(@PathVariable @NonNull Long id) {
         scheduleService.deleteSchedule(id);
         return "redirect:/schedules";

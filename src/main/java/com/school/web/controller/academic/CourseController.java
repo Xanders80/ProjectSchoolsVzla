@@ -50,7 +50,7 @@ public class CourseController {
         return COURSE_FORM_VIEW;
     }
 
-    @PostMapping("/save")
+    @PostMapping
     public String saveCourse(@jakarta.validation.Valid @ModelAttribute @NonNull Course course,
             org.springframework.validation.BindingResult result, Model model) {
         if (result.hasErrors()) {
@@ -66,7 +66,7 @@ public class CourseController {
         return COURSE_FORM_VIEW;
     }
 
-    @GetMapping("/delete/{id}")
+    @RequestMapping(value = "/delete/{id}", method = { RequestMethod.POST, RequestMethod.DELETE })
     public String deleteCourse(@PathVariable @NonNull Long id) {
         courseRepository.deleteById(id);
         return "redirect:/courses";

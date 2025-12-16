@@ -1,0 +1,231 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+  <head>
+    <meta charset="utf-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta
+      name="viewport"
+      content="width=device-width, initial-scale=1, shrink-to-fit=no"
+    />
+    <title th:text="'Portal - ' + ${student.firstName}">
+      Detalle Estudiante
+    </title>
+    <link
+      th:href="@{/vendor/fontawesome-free/css/all.min.css}"
+      rel="stylesheet"
+      type="text/css"
+    />
+    <link
+      href="https://fonts.googleapis.com/css?family=Nunito:200,200i,300,300i,400,400i,600,600i,700,700i,800,800i,900,900i"
+      rel="stylesheet"
+    />
+    <link th:href="@{/css/sb-admin-2.min.css}" rel="stylesheet" />
+  </head>
+  <body id="page-top">
+    <div id="wrapper">
+      <div th:replace="~{fragments/sb-admin-sidebar :: sidebar}"></div>
+      <div id="content-wrapper" class="d-flex flex-column">
+        <div id="content">
+          <div th:replace="~{fragments/sb-admin-topbar :: topbar}"></div>
+          <div class="container-fluid">
+            <div
+              class="d-sm-flex align-items-center justify-content-between mb-4"
+            >
+              <h1 class="h3 mb-0 text-gray-800">
+                <span th:text="${student.firstName + ' ' + student.lastName}"
+                  >Nombre</span
+                >
+                <small
+                  class="text-muted"
+                  th:text="'(' + ${student.registrationNumber} + ')'"
+                ></small>
+              </h1>
+              <a th:href="@{/portal}" class="btn btn-sm btn-secondary shadow-sm"
+                ><i class="fas fa-arrow-left"></i> Volver</a
+              >
+            </div>
+
+            <!-- Tabs -->
+            <ul class="nav nav-tabs" id="studentTabs" role="tablist">
+              <li class="nav-item">
+                <a
+                  class="nav-link active"
+                  id="grades-tab"
+                  data-toggle="tab"
+                  href="#grades"
+                  role="tab"
+                  >Calificaciones</a
+                >
+              </li>
+              <li class="nav-item">
+                <a
+                  class="nav-link"
+                  id="attendance-tab"
+                  data-toggle="tab"
+                  href="#attendance"
+                  role="tab"
+                  >Asistencia</a
+                >
+              </li>
+              <li class="nav-item">
+                <a
+                  class="nav-link"
+                  id="finance-tab"
+                  data-toggle="tab"
+                  href="#finance"
+                  role="tab"
+                  >Estado de Cuenta</a
+                >
+              </li>
+            </ul>
+
+            <div class="tab-content mt-4" id="studentTabsContent">
+              <!-- Grades Tab -->
+              <div
+                class="tab-pane fade show active"
+                id="grades"
+                role="tabpanel"
+              >
+                <div class="card shadow mb-4">
+                  <div class="card-header py-3">
+                    <h6 class="m-0 font-weight-bold text-primary">
+                      Historial Académico
+                    </h6>
+                  </div>
+                  <div class="card-body">
+                    <div class="table-responsive">
+                      <table class="table table-bordered">
+                        <thead>
+                          <tr>
+                            <th>Periodo</th>
+                            <th>Curso</th>
+                            <th>Evaluación</th>
+                            <th>Nota</th>
+                            <th>Fecha</th>
+                          </tr>
+                        </thead>
+                        <tbody>
+                          <tr th:each="g : ${grades}">
+                            <td th:text="${g.term}">Term</td>
+                            <td th:text="${g.course.name}">Math</td>
+                            <td th:text="${g.evaluationType.displayName}">
+                              Exam
+                            </td>
+                            <td th:text="${g.score}" class="font-weight-bold">
+                              100
+                            </td>
+                            <td th:text="${g.date}">Date</td>
+                          </tr>
+                          <tr th:if="${#lists.isEmpty(grades)}">
+                            <td colspan="5" class="text-center">
+                              No hay calificaciones registradas.
+                            </td>
+                          </tr>
+                        </tbody>
+                      </table>
+                    </div>
+                  </div>
+                </div>
+              </div>
+
+              <!-- Attendance Tab -->
+              <div class="tab-pane fade" id="attendance" role="tabpanel">
+                <div class="card shadow mb-4">
+                  <div class="card-header py-3">
+                    <h6 class="m-0 font-weight-bold text-primary">
+                      Registro de Asistencia
+                    </h6>
+                  </div>
+                  <div class="card-body">
+                    <div class="table-responsive">
+                      <table class="table table-bordered">
+                        <thead>
+                          <tr>
+                            <th>Fecha</th>
+                            <th>Estado</th>
+                            <th>Observaciones</th>
+                          </tr>
+                        </thead>
+                        <tbody>
+                          <tr th:each="att : ${attendance}">
+                            <td th:text="${att.date}">Date</td>
+                            <td>
+                              <span
+                                th:class="'badge badge-' +
+                                                        (${att.status.name() == 'PRESENT'} ? 'success' :
+                                                        (${att.status.name() == 'ABSENT'} ? 'danger' : 'warning'))"
+                                th:text="${att.status.displayName}"
+                                >Presente</span
+                              >
+                            </td>
+                            <td th:text="${att.remarks}">OK</td>
+                          </tr>
+                          <tr th:if="${#lists.isEmpty(attendance)}">
+                            <td colspan="3" class="text-center">
+                              No hay registros de asistencia.
+                            </td>
+                          </tr>
+                        </tbody>
+                      </table>
+                    </div>
+                  </div>
+                </div>
+              </div>
+
+              <!-- Finance Tab -->
+              <div class="tab-pane fade" id="finance" role="tabpanel">
+                <div class="card shadow mb-4">
+                  <div class="card-header py-3">
+                    <h6 class="m-0 font-weight-bold text-primary">
+                      Pagos y Deudas
+                    </h6>
+                  </div>
+                  <div class="card-body">
+                    <div class="table-responsive">
+                      <table class="table table-bordered">
+                        <thead>
+                          <tr>
+                            <th>Concepto</th>
+                            <th>Vencimiento</th>
+                            <th>Monto</th>
+                            <th>Estado</th>
+                          </tr>
+                        </thead>
+                        <tbody>
+                          <tr th:each="fee : ${fees}">
+                            <td th:text="${fee.description}">Tuition</td>
+                            <td th:text="${fee.dueDate}">Date</td>
+                            <td th:text="${fee.amount}">100</td>
+                            <td>
+                              <span
+                                th:class="'badge badge-' +
+                                                        (${fee.status.name() == 'PAID'} ? 'success' :
+                                                        (${fee.status.name() == 'OVERDUE'} ? 'danger' : 'warning'))"
+                                th:text="${fee.status.displayName}"
+                                >Pending</span
+                              >
+                            </td>
+                          </tr>
+                          <tr th:if="${#lists.isEmpty(fees)}">
+                            <td colspan="4" class="text-center">
+                              No hay cobros registrados.
+                            </td>
+                          </tr>
+                        </tbody>
+                      </table>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div th:replace="~{fragments/sb-admin-footer :: footer}"></div>
+      </div>
+    </div>
+    <script th:src="@{/vendor/jquery/jquery.min.js}"></script>
+    <script th:src="@{/vendor/bootstrap/js/bootstrap.bundle.min.js}"></script>
+    <script th:src="@{/vendor/jquery-easing/jquery.easing.min.js}"></script>
+    <script th:src="@{/js/sb-admin-2.min.js}"></script>
+  </body>
+</html>

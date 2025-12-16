@@ -30,8 +30,15 @@
           <div th:replace="~{fragments/sb-admin-topbar :: topbar}"></div>
 
           <div class="container-fluid">
-            <div class="d-sm-flex align-items-center justify-content-between mb-4">
-              <h1 class="h3 mb-0 text-gray-800" th:text="${parent.id != null ? 'Editar Representante' : 'Nuevo Representante'}">Representante</h1>
+            <div
+              class="d-sm-flex align-items-center justify-content-between mb-4"
+            >
+              <h1
+                class="h3 mb-0 text-gray-800"
+                th:text="${parent.id != null ? 'Editar Representante' : 'Nuevo Representante'}"
+              >
+                Representante
+              </h1>
               <a th:href="@{/parents}" class="btn btn-secondary">
                 <i class="fas fa-arrow-left"></i> Volver
               </a>
@@ -44,9 +51,13 @@
                 </h6>
               </div>
               <div class="card-body">
-                <form th:action="@{/parents/save}" th:object="${parent}" method="post">
+                <form
+                  th:action="@{/parents}"
+                  th:object="${parent}"
+                  method="post"
+                >
                   <input type="hidden" th:field="*{id}" />
-                  
+
                   <div class="row">
                     <div class="col-md-6">
                       <div class="form-group">
@@ -58,7 +69,10 @@
                           th:classappend="${#fields.hasErrors('firstName')} ? 'is-invalid'"
                           required
                         />
-                        <div th:if="${#fields.hasErrors('firstName')}" class="invalid-feedback">
+                        <div
+                          th:if="${#fields.hasErrors('firstName')}"
+                          class="invalid-feedback"
+                        >
                           <span th:errors="*{firstName}"></span>
                         </div>
                       </div>
@@ -73,7 +87,10 @@
                           th:classappend="${#fields.hasErrors('lastName')} ? 'is-invalid'"
                           required
                         />
-                        <div th:if="${#fields.hasErrors('lastName')}" class="invalid-feedback">
+                        <div
+                          th:if="${#fields.hasErrors('lastName')}"
+                          class="invalid-feedback"
+                        >
                           <span th:errors="*{lastName}"></span>
                         </div>
                       </div>
@@ -91,7 +108,10 @@
                           th:classappend="${#fields.hasErrors('dni')} ? 'is-invalid'"
                           required
                         />
-                        <div th:if="${#fields.hasErrors('dni')}" class="invalid-feedback">
+                        <div
+                          th:if="${#fields.hasErrors('dni')}"
+                          class="invalid-feedback"
+                        >
                           <span th:errors="*{dni}"></span>
                         </div>
                       </div>
@@ -115,7 +135,10 @@
                           <option value="Tía">Tía</option>
                           <option value="Otro">Otro</option>
                         </select>
-                        <div th:if="${#fields.hasErrors('relationship')}" class="invalid-feedback">
+                        <div
+                          th:if="${#fields.hasErrors('relationship')}"
+                          class="invalid-feedback"
+                        >
                           <span th:errors="*{relationship}"></span>
                         </div>
                       </div>
@@ -133,7 +156,10 @@
                           th:classappend="${#fields.hasErrors('email')} ? 'is-invalid'"
                           required
                         />
-                        <div th:if="${#fields.hasErrors('email')}" class="invalid-feedback">
+                        <div
+                          th:if="${#fields.hasErrors('email')}"
+                          class="invalid-feedback"
+                        >
                           <span th:errors="*{email}"></span>
                         </div>
                       </div>
@@ -147,7 +173,10 @@
                           th:field="*{phoneNumber}"
                           th:classappend="${#fields.hasErrors('phoneNumber')} ? 'is-invalid'"
                         />
-                        <div th:if="${#fields.hasErrors('phoneNumber')}" class="invalid-feedback">
+                        <div
+                          th:if="${#fields.hasErrors('phoneNumber')}"
+                          class="invalid-feedback"
+                        >
                           <span th:errors="*{phoneNumber}"></span>
                         </div>
                       </div>
@@ -162,7 +191,10 @@
                       th:field="*{birthDate}"
                       th:classappend="${#fields.hasErrors('birthDate')} ? 'is-invalid'"
                     />
-                    <div th:if="${#fields.hasErrors('birthDate')}" class="invalid-feedback">
+                    <div
+                      th:if="${#fields.hasErrors('birthDate')}"
+                      class="invalid-feedback"
+                    >
                       <span th:errors="*{birthDate}"></span>
                     </div>
                   </div>
@@ -175,7 +207,10 @@
                       rows="3"
                       th:classappend="${#fields.hasErrors('address')} ? 'is-invalid'"
                     ></textarea>
-                    <div th:if="${#fields.hasErrors('address')}" class="invalid-feedback">
+                    <div
+                      th:if="${#fields.hasErrors('address')}"
+                      class="invalid-feedback"
+                    >
                       <span th:errors="*{address}"></span>
                     </div>
                   </div>
@@ -184,14 +219,20 @@
                     <label>Estudiantes Asociados</label>
                     <div class="row">
                       <div class="col-md-12">
-                        <div th:each="student : ${students}" class="form-check form-check-inline">
+                        <div
+                          th:each="student : ${students}"
+                          class="form-check form-check-inline"
+                        >
                           <input
                             class="form-check-input"
                             type="checkbox"
                             th:field="*{children}"
                             th:value="${student.id}"
                           />
-                          <label class="form-check-label" th:text="${student.fullName}">
+                          <label
+                            class="form-check-label"
+                            th:text="${student.fullName}"
+                          >
                             Student Name
                           </label>
                         </div>

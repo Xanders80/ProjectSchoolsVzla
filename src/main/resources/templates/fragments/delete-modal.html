@@ -53,12 +53,29 @@
               method="post"
               style="display: inline"
             >
+              <input
+                type="hidden"
+                th:name="${_csrf.parameterName}"
+                th:value="${_csrf.token}"
+              />
               <input type="hidden" name="_method" value="DELETE" />
               <button class="btn btn-danger" type="submit">Eliminar</button>
             </form>
           </div>
         </div>
       </div>
+      <script>
+        document.addEventListener("DOMContentLoaded", function () {
+          $("#deleteModal").on("show.bs.modal", function (event) {
+            var button = $(event.relatedTarget);
+            var url = button.data("url");
+            var modal = $(this);
+            if (url) {
+              modal.find("#deleteForm").attr("action", url);
+            }
+          });
+        });
+      </script>
     </div>
   </body>
 </html>

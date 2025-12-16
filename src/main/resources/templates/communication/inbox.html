@@ -1,0 +1,144 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+  <head>
+    <meta charset="utf-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta
+      name="viewport"
+      content="width=device-width, initial-scale=1, shrink-to-fit=no"
+    />
+    <title>Mensajería</title>
+    <link
+      th:href="@{/vendor/fontawesome-free/css/all.min.css}"
+      rel="stylesheet"
+      type="text/css"
+    />
+    <link
+      href="https://fonts.googleapis.com/css?family=Nunito:200,200i,300,300i,400,400i,600,600i,700,700i,800,800i,900,900i"
+      rel="stylesheet"
+    />
+    <link th:href="@{/css/sb-admin-2.min.css}" rel="stylesheet" />
+  </head>
+  <body id="page-top">
+    <div id="wrapper">
+      <div th:replace="~{fragments/sb-admin-sidebar :: sidebar}"></div>
+      <div id="content-wrapper" class="d-flex flex-column">
+        <div id="content">
+          <div th:replace="~{fragments/sb-admin-topbar :: topbar}"></div>
+          <div class="container-fluid">
+            <div
+              class="d-sm-flex align-items-center justify-content-between mb-4"
+            >
+              <h1 class="h3 mb-0 text-gray-800" th:text="${title}">Mensajes</h1>
+              <div>
+                <a
+                  th:href="@{/messages}"
+                  class="btn btn-sm btn-light shadow-sm"
+                  th:classappend="${isInbox} ? 'active'"
+                >
+                  <i class="fas fa-inbox fa-sm"></i> Entrada
+                </a>
+                <a
+                  th:href="@{/messages/sent}"
+                  class="btn btn-sm btn-light shadow-sm"
+                  th:classappend="${!isInbox} ? 'active'"
+                >
+                  <i class="fas fa-paper-plane fa-sm"></i> Enviados
+                </a>
+                <a
+                  th:href="@{/messages/compose}"
+                  class="btn btn-sm btn-primary shadow-sm ml-2"
+                >
+                  <i class="fas fa-pen fa-sm text-white-50"></i> Redactar
+                </a>
+              </div>
+            </div>
+
+            <div
+              th:if="${successMessage}"
+              class="alert alert-success"
+              th:text="${successMessage}"
+            ></div>
+            <div
+              th:if="${errorMessage}"
+              class="alert alert-danger"
+              th:text="${errorMessage}"
+            ></div>
+
+            <div class="card shadow mb-4">
+              <div class="card-body">
+                <div class="table-responsive">
+                  <table
+                    class="table table-hover"
+                    id="dataTable"
+                    width="100%"
+                    cellspacing="0"
+                  >
+                    <thead>
+                      <tr>
+                        <th th:text="${isInbox} ? 'De' : 'Para'">Usuario</th>
+                        <th>Asunto</th>
+                        <th>Fecha</th>
+                        <th th:if="${isInbox}">Estado</th>
+                        <th>Acción</th>
+                      </tr>
+                    </thead>
+                    <tbody>
+                      <tr
+                        th:each="msg : ${messages}"
+                        th:classappend="${!msg.read and isInbox} ? 'font-weight-bold table-active'"
+                      >
+                        <td
+                          th:text="${isInbox} ? ${msg.sender.firstName + ' ' + msg.sender.lastName} : ${msg.receiver.firstName + ' ' + msg.receiver.lastName}"
+                        >
+                          User
+                        </td>
+                        <td th:text="${msg.subject}">Subject</td>
+                        <td
+                          th:text="${#temporals.format(msg.sentAt, 'dd-MM-yyyy HH:mm')}"
+                        >
+                          Date
+                        </td>
+                        <td th:if="${isInbox}">
+                          <span th:if="${!msg.read}" class="badge badge-danger"
+                            >Nuevo</span
+                          >
+                          <span
+                            th:if="${msg.read}"
+                            class="badge badge-secondary"
+                            >Leído</span
+                          >
+                        </td>
+                        <td>
+                          <a
+                            th:href="@{/messages/read/{id}(id=${msg.id})}"
+                            class="btn btn-info btn-circle btn-sm"
+                          >
+                            <i class="fas fa-eye"></i>
+                          </a>
+                        </td>
+                      </tr>
+                    </tbody>
+                  </table>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div th:replace="~{fragments/sb-admin-footer :: footer}"></div>
+      </div>
+    </div>
+    <a class="scroll-to-top rounded" href="#page-top"
+      ><i class="fas fa-angle-up"></i
+    ></a>
+    <div th:replace="~{fragments/sb-admin-topbar :: logoutModal}"></div>
+
+    <script th:src="@{/vendor/jquery/jquery.min.js}"></script>
+    <script th:src="@{/vendor/bootstrap/js/bootstrap.bundle.min.js}"></script>
+    <script th:src="@{/vendor/jquery-easing/jquery.easing.min.js}"></script>
+    <script th:src="@{/js/sb-admin-2.min.js}"></script>
+    <script th:src="@{/vendor/datatables/jquery.dataTables.min.js}"></script>
+    <script th:src="@{/vendor/datatables/dataTables.bootstrap4.min.js}"></script>
+    <script th:src="@{/js/demo/datatables-demo.js}"></script>
+  </body>
+</html>

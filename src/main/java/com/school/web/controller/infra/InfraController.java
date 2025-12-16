@@ -34,13 +34,13 @@ public class InfraController {
         return BUILDING_FORM_VIEW;
     }
 
-    @PostMapping("/buildings/save")
+    @PostMapping("/buildings")
     public String saveBuilding(@ModelAttribute @NonNull Building building) {
         infraService.saveBuilding(building);
         return "redirect:/infra/buildings";
     }
 
-    @GetMapping("/buildings/delete/{id}")
+    @RequestMapping(value = "/buildings/delete/{id}", method = { RequestMethod.POST, RequestMethod.DELETE })
     public String deleteBuilding(@PathVariable @NonNull Long id) {
         infraService.deleteBuilding(id);
         return "redirect:/infra/buildings";
@@ -61,13 +61,13 @@ public class InfraController {
         return ROOM_FORM_VIEW;
     }
 
-    @PostMapping("/rooms/save")
+    @PostMapping("/rooms")
     public String saveRoom(@ModelAttribute @NonNull Room room) {
         infraService.saveRoom(room);
         return "redirect:/infra/rooms";
     }
 
-    @GetMapping("/rooms/delete/{id}")
+    @RequestMapping(value = "/rooms/delete/{id}", method = { RequestMethod.POST, RequestMethod.DELETE })
     public String deleteRoom(@PathVariable @NonNull Long id) {
         infraService.deleteRoom(id);
         return "redirect:/infra/rooms";

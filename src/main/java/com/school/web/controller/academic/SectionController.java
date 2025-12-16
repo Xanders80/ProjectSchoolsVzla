@@ -45,7 +45,7 @@ public class SectionController {
         return SECTION_FORM_VIEW;
     }
 
-    @PostMapping("/save")
+    @PostMapping
     public String saveSection(@jakarta.validation.Valid @ModelAttribute @NonNull Section section,
             org.springframework.validation.BindingResult result, Model model) {
         if (result.hasErrors()) {
@@ -63,7 +63,7 @@ public class SectionController {
         return SECTION_FORM_VIEW;
     }
 
-    @GetMapping("/delete/{id}")
+    @RequestMapping(value = "/delete/{id}", method = { RequestMethod.POST, RequestMethod.DELETE })
     public String deleteSection(@PathVariable @NonNull Long id) {
         sectionRepository.deleteById(id);
         return "redirect:/sections";

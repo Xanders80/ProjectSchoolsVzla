@@ -15,16 +15,57 @@ public class AcademicService {
     private final StudentRepository studentRepository;
     private final com.school.academic.repository.CourseRepository courseRepository;
     private final com.school.academic.repository.SectionRepository sectionRepository;
+    private final com.school.academic.repository.GradeRepository gradeRepository;
+    private final com.school.academic.repository.AttendanceRepository attendanceRepository;
 
     public AcademicService(StudentRepository studentRepository,
             com.school.academic.repository.CourseRepository courseRepository,
-            com.school.academic.repository.SectionRepository sectionRepository) {
+            com.school.academic.repository.SectionRepository sectionRepository,
+            com.school.academic.repository.GradeRepository gradeRepository,
+            com.school.academic.repository.AttendanceRepository attendanceRepository) {
         this.studentRepository = studentRepository;
         this.courseRepository = courseRepository;
         this.sectionRepository = sectionRepository;
+        this.gradeRepository = gradeRepository;
+        this.attendanceRepository = attendanceRepository;
     }
 
     // Student Ops...
+
+    // Attendance Ops
+    public java.util.List<com.school.academic.entity.Attendance> getAttendanceBySectionAndDate(@NonNull Long sectionId,
+            @NonNull java.time.LocalDate date) {
+        return attendanceRepository.findBySectionIdAndDate(sectionId, date);
+    }
+
+    public void saveAttendanceList(@NonNull java.util.List<com.school.academic.entity.Attendance> attendanceList) {
+        attendanceRepository.saveAll(attendanceList);
+    }
+
+    public java.util.List<com.school.academic.entity.Attendance> getAttendanceByStudent(@NonNull Long studentId) {
+        return attendanceRepository.findByStudentId(studentId);
+    }
+
+    // Grade Ops
+    public com.school.academic.entity.Grade saveGrade(@NonNull com.school.academic.entity.Grade grade) {
+        return gradeRepository.save(grade);
+    }
+
+    public java.util.List<com.school.academic.entity.Grade> getGradesByStudent(@NonNull Long studentId) {
+        return gradeRepository.findByStudentIdOrderByDateDesc(studentId);
+    }
+
+    public void deleteGrade(@NonNull Long id) {
+        gradeRepository.deleteById(id);
+    }
+
+    public Optional<com.school.academic.entity.Grade> getGradeById(@NonNull Long id) {
+        return gradeRepository.findById(id);
+    }
+
+    public java.util.List<com.school.academic.entity.Grade> getAllGrades() {
+        return gradeRepository.findAll();
+    }
 
     // Course Ops
     public java.util.List<com.school.academic.entity.Course> getAllCourses() {

@@ -30,8 +30,15 @@
           <div th:replace="~{fragments/sb-admin-topbar :: topbar}"></div>
 
           <div class="container-fluid">
-            <div class="d-sm-flex align-items-center justify-content-between mb-4">
-              <h1 class="h3 mb-0 text-gray-800" th:text="${student.id != null ? 'Editar Estudiante' : 'Nuevo Estudiante'}">Estudiante</h1>
+            <div
+              class="d-sm-flex align-items-center justify-content-between mb-4"
+            >
+              <h1
+                class="h3 mb-0 text-gray-800"
+                th:text="${student.id != null ? 'Editar Estudiante' : 'Nuevo Estudiante'}"
+              >
+                Estudiante
+              </h1>
               <a th:href="@{/students}" class="btn btn-secondary">
                 <i class="fas fa-arrow-left"></i> Volver
               </a>
@@ -45,7 +52,7 @@
               </div>
               <div class="card-body">
                 <form
-                  th:action="@{/students/save}"
+                  th:action="@{/students}"
                   th:object="${student}"
                   method="post"
                 >

@@ -37,7 +37,7 @@ public class StaffController {
         return STAFF_FORM_VIEW;
     }
 
-    @PostMapping("/save")
+    @PostMapping
     public String saveStaff(@jakarta.validation.Valid @ModelAttribute @NonNull Staff staff,
             org.springframework.validation.BindingResult result, Model model) {
         if (result.hasErrors()) {
@@ -55,7 +55,7 @@ public class StaffController {
         return STAFF_FORM_VIEW;
     }
 
-    @GetMapping("/delete/{id}")
+    @RequestMapping(value = "/delete/{id}", method = { RequestMethod.POST, RequestMethod.DELETE })
     public String deleteStaff(@PathVariable @NonNull Long id) {
         staffService.deleteStaff(id);
         return "redirect:/staff";

@@ -36,7 +36,7 @@ public class StudentController {
         return STUDENT_FORM_VIEW;
     }
 
-    @PostMapping("/save")
+    @PostMapping
     public String saveStudent(@jakarta.validation.Valid @ModelAttribute @NonNull Student student,
             org.springframework.validation.BindingResult result, Model model) {
         if (result.hasErrors()) {
@@ -56,7 +56,7 @@ public class StudentController {
         return STUDENT_FORM_VIEW;
     }
 
-    @GetMapping("/delete/{id}")
+    @RequestMapping(value = "/delete/{id}", method = { RequestMethod.POST, RequestMethod.DELETE })
     public String deleteStudent(@PathVariable @NonNull Long id) {
         academicService.deleteStudent(id);
         return "redirect:/students";

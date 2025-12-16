@@ -39,7 +39,7 @@ public class ParentController {
         return PARENT_FORM_VIEW;
     }
 
-    @PostMapping("/save")
+    @PostMapping
     public String saveParent(@jakarta.validation.Valid @ModelAttribute @NonNull Parent parent,
             org.springframework.validation.BindingResult result, Model model, RedirectAttributes redirectAttributes) {
         if (result.hasErrors()) {
@@ -50,7 +50,8 @@ public class ParentController {
             parentService.saveParent(parent);
             redirectAttributes.addFlashAttribute("successMessage", "Representante guardado exitosamente.");
         } catch (Exception e) {
-            redirectAttributes.addFlashAttribute("errorMessage", "Error al guardar el representante: " + e.getMessage());
+            redirectAttributes.addFlashAttribute("errorMessage",
+                    "Error al guardar el representante: " + e.getMessage());
         }
         return "redirect:/parents";
     }
@@ -68,13 +69,14 @@ public class ParentController {
         }
     }
 
-    @PostMapping("/delete/{id}")
+    @RequestMapping(value = "/delete/{id}", method = { RequestMethod.POST, RequestMethod.DELETE })
     public String deleteParent(@PathVariable @NonNull Long id, RedirectAttributes redirectAttributes) {
         try {
             parentService.deleteParent(id);
             redirectAttributes.addFlashAttribute("successMessage", "Representante eliminado exitosamente.");
         } catch (Exception e) {
-            redirectAttributes.addFlashAttribute("errorMessage", "Error al eliminar el representante: " + e.getMessage());
+            redirectAttributes.addFlashAttribute("errorMessage",
+                    "Error al eliminar el representante: " + e.getMessage());
         }
         return "redirect:/parents";
     }

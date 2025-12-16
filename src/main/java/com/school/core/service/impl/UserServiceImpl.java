@@ -63,9 +63,10 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    public User registerNewUserWithType(String firstName, String lastName, String email, String username, String password,
+    public User registerNewUserWithType(String firstName, String lastName, String email, String username,
+            String password,
             String userType, String dni, String phoneNumber, String address, String relationship) {
-        
+
         if (userRepository.findByUsername(username).isPresent()) {
             throw new RuntimeException("El nombre de usuario ya existe: " + username);
         }
@@ -87,18 +88,19 @@ public class UserServiceImpl implements UserService {
         user.setRole(Role.valueOf(userType));
         user.setEnabled(true);
         user.setCreatedAt(LocalDateTime.now());
-        
+
         User savedUser = userRepository.save(user);
-        
+
         // Crear entidad específica según el tipo
         createSpecificEntity(savedUser, userType, dni, phoneNumber, address, relationship);
-        
+
         return savedUser;
     }
-    
-    private void createSpecificEntity(User user, String userType, String dni, String phoneNumber, String address, String relationship) {
+
+    private void createSpecificEntity(User user, String userType, String dni, String phoneNumber, String address,
+            String relationship) {
         Role role = Role.valueOf(userType);
-        
+
         switch (role) {
             case PARENT:
                 com.school.core.entity.Parent parent = new com.school.core.entity.Parent();
@@ -112,7 +114,7 @@ public class UserServiceImpl implements UserService {
                 parent.setRelationship(relationship != null ? relationship : "Padre");
                 parentService.saveParent(parent);
                 break;
-                
+
             case TEACHER:
             case STAFF:
                 com.school.admin.entity.Staff staff = new com.school.admin.entity.Staff();
@@ -128,7 +130,7 @@ public class UserServiceImpl implements UserService {
                 staff.setDepartment("General");
                 staffService.saveStaff(staff);
                 break;
-                
+
             case STUDENT:
                 com.school.academic.entity.Student student = new com.school.academic.entity.Student();
                 student.setUser(user);
@@ -142,7 +144,7 @@ public class UserServiceImpl implements UserService {
                 student.setEnrollmentDate(java.time.LocalDate.now());
                 academicService.saveStudent(student);
                 break;
-                
+
             default:
                 break;
         }
@@ -152,6 +154,11 @@ public class UserServiceImpl implements UserService {
     @org.springframework.cache.annotation.Cacheable(value = "users", key = "#email")
     public Optional<User> findByEmail(String email) {
         return userRepository.findByEmail(email);
+    }
+
+    @Override
+    public Optional<User> findByUsername(String username) {
+        return userRepository.findByUsername(username);
     }
 
     @Override
@@ -199,5 +206,15 @@ public class UserServiceImpl implements UserService {
         user.setEmail(email);
 
         return userRepository.save(user);
+    }
+
+    @Override
+    public Optional<User> findById(Long id) {
+        return userRepository.findById(id);
+    }
+
+    @Override
+    public java.util.List<User> findAllUsers() {
+        return userRepository.findAll();
     }
 }

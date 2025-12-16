@@ -30,7 +30,9 @@
           <div th:replace="~{fragments/sb-admin-topbar :: topbar}"></div>
 
           <div class="container-fluid">
-            <div class="d-sm-flex align-items-center justify-content-between mb-4">
+            <div
+              class="d-sm-flex align-items-center justify-content-between mb-4"
+            >
               <h1 class="h3 mb-0 text-gray-800">Lista de Horarios</h1>
               <a th:href="@{/schedules/new}" class="btn btn-primary">
                 <i class="fas fa-plus"></i> Agregar Nuevo Horario
@@ -89,19 +91,15 @@
                           >
                             <i class="fas fa-edit"></i> Editar
                           </a>
-                          <form
-                            th:action="@{/schedules/delete/{id}(id=${entry.id})}"
-                            method="post"
-                            style="display: inline"
+                          <a
+                            href="#"
+                            class="btn btn-sm btn-danger"
+                            data-toggle="modal"
+                            data-target="#deleteModal"
+                            th:data-url="@{/schedules/delete/{id}(id=${entry.id})}"
                           >
-                            <button
-                              type="submit"
-                              class="btn btn-sm btn-danger"
-                              onclick="return confirm('¿Está seguro de eliminar este horario?')"
-                            >
-                              <i class="fas fa-trash"></i> Eliminar
-                            </button>
-                          </form>
+                            <i class="fas fa-trash"></i> Eliminar
+                          </a>
                         </td>
                       </tr>
                       <tr th:if="${#lists.isEmpty(scheduleEntries)}">
@@ -136,5 +134,13 @@
       th:src="@{/vendor/datatables/dataTables.bootstrap4.min.js}"
     ></script>
     <script th:src="@{/js/demo/datatables-demo.js}"></script>
+    <script>
+      $("#deleteModal").on("show.bs.modal", function (event) {
+        var button = $(event.relatedTarget);
+        var url = button.data("url");
+        var modal = $(this);
+        modal.find("#deleteForm").attr("action", url);
+      });
+    </script>
   </body>
 </html>

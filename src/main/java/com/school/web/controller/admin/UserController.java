@@ -56,7 +56,7 @@ public class UserController {
         return USER_FORM_VIEW;
     }
 
-    @PostMapping("/save")
+    @PostMapping
     public String saveUser(@jakarta.validation.Valid @ModelAttribute @NonNull User user,
             org.springframework.validation.BindingResult result, Model model,
             @RequestParam(required = false) String password) {
@@ -80,7 +80,7 @@ public class UserController {
         return USER_FORM_VIEW;
     }
 
-    @GetMapping("/delete/{id}")
+    @RequestMapping(value = "/delete/{id}", method = { RequestMethod.POST, RequestMethod.DELETE })
     public String deleteUser(@PathVariable @NonNull Long id) {
         userRepository.deleteById(id);
         return "redirect:/admin/users";

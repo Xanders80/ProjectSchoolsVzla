@@ -1,0 +1,96 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+  <head>
+    <meta charset="utf-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta
+      name="viewport"
+      content="width=device-width, initial-scale=1, shrink-to-fit=no"
+    />
+    <title>Portal de Padres - Dashboard</title>
+    <link
+      th:href="@{/vendor/fontawesome-free/css/all.min.css}"
+      rel="stylesheet"
+      type="text/css"
+    />
+    <link
+      href="https://fonts.googleapis.com/css?family=Nunito:200,200i,300,300i,400,400i,600,600i,700,700i,800,800i,900,900i"
+      rel="stylesheet"
+    />
+    <link th:href="@{/css/sb-admin-2.min.css}" rel="stylesheet" />
+  </head>
+  <body id="page-top">
+    <div id="wrapper">
+      <!-- Reuse sidebar but might need cleanup for parents later -->
+      <div th:replace="~{fragments/sb-admin-sidebar :: sidebar}"></div>
+
+      <div id="content-wrapper" class="d-flex flex-column">
+        <div id="content">
+          <div th:replace="~{fragments/sb-admin-topbar :: topbar}"></div>
+
+          <div class="container-fluid">
+            <h1 class="h3 mb-4 text-gray-800">
+              Bienvenido, <span th:text="${parent.firstName}">Padre</span>
+            </h1>
+
+            <div
+              th:if="${errorMessage}"
+              class="alert alert-danger"
+              th:text="${errorMessage}"
+            ></div>
+
+            <div class="row">
+              <div class="col-xl-3 col-md-6 mb-4" th:each="child : ${children}">
+                <div class="card border-left-primary shadow h-100 py-2">
+                  <div class="card-body">
+                    <div class="row no-gutters align-items-center">
+                      <div class="col mr-2">
+                        <div
+                          class="text-xs font-weight-bold text-primary text-uppercase mb-1"
+                        >
+                          Estudiante
+                        </div>
+                        <div
+                          class="h5 mb-0 font-weight-bold text-gray-800"
+                          th:text="${child.firstName + ' ' + child.lastName}"
+                        >
+                          Nombre
+                        </div>
+                        <div class="text-muted small mt-2">
+                          Matrícula:
+                          <span th:text="${child.registrationNumber}">123</span>
+                        </div>
+                      </div>
+                      <div class="col-auto">
+                        <i class="fas fa-user-graduate fa-2x text-gray-300"></i>
+                      </div>
+                    </div>
+                    <hr />
+                    <a
+                      th:href="@{/portal/student/{id}(id=${child.id})}"
+                      class="btn btn-primary btn-sm btn-block"
+                    >
+                      Ver Detalles <i class="fas fa-arrow-right"></i>
+                    </a>
+                  </div>
+                </div>
+              </div>
+
+              <div class="col-12" th:if="${#lists.isEmpty(children)}">
+                <div class="alert alert-info">
+                  No tiene estudiantes asociados a su cuenta. Por favor contacte
+                  a la administración.
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div th:replace="~{fragments/sb-admin-footer :: footer}"></div>
+      </div>
+    </div>
+    <script th:src="@{/vendor/jquery/jquery.min.js}"></script>
+    <script th:src="@{/vendor/bootstrap/js/bootstrap.bundle.min.js}"></script>
+    <script th:src="@{/vendor/jquery-easing/jquery.easing.min.js}"></script>
+    <script th:src="@{/js/sb-admin-2.min.js}"></script>
+  </body>
+</html>
