@@ -36,4 +36,14 @@ public class SecurityAuditService {
         securityLogger.warn("SUSPICIOUS_ACTIVITY: activity={}, ip={}, userAgent={}, timestamp={}",
                 activity, clientIP, userAgent, java.time.LocalDateTime.now());
     }
+
+    public void logSuccessfulLogin(String username, String ip) {
+        securityLogger.info("LOGIN_SUCCESS | USER={} | IP={} | TIMESTAMP={}", 
+                username, ip, java.time.LocalDateTime.now());
+    }
+    
+    public void logFailedLogin(String username, String ip, String reason) {
+        securityLogger.warn("LOGIN_FAILED | USER={} | IP={} | REASON={} | TIMESTAMP={}", 
+                username, ip, reason, java.time.LocalDateTime.now());
+    }
 }

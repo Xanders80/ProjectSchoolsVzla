@@ -34,6 +34,15 @@ public class SecurityConfig {
 
         @Autowired
         private RateLimitingFilter rateLimitingFilter;
+        
+        @Autowired
+        private com.school.core.filter.AuditLoggingFilter auditLoggingFilter;
+        
+        @Autowired
+        private CustomAccessDeniedHandler customAccessDeniedHandler;
+        
+        @Autowired
+        private AnomalyDetectionFilter anomalyDetectionFilter;
 
         @Bean
         public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
@@ -48,38 +57,48 @@ public class SecurityConfig {
                                                 .contentSecurityPolicy(csp -> csp
                                                                 .policyDirectives(
                                                                                 "default-src 'self'; script-src 'self'; style-src 'self' 'unsafe-inline'; img-src 'self' data:; font-src 'self'; object-src 'none'; base-uri 'self'")))
-                                .addFilterBefore(rateLimitingFilter, UsernamePasswordAuthenticationFilter.class)
+                                .addFilterBefore(anomalyDetectionFilter, UsernamePasswordAuthenticationFilter.class)
+                                .addFilterAfter(rateLimitingFilter, anomalyDetectionFilter.getClass())
+                                .addFilterAfter(auditLoggingFilter, rateLimitingFilter.getClass())
                                 .csrf(csrf -> csrf
                                                 .csrfTokenRepository(
                                                                 org.springframework.security.web.csrf.CookieCsrfTokenRepository
-                                                                                .withHttpOnlyFalse()))
+                                                                                .withHttpOnlyFalse())
+                                                .ignoringRequestMatchers("/h2-console/**"))
                                 .sessionManagement(session -> session
+                                                .sessionCreationPolicy(org.springframework.security.config.http.SessionCreationPolicy.IF_REQUIRED)
                                                 .sessionConcurrency(concurrency -> concurrency
                                                                 .maximumSessions(1)
                                                                 .maxSessionsPreventsLogin(false)
-                                                                .sessionRegistry(sessionRegistry())))
+                                                                .sessionRegistry(sessionRegistry()))
+                                                .sessionFixation().migrateSession())
                                 .authorizeHttpRequests(auth -> auth
+                                                // Recursos estáticos - PRIMERO
                                                 .requestMatchers("/css/**", "/js/**", "/images/**", "/vendor/**",
                                                                 "/webjars/**", "/favicon.ico", "/error/**")
                                                 .permitAll()
+                                                // Páginas públicas
                                                 .requestMatchers("/login", "/register", "/forgot-password", "/404")
                                                 .permitAll()
+                                                // Herramientas de desarrollo
                                                 .requestMatchers("/h2-console/**").permitAll()
                                                 .requestMatchers("/swagger-ui/**", "/v3/api-docs/**").permitAll()
                                                 .requestMatchers("/actuator/health").permitAll()
-                                                .requestMatchers("/actuator/health").permitAll()
-                                                .requestMatchers("/actuator/**").hasRole("ADMIN")
+                                                // ENDPOINTS PROTEGIDOS - ORDEN ESPECÍFICO
                                                 .requestMatchers("/admin/**").hasRole("ADMIN")
+                                                .requestMatchers("/students/**").hasAnyRole("ADMIN", "STAFF")
+                                                .requestMatchers("/sections/**").hasAnyRole("ADMIN", "STAFF")
                                                 .requestMatchers("/library/**").hasAnyRole("ADMIN", "STAFF")
-                                                .requestMatchers("/messages/**").authenticated()
-                                                .requestMatchers("/notifications/broadcast").hasRole("ADMIN")
-                                                .requestMatchers("/notifications/broadcast").hasRole("ADMIN")
-                                                .requestMatchers("/notifications/**").authenticated()
+                                                .requestMatchers("/actuator/**").hasRole("ADMIN")
                                                 .requestMatchers("/reports/**").hasAnyRole("ADMIN", "DIRECTOR")
                                                 .requestMatchers("/health/**").hasAnyRole("ADMIN", "DIRECTOR")
                                                 .requestMatchers("/hr/**").hasAnyRole("ADMIN", "DIRECTOR")
                                                 .requestMatchers("/bi/**").hasAnyRole("ADMIN", "DIRECTOR")
                                                 .requestMatchers("/portal/**").hasAnyRole("PARENT", "ADMIN")
+                                                .requestMatchers("/messages/**").authenticated()
+                                                .requestMatchers("/notifications/broadcast").hasRole("ADMIN")
+                                                .requestMatchers("/notifications/**").authenticated()
+                                                // DENEGAR TODO LO DEMÁS
                                                 .anyRequest().authenticated())
                                 .formLogin(login -> login
                                                 .loginPage("/login")
@@ -90,7 +109,9 @@ public class SecurityConfig {
                                                 .logoutSuccessUrl("/login?logout")
                                                 .invalidateHttpSession(true)
                                                 .deleteCookies("JSESSIONID")
-                                                .permitAll());
+                                                .permitAll())
+                                .exceptionHandling(exceptions -> exceptions
+                                                .accessDeniedHandler(customAccessDeniedHandler));
 
                 return http.build();
         }

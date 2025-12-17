@@ -17,21 +17,22 @@
 package com.school.web.controller.academic;
 
 import com.school.academic.entity.Course;
-import com.school.academic.repository.CourseRepository;
+import com.school.academic.service.CourseService;
 import org.springframework.lang.NonNull;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 @Controller
 @RequestMapping("/courses")
 public class CourseController {
 
     private static final String COURSE_FORM_VIEW = "academic/course-form";
-    private final CourseRepository courseRepository;
+    private final CourseService courseService;
 
-    public CourseController(CourseRepository courseRepository) {
-        this.courseRepository = courseRepository;
+    public CourseController(CourseService courseService) {
+        this.courseService = courseService;
     }
 
     @GetMapping
@@ -40,7 +41,7 @@ public class CourseController {
             @RequestParam(defaultValue = "10") int size) {
         org.springframework.data.domain.Pageable pageable = org.springframework.data.domain.PageRequest.of(page, size,
                 org.springframework.data.domain.Sort.by(org.springframework.data.domain.Sort.Direction.DESC, "id"));
-        model.addAttribute("courses", courseRepository.findAll(pageable));
+        model.addAttribute("courses", courseService.getAllActiveCourses(pageable));
         return "academic/course-list";
     }
 
@@ -56,19 +57,28 @@ public class CourseController {
         if (result.hasErrors()) {
             return COURSE_FORM_VIEW;
         }
-        courseRepository.save(course);
+        courseService.saveCourse(course);
         return "redirect:/courses";
     }
 
     @GetMapping("/edit/{id}")
     public String editCourseForm(@PathVariable @NonNull Long id, Model model) {
-        model.addAttribute("course", courseRepository.findById(id).orElseThrow());
+        model.addAttribute("course", courseService.getCourseById(id).orElseThrow());
         return COURSE_FORM_VIEW;
     }
 
     @RequestMapping(value = "/delete/{id}", method = { RequestMethod.POST, RequestMethod.DELETE })
-    public String deleteCourse(@PathVariable @NonNull Long id) {
-        courseRepository.deleteById(id);
+    public String deleteCourse(@PathVariable @NonNull Long id, RedirectAttributes redirectAttributes) {
+        try {
+            courseService.deleteCourse(id);
+            redirectAttributes.addFlashAttribute("successMessage", "Curso eliminado exitosamente");
+        } catch (IllegalArgumentException e) {
+            redirectAttributes.addFlashAttribute("errorMessage", "Curso no encontrado");
+        } catch (IllegalStateException e) {
+            redirectAttributes.addFlashAttribute("errorMessage", e.getMessage());
+        } catch (Exception e) {
+            redirectAttributes.addFlashAttribute("errorMessage", "Error interno del sistema");
+        }
         return "redirect:/courses";
     }
 }

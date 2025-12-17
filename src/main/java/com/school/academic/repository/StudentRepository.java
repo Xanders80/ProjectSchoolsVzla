@@ -9,4 +9,10 @@ public interface StudentRepository extends JpaRepository<Student, Long> {
 
     Optional<Student> findByDni(String dni);
 
+    @org.springframework.data.jpa.repository.Query("SELECT s FROM Student s WHERE s.deleted = false")
+    java.util.List<Student> findAllActive();
+
+    @org.springframework.data.jpa.repository.Query("SELECT s FROM Student s WHERE s.id = ?1 AND s.deleted = false")
+    Optional<Student> findByIdAndNotDeleted(Long id);
+
 }

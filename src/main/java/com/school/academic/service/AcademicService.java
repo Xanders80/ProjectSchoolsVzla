@@ -13,21 +13,30 @@ import java.util.Optional;
 public class AcademicService {
 
     private final StudentRepository studentRepository;
-    private final com.school.academic.repository.CourseRepository courseRepository;
-    private final com.school.academic.repository.SectionRepository sectionRepository;
+    private final com.school.academic.service.CourseService courseService;
+    private final com.school.academic.service.SectionService sectionService;
     private final com.school.academic.repository.GradeRepository gradeRepository;
     private final com.school.academic.repository.AttendanceRepository attendanceRepository;
+    private final com.school.academic.repository.EnrollmentRepository enrollmentRepository;
+    private final com.school.health.service.HealthService healthService;
+    private final com.school.core.service.AuditService auditService;
 
     public AcademicService(StudentRepository studentRepository,
-            com.school.academic.repository.CourseRepository courseRepository,
-            com.school.academic.repository.SectionRepository sectionRepository,
+            com.school.academic.service.CourseService courseService,
+            com.school.academic.service.SectionService sectionService,
             com.school.academic.repository.GradeRepository gradeRepository,
-            com.school.academic.repository.AttendanceRepository attendanceRepository) {
+            com.school.academic.repository.AttendanceRepository attendanceRepository,
+            com.school.academic.repository.EnrollmentRepository enrollmentRepository,
+            com.school.health.service.HealthService healthService,
+            com.school.core.service.AuditService auditService) {
         this.studentRepository = studentRepository;
-        this.courseRepository = courseRepository;
-        this.sectionRepository = sectionRepository;
+        this.courseService = courseService;
+        this.sectionService = sectionService;
         this.gradeRepository = gradeRepository;
         this.attendanceRepository = attendanceRepository;
+        this.enrollmentRepository = enrollmentRepository;
+        this.healthService = healthService;
+        this.auditService = auditService;
     }
 
     // Student Ops...
@@ -67,26 +76,26 @@ public class AcademicService {
         return gradeRepository.findAll();
     }
 
-    // Course Ops
+    // Course Ops - Delegated to CourseService
     public java.util.List<com.school.academic.entity.Course> getAllCourses() {
-        return courseRepository.findAll();
+        return courseService.getAllActiveCourses();
     }
 
-    // Section Ops
-    public java.util.List<com.school.academic.entity.Section> getAllSections() {
-        return sectionRepository.findAll();
-    }
-
+    // Section Ops - Delegated to SectionService
     public com.school.academic.entity.Section saveSection(@NonNull com.school.academic.entity.Section section) {
-        return sectionRepository.save(section);
+        return sectionService.saveSection(section);
     }
 
     public void deleteSection(@NonNull Long id) {
-        sectionRepository.deleteById(id);
+        sectionService.deleteSection(id);
     }
 
     public Optional<com.school.academic.entity.Section> getSectionById(@NonNull Long id) {
-        return sectionRepository.findById(id);
+        return sectionService.getSectionById(id);
+    }
+
+    public java.util.List<com.school.academic.entity.Section> getAllSections() {
+        return sectionService.getAllActiveSections(org.springframework.data.domain.Pageable.unpaged()).getContent();
     }
 
     public org.springframework.data.domain.Page<Student> getAllStudents(
@@ -103,7 +112,41 @@ public class AcademicService {
     }
 
     public void deleteStudent(@NonNull Long id) {
+        // Verificar enrollments existentes
+        if (enrollmentRepository.existsByStudentId(id)) {
+            throw new IllegalStateException("Cannot delete student with existing enrollments");
+        }
+
+        Student student = studentRepository.findById(id)
+            .orElseThrow(() -> new IllegalArgumentException("Student not found"));
+
+        // Soft delete
+        student.setDeleted(true);
+        studentRepository.save(student);
+
+        // Auditoría
+        auditService.logStudentDeletion(id, getCurrentUser());
+    }
+
+    public void hardDeleteStudent(@NonNull Long id) {
+        // 1. Delete health data
+        healthService.deleteStudentHealthData(id);
+
+        // 2. Delete academic data
+        gradeRepository.deleteByStudentId(id);
+        attendanceRepository.deleteByStudentId(id);
+        enrollmentRepository.deleteByStudentId(id);
+
+        // 3. Delete student
         studentRepository.deleteById(id);
+
+        // Auditoría
+        auditService.logStudentDeletion(id, getCurrentUser());
+    }
+
+    private String getCurrentUser() {
+        return org.springframework.security.core.context.SecurityContextHolder
+            .getContext().getAuthentication().getName();
     }
 
     public long countStudents() {

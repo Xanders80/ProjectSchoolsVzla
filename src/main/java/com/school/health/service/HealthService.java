@@ -80,4 +80,9 @@ public class HealthService {
     public void deleteVaccine(Long vaccineId) {
         vaccineRepository.deleteById(vaccineId);
     }
+
+    public void deleteStudentHealthData(@NonNull Long studentId) {
+        medicalRecordRepository.deleteByStudentId(studentId);
+        vaccineRepository.deleteByStudentId(studentId);
+    }
 }

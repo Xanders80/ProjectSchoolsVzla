@@ -45,6 +45,12 @@ public class Student extends Person {
     @Column(name = "enrollment_date", nullable = false)
     private LocalDate enrollmentDate;
 
+    @Column(name = "deleted", nullable = false)
+    private boolean deleted = false;
+
+    @Column(name = "deleted_at")
+    private LocalDateTime deletedAt;
+
     public Student() {
     }
 
@@ -91,6 +97,21 @@ public class Student extends Person {
 
     public void setEnrollmentDate(LocalDate enrollmentDate) {
         this.enrollmentDate = enrollmentDate;
+    }
+
+    public boolean isDeleted() {
+        return deleted;
+    }
+
+    public void setDeleted(boolean deleted) {
+        this.deleted = deleted;
+        if (deleted && this.deletedAt == null) {
+            this.deletedAt = LocalDateTime.now();
+        }
+    }
+
+    public LocalDateTime getDeletedAt() {
+        return deletedAt;
     }
 
     @Override

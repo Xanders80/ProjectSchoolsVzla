@@ -2,11 +2,15 @@ package com.school.admin.service;
 
 import com.school.admin.entity.Staff;
 import com.school.admin.repository.StaffRepository;
+import com.school.academic.repository.SectionRepository;
 import com.school.core.enums.Role;
+import com.school.core.service.AuditService;
 
 import org.springframework.lang.NonNull;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Optional;
 
@@ -15,9 +19,15 @@ import java.util.Optional;
 public class StaffService {
 
     private final StaffRepository staffRepository;
+    private final SectionRepository sectionRepository;
+    private final AuditService auditService;
 
-    public StaffService(StaffRepository staffRepository) {
+    public StaffService(StaffRepository staffRepository,
+                       SectionRepository sectionRepository,
+                       AuditService auditService) {
         this.staffRepository = staffRepository;
+        this.sectionRepository = sectionRepository;
+        this.auditService = auditService;
     }
 
     public org.springframework.data.domain.Page<Staff> getAllStaff(
@@ -46,7 +56,33 @@ public class StaffService {
     }
 
     public void deleteStaff(@NonNull Long id) {
-        staffRepository.deleteById(id);
+        Staff staff = staffRepository.findById(id)
+            .orElseThrow(() -> new IllegalArgumentException("Personal no encontrado"));
+
+        validateStaffDependencies(id);
+
+        staff.setDeleted(true);
+        staff.setDeletedAt(LocalDateTime.now());
+        staff.setDeletedBy(getCurrentUser());
+        
+        staffRepository.save(staff);
+        auditService.logStaffDeletion(id, getCurrentUser());
+    }
+
+    private void validateStaffDependencies(@NonNull Long staffId) {
+        // Verificar si el staff es profesor de alguna sección
+        long sectionCount = sectionRepository.findAll().stream()
+            .filter(s -> s.getTeacher() != null && s.getTeacher().getId().equals(staffId))
+            .count();
+        
+        if (sectionCount > 0) {
+            throw new IllegalStateException(
+                String.format("No se puede eliminar el personal. Es profesor de %d sección(es)", sectionCount));
+        }
+    }
+
+    private String getCurrentUser() {
+        return SecurityContextHolder.getContext().getAuthentication().getName();
     }
 
     public long countStaff() {

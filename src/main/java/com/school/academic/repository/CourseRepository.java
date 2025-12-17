@@ -18,8 +18,21 @@ package com.school.academic.repository;
 
 import com.school.academic.entity.Course;
 import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.jpa.repository.Query;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
+import java.util.List;
 import java.util.Optional;
 
 public interface CourseRepository extends JpaRepository<Course, Long> {
     Optional<Course> findByCode(String code);
+    
+    @Query("SELECT c FROM Course c WHERE c.deleted = false")
+    Page<Course> findAllActive(Pageable pageable);
+    
+    @Query("SELECT c FROM Course c WHERE c.deleted = false")
+    List<Course> findAllActive();
+    
+    @Query("SELECT c FROM Course c WHERE c.id = ?1 AND c.deleted = false")
+    Optional<Course> findByIdAndNotDeleted(Long id);
 }

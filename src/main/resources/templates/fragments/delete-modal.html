@@ -36,8 +36,16 @@
             </button>
           </div>
           <div class="modal-body">
-            ¿Estás seguro de que deseas eliminar este elemento? Esta acción no
-            se puede deshacer.
+            <p>¿Estás seguro de que deseas eliminar este elemento?</p>
+            <div class="alert alert-warning">
+              <i class="fas fa-exclamation-triangle"></i>
+              <strong>Advertencia:</strong> Esta acción no se puede deshacer.
+              El elemento será marcado como eliminado pero se conservará para auditoría.
+            </div>
+            <p class="text-muted small">
+              <strong>Nota:</strong> No se puede eliminar si tiene dependencias activas
+              (estudiantes matriculados o registros de asistencia).
+            </p>
           </div>
           <div class="modal-footer">
             <button

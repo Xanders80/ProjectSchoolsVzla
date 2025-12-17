@@ -7,6 +7,7 @@ import org.springframework.lang.NonNull;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 @Controller
 @RequestMapping("/students")
@@ -57,8 +58,31 @@ public class StudentController {
     }
 
     @RequestMapping(value = "/delete/{id}", method = { RequestMethod.POST, RequestMethod.DELETE })
-    public String deleteStudent(@PathVariable @NonNull Long id) {
-        academicService.deleteStudent(id);
+    @org.springframework.security.access.prepost.PreAuthorize("hasRole('ADMIN')")
+    public String deleteStudent(@PathVariable @NonNull Long id, RedirectAttributes redirectAttributes) {
+        try {
+            academicService.deleteStudent(id);
+            redirectAttributes.addFlashAttribute("successMessage", "Estudiante eliminado exitosamente");
+        } catch (IllegalArgumentException e) {
+            redirectAttributes.addFlashAttribute("errorMessage", "Estudiante no encontrado");
+        } catch (IllegalStateException e) {
+            redirectAttributes.addFlashAttribute("errorMessage", e.getMessage());
+        } catch (Exception e) {
+            redirectAttributes.addFlashAttribute("errorMessage", "Error interno del sistema");
+        }
         return "redirect:/students";
+    }
+    
+    @DeleteMapping("/api/{id}")
+    @org.springframework.security.access.prepost.PreAuthorize("hasRole('ADMIN')")
+    @ResponseBody
+    public org.springframework.http.ResponseEntity<?> deleteStudentApi(@PathVariable @NonNull Long id) {
+        try {
+            academicService.deleteStudent(id);
+            return org.springframework.http.ResponseEntity.ok(java.util.Map.of("message", "Student deleted successfully"));
+        } catch (Exception e) {
+            return org.springframework.http.ResponseEntity.status(500)
+                .body(java.util.Map.of("error", "Error deleting student"));
+        }
     }
 }

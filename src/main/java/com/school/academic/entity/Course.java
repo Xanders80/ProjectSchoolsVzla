@@ -68,6 +68,15 @@ public class Course {
     @Column(name = "grade_level", nullable = false)
     private Integer gradeLevel;
 
+    @Column(name = "deleted", nullable = false)
+    private boolean deleted = false;
+
+    @Column(name = "deleted_at")
+    private LocalDateTime deletedAt;
+
+    @Column(name = "deleted_by", length = 100)
+    private String deletedBy;
+
     public Course() {
         /*
          * Default constructor required by JPA and other frameworks that create entity
@@ -135,6 +144,13 @@ public class Course {
     public void setGradeLevel(Integer gradeLevel) {
         this.gradeLevel = gradeLevel;
     }
+
+    public boolean isDeleted() { return deleted; }
+    public void setDeleted(boolean deleted) { this.deleted = deleted; }
+    public LocalDateTime getDeletedAt() { return deletedAt; }
+    public void setDeletedAt(LocalDateTime deletedAt) { this.deletedAt = deletedAt; }
+    public String getDeletedBy() { return deletedBy; }
+    public void setDeletedBy(String deletedBy) { this.deletedBy = deletedBy; }
 
     @Override
     public boolean equals(Object o) {

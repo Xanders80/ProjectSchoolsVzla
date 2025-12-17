@@ -2,7 +2,7 @@
 <html xmlns:th="http://www.thymeleaf.org">
 <head>
     <meta charset="utf-8">
-    <title>Acceso Denegado - Sistema Escolar</title>
+    <title>Acceso Denegado - Sistema de Gestión Escolar</title>
     <link th:href="@{/css/sb-admin-2.min.css}" rel="stylesheet">
 </head>
 <body class="bg-gradient-primary">
@@ -16,8 +16,7 @@
                                 <div class="p-5">
                                     <div class="text-center">
                                         <h1 class="h4 text-gray-900 mb-4">Acceso Denegado</h1>
-                                        <p class="mb-4">No tiene permisos para acceder a este recurso.</p>
-                                        <p class="text-muted small" th:if="${errorId}">ID de Error: <span th:text="${errorId}"></span></p>
+                                        <p class="mb-4">No tienes permisos para acceder a este recurso.</p>
                                         <a th:href="@{/}" class="btn btn-primary">Volver al Inicio</a>
                                     </div>
                                 </div>

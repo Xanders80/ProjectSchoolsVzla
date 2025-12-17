@@ -37,6 +37,15 @@ public class Section {
     @Column(name = "term_changed_at")
     private LocalDateTime termChangedAt;
 
+    @Column(name = "deleted", nullable = false)
+    private boolean deleted = false;
+
+    @Column(name = "deleted_at")
+    private LocalDateTime deletedAt;
+
+    @Column(name = "deleted_by", length = 100)
+    private String deletedBy;
+
     @NotNull(message = "El curso es obligatorio", groups = ValidationGroups.Create.class)
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "course_id", nullable = false, foreignKey = @ForeignKey(name = "fk_section_course"))
@@ -73,6 +82,13 @@ public class Section {
     public LocalDateTime getTermChangedAt() {
         return termChangedAt;
     }
+
+    public boolean isDeleted() { return deleted; }
+    public void setDeleted(boolean deleted) { this.deleted = deleted; }
+    public LocalDateTime getDeletedAt() { return deletedAt; }
+    public void setDeletedAt(LocalDateTime deletedAt) { this.deletedAt = deletedAt; }
+    public String getDeletedBy() { return deletedBy; }
+    public void setDeletedBy(String deletedBy) { this.deletedBy = deletedBy; }
     public Course getCourse() { return course; }
     public void setCourse(Course course) { this.course = course; }
     public Staff getTeacher() { return teacher; }

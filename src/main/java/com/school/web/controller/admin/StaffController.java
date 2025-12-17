@@ -8,6 +8,7 @@ import org.springframework.lang.NonNull;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 @Controller
 @RequestMapping("/staff")
@@ -58,8 +59,17 @@ public class StaffController {
     }
 
     @RequestMapping(value = "/delete/{id}", method = { RequestMethod.POST, RequestMethod.DELETE })
-    public String deleteStaff(@PathVariable @NonNull Long id) {
-        staffService.deleteStaff(id);
+    public String deleteStaff(@PathVariable @NonNull Long id, RedirectAttributes redirectAttributes) {
+        try {
+            staffService.deleteStaff(id);
+            redirectAttributes.addFlashAttribute("successMessage", "Personal eliminado exitosamente");
+        } catch (IllegalArgumentException e) {
+            redirectAttributes.addFlashAttribute("errorMessage", "Personal no encontrado");
+        } catch (IllegalStateException e) {
+            redirectAttributes.addFlashAttribute("errorMessage", e.getMessage());
+        } catch (Exception e) {
+            redirectAttributes.addFlashAttribute("errorMessage", "Error interno del sistema");
+        }
         return "redirect:/staff";
     }
 }

@@ -60,6 +60,15 @@ public class Staff extends Person {
     @Column(name = "specialization", length = 200)
     private String specialization;
 
+    @Column(name = "deleted", nullable = false)
+    private boolean deleted = false;
+
+    @Column(name = "deleted_at")
+    private LocalDateTime deletedAt;
+
+    @Column(name = "deleted_by", length = 100)
+    private String deletedBy;
+
     public Staff() {
     }
 
@@ -131,6 +140,13 @@ public class Staff extends Person {
     public void setSpecialization(String specialization) {
         this.specialization = specialization != null ? specialization.trim() : null;
     }
+
+    public boolean isDeleted() { return deleted; }
+    public void setDeleted(boolean deleted) { this.deleted = deleted; }
+    public LocalDateTime getDeletedAt() { return deletedAt; }
+    public void setDeletedAt(LocalDateTime deletedAt) { this.deletedAt = deletedAt; }
+    public String getDeletedBy() { return deletedBy; }
+    public void setDeletedBy(String deletedBy) { this.deletedBy = deletedBy; }
 
     @Override
     public boolean equals(Object o) {
