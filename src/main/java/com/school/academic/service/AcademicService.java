@@ -160,4 +160,8 @@ public class AcademicService {
     public Optional<Student> getStudentByEmail(String email) {
         return studentRepository.findByEmail(email);
     }
+
+    public Optional<Student> getStudentByUserId(Long userId) {
+        return studentRepository.findByUserId(userId);
+    }
 }

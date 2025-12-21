@@ -20,7 +20,8 @@ public interface UserService {
 
     boolean checkIfValidOldPassword(User user, String oldPassword);
 
-    User updateUserProfile(User user, String firstName, String lastName, String email);
+    User updateUserProfile(User user, String firstName, String lastName, String email, String dni, String phoneNumber,
+            String address, String relationship, String department, String specialization);
 
     Optional<User> findById(Long id);
 

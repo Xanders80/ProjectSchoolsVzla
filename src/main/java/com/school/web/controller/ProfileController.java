@@ -87,12 +87,9 @@ public class ProfileController {
             User user = userRepository.findByUsername(userDetails.getUsername())
                     .orElseThrow(() -> new RuntimeException("Usuario no encontrado"));
 
-            // Actualizar usuario base (ahora solo guarda el estado del usuario)
-            userService.updateUserProfile(user, firstName, lastName, email);
-
-            // Actualizar entidad específica con los datos personales recibidos
-            updateSpecificEntity(user, dni, phoneNumber, address, relationship, department, specialization, firstName,
-                    lastName, email);
+            // Actualizar perfil de forma centralizada a través del servicio
+            userService.updateUserProfile(user, firstName, lastName, email, dni, phoneNumber, address, relationship,
+                    department, specialization);
 
             redirectAttributes.addFlashAttribute("success", "Perfil actualizado exitosamente");
         } catch (RuntimeException e) {
@@ -100,76 +97,6 @@ public class ProfileController {
         }
 
         return "redirect:/profile";
-    }
-
-    private void updateSpecificEntity(User user, String dni, String phoneNumber, String address,
-            String relationship, String department, String specialization, String firstName, String lastName,
-            String email) {
-        switch (user.getRole()) {
-            case PARENT:
-                parentService.getAllParents(org.springframework.data.domain.PageRequest.of(0, 1000))
-                        .getContent().stream()
-                        .filter(p -> p.getUser() != null && p.getUser().getId().equals(user.getId()))
-                        .findFirst()
-                        .ifPresent(parent -> {
-                            parent.setFirstName(firstName);
-                            parent.setLastName(lastName);
-                            parent.setEmail(email);
-                            if (dni != null)
-                                parent.setDni(dni);
-                            if (phoneNumber != null)
-                                parent.setPhoneNumber(phoneNumber);
-                            if (address != null)
-                                parent.setAddress(address);
-                            if (relationship != null)
-                                parent.setRelationship(relationship);
-                            parentService.saveParent(parent);
-                        });
-                break;
-            case TEACHER:
-            case STAFF:
-                staffService.getAllStaff(org.springframework.data.domain.PageRequest.of(0, 1000))
-                        .getContent().stream()
-                        .filter(s -> s.getUser() != null && s.getUser().getId().equals(user.getId()))
-                        .findFirst()
-                        .ifPresent(staff -> {
-                            staff.setFirstName(firstName);
-                            staff.setLastName(lastName);
-                            staff.setEmail(email);
-                            if (dni != null)
-                                staff.setDni(dni);
-                            if (phoneNumber != null)
-                                staff.setPhoneNumber(phoneNumber);
-                            if (address != null)
-                                staff.setAddress(address);
-                            if (department != null)
-                                staff.setDepartment(department);
-                            if (specialization != null)
-                                staff.setSpecialization(specialization);
-                            staffService.saveStaff(staff);
-                        });
-                break;
-            case STUDENT:
-                academicService.getAllStudents(org.springframework.data.domain.PageRequest.of(0, 1000))
-                        .getContent().stream()
-                        .filter(s -> s.getUser() != null && s.getUser().getId().equals(user.getId()))
-                        .findFirst()
-                        .ifPresent(student -> {
-                            student.setFirstName(firstName);
-                            student.setLastName(lastName);
-                            student.setEmail(email);
-                            if (dni != null)
-                                student.setDni(dni);
-                            if (phoneNumber != null)
-                                student.setPhoneNumber(phoneNumber);
-                            if (address != null)
-                                student.setAddress(address);
-                            academicService.saveStudent(student);
-                        });
-                break;
-            default:
-                break;
-        }
     }
 
     @GetMapping("/settings")

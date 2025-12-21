@@ -200,11 +200,66 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    public User updateUserProfile(User user, String firstName, String lastName, String email) {
-        // Validar si el email cambió y si ya existe
-        // En una arquitectura sin redundancia, el perfil del usuario (Student, Staff,
-        // etc)
-        // debería ser actualizado a través de sus propios servicios, no del UserProfile
+    public User updateUserProfile(User user, String firstName, String lastName, String email, String dni,
+            String phoneNumber, String address, String relationship, String department, String specialization) {
+        switch (user.getRole()) {
+            case PARENT:
+                parentService.getParentByUserId(user.getId())
+                        .ifPresent(parent -> {
+                            parent.setFirstName(firstName);
+                            parent.setLastName(lastName);
+                            parent.setEmail(email);
+                            if (dni != null)
+                                parent.setDni(dni);
+                            if (phoneNumber != null)
+                                parent.setPhoneNumber(phoneNumber);
+                            if (address != null)
+                                parent.setAddress(address);
+                            if (relationship != null)
+                                parent.setRelationship(relationship);
+                            parentService.saveParent(parent);
+                        });
+                break;
+            case ADMIN:
+            case DIRECTOR:
+            case TEACHER:
+            case STAFF:
+                staffService.getStaffByUserId(user.getId())
+                        .ifPresent(staff -> {
+                            staff.setFirstName(firstName);
+                            staff.setLastName(lastName);
+                            staff.setEmail(email);
+                            if (dni != null)
+                                staff.setDni(dni);
+                            if (phoneNumber != null)
+                                staff.setPhoneNumber(phoneNumber);
+                            if (address != null)
+                                staff.setAddress(address);
+                            if (department != null)
+                                staff.setDepartment(department);
+                            if (specialization != null)
+                                staff.setSpecialization(specialization);
+                            staffService.saveStaff(staff);
+                        });
+                break;
+            case STUDENT:
+                academicService.getStudentByUserId(user.getId())
+                        .ifPresent(student -> {
+                            student.setFirstName(firstName);
+                            student.setLastName(lastName);
+                            student.setEmail(email);
+                            if (dni != null)
+                                student.setDni(dni);
+                            if (phoneNumber != null)
+                                student.setPhoneNumber(phoneNumber);
+                            if (address != null)
+                                student.setAddress(address);
+                            academicService.saveStudent(student);
+                        });
+                break;
+            default:
+                break;
+        }
         return userRepository.save(user);
     }
 

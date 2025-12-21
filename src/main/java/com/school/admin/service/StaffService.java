@@ -96,4 +96,8 @@ public class StaffService {
     public Optional<Staff> findByEmail(String email) {
         return staffRepository.findByEmail(email);
     }
+
+    public Optional<Staff> getStaffByUserId(Long userId) {
+        return staffRepository.findByUserId(userId);
+    }
 }
