@@ -118,7 +118,7 @@ public class AcademicService {
         }
 
         Student student = studentRepository.findById(id)
-            .orElseThrow(() -> new IllegalArgumentException("Student not found"));
+                .orElseThrow(() -> new IllegalArgumentException("Student not found"));
 
         // Soft delete
         student.setDeleted(true);
@@ -146,7 +146,7 @@ public class AcademicService {
 
     private String getCurrentUser() {
         return org.springframework.security.core.context.SecurityContextHolder
-            .getContext().getAuthentication().getName();
+                .getContext().getAuthentication().getName();
     }
 
     public long countStudents() {
