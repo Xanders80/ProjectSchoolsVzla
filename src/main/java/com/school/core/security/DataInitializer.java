@@ -59,9 +59,6 @@ public class DataInitializer {
             if (userRepository.findByUsername("admin").isEmpty()) {
                 User admin = new User();
                 admin.setUsername("admin");
-                admin.setEmail("admin@school.com");
-                admin.setFirstName("Admin");
-                admin.setLastName("User");
                 admin.setPassword(passwordEncoder.encode("P@ssw0rd123!"));
                 admin.setRole(com.school.core.enums.Role.ADMIN);
                 admin.setEnabled(true);

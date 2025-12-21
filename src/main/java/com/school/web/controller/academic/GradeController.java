@@ -8,19 +8,29 @@ import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 @Controller
 @RequestMapping("/grades")
 public class GradeController {
 
-    private final AcademicService academicService;
+    private static final Logger logger = LoggerFactory.getLogger(GradeController.class);
 
-    public GradeController(AcademicService academicService) {
+    private final AcademicService academicService;
+    private final com.school.academic.repository.AcademicPeriodRepository academicPeriodRepository;
+
+    public GradeController(AcademicService academicService,
+            com.school.academic.repository.AcademicPeriodRepository academicPeriodRepository) {
         this.academicService = academicService;
+        this.academicPeriodRepository = academicPeriodRepository;
     }
 
     @GetMapping
     public String listGrades(Model model) {
-        model.addAttribute("grades", academicService.getAllGrades());
+        java.util.List<Grade> grades = academicService.getAllGrades();
+        logger.info("Retrieved {} grades from database", grades.size());
+        model.addAttribute("grades", grades);
         return "academic/grade-list";
     }
 
@@ -57,6 +67,7 @@ public class GradeController {
         model.addAttribute("students",
                 academicService.getAllStudents(org.springframework.data.domain.Pageable.unpaged()).getContent());
         model.addAttribute("courses", academicService.getAllCourses());
+        model.addAttribute("periods", academicPeriodRepository.findAll());
         model.addAttribute("evaluationTypes", EvaluationType.values());
     }
 }

@@ -19,6 +19,10 @@
       rel="stylesheet"
     />
     <link th:href="@{/css/sb-admin-2.min.css}" rel="stylesheet" />
+    <link
+      th:href="@{/vendor/datatables/dataTables.bootstrap4.min.css}"
+      rel="stylesheet"
+    />
   </head>
 
   <body id="page-top">
@@ -90,17 +94,23 @@
                       <tr th:each="grade : ${grades}">
                         <td th:text="${grade.id}">1</td>
                         <td
-                          th:text="${grade.student.firstName + ' ' + grade.student.lastName}"
+                          th:text="${(grade.student?.firstName ?: '') + ' ' + (grade.student?.lastName ?: '')}"
                         >
                           Juan Perez
                         </td>
-                        <td th:text="${grade.course.name}">Matemáticas</td>
-                        <td th:text="${grade.term}">2025-1</td>
-                        <td th:text="${grade.evaluationType.displayName}">
+                        <td th:text="${grade.course?.name ?: 'N/A'}">
+                          Matemáticas
+                        </td>
+                        <td th:text="${grade.period?.code ?: 'N/A'}">
+                          2025-Q1
+                        </td>
+                        <td
+                          th:text="${grade.evaluationType?.displayName ?: 'N/A'}"
+                        >
                           Examen
                         </td>
-                        <td th:text="${grade.score}">85</td>
-                        <td th:text="${grade.date}">2025-05-20</td>
+                        <td th:text="${grade.score ?: '0.0'}">85</td>
+                        <td th:text="${grade.date ?: 'N/A'}">2025-05-20</td>
                         <td>
                           <a
                             th:href="@{/grades/edit/{id}(id=${grade.id})}"
@@ -146,12 +156,19 @@
     <script th:src="@{/vendor/bootstrap/js/bootstrap.bundle.min.js}"></script>
     <script th:src="@{/vendor/jquery-easing/jquery.easing.min.js}"></script>
     <script th:src="@{/js/sb-admin-2.min.js}"></script>
+    <script th:src="@{/vendor/datatables/jquery.dataTables.min.js}"></script>
+    <script
+      th:src="@{/vendor/datatables/dataTables.bootstrap4.min.js}"
+    ></script>
+    <script th:src="@{/js/demo/datatables-demo.js}"></script>
     <script>
-      $("#deleteModal").on("show.bs.modal", function (event) {
-        var button = $(event.relatedTarget);
-        var url = button.data("url");
-        var modal = $(this);
-        modal.find("#deleteForm").attr("action", url);
+      $(document).ready(function () {
+        $("#deleteModal").on("show.bs.modal", function (event) {
+          var button = $(event.relatedTarget);
+          var url = button.data("url");
+          var modal = $(this);
+          modal.find("#deleteForm").attr("action", url);
+        });
       });
     </script>
   </body>

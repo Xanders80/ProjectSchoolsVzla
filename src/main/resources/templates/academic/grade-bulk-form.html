@@ -1,0 +1,232 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+  <head>
+    <meta charset="utf-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta
+      name="viewport"
+      content="width=device-width, initial-scale=1, shrink-to-fit=no"
+    />
+    <title>Registro Masivo de Calificaciones - Sistema Escolar</title>
+    <link
+      th:href="@{/vendor/fontawesome-free/css/all.min.css}"
+      rel="stylesheet"
+      type="text/css"
+    />
+    <link
+      href="https://fonts.googleapis.com/css?family=Nunito:200,200i,300,300i,400,400i,600,600i,700,700i,800,800i,900,900i"
+      rel="stylesheet"
+    />
+    <link th:href="@{/css/sb-admin-2.min.css}" rel="stylesheet" />
+    <style>
+      .table-responsive {
+        max-height: 600px;
+        overflow-y: auto;
+      }
+      .score-input {
+        width: 80px;
+        text-align: center;
+      }
+    </style>
+  </head>
+  <body id="page-top">
+    <div id="wrapper">
+      <div th:replace="~{fragments/sb-admin-sidebar :: sidebar}"></div>
+      <div id="content-wrapper" class="d-flex flex-column">
+        <div id="content">
+          <div th:replace="~{fragments/sb-admin-topbar :: topbar}"></div>
+          <div class="container-fluid">
+            <h1 class="h3 mb-4 text-gray-800">Carga Masiva de Notas</h1>
+
+            <div class="card shadow mb-4">
+              <div class="card-header py-3">
+                <h6 class="m-0 font-weight-bold text-primary">
+                  Filtros de Selección
+                </h6>
+              </div>
+              <div class="card-body">
+                <form
+                  th:action="@{/grades/bulk}"
+                  method="get"
+                  class="form-row align-items-end"
+                >
+                  <div class="form-group col-md-3">
+                    <label>Curso</label>
+                    <select name="courseId" class="form-control" required>
+                      <option value="">Seleccione...</option>
+                      <option
+                        th:each="c : ${courses}"
+                        th:value="${c.id}"
+                        th:text="${c.name}"
+                        th:selected="${c.id == bulkDto.courseId}"
+                      ></option>
+                    </select>
+                  </div>
+                  <div class="form-group col-md-2">
+                    <label>Sección</label>
+                    <select name="sectionId" class="form-control" required>
+                      <option value="">Seleccione...</option>
+                      <option
+                        th:each="s : ${sections}"
+                        th:value="${s.id}"
+                        th:text="${s.name}"
+                        th:selected="${s.id == bulkDto.sectionId}"
+                      ></option>
+                    </select>
+                  </div>
+                  <div class="form-group col-md-3">
+                    <label>Periodo</label>
+                    <select name="periodId" class="form-control" required>
+                      <option value="">Seleccione...</option>
+                      <option
+                        th:each="p : ${periods}"
+                        th:value="${p.id}"
+                        th:text="${p.name}"
+                        th:selected="${p.id == bulkDto.periodId}"
+                      ></option>
+                    </select>
+                  </div>
+                  <div class="form-group col-md-2">
+                    <label>Tipo Evaluación</label>
+                    <select name="evaluationType" class="form-control" required>
+                      <option value="">Seleccione...</option>
+                      <option
+                        th:each="t : ${evaluationTypes}"
+                        th:value="${t}"
+                        th:text="${t.displayName}"
+                        th:selected="${t == bulkDto.evaluationType}"
+                      ></option>
+                    </select>
+                  </div>
+                  <div class="form-group col-md-2">
+                    <button type="submit" class="btn btn-info btn-block">
+                      <i class="fas fa-search"></i> Cargar alumnos
+                    </button>
+                  </div>
+                </form>
+              </div>
+            </div>
+
+            <div
+              th:if="${not #lists.isEmpty(bulkDto.studentGrades)}"
+              class="card shadow mb-4"
+            >
+              <div
+                class="card-header py-3 d-flex justify-content-between align-items-center"
+              >
+                <h6 class="m-0 font-weight-bold text-primary">Hoja de Notas</h6>
+                <span
+                  class="badge badge-secondary"
+                  th:text="${bulkDto.evaluationType.displayName}"
+                ></span>
+              </div>
+              <div class="card-body">
+                <form
+                  th:action="@{/grades/bulk/save}"
+                  th:object="${bulkDto}"
+                  method="post"
+                >
+                  <input type="hidden" th:field="*{courseId}" />
+                  <input type="hidden" th:field="*{sectionId}" />
+                  <input type="hidden" th:field="*{periodId}" />
+                  <input type="hidden" th:field="*{evaluationType}" />
+
+                  <div class="table-responsive">
+                    <table
+                      class="table table-bordered table-hover"
+                      id="gradesTable"
+                    >
+                      <thead class="thead-light">
+                        <tr>
+                          <th width="300">Estudiante</th>
+                          <th width="150" class="text-center">Nota (0-20)</th>
+                          <th>Letra</th>
+                          <th>Comentarios</th>
+                        </tr>
+                      </thead>
+                      <tbody>
+                        <tr th:each="sg, stat : *{studentGrades}">
+                          <td>
+                            <input
+                              type="hidden"
+                              th:field="*{studentGrades[__${stat.index}__].studentId}"
+                            />
+                            <span th:text="${sg.studentName}"></span>
+                          </td>
+                          <td class="text-center">
+                            <input
+                              type="number"
+                              step="0.5"
+                              min="0"
+                              max="20"
+                              class="form-control score-input mx-auto"
+                              th:field="*{studentGrades[__${stat.index}__].score}"
+                              onchange="updateLetter(this)"
+                            />
+                          </td>
+                          <td class="letter-col text-center font-weight-bold">
+                            -
+                          </td>
+                          <td>
+                            <input
+                              type="text"
+                              class="form-control form-control-sm"
+                              th:field="*{studentGrades[__${stat.index}__].comments}"
+                            />
+                          </td>
+                        </tr>
+                      </tbody>
+                    </table>
+                  </div>
+
+                  <div class="mt-4">
+                    <button type="submit" class="btn btn-primary">
+                      <i class="fas fa-save"></i> Guardar Calificaciones
+                    </button>
+                  </div>
+                </form>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div th:replace="~{fragments/sb-admin-footer :: footer}"></div>
+      </div>
+    </div>
+    <a class="scroll-to-top rounded" href="#page-top"
+      ><i class="fas fa-angle-up"></i
+    ></a>
+
+    <script th:src="@{/vendor/jquery/jquery.min.js}"></script>
+    <script th:src="@{/vendor/bootstrap/js/bootstrap.bundle.min.js}"></script>
+    <script th:src="@{/js/sb-admin-2.min.js}"></script>
+
+    <script>
+      function updateLetter(input) {
+        const score = parseFloat(input.value);
+        const row = input.closest("tr");
+        const letterCol = row.querySelector(".letter-col");
+        let letter = "-";
+
+        if (!isNaN(score)) {
+          if (score >= 18) letter = "A";
+          else if (score >= 15) letter = "B";
+          else if (score >= 12) letter = "C";
+          else if (score >= 10) letter = "D";
+          else letter = "F";
+        }
+        letterCol.textContent = letter;
+
+        // Highlight color
+        letterCol.className = "letter-col text-center font-weight-bold";
+        if (letter === "F") letterCol.classList.add("text-danger");
+        else if (letter === "A") letterCol.classList.add("text-success");
+        else letterCol.classList.add("text-primary");
+      }
+
+      // Initialize on load
+      document
+        .querySelectorAll(".score-input")
+        .forEach((input) => updateLetter(input));
+    </script>
+  </body>
+</html>

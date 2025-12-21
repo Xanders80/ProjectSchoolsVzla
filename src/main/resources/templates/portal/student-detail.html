@@ -106,7 +106,7 @@
                         </thead>
                         <tbody>
                           <tr th:each="g : ${grades}">
-                            <td th:text="${g.term}">Term</td>
+                            <td th:text="${g.period?.code}">Term</td>
                             <td th:text="${g.course.name}">Math</td>
                             <td th:text="${g.evaluationType.displayName}">
                               Exam

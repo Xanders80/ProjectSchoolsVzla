@@ -68,6 +68,7 @@
                           id="code"
                           th:field="*{code}"
                           placeholder="Ej: MATH101"
+                          maxlength="10"
                           required
                         />
                         <div
@@ -86,6 +87,7 @@
                           id="name"
                           th:field="*{name}"
                           placeholder="Nombre del curso"
+                          maxlength="100"
                           required
                         />
                         <div
@@ -145,6 +147,7 @@
                       id="description"
                       th:field="*{description}"
                       rows="3"
+                      maxlength="500"
                       placeholder="Descripción opcional del curso"
                     ></textarea>
                     <div

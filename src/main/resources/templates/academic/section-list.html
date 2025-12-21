@@ -75,7 +75,7 @@
                       <tr th:each="section : ${sections.content}">
                         <td th:text="${section.id}">1</td>
                         <td th:text="${section.name}">Grupo A</td>
-                        <td th:text="${section.term}">2025-1</td>
+                        <td th:text="${section.period?.code}">2025-Q1</td>
                         <td th:text="${section.course?.name}">Curso</td>
                         <td th:text="${section.teacher?.fullName}">Profesor</td>
                         <td

@@ -15,4 +15,6 @@ public interface StudentRepository extends JpaRepository<Student, Long> {
     @org.springframework.data.jpa.repository.Query("SELECT s FROM Student s WHERE s.id = ?1 AND s.deleted = false")
     Optional<Student> findByIdAndNotDeleted(Long id);
 
+    Optional<Student> findByEmail(String email);
+
 }

@@ -5,7 +5,13 @@ import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Modifying;
 import java.util.List;
 
+import com.school.academic.entity.Student;
+import com.school.academic.entity.Course;
+import com.school.academic.entity.AcademicPeriod;
+
 public interface GradeRepository extends JpaRepository<Grade, Long> {
+    List<Grade> findByStudentAndCourseAndPeriod(Student student, Course course, AcademicPeriod period);
+
     List<Grade> findByStudentIdOrderByDateDesc(Long studentId);
 
     List<Grade> findByCourseId(Long courseId);

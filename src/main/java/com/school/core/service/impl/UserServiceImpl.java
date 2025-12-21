@@ -41,7 +41,7 @@ public class UserServiceImpl implements UserService {
         if (userRepository.findByUsername(username).isPresent()) {
             throw new RuntimeException("El nombre de usuario ya existe: " + username);
         }
-        if (userRepository.findByEmail(email).isPresent()) {
+        if (this.findByEmail(email).isPresent()) {
             throw new RuntimeException("El correo electrónico ya existe: " + email);
         }
         if (!isValidPassword(password)) {
@@ -50,9 +50,6 @@ public class UserServiceImpl implements UserService {
         }
 
         User user = new User();
-        user.setFirstName(firstName);
-        user.setLastName(lastName);
-        user.setEmail(email);
         user.setUsername(username);
         user.setPassword(passwordEncoder.encode(password));
         user.setRole(Role.STUDENT); // Asignar rol por defecto (ej. ESTUDIANTE)
@@ -70,9 +67,6 @@ public class UserServiceImpl implements UserService {
         if (userRepository.findByUsername(username).isPresent()) {
             throw new RuntimeException("El nombre de usuario ya existe: " + username);
         }
-        if (userRepository.findByEmail(email).isPresent()) {
-            throw new RuntimeException("El correo electrónico ya existe: " + email);
-        }
         if (!isValidPassword(password)) {
             throw new RuntimeException(
                     "La contraseña no cumple con los requisitos de seguridad (Mínimo 8 caracteres, 1 mayúscula, 1 número, 1 carácter especial).");
@@ -80,9 +74,6 @@ public class UserServiceImpl implements UserService {
 
         // Crear usuario base
         User user = new User();
-        user.setFirstName(firstName);
-        user.setLastName(lastName);
-        user.setEmail(email);
         user.setUsername(username);
         user.setPassword(passwordEncoder.encode(password));
         user.setRole(Role.valueOf(userType));
@@ -92,22 +83,22 @@ public class UserServiceImpl implements UserService {
         User savedUser = userRepository.save(user);
 
         // Crear entidad específica según el tipo
-        createSpecificEntity(savedUser, userType, dni, phoneNumber, address, relationship);
+        createSpecificEntity(savedUser, userType, dni, phoneNumber, address, relationship, firstName, lastName, email);
 
         return savedUser;
     }
 
     private void createSpecificEntity(User user, String userType, String dni, String phoneNumber, String address,
-            String relationship) {
+            String relationship, String firstName, String lastName, String email) {
         Role role = Role.valueOf(userType);
 
         switch (role) {
             case PARENT:
                 com.school.core.entity.Parent parent = new com.school.core.entity.Parent();
                 parent.setUser(user);
-                parent.setFirstName(user.getFirstName());
-                parent.setLastName(user.getLastName());
-                parent.setEmail(user.getEmail());
+                parent.setFirstName(firstName);
+                parent.setLastName(lastName);
+                parent.setEmail(email);
                 parent.setDni(dni);
                 parent.setPhoneNumber(phoneNumber);
                 parent.setAddress(address);
@@ -119,9 +110,9 @@ public class UserServiceImpl implements UserService {
             case STAFF:
                 com.school.admin.entity.Staff staff = new com.school.admin.entity.Staff();
                 staff.setUser(user);
-                staff.setFirstName(user.getFirstName());
-                staff.setLastName(user.getLastName());
-                staff.setEmail(user.getEmail());
+                staff.setFirstName(firstName);
+                staff.setLastName(lastName);
+                staff.setEmail(email);
                 staff.setDni(dni);
                 staff.setPhoneNumber(phoneNumber);
                 staff.setAddress(address);
@@ -134,9 +125,9 @@ public class UserServiceImpl implements UserService {
             case STUDENT:
                 com.school.academic.entity.Student student = new com.school.academic.entity.Student();
                 student.setUser(user);
-                student.setFirstName(user.getFirstName());
-                student.setLastName(user.getLastName());
-                student.setEmail(user.getEmail());
+                student.setFirstName(firstName);
+                student.setLastName(lastName);
+                student.setEmail(email);
                 student.setDni(dni);
                 student.setPhoneNumber(phoneNumber);
                 student.setAddress(address);
@@ -151,9 +142,23 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    @org.springframework.cache.annotation.Cacheable(value = "users", key = "#email")
     public Optional<User> findByEmail(String email) {
-        return userRepository.findByEmail(email);
+        // Buscar en estudiantes
+        Optional<com.school.academic.entity.Student> student = academicService.getStudentByEmail(email);
+        if (student.isPresent())
+            return Optional.ofNullable(student.get().getUser());
+
+        // Buscar en personal
+        Optional<com.school.admin.entity.Staff> staff = staffService.findByEmail(email);
+        if (staff.isPresent())
+            return Optional.ofNullable(staff.get().getUser());
+
+        // Buscar en padres
+        Optional<com.school.core.entity.Parent> parent = parentService.findByEmail(email);
+        if (parent.isPresent())
+            return Optional.ofNullable(parent.get().getUser());
+
+        return Optional.empty();
     }
 
     @Override
@@ -197,14 +202,9 @@ public class UserServiceImpl implements UserService {
     @Override
     public User updateUserProfile(User user, String firstName, String lastName, String email) {
         // Validar si el email cambió y si ya existe
-        if (!user.getEmail().equals(email) && userRepository.findByEmail(email).isPresent()) {
-            throw new RuntimeException("El correo electrónico ya está en uso por otro usuario.");
-        }
-
-        user.setFirstName(firstName);
-        user.setLastName(lastName);
-        user.setEmail(email);
-
+        // En una arquitectura sin redundancia, el perfil del usuario (Student, Staff,
+        // etc)
+        // debería ser actualizado a través de sus propios servicios, no del UserProfile
         return userRepository.save(user);
     }
 

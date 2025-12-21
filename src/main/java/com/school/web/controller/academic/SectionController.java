@@ -2,6 +2,7 @@ package com.school.web.controller.academic;
 
 import com.school.academic.entity.Section;
 import com.school.academic.service.SectionService;
+import com.school.academic.repository.AcademicPeriodRepository;
 import com.school.academic.repository.CourseRepository;
 import com.school.admin.service.StaffService;
 import com.school.infra.service.InfraService;
@@ -21,13 +22,16 @@ public class SectionController {
     private final CourseRepository courseRepository;
     private final StaffService staffService;
     private final InfraService infraService;
+    private final AcademicPeriodRepository academicPeriodRepository;
 
     public SectionController(SectionService sectionService, CourseRepository courseRepository,
-            StaffService staffService, InfraService infraService) {
+            StaffService staffService, InfraService infraService,
+            AcademicPeriodRepository academicPeriodRepository) {
         this.sectionService = sectionService;
         this.courseRepository = courseRepository;
         this.staffService = staffService;
         this.infraService = infraService;
+        this.academicPeriodRepository = academicPeriodRepository;
     }
 
     @GetMapping
@@ -87,5 +91,6 @@ public class SectionController {
         model.addAttribute("courses", courseRepository.findAll());
         model.addAttribute("teachers", staffService.getAllTeachers());
         model.addAttribute("rooms", infraService.getAllRooms());
+        model.addAttribute("periods", academicPeriodRepository.findAll());
     }
 }

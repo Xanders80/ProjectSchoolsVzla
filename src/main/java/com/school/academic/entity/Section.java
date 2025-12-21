@@ -9,11 +9,10 @@ import java.time.LocalDateTime;
 import java.util.Objects;
 
 @Entity
-@Table(name = "sections",
-       indexes = {
-           @Index(name = "idx_section_term", columnList = "term"),
-           @Index(name = "idx_section_course", columnList = "course_id")
-       })
+@Table(name = "sections", indexes = {
+        @Index(name = "idx_section_period", columnList = "period_id"),
+        @Index(name = "idx_section_course", columnList = "course_id")
+})
 @EntityListeners(com.school.core.listener.AuditEntityListener.class)
 public class Section {
 
@@ -21,21 +20,18 @@ public class Section {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @NotBlank(message = "El nombre de la sección es obligatorio", groups = {ValidationGroups.Create.class, ValidationGroups.Update.class})
-    @Size(min = 1, max = 50, message = "El nombre debe tener entre 1 y 50 caracteres", groups = {ValidationGroups.Create.class, ValidationGroups.Update.class})
+    @NotBlank(message = "El nombre de la sección es obligatorio", groups = { ValidationGroups.Create.class,
+            ValidationGroups.Update.class })
+    @Size(min = 1, max = 50, message = "El nombre debe tener entre 1 y 50 caracteres", groups = {
+            ValidationGroups.Create.class, ValidationGroups.Update.class })
     @Column(name = "name", nullable = false, length = 50)
     private String name;
 
-    @NotBlank(message = "El período es obligatorio", groups = ValidationGroups.Create.class)
-    @Pattern(regexp = "^\\d{4}-[12]$", message = "El período debe tener formato YYYY-1 o YYYY-2", groups = {ValidationGroups.Create.class, ValidationGroups.Update.class})
-    @Column(name = "term", nullable = false, length = 10)
-    private String term;
-
-    @Column(name = "previous_term", length = 10)
-    private String previousTerm;
-
-    @Column(name = "term_changed_at")
-    private LocalDateTime termChangedAt;
+    @NotNull(message = "El período es obligatorio", groups = { ValidationGroups.Create.class,
+            ValidationGroups.Update.class })
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "period_id", nullable = false)
+    private AcademicPeriod period;
 
     @Column(name = "deleted", nullable = false)
     private boolean deleted = false;
@@ -59,47 +55,87 @@ public class Section {
     @JoinColumn(name = "room_id", foreignKey = @ForeignKey(name = "fk_section_room"))
     private Room room;
 
-    public Section() {}
-
-    public Long getId() { return id; }
-    public void setId(Long id) { this.id = id; }
-    public String getName() { return name; }
-    public void setName(String name) { this.name = name; }
-    public String getTerm() { return term; }
-    public void setTerm(String term) {
-        String newValue = term != null ? term.trim() : null;
-        if (this.term != null && !Objects.equals(this.term, newValue)) {
-            this.previousTerm = this.term;
-            this.termChangedAt = LocalDateTime.now();
-        }
-        this.term = newValue;
+    public Section() {
     }
 
-    public String getPreviousTerm() {
-        return previousTerm;
+    public Long getId() {
+        return id;
     }
 
-    public LocalDateTime getTermChangedAt() {
-        return termChangedAt;
+    public void setId(Long id) {
+        this.id = id;
     }
 
-    public boolean isDeleted() { return deleted; }
-    public void setDeleted(boolean deleted) { this.deleted = deleted; }
-    public LocalDateTime getDeletedAt() { return deletedAt; }
-    public void setDeletedAt(LocalDateTime deletedAt) { this.deletedAt = deletedAt; }
-    public String getDeletedBy() { return deletedBy; }
-    public void setDeletedBy(String deletedBy) { this.deletedBy = deletedBy; }
-    public Course getCourse() { return course; }
-    public void setCourse(Course course) { this.course = course; }
-    public Staff getTeacher() { return teacher; }
-    public void setTeacher(Staff teacher) { this.teacher = teacher; }
-    public Room getRoom() { return room; }
-    public void setRoom(Room room) { this.room = room; }
+    public String getName() {
+        return name;
+    }
+
+    public void setName(String name) {
+        this.name = name;
+    }
+
+    public AcademicPeriod getPeriod() {
+        return period;
+    }
+
+    public void setPeriod(AcademicPeriod period) {
+        this.period = period;
+    }
+
+    public boolean isDeleted() {
+        return deleted;
+    }
+
+    public void setDeleted(boolean deleted) {
+        this.deleted = deleted;
+    }
+
+    public LocalDateTime getDeletedAt() {
+        return deletedAt;
+    }
+
+    public void setDeletedAt(LocalDateTime deletedAt) {
+        this.deletedAt = deletedAt;
+    }
+
+    public String getDeletedBy() {
+        return deletedBy;
+    }
+
+    public void setDeletedBy(String deletedBy) {
+        this.deletedBy = deletedBy;
+    }
+
+    public Course getCourse() {
+        return course;
+    }
+
+    public void setCourse(Course course) {
+        this.course = course;
+    }
+
+    public Staff getTeacher() {
+        return teacher;
+    }
+
+    public void setTeacher(Staff teacher) {
+        this.teacher = teacher;
+    }
+
+    public Room getRoom() {
+        return room;
+    }
+
+    public void setRoom(Room room) {
+        this.room = room;
+    }
 
     @Override
     public boolean equals(Object o) {
-        if (this == o) return true;
-        if (!(o instanceof Section section)) return false;
+        if (this == o)
+            return true;
+        if (!(o instanceof Section section))
+            return false;
         return Objects.equals(id, section.id);
     }
 
@@ -110,6 +146,7 @@ public class Section {
 
     @Override
     public String toString() {
-        return "Section{id=" + id + ", name='" + name + "', term='" + term + "'}";
+        return "Section{id=" + id + ", name='" + name + "', period=" + (period != null ? period.getCode() : "null")
+                + "}";
     }
 }

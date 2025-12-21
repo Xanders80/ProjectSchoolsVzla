@@ -142,7 +142,7 @@
                     </thead>
                     <tbody>
                       <tr th:each="g : ${grades}">
-                        <td th:text="${g.term}">2025-1</td>
+                        <td th:text="${g.period?.code}">2025-Q1</td>
                         <td th:text="${g.course.name}">Matemáticas</td>
                         <td th:text="${g.evaluationType.displayName}">
                           Examen

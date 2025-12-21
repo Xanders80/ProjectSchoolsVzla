@@ -78,13 +78,21 @@
                     </div>
                     <div class="col-md-6">
                       <div class="form-group">
-                        <label>Periodo Académico (ej. 2025-1)</label>
-                        <input
-                          type="text"
-                          th:field="*{term}"
+                        <label>Periodo Académico</label>
+                        <select
+                          th:field="*{period.id}"
                           class="form-control"
                           required
-                        />
+                        >
+                          <option value="">Seleccionar Periodo</option>
+                          <option
+                            th:each="p : ${periods}"
+                            th:value="${p.id}"
+                            th:text="${p.name + ' (' + p.code + ')'}"
+                          >
+                            Period
+                          </option>
+                        </select>
                       </div>
                     </div>
                   </div>

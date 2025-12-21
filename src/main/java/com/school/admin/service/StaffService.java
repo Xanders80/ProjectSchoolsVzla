@@ -23,8 +23,8 @@ public class StaffService {
     private final AuditService auditService;
 
     public StaffService(StaffRepository staffRepository,
-                       SectionRepository sectionRepository,
-                       AuditService auditService) {
+            SectionRepository sectionRepository,
+            AuditService auditService) {
         this.staffRepository = staffRepository;
         this.sectionRepository = sectionRepository;
         this.auditService = auditService;
@@ -57,14 +57,14 @@ public class StaffService {
 
     public void deleteStaff(@NonNull Long id) {
         Staff staff = staffRepository.findById(id)
-            .orElseThrow(() -> new IllegalArgumentException("Personal no encontrado"));
+                .orElseThrow(() -> new IllegalArgumentException("Personal no encontrado"));
 
         validateStaffDependencies(id);
 
         staff.setDeleted(true);
         staff.setDeletedAt(LocalDateTime.now());
         staff.setDeletedBy(getCurrentUser());
-        
+
         staffRepository.save(staff);
         auditService.logStaffDeletion(id, getCurrentUser());
     }
@@ -72,12 +72,12 @@ public class StaffService {
     private void validateStaffDependencies(@NonNull Long staffId) {
         // Verificar si el staff es profesor de alguna sección
         long sectionCount = sectionRepository.findAll().stream()
-            .filter(s -> s.getTeacher() != null && s.getTeacher().getId().equals(staffId))
-            .count();
-        
+                .filter(s -> s.getTeacher() != null && s.getTeacher().getId().equals(staffId))
+                .count();
+
         if (sectionCount > 0) {
             throw new IllegalStateException(
-                String.format("No se puede eliminar el personal. Es profesor de %d sección(es)", sectionCount));
+                    String.format("No se puede eliminar el personal. Es profesor de %d sección(es)", sectionCount));
         }
     }
 
@@ -91,5 +91,9 @@ public class StaffService {
 
     public long countTeachers() {
         return staffRepository.countByJobTitle(Role.TEACHER);
+    }
+
+    public Optional<Staff> findByEmail(String email) {
+        return staffRepository.findByEmail(email);
     }
 }

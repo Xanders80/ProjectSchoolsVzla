@@ -5,7 +5,6 @@ import com.school.core.listener.AuditEntityListener;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.Max;
 import jakarta.validation.constraints.Min;
-import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
 import java.time.LocalDate;
 
@@ -28,14 +27,15 @@ public class Grade {
     @NotNull(message = "El curso es obligatorio")
     private Course course;
 
-    @Column(nullable = false)
-    @NotBlank(message = "El periodo es obligatorio")
-    private String term; // e.g. "2025-1"
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "period_id", nullable = false)
+    @NotNull(message = "El periodo es obligatorio")
+    private AcademicPeriod period;
 
     @Column(nullable = false)
     @NotNull(message = "La calificación es obligatoria")
     @Min(value = 0, message = "La calificación mínima es 0")
-    @Max(value = 100, message = "La calificación máxima es 100")
+    @Max(value = 20, message = "La calificación máxima es 20")
     private Double score;
 
     @Enumerated(EnumType.STRING)
@@ -80,12 +80,12 @@ public class Grade {
         this.course = course;
     }
 
-    public String getTerm() {
-        return term;
+    public AcademicPeriod getPeriod() {
+        return period;
     }
 
-    public void setTerm(String term) {
-        this.term = term;
+    public void setPeriod(AcademicPeriod period) {
+        this.period = period;
     }
 
     public Double getScore() {

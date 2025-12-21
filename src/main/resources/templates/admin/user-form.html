@@ -60,7 +60,7 @@
                   <input type="hidden" th:field="*{id}" />
 
                   <div class="row">
-                    <div class="col-md-6">
+                    <div class="col-md-12">
                       <div class="form-group">
                         <label for="username">Nombre de Usuario</label>
                         <input
@@ -75,63 +75,6 @@
                           class="invalid-feedback"
                           th:if="${#fields.hasErrors('username')}"
                           th:errors="*{username}"
-                        ></div>
-                      </div>
-                    </div>
-                    <div class="col-md-6">
-                      <div class="form-group">
-                        <label for="email">Correo Electrónico</label>
-                        <input
-                          type="email"
-                          class="form-control"
-                          id="email"
-                          th:field="*{email}"
-                          placeholder="usuario@example.com"
-                          required
-                        />
-                        <div
-                          class="invalid-feedback"
-                          th:if="${#fields.hasErrors('email')}"
-                          th:errors="*{email}"
-                        ></div>
-                      </div>
-                    </div>
-                  </div>
-
-                  <div class="row">
-                    <div class="col-md-6">
-                      <div class="form-group">
-                        <label for="firstName">Nombre</label>
-                        <input
-                          type="text"
-                          class="form-control"
-                          id="firstName"
-                          th:field="*{firstName}"
-                          placeholder="Nombre"
-                          required
-                        />
-                        <div
-                          class="invalid-feedback"
-                          th:if="${#fields.hasErrors('firstName')}"
-                          th:errors="*{firstName}"
-                        ></div>
-                      </div>
-                    </div>
-                    <div class="col-md-6">
-                      <div class="form-group">
-                        <label for="lastName">Apellido</label>
-                        <input
-                          type="text"
-                          class="form-control"
-                          id="lastName"
-                          th:field="*{lastName}"
-                          placeholder="Apellido"
-                          required
-                        />
-                        <div
-                          class="invalid-feedback"
-                          th:if="${#fields.hasErrors('lastName')}"
-                          th:errors="*{lastName}"
                         ></div>
                       </div>
                     </div>

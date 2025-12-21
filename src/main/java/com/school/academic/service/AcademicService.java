@@ -156,4 +156,8 @@ public class AcademicService {
     public java.util.List<Student> getAllStudents() {
         return studentRepository.findAll();
     }
+
+    public Optional<Student> getStudentByEmail(String email) {
+        return studentRepository.findByEmail(email);
+    }
 }

@@ -18,9 +18,11 @@ package com.school.web.controller.academic;
 
 import com.school.academic.entity.Course;
 import com.school.academic.service.CourseService;
+import com.school.academic.validation.ValidationGroups;
 import org.springframework.lang.NonNull;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
+import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
@@ -52,7 +54,9 @@ public class CourseController {
     }
 
     @PostMapping
-    public String saveCourse(@jakarta.validation.Valid @ModelAttribute @NonNull Course course,
+    public String saveCourse(
+            @Validated({ ValidationGroups.Create.class,
+                    ValidationGroups.Update.class }) @ModelAttribute @NonNull Course course,
             org.springframework.validation.BindingResult result, Model model) {
         if (result.hasErrors()) {
             return COURSE_FORM_VIEW;

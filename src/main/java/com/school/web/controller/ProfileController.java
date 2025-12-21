@@ -21,13 +21,13 @@ public class ProfileController {
 
     @Autowired
     private UserRepository userRepository;
-    
+
     @Autowired
     private com.school.core.service.ParentService parentService;
-    
+
     @Autowired
     private com.school.admin.service.StaffService staffService;
-    
+
     @Autowired
     private com.school.academic.service.AcademicService academicService;
 
@@ -37,35 +37,35 @@ public class ProfileController {
                 .orElseThrow(() -> new RuntimeException("Usuario no encontrado"));
 
         model.addAttribute("user", user);
-        
+
         // Cargar entidad específica según rol
         switch (user.getRole()) {
             case PARENT:
                 parentService.getAllParents(org.springframework.data.domain.PageRequest.of(0, 1))
-                    .getContent().stream()
-                    .filter(p -> p.getUser() != null && p.getUser().getId().equals(user.getId()))
-                    .findFirst()
-                    .ifPresent(parent -> model.addAttribute("parentInfo", parent));
+                        .getContent().stream()
+                        .filter(p -> p.getUser() != null && p.getUser().getId().equals(user.getId()))
+                        .findFirst()
+                        .ifPresent(parent -> model.addAttribute("parentInfo", parent));
                 break;
             case TEACHER:
             case STAFF:
                 staffService.getAllStaff(org.springframework.data.domain.PageRequest.of(0, 1000))
-                    .getContent().stream()
-                    .filter(s -> s.getUser() != null && s.getUser().getId().equals(user.getId()))
-                    .findFirst()
-                    .ifPresent(staff -> model.addAttribute("staffInfo", staff));
+                        .getContent().stream()
+                        .filter(s -> s.getUser() != null && s.getUser().getId().equals(user.getId()))
+                        .findFirst()
+                        .ifPresent(staff -> model.addAttribute("staffInfo", staff));
                 break;
             case STUDENT:
                 academicService.getAllStudents(org.springframework.data.domain.PageRequest.of(0, 1000))
-                    .getContent().stream()
-                    .filter(s -> s.getUser() != null && s.getUser().getId().equals(user.getId()))
-                    .findFirst()
-                    .ifPresent(student -> model.addAttribute("studentInfo", student));
+                        .getContent().stream()
+                        .filter(s -> s.getUser() != null && s.getUser().getId().equals(user.getId()))
+                        .findFirst()
+                        .ifPresent(student -> model.addAttribute("studentInfo", student));
                 break;
             default:
                 break;
         }
-        
+
         return "profile";
     }
 
@@ -87,12 +87,13 @@ public class ProfileController {
             User user = userRepository.findByUsername(userDetails.getUsername())
                     .orElseThrow(() -> new RuntimeException("Usuario no encontrado"));
 
-            // Actualizar usuario base
+            // Actualizar usuario base (ahora solo guarda el estado del usuario)
             userService.updateUserProfile(user, firstName, lastName, email);
-            
-            // Actualizar entidad específica
-            updateSpecificEntity(user, dni, phoneNumber, address, relationship, department, specialization);
-            
+
+            // Actualizar entidad específica con los datos personales recibidos
+            updateSpecificEntity(user, dni, phoneNumber, address, relationship, department, specialization, firstName,
+                    lastName, email);
+
             redirectAttributes.addFlashAttribute("success", "Perfil actualizado exitosamente");
         } catch (RuntimeException e) {
             redirectAttributes.addFlashAttribute("error", e.getMessage());
@@ -100,58 +101,71 @@ public class ProfileController {
 
         return "redirect:/profile";
     }
-    
-    private void updateSpecificEntity(User user, String dni, String phoneNumber, String address, 
-            String relationship, String department, String specialization) {
+
+    private void updateSpecificEntity(User user, String dni, String phoneNumber, String address,
+            String relationship, String department, String specialization, String firstName, String lastName,
+            String email) {
         switch (user.getRole()) {
             case PARENT:
                 parentService.getAllParents(org.springframework.data.domain.PageRequest.of(0, 1000))
-                    .getContent().stream()
-                    .filter(p -> p.getUser() != null && p.getUser().getId().equals(user.getId()))
-                    .findFirst()
-                    .ifPresent(parent -> {
-                        parent.setFirstName(user.getFirstName());
-                        parent.setLastName(user.getLastName());
-                        parent.setEmail(user.getEmail());
-                        if (dni != null) parent.setDni(dni);
-                        if (phoneNumber != null) parent.setPhoneNumber(phoneNumber);
-                        if (address != null) parent.setAddress(address);
-                        if (relationship != null) parent.setRelationship(relationship);
-                        parentService.saveParent(parent);
-                    });
+                        .getContent().stream()
+                        .filter(p -> p.getUser() != null && p.getUser().getId().equals(user.getId()))
+                        .findFirst()
+                        .ifPresent(parent -> {
+                            parent.setFirstName(firstName);
+                            parent.setLastName(lastName);
+                            parent.setEmail(email);
+                            if (dni != null)
+                                parent.setDni(dni);
+                            if (phoneNumber != null)
+                                parent.setPhoneNumber(phoneNumber);
+                            if (address != null)
+                                parent.setAddress(address);
+                            if (relationship != null)
+                                parent.setRelationship(relationship);
+                            parentService.saveParent(parent);
+                        });
                 break;
             case TEACHER:
             case STAFF:
                 staffService.getAllStaff(org.springframework.data.domain.PageRequest.of(0, 1000))
-                    .getContent().stream()
-                    .filter(s -> s.getUser() != null && s.getUser().getId().equals(user.getId()))
-                    .findFirst()
-                    .ifPresent(staff -> {
-                        staff.setFirstName(user.getFirstName());
-                        staff.setLastName(user.getLastName());
-                        staff.setEmail(user.getEmail());
-                        if (dni != null) staff.setDni(dni);
-                        if (phoneNumber != null) staff.setPhoneNumber(phoneNumber);
-                        if (address != null) staff.setAddress(address);
-                        if (department != null) staff.setDepartment(department);
-                        if (specialization != null) staff.setSpecialization(specialization);
-                        staffService.saveStaff(staff);
-                    });
+                        .getContent().stream()
+                        .filter(s -> s.getUser() != null && s.getUser().getId().equals(user.getId()))
+                        .findFirst()
+                        .ifPresent(staff -> {
+                            staff.setFirstName(firstName);
+                            staff.setLastName(lastName);
+                            staff.setEmail(email);
+                            if (dni != null)
+                                staff.setDni(dni);
+                            if (phoneNumber != null)
+                                staff.setPhoneNumber(phoneNumber);
+                            if (address != null)
+                                staff.setAddress(address);
+                            if (department != null)
+                                staff.setDepartment(department);
+                            if (specialization != null)
+                                staff.setSpecialization(specialization);
+                            staffService.saveStaff(staff);
+                        });
                 break;
             case STUDENT:
                 academicService.getAllStudents(org.springframework.data.domain.PageRequest.of(0, 1000))
-                    .getContent().stream()
-                    .filter(s -> s.getUser() != null && s.getUser().getId().equals(user.getId()))
-                    .findFirst()
-                    .ifPresent(student -> {
-                        student.setFirstName(user.getFirstName());
-                        student.setLastName(user.getLastName());
-                        student.setEmail(user.getEmail());
-                        if (dni != null) student.setDni(dni);
-                        if (phoneNumber != null) student.setPhoneNumber(phoneNumber);
-                        if (address != null) student.setAddress(address);
-                        academicService.saveStudent(student);
-                    });
+                        .getContent().stream()
+                        .filter(s -> s.getUser() != null && s.getUser().getId().equals(user.getId()))
+                        .findFirst()
+                        .ifPresent(student -> {
+                            student.setFirstName(firstName);
+                            student.setLastName(lastName);
+                            student.setEmail(email);
+                            if (dni != null)
+                                student.setDni(dni);
+                            if (phoneNumber != null)
+                                student.setPhoneNumber(phoneNumber);
+                            if (address != null)
+                                student.setAddress(address);
+                            academicService.saveStudent(student);
+                        });
                 break;
             default:
                 break;

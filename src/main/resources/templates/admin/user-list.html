@@ -65,8 +65,6 @@
                       <tr>
                         <th>ID</th>
                         <th>Nombre de Usuario</th>
-                        <th>Email</th>
-                        <th>Nombre Completo</th>
                         <th>Rol</th>
                         <th>Habilitado</th>
                         <th>Fecha de Creación</th>
@@ -77,10 +75,6 @@
                       <tr th:each="user : ${users.content}">
                         <td th:text="${user.id}">1</td>
                         <td th:text="${user.username}">admin</td>
-                        <td th:text="${user.email}">admin@example.com</td>
-                        <td th:text="${user.firstName + ' ' + user.lastName}">
-                          Admin User
-                        </td>
                         <td th:text="${user.role}">ADMIN</td>
                         <td>
                           <span

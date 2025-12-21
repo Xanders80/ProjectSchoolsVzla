@@ -24,12 +24,10 @@ import java.time.LocalDateTime;
 import java.util.Objects;
 
 @Entity
-@Table(name = "users",
-       indexes = {
-           @Index(name = "idx_user_username", columnList = "username", unique = true),
-           @Index(name = "idx_user_email", columnList = "email", unique = true),
-           @Index(name = "idx_user_role", columnList = "role")
-       })
+@Table(name = "users", indexes = {
+        @Index(name = "idx_user_username", columnList = "username", unique = true),
+        @Index(name = "idx_user_role", columnList = "role")
+})
 @EntityListeners(com.school.core.listener.AuditEntityListener.class)
 public class User {
 
@@ -37,9 +35,12 @@ public class User {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @NotBlank(message = "El nombre de usuario es obligatorio", groups = {ValidationGroups.Create.class, ValidationGroups.Update.class})
-    @Size(min = 3, max = 50, message = "El nombre de usuario debe tener entre 3 y 50 caracteres", groups = {ValidationGroups.Create.class, ValidationGroups.Update.class})
-    @Pattern(regexp = "^[a-zA-Z0-9._-]+$", message = "El nombre de usuario solo puede contener letras, números, puntos, guiones y guiones bajos", groups = {ValidationGroups.Create.class, ValidationGroups.Update.class})
+    @NotBlank(message = "El nombre de usuario es obligatorio", groups = { ValidationGroups.Create.class,
+            ValidationGroups.Update.class })
+    @Size(min = 3, max = 50, message = "El nombre de usuario debe tener entre 3 y 50 caracteres", groups = {
+            ValidationGroups.Create.class, ValidationGroups.Update.class })
+    @Pattern(regexp = "^[a-zA-Z0-9._-]+$", message = "El nombre de usuario solo puede contener letras, números, puntos, guiones y guiones bajos", groups = {
+            ValidationGroups.Create.class, ValidationGroups.Update.class })
     @Column(name = "username", unique = true, nullable = false, length = 50)
     private String username;
 
@@ -49,31 +50,11 @@ public class User {
     @Column(name = "username_changed_at")
     private LocalDateTime usernameChangedAt;
 
-    @NotBlank(message = "El email es obligatorio", groups = {ValidationGroups.Create.class, ValidationGroups.Update.class})
-    @Email(message = "El email debe tener un formato válido", groups = {ValidationGroups.Create.class, ValidationGroups.Update.class})
-    @Size(max = 100, message = "El email no puede exceder los 100 caracteres", groups = {ValidationGroups.Create.class, ValidationGroups.Update.class})
-    @Column(name = "email", unique = true, nullable = false, length = 100)
-    private String email;
-
-    @Column(name = "previous_email", length = 100)
-    private String previousEmail;
-
-    @Column(name = "email_changed_at")
-    private LocalDateTime emailChangedAt;
-
-    @NotBlank(message = "El nombre es obligatorio", groups = {ValidationGroups.Create.class, ValidationGroups.Update.class})
-    @Size(min = 1, max = 50, message = "El nombre debe tener entre 1 y 50 caracteres", groups = {ValidationGroups.Create.class, ValidationGroups.Update.class})
-    @Column(name = "first_name", nullable = false, length = 50)
-    private String firstName;
-
-    @NotBlank(message = "El apellido es obligatorio", groups = {ValidationGroups.Create.class, ValidationGroups.Update.class})
-    @Size(min = 1, max = 50, message = "El apellido debe tener entre 1 y 50 caracteres", groups = {ValidationGroups.Create.class, ValidationGroups.Update.class})
-    @Column(name = "last_name", nullable = false, length = 50)
-    private String lastName;
-
     @NotBlank(message = "La contraseña es obligatoria", groups = ValidationGroups.Create.class)
-    @Size(min = 8, max = 128, message = "La contraseña debe tener entre 8 y 128 caracteres", groups = {ValidationGroups.Create.class, ValidationGroups.Update.class})
-    @Pattern(regexp = "^(?=.*[a-z])(?=.*[A-Z])(?=.*\\d).*$", message = "La contraseña debe contener al menos una minúscula, una mayúscula y un número", groups = {ValidationGroups.Create.class, ValidationGroups.Update.class})
+    @Size(min = 8, max = 128, message = "La contraseña debe tener entre 8 y 128 caracteres", groups = {
+            ValidationGroups.Create.class, ValidationGroups.Update.class })
+    @Pattern(regexp = "^(?=.*[a-z])(?=.*[A-Z])(?=.*\\d).*$", message = "La contraseña debe contener al menos una minúscula, una mayúscula y un número", groups = {
+            ValidationGroups.Create.class, ValidationGroups.Update.class })
     @Column(name = "password", nullable = false, length = 255)
     private String password;
 
@@ -123,43 +104,6 @@ public class User {
         return usernameChangedAt;
     }
 
-    public String getEmail() {
-        return email;
-    }
-
-    public void setEmail(String email) {
-        String newValue = email != null ? email.trim().toLowerCase() : null;
-        if (this.email != null && !Objects.equals(this.email, newValue)) {
-            this.previousEmail = this.email;
-            this.emailChangedAt = LocalDateTime.now();
-        }
-        this.email = newValue;
-    }
-
-    public String getPreviousEmail() {
-        return previousEmail;
-    }
-
-    public LocalDateTime getEmailChangedAt() {
-        return emailChangedAt;
-    }
-
-    public String getFirstName() {
-        return firstName;
-    }
-
-    public void setFirstName(String firstName) {
-        this.firstName = firstName != null ? firstName.trim() : null;
-    }
-
-    public String getLastName() {
-        return lastName;
-    }
-
-    public void setLastName(String lastName) {
-        this.lastName = lastName != null ? lastName.trim() : null;
-    }
-
     public String getPassword() {
         return password;
     }
@@ -201,8 +145,10 @@ public class User {
 
     @Override
     public boolean equals(Object o) {
-        if (this == o) return true;
-        if (!(o instanceof User user)) return false;
+        if (this == o)
+            return true;
+        if (!(o instanceof User user))
+            return false;
         return Objects.equals(id, user.id) && Objects.equals(username, user.username);
     }
 

@@ -109,7 +109,7 @@
                             type="text"
                             class="form-control"
                             name="firstName"
-                            th:value="${user.firstName}"
+                            th:value="${parentInfo?.firstName ?: staffInfo?.firstName ?: studentInfo?.firstName}"
                             required
                           />
                         </div>
@@ -119,7 +119,7 @@
                             type="text"
                             class="form-control"
                             name="lastName"
-                            th:value="${user.lastName}"
+                            th:value="${parentInfo?.lastName ?: staffInfo?.lastName ?: studentInfo?.lastName}"
                             required
                           />
                         </div>
@@ -130,16 +130,18 @@
                           type="email"
                           class="form-control"
                           name="email"
-                          th:value="${user.email}"
+                          th:value="${parentInfo?.email ?: staffInfo?.email ?: studentInfo?.email}"
                           required
                         />
                       </div>
-                      
+
                       <!-- Campos específicos según rol -->
-                      <div th:if="${parentInfo != null or staffInfo != null or studentInfo != null}">
-                        <hr>
+                      <div
+                        th:if="${parentInfo != null or staffInfo != null or studentInfo != null}"
+                      >
+                        <hr />
                         <h6 class="text-primary">Información Adicional</h6>
-                        
+
                         <div class="form-group row">
                           <div class="col-sm-6 mb-3 mb-sm-0">
                             <label>DNI</label>
@@ -160,7 +162,7 @@
                             />
                           </div>
                         </div>
-                        
+
                         <div class="form-group">
                           <label>Dirección</label>
                           <input
@@ -170,24 +172,64 @@
                             th:value="${parentInfo?.address ?: staffInfo?.address ?: studentInfo?.address}"
                           />
                         </div>
-                        
+
                         <!-- Campos específicos para Representantes -->
                         <div th:if="${parentInfo != null}">
                           <div class="form-group">
                             <label>Relación</label>
                             <select class="form-control" name="relationship">
-                              <option value="Padre" th:selected="${parentInfo.relationship == 'Padre'}">Padre</option>
-                              <option value="Madre" th:selected="${parentInfo.relationship == 'Madre'}">Madre</option>
-                              <option value="Tutor" th:selected="${parentInfo.relationship == 'Tutor'}">Tutor</option>
-                              <option value="Abuelo" th:selected="${parentInfo.relationship == 'Abuelo'}">Abuelo</option>
-                              <option value="Abuela" th:selected="${parentInfo.relationship == 'Abuela'}">Abuela</option>
-                              <option value="Tío" th:selected="${parentInfo.relationship == 'Tío'}">Tío</option>
-                              <option value="Tía" th:selected="${parentInfo.relationship == 'Tía'}">Tía</option>
-                              <option value="Otro" th:selected="${parentInfo.relationship == 'Otro'}">Otro</option>
+                              <option
+                                value="Padre"
+                                th:selected="${parentInfo.relationship == 'Padre'}"
+                              >
+                                Padre
+                              </option>
+                              <option
+                                value="Madre"
+                                th:selected="${parentInfo.relationship == 'Madre'}"
+                              >
+                                Madre
+                              </option>
+                              <option
+                                value="Tutor"
+                                th:selected="${parentInfo.relationship == 'Tutor'}"
+                              >
+                                Tutor
+                              </option>
+                              <option
+                                value="Abuelo"
+                                th:selected="${parentInfo.relationship == 'Abuelo'}"
+                              >
+                                Abuelo
+                              </option>
+                              <option
+                                value="Abuela"
+                                th:selected="${parentInfo.relationship == 'Abuela'}"
+                              >
+                                Abuela
+                              </option>
+                              <option
+                                value="Tío"
+                                th:selected="${parentInfo.relationship == 'Tío'}"
+                              >
+                                Tío
+                              </option>
+                              <option
+                                value="Tía"
+                                th:selected="${parentInfo.relationship == 'Tía'}"
+                              >
+                                Tía
+                              </option>
+                              <option
+                                value="Otro"
+                                th:selected="${parentInfo.relationship == 'Otro'}"
+                              >
+                                Otro
+                              </option>
                             </select>
                           </div>
                         </div>
-                        
+
                         <!-- Campos específicos para Personal -->
                         <div th:if="${staffInfo != null}">
                           <div class="form-group row">
@@ -212,7 +254,7 @@
                           </div>
                         </div>
                       </div>
-                      
+
                       <button type="submit" class="btn btn-primary btn-block">
                         Actualizar Perfil
                       </button>
@@ -235,37 +277,92 @@
                         src="/img/undraw_profile.svg"
                         style="width: 10rem; height: 10rem"
                       />
-                      <h4 th:text="${user.firstName + ' ' + user.lastName}">
+                      <h4
+                        th:text="${(parentInfo?.firstName ?: staffInfo?.firstName ?: studentInfo?.firstName ?: '') + ' ' + (parentInfo?.lastName ?: staffInfo?.lastName ?: studentInfo?.lastName ?: '')}"
+                      >
                         Nombre Usuario
                       </h4>
-                      <p class="text-muted" th:text="${user.email}">
+                      <p
+                        class="text-muted"
+                        th:text="${parentInfo?.email ?: staffInfo?.email ?: studentInfo?.email ?: 'Sin correo'}"
+                      >
                         correo@ejemplo.com
                       </p>
-                      <span class="badge badge-primary" th:text="${user.role}">ROL</span>
+                      <span class="badge badge-primary" th:text="${user.role}"
+                        >ROL</span
+                      >
                     </div>
-                    
+
                     <!-- Información adicional según rol -->
-                    <hr>
+                    <hr />
                     <div th:if="${parentInfo != null}">
                       <h6 class="text-primary">Información de Representante</h6>
-                      <p><strong>DNI:</strong> <span th:text="${parentInfo.dni ?: 'No especificado'}"></span></p>
-                      <p><strong>Relación:</strong> <span th:text="${parentInfo.relationship ?: 'No especificado'}"></span></p>
-                      <p><strong>Hijos:</strong> <span th:text="${#sets.size(parentInfo.children)}"></span></p>
+                      <p>
+                        <strong>DNI:</strong>
+                        <span
+                          th:text="${parentInfo.dni ?: 'No especificado'}"
+                        ></span>
+                      </p>
+                      <p>
+                        <strong>Relación:</strong>
+                        <span
+                          th:text="${parentInfo.relationship ?: 'No especificado'}"
+                        ></span>
+                      </p>
+                      <p>
+                        <strong>Hijos:</strong>
+                        <span
+                          th:text="${#sets.size(parentInfo.children)}"
+                        ></span>
+                      </p>
                     </div>
-                    
+
                     <div th:if="${staffInfo != null}">
                       <h6 class="text-primary">Información de Personal</h6>
-                      <p><strong>DNI:</strong> <span th:text="${staffInfo.dni ?: 'No especificado'}"></span></p>
-                      <p><strong>Cargo:</strong> <span th:text="${staffInfo.jobTitle}"></span></p>
-                      <p><strong>Departamento:</strong> <span th:text="${staffInfo.department ?: 'No especificado'}"></span></p>
-                      <p><strong>Fecha Contratación:</strong> <span th:text="${staffInfo.hireDate != null ? #temporals.format(staffInfo.hireDate, 'dd/MM/yyyy') : 'No especificado'}"></span></p>
+                      <p>
+                        <strong>DNI:</strong>
+                        <span
+                          th:text="${staffInfo.dni ?: 'No especificado'}"
+                        ></span>
+                      </p>
+                      <p>
+                        <strong>Cargo:</strong>
+                        <span th:text="${staffInfo.jobTitle}"></span>
+                      </p>
+                      <p>
+                        <strong>Departamento:</strong>
+                        <span
+                          th:text="${staffInfo.department ?: 'No especificado'}"
+                        ></span>
+                      </p>
+                      <p>
+                        <strong>Fecha Contratación:</strong>
+                        <span
+                          th:text="${staffInfo.hireDate != null ? #temporals.format(staffInfo.hireDate, 'dd/MM/yyyy') : 'No especificado'}"
+                        ></span>
+                      </p>
                     </div>
-                    
+
                     <div th:if="${studentInfo != null}">
                       <h6 class="text-primary">Información de Estudiante</h6>
-                      <p><strong>DNI:</strong> <span th:text="${studentInfo.dni ?: 'No especificado'}"></span></p>
-                      <p><strong>Matrícula:</strong> <span th:text="${studentInfo.registrationNumber}"></span></p>
-                      <p><strong>Fecha Inscripción:</strong> <span th:text="${studentInfo.enrollmentDate != null ? #temporals.format(studentInfo.enrollmentDate, 'dd/MM/yyyy') : 'No especificado'}"></span></p>
+                      <p>
+                        <strong>DNI:</strong>
+                        <span
+                          th:text="${studentInfo.dni ?: 'No especificado'}"
+                        ></span>
+                      </p>
+                      <p>
+                        <strong>Matrícula:</strong>
+                        <span
+                          th:text="${studentInfo.registrationNumber}"
+                        ></span>
+                      </p>
+                      <p>
+                        <strong>Fecha Inscripción:</strong>
+                        <span
+                          th:text="${studentInfo.enrollmentDate != null ? #temporals.format(studentInfo.enrollmentDate, 'dd/MM/yyyy') : 'No especificado'}"
+                        ></span>
+                      </p>
                     </div>
                   </div>
                 </div>
