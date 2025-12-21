@@ -1,13 +1,15 @@
 package com.school.communication.service;
 
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
+import org.springframework.lang.NonNull;
+import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
+
 import com.school.communication.entity.Message;
 import com.school.communication.repository.MessageRepository;
 import com.school.core.entity.User;
 import com.school.core.service.UserService;
-import org.springframework.data.domain.Page;
-import org.springframework.data.domain.Pageable;
-import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
 
 @Service
 @Transactional
@@ -48,7 +50,7 @@ public class CommunicationService {
         return messageRepository.findBySenderIdOrderBySentAtDesc(userId, pageable);
     }
 
-    public Message readMessage(Long messageId, Long userId) {
+    public Message readMessage(@NonNull Long messageId, Long userId) {
         Message message = messageRepository.findById(messageId)
                 .orElseThrow(() -> new IllegalArgumentException("Message not found"));
 
@@ -108,7 +110,7 @@ public class CommunicationService {
         return notificationRepository.findByUserIdOrderByCreatedAtDesc(userId, pageable);
     }
 
-    public void markNotificationRead(Long notificationId) {
+    public void markNotificationRead(@NonNull Long notificationId) {
         notificationRepository.findById(notificationId).ifPresent(n -> {
             n.setRead(true);
             notificationRepository.save(n);

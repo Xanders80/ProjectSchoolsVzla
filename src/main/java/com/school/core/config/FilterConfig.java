@@ -1,11 +1,12 @@
 package com.school.core.config;
 
-import com.school.core.filter.AuditLoggingFilter;
-import com.school.core.security.AnomalyDetectionFilter;
-import com.school.core.security.RateLimitingFilter;
 import org.springframework.boot.web.servlet.FilterRegistrationBean;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+
+import com.school.core.filter.AuditLoggingFilter;
+import com.school.core.security.AnomalyDetectionFilter;
+import com.school.core.security.RateLimitingFilter;
 
 @Configuration
 public class FilterConfig {

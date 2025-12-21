@@ -1,8 +1,9 @@
 package com.school.core.service;
 
-import com.school.core.entity.User;
-import com.school.core.entity.PasswordResetToken;
 import java.util.Optional;
+
+import com.school.core.entity.PasswordResetToken;
+import com.school.core.entity.User;
 
 public interface UserService {
     User registerNewUser(String firstName, String lastName, String email, String username, String password);

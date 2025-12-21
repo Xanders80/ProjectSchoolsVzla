@@ -1,17 +1,18 @@
 package com.school.health.service;
 
+import java.time.LocalDateTime;
+import java.util.List;
+
+import org.springframework.lang.NonNull;
+import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
+
 import com.school.academic.entity.Student;
 import com.school.academic.repository.StudentRepository;
 import com.school.health.entity.MedicalRecord;
 import com.school.health.entity.Vaccine;
 import com.school.health.repository.MedicalRecordRepository;
 import com.school.health.repository.VaccineRepository;
-import org.springframework.lang.NonNull;
-import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
-
-import java.time.LocalDateTime;
-import java.util.List;
 
 @Service
 @Transactional
@@ -77,7 +78,7 @@ public class HealthService {
         return vaccineRepository.save(vaccine);
     }
 
-    public void deleteVaccine(Long vaccineId) {
+    public void deleteVaccine(@NonNull Long vaccineId) {
         vaccineRepository.deleteById(vaccineId);
     }
 

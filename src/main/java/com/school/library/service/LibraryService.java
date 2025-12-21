@@ -1,5 +1,15 @@
 package com.school.library.service;
 
+import java.time.LocalDate;
+import java.util.List;
+import java.util.Optional;
+
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
+import org.springframework.lang.NonNull;
+import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
+
 import com.school.core.entity.User;
 import com.school.core.service.UserService;
 import com.school.library.entity.Book;
@@ -8,15 +18,6 @@ import com.school.library.enums.BookStatus;
 import com.school.library.enums.LoanStatus;
 import com.school.library.repository.BookRepository;
 import com.school.library.repository.LoanRepository;
-import org.springframework.data.domain.Page;
-import org.springframework.data.domain.Pageable;
-import org.springframework.lang.NonNull;
-import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
-
-import java.time.LocalDate;
-import java.util.List;
-import java.util.Optional;
 
 @Service
 @Transactional
@@ -54,7 +55,7 @@ public class LibraryService {
     }
 
     // Loan Operations
-    public Loan borrowBook(Long bookId, Long userId, LocalDate dueDate) {
+    public Loan borrowBook(@NonNull Long bookId, @NonNull Long userId, @NonNull LocalDate dueDate) {
         Book book = bookRepository.findById(bookId)
                 .orElseThrow(() -> new IllegalArgumentException("Invalid book ID"));
 
@@ -77,7 +78,7 @@ public class LibraryService {
         return loanRepository.save(loan);
     }
 
-    public void returnBook(Long loanId) {
+    public void returnBook(@NonNull Long loanId) {
         Loan loan = loanRepository.findById(loanId)
                 .orElseThrow(() -> new IllegalArgumentException("Invalid loan ID"));
 
@@ -104,7 +105,7 @@ public class LibraryService {
         return loanRepository.findByStatus(LoanStatus.ACTIVE);
     }
 
-    public Optional<Loan> getLoanById(Long id) {
+    public Optional<Loan> getLoanById(@NonNull Long id) {
         return loanRepository.findById(id);
     }
 }

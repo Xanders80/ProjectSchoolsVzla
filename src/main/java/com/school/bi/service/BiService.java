@@ -1,17 +1,18 @@
 package com.school.bi.service;
 
-import com.school.academic.repository.GradeRepository;
-import com.school.admin.repository.StaffRepository;
-import com.school.academic.repository.StudentRepository;
-import com.school.finance.repository.StudentFeeRepository;
-import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
-
 import java.math.BigDecimal;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
+
+import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
+
+import com.school.academic.repository.GradeRepository;
+import com.school.academic.repository.StudentRepository;
+import com.school.admin.repository.StaffRepository;
+import com.school.finance.repository.StudentFeeRepository;
 
 @Service
 @Transactional(readOnly = true)

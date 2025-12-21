@@ -1,10 +1,8 @@
 package com.school.academic.service;
 
-import com.school.academic.entity.Section;
-import com.school.academic.repository.SectionRepository;
-import com.school.academic.repository.EnrollmentRepository;
-import com.school.academic.repository.AttendanceRepository;
-import com.school.core.service.AuditService;
+import java.time.LocalDateTime;
+import java.util.Optional;
+
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.lang.NonNull;
@@ -12,8 +10,11 @@ import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.time.LocalDateTime;
-import java.util.Optional;
+import com.school.academic.entity.Section;
+import com.school.academic.repository.AttendanceRepository;
+import com.school.academic.repository.EnrollmentRepository;
+import com.school.academic.repository.SectionRepository;
+import com.school.core.service.AuditService;
 
 @Service
 @Transactional

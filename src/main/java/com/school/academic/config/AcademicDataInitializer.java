@@ -1,16 +1,21 @@
 package com.school.academic.config;
 
-import com.school.academic.entity.AcademicPeriod;
-import com.school.academic.repository.AcademicPeriodRepository;
+import java.time.LocalDate;
+import java.util.Arrays;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
-import java.time.LocalDate;
-import java.util.Arrays;
+import com.school.academic.entity.AcademicPeriod;
+import com.school.academic.repository.AcademicPeriodRepository;
 
 @Configuration
 public class AcademicDataInitializer {
+
+    private static final Logger log = LoggerFactory.getLogger(AcademicDataInitializer.class);
 
     @Bean
     CommandLineRunner initAcademicPeriods(AcademicPeriodRepository repository) {
@@ -38,7 +43,7 @@ public class AcademicDataInitializer {
                 q3.setActive(true);
 
                 repository.saveAll(Arrays.asList(q1, q2, q3));
-                System.out.println(">> Academic periods initialized (Oct-Jul schedule)");
+                log.info(">> Academic periods initialized (Oct-Jul schedule)");
             }
         };
     }

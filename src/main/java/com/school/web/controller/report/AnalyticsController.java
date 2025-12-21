@@ -1,16 +1,18 @@
 package com.school.web.controller.report;
 
-import com.school.report.dto.ChartDataDTO;
-import com.school.report.service.ReportingService;
+import java.io.IOException;
+import java.math.BigDecimal;
+import java.util.Map;
+
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 
+import com.school.report.dto.ChartDataDTO;
+import com.school.report.service.ReportingService;
+
 import jakarta.servlet.http.HttpServletResponse;
-import java.io.IOException;
-import java.math.BigDecimal;
-import java.util.Map;
 
 @Controller
 @RequestMapping("/reports")

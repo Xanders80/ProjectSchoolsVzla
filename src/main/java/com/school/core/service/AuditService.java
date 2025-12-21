@@ -1,9 +1,10 @@
 package com.school.core.service;
 
-import com.school.core.entity.AuditLog;
-import com.school.core.repository.AuditLogRepository;
 import org.springframework.lang.NonNull;
 import org.springframework.stereotype.Service;
+
+import com.school.core.entity.AuditLog;
+import com.school.core.repository.AuditLogRepository;
 
 @Service
 public class AuditService {

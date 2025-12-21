@@ -1,7 +1,8 @@
 package com.school.academic.dto;
 
-import com.school.academic.enums.EvaluationType;
 import java.util.List;
+
+import com.school.academic.enums.EvaluationType;
 
 public class GradeBulkEntryDTO {
     private Long courseId;

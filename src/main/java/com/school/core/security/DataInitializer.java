@@ -16,16 +16,17 @@
 
 package com.school.core.security;
 
-import com.school.core.entity.Role;
-import com.school.core.entity.User;
-import com.school.core.repository.RoleRepository;
-import com.school.core.repository.UserRepository;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.crypto.password.PasswordEncoder;
+
+import com.school.core.entity.Role;
+import com.school.core.entity.User;
+import com.school.core.repository.RoleRepository;
+import com.school.core.repository.UserRepository;
 
 @Configuration
 public class DataInitializer {

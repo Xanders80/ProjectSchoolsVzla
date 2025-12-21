@@ -1,15 +1,20 @@
 package com.school.academic.service;
 
-import com.school.academic.entity.*;
-import com.school.academic.repository.GradeRepository;
-import com.school.academic.repository.EvaluationWeightRepository;
-import com.school.academic.util.GradingScaleConverter;
-import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
-
 import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
+
+import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
+
+import com.school.academic.entity.AcademicPeriod;
+import com.school.academic.entity.Course;
+import com.school.academic.entity.EvaluationWeight;
+import com.school.academic.entity.Grade;
+import com.school.academic.entity.Student;
+import com.school.academic.repository.EvaluationWeightRepository;
+import com.school.academic.repository.GradeRepository;
+import com.school.academic.util.GradingScaleConverter;
 
 @Service
 public class GradeService {

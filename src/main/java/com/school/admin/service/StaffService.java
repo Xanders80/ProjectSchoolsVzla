@@ -1,18 +1,19 @@
 package com.school.admin.service;
 
-import com.school.admin.entity.Staff;
-import com.school.admin.repository.StaffRepository;
-import com.school.academic.repository.SectionRepository;
-import com.school.core.enums.Role;
-import com.school.core.service.AuditService;
+import java.time.LocalDateTime;
+import java.util.List;
+import java.util.Optional;
 
 import org.springframework.lang.NonNull;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-import java.time.LocalDateTime;
-import java.util.List;
-import java.util.Optional;
+
+import com.school.academic.repository.SectionRepository;
+import com.school.admin.entity.Staff;
+import com.school.admin.repository.StaffRepository;
+import com.school.core.enums.Role;
+import com.school.core.service.AuditService;
 
 @Service
 @Transactional

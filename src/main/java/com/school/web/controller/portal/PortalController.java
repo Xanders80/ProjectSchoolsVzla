@@ -1,12 +1,6 @@
 package com.school.web.controller.portal;
 
-import com.school.academic.entity.Student;
-import com.school.academic.service.AcademicService;
-import com.school.core.entity.Parent;
-import com.school.core.entity.User;
-import com.school.core.service.ParentService;
-import com.school.core.service.UserService;
-import com.school.finance.service.FinanceService;
+import org.springframework.lang.NonNull;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Controller;
@@ -16,7 +10,12 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
-import java.util.Optional;
+import com.school.academic.entity.Student;
+import com.school.academic.service.AcademicService;
+import com.school.core.entity.Parent;
+import com.school.core.service.ParentService;
+import com.school.core.service.UserService;
+import com.school.finance.service.FinanceService;
 
 @Controller
 @RequestMapping("/portal")
@@ -53,7 +52,7 @@ public class PortalController {
     }
 
     @GetMapping("/student/{id}")
-    public String studentDetail(@PathVariable Long id, Model model, RedirectAttributes redirectAttributes) {
+    public String studentDetail(@PathVariable @NonNull Long id, Model model, RedirectAttributes redirectAttributes) {
         Parent parent = getLoggedParent();
         if (parent == null)
             return "redirect:/login";

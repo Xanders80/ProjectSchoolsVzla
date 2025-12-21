@@ -1,18 +1,25 @@
 package com.school.core.service.impl;
 
+import java.time.LocalDateTime;
+import java.util.Optional;
+
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.crypto.password.PasswordEncoder;
+import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
+
+import com.school.academic.entity.Student;
+import com.school.academic.service.AcademicService;
+import com.school.admin.entity.Staff;
+import com.school.admin.service.StaffService;
+import com.school.core.entity.Parent;
 import com.school.core.entity.PasswordResetToken;
 import com.school.core.entity.User;
 import com.school.core.enums.Role;
 import com.school.core.repository.PasswordResetTokenRepository;
 import com.school.core.repository.UserRepository;
 import com.school.core.service.UserService;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.security.crypto.password.PasswordEncoder;
-import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
-
-import java.time.LocalDateTime;
-import java.util.Optional;
+import com.school.core.service.ParentService;
 
 @Service
 @Transactional
@@ -28,13 +35,13 @@ public class UserServiceImpl implements UserService {
     private PasswordEncoder passwordEncoder;
 
     @Autowired
-    private com.school.core.service.ParentService parentService;
+    private ParentService parentService;
 
     @Autowired
-    private com.school.admin.service.StaffService staffService;
+    private StaffService staffService;
 
     @Autowired
-    private com.school.academic.service.AcademicService academicService;
+    private AcademicService academicService;
 
     @Override
     public User registerNewUser(String firstName, String lastName, String email, String username, String password) {
@@ -94,7 +101,7 @@ public class UserServiceImpl implements UserService {
 
         switch (role) {
             case PARENT:
-                com.school.core.entity.Parent parent = new com.school.core.entity.Parent();
+                Parent parent = new Parent();
                 parent.setUser(user);
                 parent.setFirstName(firstName);
                 parent.setLastName(lastName);
@@ -108,7 +115,7 @@ public class UserServiceImpl implements UserService {
 
             case TEACHER:
             case STAFF:
-                com.school.admin.entity.Staff staff = new com.school.admin.entity.Staff();
+                Staff staff = new Staff();
                 staff.setUser(user);
                 staff.setFirstName(firstName);
                 staff.setLastName(lastName);
@@ -123,7 +130,7 @@ public class UserServiceImpl implements UserService {
                 break;
 
             case STUDENT:
-                com.school.academic.entity.Student student = new com.school.academic.entity.Student();
+                Student student = new Student();
                 student.setUser(user);
                 student.setFirstName(firstName);
                 student.setLastName(lastName);
@@ -144,17 +151,17 @@ public class UserServiceImpl implements UserService {
     @Override
     public Optional<User> findByEmail(String email) {
         // Buscar en estudiantes
-        Optional<com.school.academic.entity.Student> student = academicService.getStudentByEmail(email);
+        Optional<Student> student = academicService.getStudentByEmail(email);
         if (student.isPresent())
             return Optional.ofNullable(student.get().getUser());
 
         // Buscar en personal
-        Optional<com.school.admin.entity.Staff> staff = staffService.findByEmail(email);
+        Optional<Staff> staff = staffService.findByEmail(email);
         if (staff.isPresent())
             return Optional.ofNullable(staff.get().getUser());
 
         // Buscar en padres
-        Optional<com.school.core.entity.Parent> parent = parentService.findByEmail(email);
+        Optional<Parent> parent = parentService.findByEmail(email);
         if (parent.isPresent())
             return Optional.ofNullable(parent.get().getUser());
 

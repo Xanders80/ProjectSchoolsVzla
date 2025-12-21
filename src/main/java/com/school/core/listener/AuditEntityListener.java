@@ -16,14 +16,17 @@
 
 package com.school.core.listener;
 
-import com.school.core.config.ApplicationContextProvider;
-import com.school.core.entity.AuditLog;
+import java.time.LocalDateTime;
 
-import jakarta.persistence.*;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 
-import java.time.LocalDateTime;
+import com.school.core.config.ApplicationContextProvider;
+import com.school.core.entity.AuditLog;
+
+import jakarta.persistence.PostPersist;
+import jakarta.persistence.PostRemove;
+import jakarta.persistence.PostUpdate;
 
 public class AuditEntityListener {
 

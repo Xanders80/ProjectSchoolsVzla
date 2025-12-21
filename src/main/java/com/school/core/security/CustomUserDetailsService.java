@@ -1,11 +1,12 @@
 package com.school.core.security;
 
-import com.school.core.entity.User;
-import com.school.core.repository.UserRepository;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
+
+import com.school.core.entity.User;
+import com.school.core.repository.UserRepository;
 
 @Service
 public class CustomUserDetailsService implements UserDetailsService {

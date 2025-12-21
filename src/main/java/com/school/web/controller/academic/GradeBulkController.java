@@ -1,23 +1,32 @@
 package com.school.web.controller.academic;
 
-import com.school.academic.dto.GradeBulkEntryDTO;
-import com.school.academic.entity.*;
-import com.school.academic.enums.EvaluationType;
-import com.school.academic.repository.EnrollmentRepository;
-import com.school.academic.repository.GradeRepository;
-import com.school.academic.repository.AcademicPeriodRepository;
-import com.school.academic.service.CourseService;
-import com.school.academic.service.GradeService;
-import com.school.academic.service.SectionService;
-import org.springframework.stereotype.Controller;
-import org.springframework.ui.Model;
-import org.springframework.web.bind.annotation.*;
-import org.springframework.web.servlet.mvc.support.RedirectAttributes;
-
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
+
+import org.springframework.stereotype.Controller;
+import org.springframework.ui.Model;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.ModelAttribute;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.servlet.mvc.support.RedirectAttributes;
+
+import com.school.academic.dto.GradeBulkEntryDTO;
+import com.school.academic.entity.AcademicPeriod;
+import com.school.academic.entity.Course;
+import com.school.academic.entity.Enrollment;
+import com.school.academic.entity.Grade;
+import com.school.academic.entity.Student;
+import com.school.academic.enums.EvaluationType;
+import com.school.academic.repository.AcademicPeriodRepository;
+import com.school.academic.repository.EnrollmentRepository;
+import com.school.academic.repository.GradeRepository;
+import com.school.academic.service.CourseService;
+import com.school.academic.service.GradeService;
+import com.school.academic.service.SectionService;
 
 @Controller
 @RequestMapping("/grades/bulk")

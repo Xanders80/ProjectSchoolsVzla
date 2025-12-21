@@ -1,5 +1,14 @@
 package com.school.hr.service;
 
+import java.time.LocalDate;
+import java.time.LocalTime;
+import java.util.List;
+import java.util.Optional;
+
+import org.springframework.lang.NonNull;
+import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
+
 import com.school.admin.entity.Staff;
 import com.school.admin.repository.StaffRepository;
 import com.school.hr.entity.Contract;
@@ -8,14 +17,6 @@ import com.school.hr.entity.StaffAttendance;
 import com.school.hr.repository.ContractRepository;
 import com.school.hr.repository.PayrollRepository;
 import com.school.hr.repository.StaffAttendanceRepository;
-import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
-
-import java.math.BigDecimal;
-import java.time.LocalDate;
-import java.time.LocalTime;
-import java.util.List;
-import java.util.Optional;
 
 @Service
 @Transactional
@@ -43,7 +44,7 @@ public class HRService {
         return contractRepository.findAll();
     }
 
-    public Contract saveContract(Contract contract) {
+    public Contract saveContract(@NonNull Contract contract) {
         return contractRepository.save(contract);
     }
 
@@ -57,7 +58,7 @@ public class HRService {
         return attendanceRepository.findByDate(date);
     }
 
-    public StaffAttendance markCheckIn(Long staffId, LocalTime time) {
+    public StaffAttendance markCheckIn(@NonNull Long staffId, LocalTime time) {
         LocalDate today = LocalDate.now();
         Staff staff = staffRepository.findById(staffId)
                 .orElseThrow(() -> new IllegalArgumentException("Staff not found"));
@@ -119,7 +120,7 @@ public class HRService {
         }
     }
 
-    public void payPayroll(Long payrollId) {
+    public void payPayroll(@NonNull Long payrollId) {
         Payroll payroll = payrollRepository.findById(payrollId)
                 .orElseThrow(() -> new IllegalArgumentException("Payroll record not found"));
         payroll.setStatus(Payroll.PaymentStatus.PAID);

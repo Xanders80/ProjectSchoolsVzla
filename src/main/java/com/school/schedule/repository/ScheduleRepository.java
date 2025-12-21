@@ -1,12 +1,14 @@
 package com.school.schedule.repository;
 
-import com.school.schedule.entity.ScheduleEntry;
-import org.springframework.data.jpa.repository.JpaRepository;
-import org.springframework.data.jpa.repository.Query;
-import org.springframework.data.repository.query.Param;
 import java.time.DayOfWeek;
 import java.time.LocalTime;
 import java.util.List;
+
+import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.jpa.repository.Query;
+import org.springframework.data.repository.query.Param;
+
+import com.school.schedule.entity.ScheduleEntry;
 
 public interface ScheduleRepository extends JpaRepository<ScheduleEntry, Long> {
 

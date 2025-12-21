@@ -6,7 +6,7 @@
 	<parent>
 		<groupId>org.springframework.boot</groupId>
 		<artifactId>spring-boot-starter-parent</artifactId>
-		<version>3.5.8</version>   <!-- Minor update - more features -->
+		<version>3.5.9</version>   <!-- Minor update - more features -->
 		<relativePath /> <!-- lookup parent from repository -->
 	</parent>
 	<groupId>com.school</groupId>

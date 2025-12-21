@@ -1,15 +1,21 @@
 package com.school.web.controller.communication;
 
-import com.school.communication.service.CommunicationService;
-import com.school.core.entity.User;
-import com.school.core.service.UserService;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.web.PageableDefault;
+import org.springframework.lang.NonNull;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
-import org.springframework.web.bind.annotation.*;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
+
+import com.school.communication.service.CommunicationService;
+import com.school.core.entity.User;
+import com.school.core.service.UserService;
 
 @Controller
 @RequestMapping("/messages")
@@ -67,7 +73,7 @@ public class CommunicationController {
     }
 
     @GetMapping("/read/{id}")
-    public String readMessage(@PathVariable Long id, Model model, RedirectAttributes redirectAttributes) {
+    public String readMessage(@PathVariable @NonNull Long id, Model model, RedirectAttributes redirectAttributes) {
         try {
             User user = getLoggedUser();
             model.addAttribute("message", communicationService.readMessage(id, user.getId()));

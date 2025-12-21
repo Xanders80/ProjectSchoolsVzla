@@ -1,13 +1,14 @@
 package com.school.academic.repository;
 
-import com.school.academic.entity.Grade;
-import org.springframework.data.jpa.repository.JpaRepository;
-import org.springframework.data.jpa.repository.Modifying;
 import java.util.List;
 
-import com.school.academic.entity.Student;
-import com.school.academic.entity.Course;
+import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.jpa.repository.Modifying;
+
 import com.school.academic.entity.AcademicPeriod;
+import com.school.academic.entity.Course;
+import com.school.academic.entity.Grade;
+import com.school.academic.entity.Student;
 
 public interface GradeRepository extends JpaRepository<Grade, Long> {
     List<Grade> findByStudentAndCourseAndPeriod(Student student, Course course, AcademicPeriod period);

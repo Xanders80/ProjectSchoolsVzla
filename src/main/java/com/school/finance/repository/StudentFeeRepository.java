@@ -1,9 +1,11 @@
 package com.school.finance.repository;
 
+import java.util.List;
+
+import org.springframework.data.jpa.repository.JpaRepository;
+
 import com.school.finance.entity.StudentFee;
 import com.school.finance.enums.FeeStatus;
-import org.springframework.data.jpa.repository.JpaRepository;
-import java.util.List;
 
 public interface StudentFeeRepository extends JpaRepository<StudentFee, Long> {
     List<StudentFee> findByStudentId(Long studentId);

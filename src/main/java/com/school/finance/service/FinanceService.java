@@ -1,14 +1,15 @@
 package com.school.finance.service;
 
+import java.util.List;
+import java.util.Optional;
+
+import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
+
 import com.school.academic.entity.Student;
 import com.school.academic.repository.StudentRepository;
 import com.school.finance.entity.StudentFee;
 import com.school.finance.repository.StudentFeeRepository;
-import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
-
-import java.util.List;
-import java.util.Optional;
 
 @Service
 @Transactional

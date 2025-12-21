@@ -1,10 +1,11 @@
 package com.school.admin.repository;
 
-import com.school.admin.entity.Staff;
-import com.school.core.enums.Role;
+import java.util.Optional;
+
 import org.springframework.data.jpa.repository.JpaRepository;
 
-import java.util.Optional;
+import com.school.admin.entity.Staff;
+import com.school.core.enums.Role;
 
 public interface StaffRepository extends JpaRepository<Staff, Long> {
     org.springframework.data.domain.Page<Staff> findByJobTitle(Role jobTitle,

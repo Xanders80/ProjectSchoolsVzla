@@ -1,11 +1,12 @@
 package com.school.web.controller;
 
-import com.school.academic.service.AcademicService;
-import com.school.admin.service.StaffService;
-import com.school.academic.repository.CourseRepository;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
+
+import com.school.academic.repository.CourseRepository;
+import com.school.academic.service.AcademicService;
+import com.school.admin.service.StaffService;
 
 @Controller
 public class HomeController {

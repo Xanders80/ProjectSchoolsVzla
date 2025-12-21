@@ -1,20 +1,25 @@
 package com.school.web.controller.hr;
 
-import com.school.admin.service.StaffService;
-import com.school.hr.entity.Contract;
-import com.school.hr.entity.StaffAttendance;
-import com.school.hr.service.HRService;
-import org.springframework.format.annotation.DateTimeFormat;
-import org.springframework.security.access.prepost.PreAuthorize;
-import org.springframework.stereotype.Controller;
-import org.springframework.ui.Model;
-import org.springframework.web.bind.annotation.*;
-import org.springframework.web.servlet.mvc.support.RedirectAttributes;
-
 import java.time.LocalDate;
 import java.time.LocalTime;
 import java.time.YearMonth;
-import java.util.List;
+
+import org.springframework.format.annotation.DateTimeFormat;
+import org.springframework.lang.NonNull;
+import org.springframework.security.access.prepost.PreAuthorize;
+import org.springframework.stereotype.Controller;
+import org.springframework.ui.Model;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.ModelAttribute;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.servlet.mvc.support.RedirectAttributes;
+
+import com.school.admin.service.StaffService;
+import com.school.hr.entity.Contract;
+import com.school.hr.service.HRService;
 
 @Controller
 @RequestMapping("/hr")
@@ -59,7 +64,7 @@ public class HRController {
     }
 
     @PostMapping("/attendance/checkin")
-    public String manualCheckIn(@RequestParam Long staffId,
+    public String manualCheckIn(@RequestParam @NonNull Long staffId,
             @RequestParam @DateTimeFormat(pattern = "HH:mm") LocalTime time,
             RedirectAttributes redirectAttributes) {
         hrService.markCheckIn(staffId, time);
@@ -98,7 +103,7 @@ public class HRController {
     }
 
     @PostMapping("/payroll/pay/{id}")
-    public String markAsPaid(@PathVariable Long id, @RequestParam String period,
+    public String markAsPaid(@PathVariable @NonNull Long id, @RequestParam String period,
             RedirectAttributes redirectAttributes) {
         hrService.payPayroll(id);
         redirectAttributes.addFlashAttribute("successMessage", "Pago registrado.");

@@ -1,16 +1,23 @@
 package com.school.web.controller.academic;
 
-import com.school.academic.entity.Section;
-import com.school.academic.service.SectionService;
-import com.school.academic.repository.AcademicPeriodRepository;
-import com.school.academic.repository.CourseRepository;
-import com.school.admin.service.StaffService;
-import com.school.infra.service.InfraService;
 import org.springframework.lang.NonNull;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
-import org.springframework.web.bind.annotation.*;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.ModelAttribute;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
+
+import com.school.academic.entity.Section;
+import com.school.academic.repository.AcademicPeriodRepository;
+import com.school.academic.repository.CourseRepository;
+import com.school.academic.service.SectionService;
+import com.school.admin.service.StaffService;
+import com.school.infra.service.InfraService;
 
 @Controller
 @RequestMapping("/sections")

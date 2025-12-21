@@ -1,10 +1,12 @@
 package com.school.academic.repository;
 
-import com.school.academic.entity.Attendance;
-import org.springframework.data.jpa.repository.JpaRepository;
-import org.springframework.data.jpa.repository.Modifying;
 import java.time.LocalDate;
 import java.util.List;
+
+import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.jpa.repository.Modifying;
+
+import com.school.academic.entity.Attendance;
 
 public interface AttendanceRepository extends JpaRepository<Attendance, Long> {
     List<Attendance> findBySectionIdAndDate(Long sectionId, LocalDate date);
