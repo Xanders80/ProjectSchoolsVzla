@@ -1,5 +1,6 @@
 package com.school.communication.service;
 
+import java.util.List;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.lang.NonNull;
@@ -7,7 +8,10 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import com.school.communication.entity.Message;
+import com.school.communication.entity.Notification;
+import com.school.communication.enums.NotificationType;
 import com.school.communication.repository.MessageRepository;
+import com.school.communication.repository.NotificationRepository;
 import com.school.core.entity.User;
 import com.school.core.service.UserService;
 
@@ -16,11 +20,11 @@ import com.school.core.service.UserService;
 public class CommunicationService {
 
     private final MessageRepository messageRepository;
-    private final com.school.communication.repository.NotificationRepository notificationRepository;
+    private final NotificationRepository notificationRepository;
     private final UserService userService;
 
     public CommunicationService(MessageRepository messageRepository,
-            com.school.communication.repository.NotificationRepository notificationRepository,
+            NotificationRepository notificationRepository,
             UserService userService) {
         this.messageRepository = messageRepository;
         this.notificationRepository = notificationRepository;
@@ -76,16 +80,16 @@ public class CommunicationService {
 
     // Notifications
 
-    public void createNotification(User user, com.school.communication.enums.NotificationType type,
+    public void createNotification(User user, NotificationType type,
             String messageContent) {
-        com.school.communication.entity.Notification notification = new com.school.communication.entity.Notification();
+        Notification notification = new Notification();
         notification.setUser(user);
         notification.setType(type);
         notification.setMessage(messageContent);
         notificationRepository.save(notification);
     }
 
-    public void broadcastNotification(com.school.communication.enums.NotificationType type, String messageContent) {
+    public void broadcastNotification(NotificationType type, String messageContent) {
         // Broadcast = Notification with null user (interpreted as Global)
         // OR we create one for every user.
         // For performance in a large system, we'd have a separate "Broadcast" entity.
@@ -102,11 +106,11 @@ public class CommunicationService {
         // status.
         // Assuming user base is small (< 1000).
 
-        java.util.List<User> users = userService.findAllUsers(); // We added this method!
+        List<User> users = userService.findAllUsers(); // We added this method!
         users.forEach(user -> createNotification(user, type, messageContent));
     }
 
-    public Page<com.school.communication.entity.Notification> getUserNotifications(Long userId, Pageable pageable) {
+    public Page<Notification> getUserNotifications(Long userId, Pageable pageable) {
         return notificationRepository.findByUserIdOrderByCreatedAtDesc(userId, pageable);
     }
 

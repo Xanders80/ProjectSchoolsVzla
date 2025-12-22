@@ -1,9 +1,11 @@
 package com.school.core.service.impl;
 
+import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.util.List;
 import java.util.Optional;
+import java.util.regex.Pattern;
 
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -25,34 +27,40 @@ import com.school.core.service.ParentService;
 @Transactional
 public class UserServiceImpl implements UserService {
 
-    @Autowired
-    private UserRepository userRepository;
+    private final UserRepository userRepository;
+    private final PasswordResetTokenRepository passwordResetTokenRepository;
+    private final PasswordEncoder passwordEncoder;
+    private final ParentService parentService;
+    private final StaffService staffService;
+    private final AcademicService academicService;
 
-    @Autowired
-    private PasswordResetTokenRepository passwordResetTokenRepository;
+    private static final String PASSWORD_REGEX = "^(?=.*[0-9])(?=.*[a-z])(?=.*[A-Z])(?=.*[@#$%^&+=!])(?=\\S+$).{8,}$";
+    private static final Pattern PASSWORD_PATTERN = Pattern.compile(PASSWORD_REGEX);
 
-    @Autowired
-    private PasswordEncoder passwordEncoder;
-
-    @Autowired
-    private ParentService parentService;
-
-    @Autowired
-    private StaffService staffService;
-
-    @Autowired
-    private AcademicService academicService;
+    public UserServiceImpl(UserRepository userRepository,
+            PasswordResetTokenRepository passwordResetTokenRepository,
+            PasswordEncoder passwordEncoder,
+            ParentService parentService,
+            StaffService staffService,
+            AcademicService academicService) {
+        this.userRepository = userRepository;
+        this.passwordResetTokenRepository = passwordResetTokenRepository;
+        this.passwordEncoder = passwordEncoder;
+        this.parentService = parentService;
+        this.staffService = staffService;
+        this.academicService = academicService;
+    }
 
     @Override
     public User registerNewUser(String firstName, String lastName, String email, String username, String password) {
         if (userRepository.findByUsername(username).isPresent()) {
-            throw new RuntimeException("El nombre de usuario ya existe: " + username);
+            throw new IllegalArgumentException("El nombre de usuario ya existe: " + username);
         }
         if (this.findByEmail(email).isPresent()) {
-            throw new RuntimeException("El correo electrónico ya existe: " + email);
+            throw new IllegalArgumentException("El correo electrónico ya existe: " + email);
         }
         if (!isValidPassword(password)) {
-            throw new RuntimeException(
+            throw new IllegalArgumentException(
                     "La contraseña no cumple con los requisitos de seguridad (Mínimo 8 caracteres, 1 mayúscula, 1 número, 1 carácter especial).");
         }
 
@@ -72,10 +80,10 @@ public class UserServiceImpl implements UserService {
             String userType, String dni, String phoneNumber, String address, String relationship) {
 
         if (userRepository.findByUsername(username).isPresent()) {
-            throw new RuntimeException("El nombre de usuario ya existe: " + username);
+            throw new IllegalArgumentException("El nombre de usuario ya existe: " + username);
         }
         if (!isValidPassword(password)) {
-            throw new RuntimeException(
+            throw new IllegalArgumentException(
                     "La contraseña no cumple con los requisitos de seguridad (Mínimo 8 caracteres, 1 mayúscula, 1 número, 1 carácter especial).");
         }
 
@@ -83,21 +91,21 @@ public class UserServiceImpl implements UserService {
         User user = new User();
         user.setUsername(username);
         user.setPassword(passwordEncoder.encode(password));
-        user.setRole(Role.valueOf(userType));
+        Role role = Role.valueOf(userType);
+        user.setRole(role);
         user.setEnabled(true);
         user.setCreatedAt(LocalDateTime.now());
 
         User savedUser = userRepository.save(user);
 
         // Crear entidad específica según el tipo
-        createSpecificEntity(savedUser, userType, dni, phoneNumber, address, relationship, firstName, lastName, email);
+        createSpecificEntity(savedUser, role, dni, phoneNumber, address, relationship, firstName, lastName, email);
 
         return savedUser;
     }
 
-    private void createSpecificEntity(User user, String userType, String dni, String phoneNumber, String address,
+    private void createSpecificEntity(User user, Role role, String dni, String phoneNumber, String address,
             String relationship, String firstName, String lastName, String email) {
-        Role role = Role.valueOf(userType);
 
         switch (role) {
             case PARENT:
@@ -124,7 +132,7 @@ public class UserServiceImpl implements UserService {
                 staff.setPhoneNumber(phoneNumber);
                 staff.setAddress(address);
                 staff.setJobTitle(role);
-                staff.setHireDate(java.time.LocalDate.now());
+                staff.setHireDate(LocalDate.now());
                 staff.setDepartment("General");
                 staffService.saveStaff(staff);
                 break;
@@ -139,7 +147,7 @@ public class UserServiceImpl implements UserService {
                 student.setPhoneNumber(phoneNumber);
                 student.setAddress(address);
                 student.setRegistrationNumber("REG" + System.currentTimeMillis());
-                student.setEnrollmentDate(java.time.LocalDate.now());
+                student.setEnrollmentDate(LocalDate.now());
                 academicService.saveStudent(student);
                 break;
 
@@ -190,15 +198,14 @@ public class UserServiceImpl implements UserService {
     @Override
     public void changeUserPassword(User user, String password) {
         if (!isValidPassword(password)) {
-            throw new RuntimeException("La contraseña no cumple con los requisitos de seguridad.");
+            throw new IllegalArgumentException("La contraseña no cumple con los requisitos de seguridad.");
         }
         user.setPassword(passwordEncoder.encode(password));
         userRepository.save(user);
     }
 
     private boolean isValidPassword(String password) {
-        String regex = "^(?=.*[0-9])(?=.*[a-z])(?=.*[A-Z])(?=.*[@#$%^&+=!])(?=\\S+$).{8,}$";
-        return password != null && password.matches(regex);
+        return password != null && PASSWORD_PATTERN.matcher(password).matches();
     }
 
     @Override
@@ -276,7 +283,7 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    public java.util.List<User> findAllUsers() {
+    public List<User> findAllUsers() {
         return userRepository.findAll();
     }
 }
