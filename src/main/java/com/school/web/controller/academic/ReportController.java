@@ -42,6 +42,7 @@ public class ReportController {
             model.addAttribute("selectedStudent", student);
             model.addAttribute("grades", grades);
             model.addAttribute("average", Math.round(average * 100.0) / 100.0); // 2 decimals
+            model.addAttribute("averageLetter", Grade.getLetterForScore(average));
         }
 
         return "academic/report-card";

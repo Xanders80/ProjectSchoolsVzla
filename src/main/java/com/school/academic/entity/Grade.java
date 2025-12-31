@@ -63,8 +63,41 @@ public class Grade {
     @Column(columnDefinition = "TEXT")
     private String comments;
 
+    @Column(name = "deleted", nullable = false)
+    private boolean deleted = false;
+
+    @Column(name = "deleted_at")
+    private java.time.LocalDateTime deletedAt;
+
+    @Column(name = "deleted_by", length = 100)
+    private String deletedBy;
+
     public Grade() {
         this.date = LocalDate.now();
+    }
+
+    public boolean isDeleted() {
+        return deleted;
+    }
+
+    public void setDeleted(boolean deleted) {
+        this.deleted = deleted;
+    }
+
+    public java.time.LocalDateTime getDeletedAt() {
+        return deletedAt;
+    }
+
+    public void setDeletedAt(java.time.LocalDateTime deletedAt) {
+        this.deletedAt = deletedAt;
+    }
+
+    public String getDeletedBy() {
+        return deletedBy;
+    }
+
+    public void setDeletedBy(String deletedBy) {
+        this.deletedBy = deletedBy;
     }
 
     // Getters and Setters
@@ -131,5 +164,23 @@ public class Grade {
 
     public void setComments(String comments) {
         this.comments = comments;
+    }
+
+    public String getLetterGrade() {
+        return getLetterForScore(this.score);
+    }
+
+    public static String getLetterForScore(Double score) {
+        if (score == null)
+            return "-";
+        if (score >= 18)
+            return "A";
+        if (score >= 15)
+            return "B";
+        if (score >= 12)
+            return "C";
+        if (score >= 10)
+            return "D";
+        return "F";
     }
 }

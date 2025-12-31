@@ -68,7 +68,7 @@ public class HealthService {
 
     @Transactional(readOnly = true)
     public List<Vaccine> getVaccinesByStudentId(@NonNull Long studentId) {
-        return vaccineRepository.findByStudentIdOrderByAdministrationDateDesc(studentId);
+        return vaccineRepository.findByStudentIdAndDeletedFalseOrderByAdministrationDateDesc(studentId);
     }
 
     public Vaccine addVaccine(@NonNull Long studentId, Vaccine vaccine) {
@@ -79,7 +79,25 @@ public class HealthService {
     }
 
     public void deleteVaccine(@NonNull Long vaccineId) {
-        vaccineRepository.deleteById(vaccineId);
+        Vaccine vaccine = vaccineRepository.findById(vaccineId)
+                .orElseThrow(() -> new IllegalArgumentException("Vaccine not found"));
+        vaccine.setDeleted(true);
+        vaccine.setDeletedAt(LocalDateTime.now());
+        vaccine.setDeletedBy(getCurrentUser());
+        vaccineRepository.save(vaccine);
+    }
+
+    @NonNull
+    private String getCurrentUser() {
+        org.springframework.security.core.Authentication auth = org.springframework.security.core.context.SecurityContextHolder
+                .getContext().getAuthentication();
+        if (auth != null) {
+            String name = auth.getName();
+            if (name != null) {
+                return name;
+            }
+        }
+        return "system";
     }
 
     public void deleteStudentHealthData(@NonNull Long studentId) {

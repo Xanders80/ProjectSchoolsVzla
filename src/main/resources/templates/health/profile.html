@@ -197,15 +197,15 @@
                       <td th:text="${vac.doseNumber}">1</td>
                       <td th:text="${vac.administrationDate}">2025-01-01</td>
                       <td class="text-center">
-                        <a
-                          href="#"
+                        <button
+                          type="button"
                           class="btn btn-danger btn-circle btn-sm"
                           data-toggle="modal"
                           data-target="#deleteModal"
-                          th:data-url="@{/health/vaccine/delete/{id}(id=${vac.id}, studentId=${student.id})}"
+                          th:onclick="'confirmDelete(\'' + @{/health/vaccine/delete/{id}(id=${vac.id}, studentId=${student.id})} + '\')'"
                         >
                           <i class="fas fa-trash"></i>
-                        </a>
+                        </button>
                       </td>
                     </tr>
                     <tr th:if="${#lists.isEmpty(vaccines)}">
@@ -297,9 +297,8 @@
             </form>
           </div>
         </div>
-        <div th:replace="~{fragments/delete-modal :: deleteModal}"></div>
-          </div>
         </div>
+      </div>
 
         <div th:replace="~{fragments/sb-admin-footer :: footer}"></div>
       </div>
@@ -308,20 +307,13 @@
     <a class="scroll-to-top rounded" href="#page-top"
       ><i class="fas fa-angle-up"></i
     ></a>
-    <div th:replace="~{fragments/sb-admin-topbar :: logoutModal}"></div>
 
     <script th:src="@{/vendor/jquery/jquery.min.js}"></script>
     <script th:src="@{/vendor/bootstrap/js/bootstrap.bundle.min.js}"></script>
     <script th:src="@{/vendor/jquery-easing/jquery.easing.min.js}"></script>
     <script th:src="@{/js/sb-admin-2.min.js}"></script>
-    
-    <script>
-      $("#deleteModal").on("show.bs.modal", function (event) {
-        var button = $(event.relatedTarget);
-        var url = button.data("url");
-        var modal = $(this);
-        modal.find("#deleteForm").attr("action", url);
-      });
-    </script>
+
+    <div th:replace="~{fragments/sb-admin-topbar :: logoutModal}"></div>
+    <div th:replace="~{fragments/delete-modal :: deleteModal}"></div>
   </body>
 </html>

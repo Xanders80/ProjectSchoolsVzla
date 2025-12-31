@@ -12,13 +12,13 @@ import com.school.academic.entity.Section;
 
 public interface SectionRepository extends JpaRepository<Section, Long> {
     List<Section> findByCourseId(Long courseId);
-    
+
     @Query("SELECT s FROM Section s WHERE s.deleted = false")
-    Page<Section> findAllActive(Pageable pageable);
-    
+    Page<Section> findByDeletedFalse(Pageable pageable);
+
     @Query("SELECT s FROM Section s WHERE s.id = ?1 AND s.deleted = false")
-    Optional<Section> findByIdAndNotDeleted(Long id);
-    
+    Optional<Section> findByIdAndDeletedFalse(Long id);
+
     @Query("SELECT COUNT(s) > 0 FROM Section s WHERE s.id = ?1 AND s.deleted = false")
-    boolean existsByIdAndNotDeleted(Long id);
+    boolean existsByIdAndDeletedFalse(Long id);
 }

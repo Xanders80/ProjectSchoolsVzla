@@ -215,7 +215,8 @@ public class UserServiceImpl implements UserService {
 
     @Override
     public User updateUserProfile(User user, String firstName, String lastName, String email, String dni,
-            String phoneNumber, String address, String relationship, String department, String specialization) {
+            String phoneNumber, String address, String relationship, String department, String specialization,
+            java.time.LocalDate birthDate) {
         switch (user.getRole()) {
             case PARENT:
                 parentService.getParentByUserId(user.getId())
@@ -223,6 +224,7 @@ public class UserServiceImpl implements UserService {
                             parent.setFirstName(firstName);
                             parent.setLastName(lastName);
                             parent.setEmail(email);
+                            parent.setBirthDate(birthDate);
                             if (dni != null)
                                 parent.setDni(dni);
                             if (phoneNumber != null)
@@ -239,10 +241,11 @@ public class UserServiceImpl implements UserService {
             case TEACHER:
             case STAFF:
                 staffService.getStaffByUserId(user.getId())
-                        .ifPresent(staff -> {
+                        .ifPresentOrElse(staff -> {
                             staff.setFirstName(firstName);
                             staff.setLastName(lastName);
                             staff.setEmail(email);
+                            staff.setBirthDate(birthDate);
                             if (dni != null)
                                 staff.setDni(dni);
                             if (phoneNumber != null)
@@ -254,6 +257,21 @@ public class UserServiceImpl implements UserService {
                             if (specialization != null)
                                 staff.setSpecialization(specialization);
                             staffService.saveStaff(staff);
+                        }, () -> {
+                            // Crear registro de personal si no existe (ej. para admin inicial)
+                            Staff newStaff = new Staff();
+                            newStaff.setUser(user);
+                            newStaff.setFirstName(firstName);
+                            newStaff.setLastName(lastName);
+                            newStaff.setEmail(email);
+                            newStaff.setBirthDate(birthDate);
+                            newStaff.setDni(dni != null && !dni.isEmpty() ? dni : "00000");
+                            newStaff.setPhoneNumber(phoneNumber);
+                            newStaff.setAddress(address);
+                            newStaff.setJobTitle(user.getRole());
+                            newStaff.setDepartment(department != null ? department : "Administración");
+                            newStaff.setHireDate(LocalDate.now());
+                            staffService.saveStaff(newStaff);
                         });
                 break;
             case STUDENT:
@@ -262,6 +280,7 @@ public class UserServiceImpl implements UserService {
                             student.setFirstName(firstName);
                             student.setLastName(lastName);
                             student.setEmail(email);
+                            student.setBirthDate(birthDate);
                             if (dni != null)
                                 student.setDni(dni);
                             if (phoneNumber != null)

@@ -26,12 +26,12 @@ public class InfraService {
 
     // Building Ops
     public List<Building> getAllBuildings() {
-        return buildingRepository.findAll();
+        return buildingRepository.findByDeletedFalse();
     }
 
     public org.springframework.data.domain.Page<Building> getAllBuildings(
             @NonNull org.springframework.data.domain.Pageable pageable) {
-        return buildingRepository.findAll(pageable);
+        return buildingRepository.findByDeletedFalse(pageable);
     }
 
     public Building saveBuilding(@NonNull Building building) {
@@ -39,7 +39,14 @@ public class InfraService {
     }
 
     public void deleteBuilding(@NonNull Long id) {
-        buildingRepository.deleteById(id);
+        Building building = buildingRepository.findById(id)
+                .orElseThrow(() -> new IllegalArgumentException("Edificio no encontrado"));
+
+        building.setDeleted(true);
+        building.setDeletedAt(java.time.LocalDateTime.now());
+        building.setDeletedBy(getCurrentUser());
+
+        buildingRepository.save(building);
     }
 
     public Optional<Building> getBuildingById(@NonNull Long id) {
@@ -48,12 +55,12 @@ public class InfraService {
 
     // Room Ops
     public List<Room> getAllRooms() {
-        return roomRepository.findAll();
+        return roomRepository.findByDeletedFalse();
     }
 
     public org.springframework.data.domain.Page<Room> getAllRooms(
             @NonNull org.springframework.data.domain.Pageable pageable) {
-        return roomRepository.findAll(pageable);
+        return roomRepository.findByDeletedFalse(pageable);
     }
 
     public List<Room> getRoomsByBuilding(Long buildingId) {
@@ -69,6 +76,26 @@ public class InfraService {
     }
 
     public void deleteRoom(@NonNull Long id) {
-        roomRepository.deleteById(id);
+        Room room = roomRepository.findById(id)
+                .orElseThrow(() -> new IllegalArgumentException("Aula no encontrada"));
+
+        room.setDeleted(true);
+        room.setDeletedAt(java.time.LocalDateTime.now());
+        room.setDeletedBy(getCurrentUser());
+
+        roomRepository.save(room);
+    }
+
+    @NonNull
+    private String getCurrentUser() {
+        org.springframework.security.core.Authentication auth = org.springframework.security.core.context.SecurityContextHolder
+                .getContext().getAuthentication();
+        if (auth != null) {
+            String name = auth.getName();
+            if (name != null) {
+                return name;
+            }
+        }
+        return "system";
     }
 }

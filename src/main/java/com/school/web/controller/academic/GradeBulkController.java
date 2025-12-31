@@ -103,6 +103,15 @@ public class GradeBulkController {
                         }).collect(Collectors.toList());
 
                         bulkDto.setStudentGrades(studentGrades);
+
+                        // Log for debugging
+                        org.slf4j.LoggerFactory.getLogger(GradeBulkController.class)
+                                        .info("Loaded {} students for section {} and course {}", students.size(),
+                                                        sectionId, courseId);
+
+                        if (students.isEmpty()) {
+                                model.addAttribute("info", "No se encontraron alumnos matriculados en esta sección.");
+                        }
                 } else {
                         bulkDto.setStudentGrades(new ArrayList<>());
                 }

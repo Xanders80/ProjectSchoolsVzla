@@ -85,9 +85,9 @@
                         <td>
                           <span
                             th:class="'badge badge-' +
-                                (${fee.status.name() == 'PAID'} ? 'success' :
-                                (${fee.status.name() == 'PENDING'} ? 'warning' :
-                                (${fee.status.name() == 'OVERDUE'} ? 'danger' : 'info')))"
+                          (${fee.status.name() == 'PAID'} ? 'success' :
+                          (${fee.status.name() == 'PENDING'} ? 'warning' :
+                          (${fee.status.name() == 'OVERDUE'} ? 'danger' : 'info')))"
                             th:text="${fee.status}"
                             >PENDIENTE</span
                           >
@@ -106,15 +106,15 @@
                           >
                             <i class="fas fa-money-bill-wave"></i> Pagar
                           </a>
-                          <a
-                            href="#"
+                          <button
+                            type="button"
                             class="btn btn-sm btn-danger"
                             data-toggle="modal"
                             data-target="#deleteModal"
-                            th:data-url="@{/finance/fees/delete/{id}(id=${fee.id})}"
+                            th:onclick="'confirmDelete(\'' + @{/finance/fees/delete/{id}(id=${fee.id})} + '\')'"
                           >
                             <i class="fas fa-trash"></i> Eliminar
-                          </a>
+                          </button>
                         </td>
                       </tr>
                       <tr th:if="${fees.empty}">
@@ -183,15 +183,17 @@
     <a class="scroll-to-top rounded" href="#page-top"
       ><i class="fas fa-angle-up"></i
     ></a>
-    <div th:replace="~{fragments/sb-admin-topbar :: logoutModal}"></div>
-    <div th:replace="~{fragments/delete-modal :: deleteModal}"></div>
 
     <script th:src="@{/vendor/jquery/jquery.min.js}"></script>
     <script th:src="@{/vendor/bootstrap/js/bootstrap.bundle.min.js}"></script>
     <script th:src="@{/vendor/jquery-easing/jquery.easing.min.js}"></script>
     <script th:src="@{/js/sb-admin-2.min.js}"></script>
     <script th:src="@{/vendor/datatables/jquery.dataTables.min.js}"></script>
-    <script th:src="@{/vendor/datatables/dataTables.bootstrap4.min.js}"></script>
+    <script
+      th:src="@{/vendor/datatables/dataTables.bootstrap4.min.js}"
+    ></script>
     <script th:src="@{/js/demo/datatables-demo.js}"></script>
+    <div th:replace="~{fragments/sb-admin-topbar :: logoutModal}"></div>
+    <div th:replace="~{fragments/delete-modal :: deleteModal}"></div>
   </body>
 </html>

@@ -57,7 +57,7 @@ public class RoleController {
             @RequestParam(defaultValue = "10") int size,
             Model model) {
         Pageable pageable = PageRequest.of(page, size);
-        Page<Role> rolePage = roleRepository.findAll(pageable);
+        Page<Role> rolePage = roleRepository.findByDeletedFalse(pageable);
 
         model.addAttribute("roles", rolePage.getContent());
         model.addAttribute("currentPage", page);
@@ -113,8 +113,14 @@ public class RoleController {
     @RequestMapping(value = "/delete/{id}", method = { RequestMethod.POST, RequestMethod.DELETE })
     public String deleteRole(@PathVariable @NonNull Long id, RedirectAttributes redirectAttributes) {
         try {
-            if (roleRepository.existsById(id)) {
-                roleRepository.deleteById(id);
+            Optional<Role> roleOpt = roleRepository.findById(id);
+            if (roleOpt.isPresent()) {
+                Role role = roleOpt.get();
+                role.setDeleted(true);
+                role.setDeletedAt(java.time.LocalDateTime.now());
+                role.setDeletedBy(getCurrentUser());
+
+                roleRepository.save(role);
                 redirectAttributes.addFlashAttribute(SUCCESS_MESSAGE, "Rol eliminado exitosamente.");
             } else {
                 redirectAttributes.addFlashAttribute(ERROR_MESSAGE, "Rol no encontrado.");
@@ -123,5 +129,11 @@ public class RoleController {
             redirectAttributes.addFlashAttribute(ERROR_MESSAGE, "Error al eliminar el rol: " + e.getMessage());
         }
         return REDIRECT_ROLES;
+    }
+
+    private String getCurrentUser() {
+        org.springframework.security.core.Authentication auth = org.springframework.security.core.context.SecurityContextHolder
+                .getContext().getAuthentication();
+        return (auth != null) ? auth.getName() : "system";
     }
 }

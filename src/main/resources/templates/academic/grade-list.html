@@ -86,6 +86,7 @@
                         <th>Periodo</th>
                         <th>Evaluación</th>
                         <th>Nota</th>
+                        <th>Letra</th>
                         <th>Fecha</th>
                         <th>Acciones</th>
                       </tr>
@@ -110,6 +111,13 @@
                           Examen
                         </td>
                         <td th:text="${grade.score ?: '0.0'}">85</td>
+                        <td
+                          class="font-weight-bold"
+                          th:text="${grade.letterGrade}"
+                          th:classappend="${grade.letterGrade == 'F' ? 'text-danger' : (grade.letterGrade == 'A' ? 'text-success' : 'text-primary')}"
+                        >
+                          A
+                        </td>
                         <td th:text="${grade.date ?: 'N/A'}">2025-05-20</td>
                         <td>
                           <a
@@ -118,15 +126,15 @@
                           >
                             <i class="fas fa-edit"></i> Editar
                           </a>
-                          <a
-                            href="#"
+                          <button
+                            type="button"
                             class="btn btn-danger btn-sm"
                             data-toggle="modal"
                             data-target="#deleteModal"
-                            th:data-url="@{/grades/delete/{id}(id=${grade.id})}"
+                            th:onclick="'confirmDelete(\'' + @{/grades/delete/{id}(id=${grade.id})} + '\')'"
                           >
                             <i class="fas fa-trash"></i> Eliminar
-                          </a>
+                          </button>
                         </td>
                       </tr>
                       <tr th:if="${#lists.isEmpty(grades)}">
@@ -149,9 +157,7 @@
     <a class="scroll-to-top rounded" href="#page-top"
       ><i class="fas fa-angle-up"></i
     ></a>
-    <div th:replace="~{fragments/sb-admin-topbar :: logoutModal}"></div>
 
-    <div th:replace="~{fragments/delete-modal :: deleteModal}"></div>
     <script th:src="@{/vendor/jquery/jquery.min.js}"></script>
     <script th:src="@{/vendor/bootstrap/js/bootstrap.bundle.min.js}"></script>
     <script th:src="@{/vendor/jquery-easing/jquery.easing.min.js}"></script>
@@ -161,15 +167,7 @@
       th:src="@{/vendor/datatables/dataTables.bootstrap4.min.js}"
     ></script>
     <script th:src="@{/js/demo/datatables-demo.js}"></script>
-    <script>
-      $(document).ready(function () {
-        $("#deleteModal").on("show.bs.modal", function (event) {
-          var button = $(event.relatedTarget);
-          var url = button.data("url");
-          var modal = $(this);
-          modal.find("#deleteForm").attr("action", url);
-        });
-      });
-    </script>
+    <div th:replace="~{fragments/sb-admin-topbar :: logoutModal}"></div>
+    <div th:replace="~{fragments/delete-modal :: deleteModal}"></div>
   </body>
 </html>

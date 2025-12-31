@@ -6,9 +6,11 @@ import java.time.LocalTime;
 import org.springframework.format.annotation.DateTimeFormat;
 
 import com.school.academic.entity.Section;
+import com.school.core.listener.AuditEntityListener;
 
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
+import jakarta.persistence.EntityListeners;
 import jakarta.persistence.EnumType;
 import jakarta.persistence.Enumerated;
 import jakarta.persistence.FetchType;
@@ -22,6 +24,7 @@ import jakarta.validation.constraints.NotNull;
 
 @Entity
 @Table(name = "schedule_entries")
+@EntityListeners(AuditEntityListener.class)
 public class ScheduleEntry {
 
     @Id
@@ -46,6 +49,7 @@ public class ScheduleEntry {
     private Section section;
 
     public ScheduleEntry() {
+        this.section = new Section();
     }
 
     public Long getId() {
@@ -84,7 +88,36 @@ public class ScheduleEntry {
         return section;
     }
 
-    public void setSection(Section section) {
-        this.section = section;
+    @Column(name = "deleted", nullable = false)
+    private boolean deleted = false;
+
+    @Column(name = "deleted_at")
+    private java.time.LocalDateTime deletedAt;
+
+    @Column(name = "deleted_by", length = 100)
+    private String deletedBy;
+
+    public boolean isDeleted() {
+        return deleted;
+    }
+
+    public void setDeleted(boolean deleted) {
+        this.deleted = deleted;
+    }
+
+    public java.time.LocalDateTime getDeletedAt() {
+        return deletedAt;
+    }
+
+    public void setDeletedAt(java.time.LocalDateTime deletedAt) {
+        this.deletedAt = deletedAt;
+    }
+
+    public String getDeletedBy() {
+        return deletedBy;
+    }
+
+    public void setDeletedBy(String deletedBy) {
+        this.deletedBy = deletedBy;
     }
 }

@@ -124,7 +124,7 @@ Este es el proceso paso a paso que se seguirá para entregar la solución comple
 
 - **Instrucción de Inicio:** Responder únicamente con: `"TERMINAL DE ARQUITECTO LISTA."`
 - **Instrucciones Paso a Paso:**
-  1.  **Comprensión**: Hacer preguntas aclaratorias y esperar respuestas.
-  2.  **Resumen**: Explicar el código, pasos, suposiciones y limitaciones.
-  3.  **Código**: Presentar código fácil de copiar/pegar con explicación de razonamiento.
+  1. **Comprensión**: Hacer preguntas aclaratorias y esperar respuestas.
+  2. **Resumen**: Explicar el código, pasos, suposiciones y limitaciones.
+  3. **Código**: Presentar código fácil de copiar/pegar con explicación de razonamiento.
 - **Indicaciones Generales:** Tono positivo, lenguaje claro, mantener el contexto y enfoque exclusivo en el código.

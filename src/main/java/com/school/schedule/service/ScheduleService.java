@@ -26,7 +26,7 @@ public class ScheduleService {
     }
 
     public List<ScheduleEntry> getAllSchedules() {
-        return scheduleRepository.findAll();
+        return scheduleRepository.findByDeletedFalse();
     }
 
     public ScheduleEntry saveSchedule(ScheduleEntry entry) {
@@ -73,7 +73,25 @@ public class ScheduleService {
     }
 
     public void deleteSchedule(@NonNull Long id) {
-        scheduleRepository.deleteById(id);
+        ScheduleEntry entry = scheduleRepository.findById(id)
+                .orElseThrow(() -> new IllegalArgumentException("Schedule entry not found"));
+        entry.setDeleted(true);
+        entry.setDeletedAt(java.time.LocalDateTime.now());
+        entry.setDeletedBy(getCurrentUser());
+        scheduleRepository.save(entry);
+    }
+
+    @NonNull
+    private String getCurrentUser() {
+        org.springframework.security.core.Authentication auth = org.springframework.security.core.context.SecurityContextHolder
+                .getContext().getAuthentication();
+        if (auth != null) {
+            String name = auth.getName();
+            if (name != null) {
+                return name;
+            }
+        }
+        return "system";
     }
 
     public Optional<ScheduleEntry> getScheduleById(@NonNull Long id) {

@@ -14,8 +14,8 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import com.school.academic.entity.Attendance;
+import com.school.academic.entity.Enrollment;
 import com.school.academic.entity.Section;
-import com.school.academic.entity.Student;
 import com.school.academic.enums.AttendanceStatus;
 import com.school.academic.service.AcademicService;
 
@@ -51,13 +51,14 @@ public class AttendanceController {
 
             if (attendanceList.isEmpty()) {
                 attendanceList = new ArrayList<>();
-                // Fetch students - using unpaged for simplicity in this view
-                List<Student> students = academicService.getAllStudents();
+                // Fetch students enrolled in the section
+                List<Enrollment> enrollments = academicService.getEnrollmentsBySection(sectionId);
                 Section section = academicService.getSectionById(sectionId).orElseThrow();
 
-                for (Student s : students) {
+                // If no enrollments, the list remains empty, effectively handling "no students"
+                for (Enrollment enrollment : enrollments) {
                     Attendance a = new Attendance();
-                    a.setStudent(s);
+                    a.setStudent(enrollment.getStudent());
                     a.setSection(section);
                     a.setDate(date);
                     a.setStatus(AttendanceStatus.PRESENT); // Default

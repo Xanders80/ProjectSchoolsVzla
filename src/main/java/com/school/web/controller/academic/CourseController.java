@@ -68,7 +68,13 @@ public class CourseController {
         if (result.hasErrors()) {
             return COURSE_FORM_VIEW;
         }
-        courseService.saveCourse(course);
+
+        try {
+            courseService.saveCourse(course);
+        } catch (org.springframework.dao.DataIntegrityViolationException e) {
+            result.rejectValue("code", "error.course", "Ese código de curso ya está en uso");
+            return COURSE_FORM_VIEW;
+        }
         return "redirect:/courses";
     }
 

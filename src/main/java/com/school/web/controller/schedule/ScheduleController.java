@@ -13,6 +13,8 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
+import jakarta.validation.Valid;
+
 import com.school.academic.repository.SectionRepository;
 import com.school.schedule.entity.ScheduleEntry;
 import com.school.schedule.service.ScheduleService;
@@ -38,18 +40,35 @@ public class ScheduleController {
     @GetMapping("/new")
     public String newScheduleForm(Model model) {
         model.addAttribute("scheduleEntry", new ScheduleEntry());
-        model.addAttribute("sections", sectionRepository.findAll());
+        model.addAttribute("sections",
+                sectionRepository.findByDeletedFalse(org.springframework.data.domain.Pageable.unpaged()).getContent());
         model.addAttribute("days", DayOfWeek.values());
         return "schedule/schedule-form";
     }
 
     @PostMapping
-    public String saveSchedule(@ModelAttribute ScheduleEntry scheduleEntry, RedirectAttributes redirectAttributes) {
+    public String saveSchedule(@Valid @ModelAttribute ScheduleEntry scheduleEntry,
+            org.springframework.validation.BindingResult result,
+            RedirectAttributes redirectAttributes,
+            Model model) {
+
+        if (result.hasErrors()) {
+            model.addAttribute("sections",
+                    sectionRepository.findByDeletedFalse(org.springframework.data.domain.Pageable.unpaged())
+                            .getContent());
+            model.addAttribute("days", DayOfWeek.values());
+            return "schedule/schedule-form";
+        }
+
         try {
             scheduleService.saveSchedule(scheduleEntry);
         } catch (IllegalStateException e) {
-            redirectAttributes.addFlashAttribute("error", e.getMessage());
-            return "redirect:/schedules/new";
+            model.addAttribute("error", e.getMessage());
+            model.addAttribute("sections",
+                    sectionRepository.findByDeletedFalse(org.springframework.data.domain.Pageable.unpaged())
+                            .getContent());
+            model.addAttribute("days", DayOfWeek.values());
+            return "schedule/schedule-form";
         }
         return "redirect:/schedules";
     }
@@ -58,7 +77,8 @@ public class ScheduleController {
     public String editScheduleForm(@PathVariable @NonNull Long id, Model model) {
         model.addAttribute("scheduleEntry", scheduleService.getScheduleById(id)
                 .orElseThrow(() -> new IllegalArgumentException("Invalid schedule Id:" + id)));
-        model.addAttribute("sections", sectionRepository.findAll());
+        model.addAttribute("sections",
+                sectionRepository.findByDeletedFalse(org.springframework.data.domain.Pageable.unpaged()).getContent());
         model.addAttribute("days", DayOfWeek.values());
         return "schedule/schedule-form";
     }

@@ -1,0 +1,143 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+  <head>
+    <meta charset="utf-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta
+      name="viewport"
+      content="width=device-width, initial-scale=1, shrink-to-fit=no"
+    />
+    <title>Inscribir Alumno - Sistema Escolar</title>
+    <link
+      th:href="@{/vendor/fontawesome-free/css/all.min.css}"
+      rel="stylesheet"
+      type="text/css"
+    />
+    <link
+      href="https://fonts.googleapis.com/css?family=Nunito:200,200i,300,300i,400,400i,600,600i,700,700i,800,800i,900,900i"
+      rel="stylesheet"
+    />
+    <link th:href="@{/css/sb-admin-2.min.css}" rel="stylesheet" />
+    <!-- Select2 CSS for searchable dropdowns -->
+    <link
+      href="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/css/select2.min.css"
+      rel="stylesheet"
+    />
+    <link
+      href="https://cdn.jsdelivr.net/npm/select2-bootstrap-5-theme@1.3.0/dist/select2-bootstrap-5-theme.min.css"
+      rel="stylesheet"
+    />
+  </head>
+  <body id="page-top">
+    <div id="wrapper">
+      <div th:replace="~{fragments/sb-admin-sidebar :: sidebar}"></div>
+      <div id="content-wrapper" class="d-flex flex-column">
+        <div id="content">
+          <div th:replace="~{fragments/sb-admin-topbar :: topbar}"></div>
+          <div class="container-fluid">
+            <div
+              class="d-sm-flex align-items-center justify-content-between mb-4"
+            >
+              <h1 class="h3 mb-0 text-gray-800">Inscribir Alumno</h1>
+              <a
+                th:href="@{/enrollments/section/{id}(id=${section.id})}"
+                class="btn btn-secondary"
+              >
+                <i class="fas fa-arrow-left"></i> Volver a la Lista
+              </a>
+            </div>
+
+            <div class="row justify-content-center">
+              <div class="col-lg-8">
+                <div class="card shadow mb-4">
+                  <div class="card-header py-3">
+                    <h6 class="m-0 font-weight-bold text-primary">
+                      Detalles de la Inscripción
+                    </h6>
+                  </div>
+                  <div class="card-body">
+                    <div class="alert alert-info">
+                      <i class="fas fa-info-circle mr-1"></i>
+                      Asignando alumno a la sección:
+                      <strong th:text="${section.name}">Sección A</strong>
+                      <br />
+                      <small
+                        class="text-muted"
+                        th:text="${'Curso: ' + section.course.name + ' | Periodo: ' + section.period.code}"
+                      ></small>
+                    </div>
+
+                    <form th:action="@{/enrollments}" method="post">
+                      <input
+                        type="hidden"
+                        name="sectionId"
+                        th:value="${section.id}"
+                      />
+
+                      <div class="form-group">
+                        <label for="studentId">Seleccione Estudiante</label>
+                        <select
+                          class="form-control select2"
+                          name="studentId"
+                          id="studentId"
+                          required
+                        >
+                          <option value="">Buscar estudiante...</option>
+                          <option
+                            th:each="student : ${students}"
+                            th:value="${student.id}"
+                            th:text="${student.registrationNumber + ' - ' + student.firstName + ' ' + student.lastName}"
+                          ></option>
+                        </select>
+                        <small class="form-text text-muted">
+                          Solo se muestran los estudiantes activos que no están
+                          inscritos actualmente en esta sección.
+                        </small>
+                      </div>
+
+                      <div
+                        th:if="${#lists.isEmpty(students)}"
+                        class="alert alert-warning"
+                      >
+                        No hay estudiantes disponibles para inscribir en esta
+                        sección.
+                      </div>
+
+                      <hr />
+                      <button
+                        type="submit"
+                        class="btn btn-success btn-block"
+                        th:disabled="${#lists.isEmpty(students)}"
+                      >
+                        <i class="fas fa-check"></i> Confirmar Inscripción
+                      </button>
+                    </form>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div th:replace="~{fragments/sb-admin-footer :: footer}"></div>
+      </div>
+    </div>
+
+    <script th:src="@{/vendor/jquery/jquery.min.js}"></script>
+    <script th:src="@{/vendor/bootstrap/js/bootstrap.bundle.min.js}"></script>
+    <script th:src="@{/vendor/jquery-easing/jquery.easing.min.js}"></script>
+    <script th:src="@{/js/sb-admin-2.min.js}"></script>
+    <!-- Select2 JS -->
+    <script src="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/js/select2.min.js"></script>
+
+    <script>
+      $(document).ready(function () {
+        $(".select2").select2({
+          theme: "bootstrap-5",
+          width: "100%",
+          placeholder: "Seleccione un estudiante",
+          allowClear: true,
+        });
+      });
+    </script>
+  </body>
+</html>

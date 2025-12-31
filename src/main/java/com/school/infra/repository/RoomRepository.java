@@ -8,4 +8,8 @@ import com.school.infra.entity.Room;
 
 public interface RoomRepository extends JpaRepository<Room, Long> {
     List<Room> findByBuildingId(Long buildingId);
+
+    org.springframework.data.domain.Page<Room> findByDeletedFalse(org.springframework.data.domain.Pageable pageable);
+
+    List<Room> findByDeletedFalse();
 }

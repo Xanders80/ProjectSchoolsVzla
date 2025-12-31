@@ -46,12 +46,20 @@ public class StudentController {
     }
 
     @PostMapping
-    public String saveStudent(@jakarta.validation.Valid @ModelAttribute @NonNull Student student,
+    public String saveStudent(
+            @org.springframework.validation.annotation.Validated({
+                    com.school.academic.validation.ValidationGroups.Create.class,
+                    jakarta.validation.groups.Default.class }) @ModelAttribute @NonNull Student student,
             org.springframework.validation.BindingResult result, Model model) {
         if (result.hasErrors()) {
             return STUDENT_FORM_VIEW;
         }
-        academicService.saveStudent(student);
+        try {
+            academicService.saveStudent(student);
+        } catch (IllegalArgumentException e) {
+            model.addAttribute("errorMessage", e.getMessage());
+            return STUDENT_FORM_VIEW;
+        }
         return "redirect:/students";
     }
 
@@ -80,17 +88,18 @@ public class StudentController {
         }
         return "redirect:/students";
     }
-    
+
     @DeleteMapping("/api/{id}")
     @org.springframework.security.access.prepost.PreAuthorize("hasRole('ADMIN')")
     @ResponseBody
     public org.springframework.http.ResponseEntity<?> deleteStudentApi(@PathVariable @NonNull Long id) {
         try {
             academicService.deleteStudent(id);
-            return org.springframework.http.ResponseEntity.ok(java.util.Map.of("message", "Student deleted successfully"));
+            return org.springframework.http.ResponseEntity
+                    .ok(java.util.Map.of("message", "Student deleted successfully"));
         } catch (Exception e) {
             return org.springframework.http.ResponseEntity.status(500)
-                .body(java.util.Map.of("error", "Error deleting student"));
+                    .body(java.util.Map.of("error", "Error deleting student"));
         }
     }
 }

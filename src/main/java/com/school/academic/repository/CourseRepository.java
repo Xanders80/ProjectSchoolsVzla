@@ -28,13 +28,13 @@ import com.school.academic.entity.Course;
 
 public interface CourseRepository extends JpaRepository<Course, Long> {
     Optional<Course> findByCode(String code);
-    
+
     @Query("SELECT c FROM Course c WHERE c.deleted = false")
-    Page<Course> findAllActive(Pageable pageable);
-    
+    Page<Course> findByDeletedFalse(Pageable pageable);
+
     @Query("SELECT c FROM Course c WHERE c.deleted = false")
-    List<Course> findAllActive();
-    
+    List<Course> findByDeletedFalse();
+
     @Query("SELECT c FROM Course c WHERE c.id = ?1 AND c.deleted = false")
-    Optional<Course> findByIdAndNotDeleted(Long id);
+    Optional<Course> findByIdAndDeletedFalse(Long id);
 }

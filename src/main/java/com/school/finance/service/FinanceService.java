@@ -63,16 +63,16 @@ public class FinanceService {
     }
 
     public List<StudentFee> getFeesByStudent(@org.springframework.lang.NonNull Long studentId) {
-        return studentFeeRepository.findByStudentId(studentId);
+        return studentFeeRepository.findByStudentIdAndDeletedFalse(studentId);
     }
 
     public List<StudentFee> getAllFees() {
-        return studentFeeRepository.findAll();
+        return studentFeeRepository.findByDeletedFalse(org.springframework.data.domain.Pageable.unpaged()).getContent();
     }
 
     public org.springframework.data.domain.Page<StudentFee> getAllFees(
             @org.springframework.lang.NonNull org.springframework.data.domain.Pageable pageable) {
-        return studentFeeRepository.findAll(pageable);
+        return studentFeeRepository.findByDeletedFalse(pageable);
     }
 
     public Optional<StudentFee> getFeeById(@org.springframework.lang.NonNull Long id) {
@@ -80,11 +80,29 @@ public class FinanceService {
     }
 
     public void deleteFee(@org.springframework.lang.NonNull Long id) {
-        studentFeeRepository.deleteById(id);
+        StudentFee fee = studentFeeRepository.findById(id)
+                .orElseThrow(() -> new IllegalArgumentException("Fee not found"));
+        fee.setDeleted(true);
+        fee.setDeletedAt(java.time.LocalDateTime.now());
+        fee.setDeletedBy(getCurrentUser());
+        studentFeeRepository.save(fee);
     }
 
     // Helper to get all students for dropdowns
     public List<Student> getAllStudents() {
-        return studentRepository.findAll();
+        return studentRepository.findByDeletedFalse(org.springframework.data.domain.Pageable.unpaged()).getContent();
+    }
+
+    @org.springframework.lang.NonNull
+    private String getCurrentUser() {
+        org.springframework.security.core.Authentication auth = org.springframework.security.core.context.SecurityContextHolder
+                .getContext().getAuthentication();
+        if (auth != null) {
+            String name = auth.getName();
+            if (name != null) {
+                return name;
+            }
+        }
+        return "system";
     }
 }

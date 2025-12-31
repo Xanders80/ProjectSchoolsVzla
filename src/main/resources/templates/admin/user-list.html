@@ -100,19 +100,19 @@
                           >
                             <i class="fas fa-edit"></i> Editar
                           </a>
-                          <a
-                            href="#"
+                          <button
+                            type="button"
                             class="btn btn-sm btn-danger"
                             data-toggle="modal"
                             data-target="#deleteModal"
-                            th:data-url="@{/admin/users/delete/{id}(id=${user.id})}"
+                            th:onclick="'confirmDelete(\'' + @{/admin/users/delete/{id}(id=${user.id})} + '\')'"
                           >
                             <i class="fas fa-trash"></i> Eliminar
-                          </a>
+                          </button>
                         </td>
                       </tr>
                       <tr th:if="${users.empty}">
-                        <td colspan="8" class="text-center text-muted">
+                        <td colspan="6" class="text-center text-muted">
                           No se encontraron usuarios.
                         </td>
                       </tr>
@@ -177,8 +177,6 @@
     <a class="scroll-to-top rounded" href="#page-top"
       ><i class="fas fa-angle-up"></i
     ></a>
-    <div th:replace="~{fragments/sb-admin-topbar :: logoutModal}"></div>
-    <div th:replace="~{fragments/delete-modal :: deleteModal}"></div>
 
     <script th:src="@{/vendor/jquery/jquery.min.js}"></script>
     <script th:src="@{/vendor/bootstrap/js/bootstrap.bundle.min.js}"></script>
@@ -189,13 +187,7 @@
       th:src="@{/vendor/datatables/dataTables.bootstrap4.min.js}"
     ></script>
     <script th:src="@{/js/demo/datatables-demo.js}"></script>
-    <script>
-      $("#deleteModal").on("show.bs.modal", function (event) {
-        var button = $(event.relatedTarget);
-        var url = button.data("url");
-        var modal = $(this);
-        modal.find("#deleteForm").attr("action", url);
-      });
-    </script>
+    <div th:replace="~{fragments/sb-admin-topbar :: logoutModal}"></div>
+    <div th:replace="~{fragments/delete-modal :: deleteModal}"></div>
   </body>
 </html>

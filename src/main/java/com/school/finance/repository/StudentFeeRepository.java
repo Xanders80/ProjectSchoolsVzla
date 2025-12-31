@@ -2,12 +2,18 @@ package com.school.finance.repository;
 
 import java.util.List;
 
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
 
 import com.school.finance.entity.StudentFee;
 import com.school.finance.enums.FeeStatus;
 
 public interface StudentFeeRepository extends JpaRepository<StudentFee, Long> {
+    Page<StudentFee> findByDeletedFalse(Pageable pageable);
+
+    List<StudentFee> findByStudentIdAndDeletedFalse(Long studentId);
+
     List<StudentFee> findByStudentId(Long studentId);
 
     List<StudentFee> findByStatus(FeeStatus status);

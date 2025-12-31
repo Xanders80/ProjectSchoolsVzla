@@ -100,15 +100,15 @@
                           >
                             <i class="fas fa-heartbeat"></i> Salud
                           </a>
-                          <a
-                            href="#"
+                          <button
+                            type="button"
                             class="btn btn-sm btn-danger"
                             data-toggle="modal"
                             data-target="#deleteModal"
-                            th:data-url="@{/students/delete/{id}(id=${student.id})}"
+                            th:onclick="'confirmDelete(\'' + @{/students/delete/{id}(id=${student.id})} + '\')'"
                           >
                             <i class="fas fa-trash"></i> Eliminar
-                          </a>
+                          </button>
                         </td>
                       </tr>
                       <tr th:if="${students.empty}">
@@ -184,10 +184,6 @@
       <i class="fas fa-angle-up"></i>
     </a>
 
-    <!-- Logout Modal-->
-    <div th:replace="~{fragments/sb-admin-topbar :: logoutModal}"></div>
-    <div th:replace="~{fragments/delete-modal :: deleteModal}"></div>
-
     <!-- Bootstrap core JavaScript-->
     <script th:src="@{/vendor/jquery/jquery.min.js}"></script>
     <script th:src="@{/vendor/bootstrap/js/bootstrap.bundle.min.js}"></script>
@@ -202,5 +198,8 @@
       th:src="@{/vendor/datatables/dataTables.bootstrap4.min.js}"
     ></script>
     <script th:src="@{/js/demo/datatables-demo.js}"></script>
+
+    <div th:replace="~{fragments/sb-admin-topbar :: logoutModal}"></div>
+    <div th:replace="~{fragments/delete-modal :: deleteModal}"></div>
   </body>
 </html>

@@ -35,11 +35,11 @@ public class LibraryService {
 
     // Book Operations
     public Page<Book> getAllBooks(@NonNull Pageable pageable) {
-        return bookRepository.findAll(pageable);
+        return bookRepository.findByDeletedFalse(pageable);
     }
 
     public List<Book> getAllBooks() {
-        return bookRepository.findAll();
+        return bookRepository.findByDeletedFalse();
     }
 
     public Optional<Book> getBookById(@NonNull Long id) {
@@ -51,7 +51,27 @@ public class LibraryService {
     }
 
     public void deleteBook(@NonNull Long id) {
-        bookRepository.deleteById(id);
+        Book book = bookRepository.findById(id)
+                .orElseThrow(() -> new IllegalArgumentException("Libro no encontrado"));
+
+        book.setDeleted(true);
+        book.setDeletedAt(java.time.LocalDateTime.now());
+        book.setDeletedBy(getCurrentUser());
+
+        bookRepository.save(book);
+    }
+
+    @NonNull
+    private String getCurrentUser() {
+        org.springframework.security.core.Authentication auth = org.springframework.security.core.context.SecurityContextHolder
+                .getContext().getAuthentication();
+        if (auth != null) {
+            String name = auth.getName();
+            if (name != null) {
+                return name;
+            }
+        }
+        return "system";
     }
 
     // Loan Operations

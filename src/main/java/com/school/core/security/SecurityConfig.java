@@ -26,7 +26,6 @@ import org.springframework.security.core.session.SessionRegistryImpl;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
-import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 
 @Configuration
 @EnableWebSecurity
@@ -34,13 +33,13 @@ public class SecurityConfig {
 
         @Autowired
         private RateLimitingFilter rateLimitingFilter;
-        
+
         @Autowired
         private com.school.core.filter.AuditLoggingFilter auditLoggingFilter;
-        
+
         @Autowired
         private CustomAccessDeniedHandler customAccessDeniedHandler;
-        
+
         @Autowired
         private AnomalyDetectionFilter anomalyDetectionFilter;
 
@@ -56,17 +55,16 @@ public class SecurityConfig {
                                                                 .includeSubDomains(true))
                                                 .contentSecurityPolicy(csp -> csp
                                                                 .policyDirectives(
-                                                                                "default-src 'self'; script-src 'self'; style-src 'self' 'unsafe-inline'; img-src 'self' data:; font-src 'self'; object-src 'none'; base-uri 'self'")))
-                                .addFilterBefore(anomalyDetectionFilter, UsernamePasswordAuthenticationFilter.class)
+                                                                                "default-src 'self'; script-src 'self' 'unsafe-inline' 'unsafe-eval'; style-src 'self' 'unsafe-inline'; img-src 'self' data:; font-src 'self'; object-src 'none'; base-uri 'self'")))
+                                .addFilterAfter(anomalyDetectionFilter,
+                                                org.springframework.security.web.context.SecurityContextHolderFilter.class)
                                 .addFilterAfter(rateLimitingFilter, anomalyDetectionFilter.getClass())
                                 .addFilterAfter(auditLoggingFilter, rateLimitingFilter.getClass())
                                 .csrf(csrf -> csrf
-                                                .csrfTokenRepository(
-                                                                org.springframework.security.web.csrf.CookieCsrfTokenRepository
-                                                                                .withHttpOnlyFalse())
                                                 .ignoringRequestMatchers("/h2-console/**"))
                                 .sessionManagement(session -> session
-                                                .sessionCreationPolicy(org.springframework.security.config.http.SessionCreationPolicy.IF_REQUIRED)
+                                                .sessionCreationPolicy(
+                                                                org.springframework.security.config.http.SessionCreationPolicy.IF_REQUIRED)
                                                 .sessionConcurrency(concurrency -> concurrency
                                                                 .maximumSessions(1)
                                                                 .maxSessionsPreventsLogin(false)
@@ -75,7 +73,7 @@ public class SecurityConfig {
                                 .authorizeHttpRequests(auth -> auth
                                                 // Recursos estáticos - PRIMERO
                                                 .requestMatchers("/css/**", "/js/**", "/images/**", "/vendor/**",
-                                                                "/webjars/**", "/favicon.ico", "/error/**")
+                                                                "/webjars/**", "/favicon.ico", "/error/**", "/error")
                                                 .permitAll()
                                                 // Páginas públicas
                                                 .requestMatchers("/login", "/register", "/forgot-password", "/404")

@@ -1,0 +1,218 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+  <head>
+    <meta charset="utf-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta
+      name="viewport"
+      content="width=device-width, initial-scale=1, shrink-to-fit=no"
+    />
+    <title>Alumnos en Sección - Sistema Escolar</title>
+    <link
+      th:href="@{/vendor/fontawesome-free/css/all.min.css}"
+      rel="stylesheet"
+      type="text/css"
+    />
+    <link
+      href="https://fonts.googleapis.com/css?family=Nunito:200,200i,300,300i,400,400i,600,600i,700,700i,800,800i,900,900i"
+      rel="stylesheet"
+    />
+    <link th:href="@{/css/sb-admin-2.min.css}" rel="stylesheet" />
+  </head>
+  <body id="page-top">
+    <div id="wrapper">
+      <div th:replace="~{fragments/sb-admin-sidebar :: sidebar}"></div>
+      <div id="content-wrapper" class="d-flex flex-column">
+        <div id="content">
+          <div th:replace="~{fragments/sb-admin-topbar :: topbar}"></div>
+          <div class="container-fluid">
+            <div
+              class="d-sm-flex align-items-center justify-content-between mb-4"
+            >
+              <h1
+                class="h3 mb-0 text-gray-800"
+                th:text="'Alumnos: ' + ${section.name}"
+              >
+                Alumnos
+              </h1>
+              <div>
+                <a th:href="@{/sections}" class="btn btn-secondary mr-2">
+                  <i class="fas fa-arrow-left"></i> Volver a Secciones
+                </a>
+                <a
+                  th:href="@{/enrollments/section/{id}/new(id=${section.id})}"
+                  class="btn btn-primary"
+                >
+                  <i class="fas fa-user-plus"></i> Inscribir Alumno
+                </a>
+              </div>
+            </div>
+
+            <div
+              th:if="${successMessage}"
+              class="alert alert-success alert-dismissible fade show"
+              role="alert"
+            >
+              <span th:text="${successMessage}"></span>
+              <button
+                type="button"
+                class="close"
+                data-dismiss="alert"
+                aria-label="Close"
+              >
+                <span aria-hidden="true">&times;</span>
+              </button>
+            </div>
+            <div
+              th:if="${errorMessage}"
+              class="alert alert-danger alert-dismissible fade show"
+              role="alert"
+            >
+              <span th:text="${errorMessage}"></span>
+              <button
+                type="button"
+                class="close"
+                data-dismiss="alert"
+                aria-label="Close"
+              >
+                <span aria-hidden="true">&times;</span>
+              </button>
+            </div>
+
+            <div class="card shadow mb-4">
+              <div
+                class="card-header py-3 bg-light d-flex justify-content-between align-items-center"
+              >
+                <h6 class="m-0 font-weight-bold text-primary">
+                  Estudiantes Matriculados
+                </h6>
+                <span
+                  class="badge badge-info p-2"
+                  th:text="${#lists.size(enrollments) + ' Estudiantes'}"
+                ></span>
+              </div>
+              <div class="card-body">
+                <div class="table-responsive">
+                  <table
+                    class="table table-bordered table-hover"
+                    id="dataTable"
+                    width="100%"
+                    cellspacing="0"
+                  >
+                    <thead class="thead-light">
+                      <tr>
+                        <th>ID Alumno</th>
+                        <th>Nombre Completo</th>
+                        <th>Matrícula</th>
+                        <th>Fecha Inscripción</th>
+                        <th width="150">Acciones</th>
+                      </tr>
+                    </thead>
+                    <tbody>
+                      <tr th:each="enrollment : ${enrollments}">
+                        <td th:text="${enrollment.student.id}">1</td>
+                        <td
+                          th:text="${enrollment.student.firstName + ' ' + enrollment.student.lastName}"
+                        >
+                          Juan Perez
+                        </td>
+                        <td th:text="${enrollment.student.registrationNumber}">
+                          REG123
+                        </td>
+                        <td
+                          th:text="${#temporals.format(enrollment.enrollmentDate, 'dd/MM/yyyy HH:mm')}"
+                        >
+                          01/01/2025
+                        </td>
+                        <td class="text-center">
+                          <button
+                            type="button"
+                            class="btn btn-sm btn-outline-danger"
+                            data-toggle="modal"
+                            data-target="#deleteModal"
+                            th:onclick="'confirmDeleteEnrol(\'' + ${enrollment.id} + '\', \'' + ${section.id} + '\')'"
+                          >
+                            <i class="fas fa-user-minus"></i> Desvincular
+                          </button>
+                        </td>
+                      </tr>
+                      <tr th:if="${#lists.isEmpty(enrollments)}">
+                        <td colspan="5" class="text-center py-4 text-muted">
+                          <i class="fas fa-info-circle mr-1"></i> No hay alumnos
+                          inscritos en esta sección.
+                        </td>
+                      </tr>
+                    </tbody>
+                  </table>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div th:replace="~{fragments/sb-admin-footer :: footer}"></div>
+      </div>
+    </div>
+
+    <!-- Delete Confirmation Modal -->
+    <div
+      class="modal fade"
+      id="deleteModal"
+      tabindex="-1"
+      role="dialog"
+      aria-labelledby="deleteModalLabel"
+      aria-hidden="true"
+    >
+      <div class="modal-dialog" role="document">
+        <div class="modal-content border-left-danger shadow">
+          <div class="modal-header">
+            <h5 class="modal-title text-danger" id="deleteModalLabel">
+              <i class="fas fa-exclamation-triangle"></i> Confirmar
+              Desvinculación
+            </h5>
+            <button
+              class="close"
+              type="button"
+              data-dismiss="modal"
+              aria-label="Close"
+            >
+              <span aria-hidden="true">×</span>
+            </button>
+          </div>
+          <div class="modal-body">
+            ¿Está seguro que desea eliminar a este estudiante de la sección?
+            <p class="small text-muted mt-2">
+              Esta acción no elimina al estudiante del sistema, solo lo quita de
+              esta sección.
+            </p>
+          </div>
+          <div class="modal-footer">
+            <button
+              class="btn btn-secondary"
+              type="button"
+              data-dismiss="modal"
+            >
+              Cancelar
+            </button>
+            <form id="deleteForm" method="post">
+              <input type="hidden" name="sectionId" id="modalSectionId" />
+              <button class="btn btn-danger" type="submit">Confirmar</button>
+            </form>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <script th:src="@{/vendor/jquery/jquery.min.js}"></script>
+    <script th:src="@{/vendor/bootstrap/js/bootstrap.bundle.min.js}"></script>
+    <script th:src="@{/vendor/jquery-easing/jquery.easing.min.js}"></script>
+    <script th:src="@{/js/sb-admin-2.min.js}"></script>
+
+    <script th:inline="javascript">
+      function confirmDeleteEnrol(enrollmentId, sectionId) {
+        document.getElementById("deleteForm").action =
+          /*[[@{/enrollments/delete/}]]*/ "/enrollments/delete/" + enrollmentId;
+        document.getElementById("modalSectionId").value = sectionId;
+      }
+    </script>
+  </body>
+</html>

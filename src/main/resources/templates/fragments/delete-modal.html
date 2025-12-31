@@ -1,14 +1,5 @@
 <!DOCTYPE html>
 <html xmlns:th="http://www.thymeleaf.org">
-  <head>
-    <meta charset="utf-8" />
-    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
-    <meta
-      name="viewport"
-      content="width=device-width, initial-scale=1, shrink-to-fit=no"
-    />
-    <title>Delete Modal</title>
-  </head>
   <body>
     <!-- Delete Modal-->
     <div
@@ -39,13 +30,10 @@
             <p>¿Estás seguro de que deseas eliminar este elemento?</p>
             <div class="alert alert-warning">
               <i class="fas fa-exclamation-triangle"></i>
-              <strong>Advertencia:</strong> Esta acción no se puede deshacer.
-              El elemento será marcado como eliminado pero se conservará para auditoría.
+              <strong>Advertencia:</strong> Esta acción no se puede deshacer. El
+              elemento será marcado como eliminado pero se conservará para
+              auditoría.
             </div>
-            <p class="text-muted small">
-              <strong>Nota:</strong> No se puede eliminar si tiene dependencias activas
-              (estudiantes matriculados o registros de asistencia).
-            </p>
           </div>
           <div class="modal-footer">
             <button
@@ -56,37 +44,37 @@
               Cancelar
             </button>
             <form
-              id="deleteForm"
-              th:action="@{#}"
+              id="globalDeleteForm"
+              action="/students/delete/not-set"
               method="post"
               style="display: inline"
             >
+              <input type="hidden" name="_method" value="DELETE" />
               <input
                 type="hidden"
                 th:name="${_csrf.parameterName}"
                 th:value="${_csrf.token}"
               />
-              <input type="hidden" name="_method" value="DELETE" />
               <button class="btn btn-danger" type="submit">Eliminar</button>
             </form>
           </div>
         </div>
       </div>
+      <!-- SCRIPTS DEBEN ESTAR DENTRO DEL FRAGMENTO PARA SER INCLUIDOS -->
       <script>
-        window.addEventListener("load", function () {
-          if (typeof $ !== "undefined") {
-            $("#deleteModal").on("show.bs.modal", function (event) {
-              var button = $(event.relatedTarget);
-              var url = button.data("url");
-              var modal = $(this);
-              if (url) {
-                modal.find("#deleteForm").attr("action", url);
-              }
-            });
+        /**
+         * Función global para preparar el formulario de borrado.
+         * Se llama desde el atributo onclick de los botones de la tabla.
+         */
+        function confirmDelete(url) {
+          console.log("Configurando borrado para:", url);
+          var form = document.getElementById("globalDeleteForm");
+          if (form) {
+            form.action = url;
           } else {
-            console.error("jQuery not loaded!");
+            console.error("Error: No se encontró 'globalDeleteForm'");
           }
-        });
+        }
       </script>
     </div>
   </body>

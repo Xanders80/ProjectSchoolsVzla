@@ -27,10 +27,9 @@ import jakarta.validation.constraints.Pattern;
 import jakarta.validation.constraints.Size;
 
 @Entity
-@Table(name = "parents",
-       indexes = {
-           @Index(name = "idx_parent_user", columnList = "user_id")
-       })
+@Table(name = "parents", indexes = {
+        @Index(name = "idx_parent_user", columnList = "user_id")
+})
 @EntityListeners(com.school.core.listener.AuditEntityListener.class)
 public class Parent extends Person {
 
@@ -42,9 +41,12 @@ public class Parent extends Person {
     @JoinColumn(name = "user_id", foreignKey = @ForeignKey(name = "fk_parent_user"))
     private User user;
 
-    @NotBlank(message = "La relación es obligatoria", groups = {ValidationGroups.Create.class, ValidationGroups.Update.class})
-    @Size(min = 2, max = 50, message = "La relación debe tener entre 2 y 50 caracteres", groups = {ValidationGroups.Create.class, ValidationGroups.Update.class})
-    @Pattern(regexp = "^[A-Za-z\\s]+$", message = "La relación solo puede contener letras y espacios", groups = {ValidationGroups.Create.class, ValidationGroups.Update.class})
+    @NotBlank(message = "La relación es obligatoria", groups = { ValidationGroups.Create.class,
+            ValidationGroups.Update.class })
+    @Size(min = 2, max = 50, message = "La relación debe tener entre 2 y 50 caracteres", groups = {
+            ValidationGroups.Create.class, ValidationGroups.Update.class })
+    @Pattern(regexp = "^[A-Za-z\\s]+$", message = "La relación solo puede contener letras y espacios", groups = {
+            ValidationGroups.Create.class, ValidationGroups.Update.class })
     @Column(name = "relationship", nullable = false, length = 50)
     private String relationship;
 
@@ -54,26 +56,69 @@ public class Parent extends Person {
     @Column(name = "relationship_changed_at")
     private LocalDateTime relationshipChangedAt;
 
+    @Column(name = "deleted", nullable = false)
+    private boolean deleted = false;
+
+    @Column(name = "deleted_at")
+    private LocalDateTime deletedAt;
+
+    @Column(name = "deleted_by", length = 100)
+    private String deletedBy;
+
     @ManyToMany(fetch = FetchType.LAZY)
-    @JoinTable(
-        name = "parent_student",
-        joinColumns = @JoinColumn(name = "parent_id", foreignKey = @ForeignKey(name = "fk_parent_student_parent")),
-        inverseJoinColumns = @JoinColumn(name = "student_id", foreignKey = @ForeignKey(name = "fk_parent_student_student")),
-        indexes = {
+    @JoinTable(name = "parent_student", joinColumns = @JoinColumn(name = "parent_id", foreignKey = @ForeignKey(name = "fk_parent_student_parent")), inverseJoinColumns = @JoinColumn(name = "student_id", foreignKey = @ForeignKey(name = "fk_parent_student_student")), indexes = {
             @Index(name = "idx_parent_student_parent", columnList = "parent_id"),
             @Index(name = "idx_parent_student_student", columnList = "student_id")
-        }
-    )
+    })
     private Set<Student> children = new HashSet<>();
 
-    public Parent() {}
+    public Parent() {
+    }
 
-    public Long getId() { return id; }
-    public void setId(Long id) { this.id = id; }
-    public User getUser() { return user; }
-    public void setUser(User user) { this.user = user; }
-    
-    public String getRelationship() { return relationship; }
+    public Long getId() {
+        return id;
+    }
+
+    public void setId(Long id) {
+        this.id = id;
+    }
+
+    public User getUser() {
+        return user;
+    }
+
+    public void setUser(User user) {
+        this.user = user;
+    }
+
+    public boolean isDeleted() {
+        return deleted;
+    }
+
+    public void setDeleted(boolean deleted) {
+        this.deleted = deleted;
+    }
+
+    public LocalDateTime getDeletedAt() {
+        return deletedAt;
+    }
+
+    public void setDeletedAt(LocalDateTime deletedAt) {
+        this.deletedAt = deletedAt;
+    }
+
+    public String getDeletedBy() {
+        return deletedBy;
+    }
+
+    public void setDeletedBy(String deletedBy) {
+        this.deletedBy = deletedBy;
+    }
+
+    public String getRelationship() {
+        return relationship;
+    }
+
     public void setRelationship(String relationship) {
         String newValue = relationship != null ? relationship.trim() : null;
         if (this.relationship != null && !Objects.equals(this.relationship, newValue)) {
@@ -82,17 +127,29 @@ public class Parent extends Person {
         }
         this.relationship = newValue;
     }
-    
-    public String getPreviousRelationship() { return previousRelationship; }
-    public LocalDateTime getRelationshipChangedAt() { return relationshipChangedAt; }
-    
-    public Set<Student> getChildren() { return children; }
-    public void setChildren(Set<Student> children) { this.children = children; }
+
+    public String getPreviousRelationship() {
+        return previousRelationship;
+    }
+
+    public LocalDateTime getRelationshipChangedAt() {
+        return relationshipChangedAt;
+    }
+
+    public Set<Student> getChildren() {
+        return children;
+    }
+
+    public void setChildren(Set<Student> children) {
+        this.children = children;
+    }
 
     @Override
     public boolean equals(Object o) {
-        if (this == o) return true;
-        if (!(o instanceof Parent parent)) return false;
+        if (this == o)
+            return true;
+        if (!(o instanceof Parent parent))
+            return false;
         return Objects.equals(id, parent.id);
     }
 

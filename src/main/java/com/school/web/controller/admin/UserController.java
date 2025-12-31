@@ -51,7 +51,7 @@ public class UserController {
             @RequestParam(defaultValue = "10") int size) {
         org.springframework.data.domain.Pageable pageable = org.springframework.data.domain.PageRequest.of(page, size,
                 org.springframework.data.domain.Sort.by(org.springframework.data.domain.Sort.Direction.DESC, "id"));
-        model.addAttribute("users", userRepository.findAll(pageable));
+        model.addAttribute("users", userRepository.findByDeletedFalse(pageable));
         model.addAttribute("roles", Role.values());
         return "admin/user-list";
     }
@@ -89,7 +89,18 @@ public class UserController {
 
     @RequestMapping(value = "/delete/{id}", method = { RequestMethod.POST, RequestMethod.DELETE })
     public String deleteUser(@PathVariable @NonNull Long id) {
-        userRepository.deleteById(id);
+        User user = userRepository.findById(id).orElseThrow();
+        user.setDeleted(true);
+        user.setDeletedAt(java.time.LocalDateTime.now());
+        user.setDeletedBy(getCurrentUser());
+
+        userRepository.save(user);
         return "redirect:/admin/users";
+    }
+
+    private String getCurrentUser() {
+        org.springframework.security.core.Authentication auth = org.springframework.security.core.context.SecurityContextHolder
+                .getContext().getAuthentication();
+        return (auth != null) ? auth.getName() : "system";
     }
 }

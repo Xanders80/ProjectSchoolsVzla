@@ -48,6 +48,8 @@ public class ProfileController {
                         .findFirst()
                         .ifPresent(parent -> model.addAttribute("parentInfo", parent));
                 break;
+            case ADMIN:
+            case DIRECTOR:
             case TEACHER:
             case STAFF:
                 staffService.getAllStaff(org.springframework.data.domain.PageRequest.of(0, 1000))
@@ -82,6 +84,7 @@ public class ProfileController {
             @RequestParam(required = false) String relationship,
             @RequestParam(required = false) String department,
             @RequestParam(required = false) String specialization,
+            @RequestParam(required = false) @org.springframework.format.annotation.DateTimeFormat(pattern = "yyyy-MM-dd") java.time.LocalDate birthDate,
             RedirectAttributes redirectAttributes) {
 
         try {
@@ -90,7 +93,7 @@ public class ProfileController {
 
             // Actualizar perfil de forma centralizada a través del servicio
             userService.updateUserProfile(user, firstName, lastName, email, dni, phoneNumber, address, relationship,
-                    department, specialization);
+                    department, specialization, birthDate);
 
             redirectAttributes.addFlashAttribute("success", "Perfil actualizado exitosamente");
         } catch (RuntimeException e) {

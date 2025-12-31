@@ -138,6 +138,7 @@
                         <th>Evaluación</th>
                         <th>Comentarios</th>
                         <th class="text-right">Calificación</th>
+                        <th class="text-center">Letra</th>
                       </tr>
                     </thead>
                     <tbody>
@@ -149,6 +150,13 @@
                         </td>
                         <td th:text="${g.comments}">-</td>
                         <td class="text-right" th:text="${g.score}">90.5</td>
+                        <td
+                          class="text-center font-weight-bold"
+                          th:text="${g.letterGrade}"
+                          th:classappend="${g.letterGrade == 'F' ? 'text-danger' : (g.letterGrade == 'A' ? 'text-success' : 'text-primary')}"
+                        >
+                          A
+                        </td>
                       </tr>
                     </tbody>
                     <tfoot class="bg-light font-weight-bold">
@@ -157,6 +165,13 @@
                           Promedio General:
                         </td>
                         <td class="text-right" th:text="${average}">85.0</td>
+                        <td
+                          class="text-center font-weight-bold"
+                          th:text="${averageLetter}"
+                          th:classappend="${averageLetter == 'F' ? 'text-danger' : (averageLetter == 'A' ? 'text-success' : 'text-primary')}"
+                        >
+                          A
+                        </td>
                       </tr>
                     </tfoot>
                   </table>

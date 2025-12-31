@@ -90,15 +90,15 @@
                           >
                             <i class="fas fa-edit"></i> Editar
                           </a>
-                          <a
-                            href="#"
+                          <button
+                            type="button"
                             class="btn btn-sm btn-danger"
                             data-toggle="modal"
                             data-target="#deleteModal"
-                            th:data-url="@{/courses/delete/{id}(id=${course.id})}"
+                            th:onclick="'confirmDelete(\'' + @{/courses/delete/{id}(id=${course.id})} + '\')'"
                           >
                             <i class="fas fa-trash"></i> Eliminar
-                          </a>
+                          </button>
                         </td>
                       </tr>
                       <tr th:if="${courses.empty}">
@@ -113,35 +113,44 @@
                 <!-- Pagination -->
                 <div
                   th:if="${courses.totalPages > 1}"
-                  class="d-flex justify-content-center mt-4"
+                  class="d-flex justify-content-center"
                 >
                   <nav aria-label="Page navigation">
                     <ul class="pagination">
                       <li
                         class="page-item"
-                        th:classappend="${courses.first} ? 'disabled'"
+                        th:classappend="${courses.number == 0} ? 'disabled'"
                       >
                         <a
                           class="page-link"
-                          th:href="@{/courses(page=${courses.number - 1}, size=${courses.size})}"
-                          >Anterior</a
+                          th:href="@{/courses(page=${courses.number - 1}, size=10)}"
+                          aria-label="Previous"
                         >
-                      </li>
-                      <li class="page-item disabled">
-                        <span
-                          class="page-link"
-                          th:text="'Página ' + ${courses.number + 1} + ' de ' + ${courses.totalPages}"
-                        ></span>
+                          <span aria-hidden="true">&laquo;</span>
+                        </a>
                       </li>
                       <li
                         class="page-item"
-                        th:classappend="${courses.last} ? 'disabled'"
+                        th:each="i : ${#numbers.sequence(0, courses.totalPages - 1)}"
+                        th:classappend="${i == courses.number} ? 'active'"
                       >
                         <a
                           class="page-link"
-                          th:href="@{/courses(page=${courses.number + 1}, size=${courses.size})}"
-                          >Siguiente</a
+                          th:href="@{/courses(page=${i}, size=10)}"
+                          th:text="${i + 1}"
+                        ></a>
+                      </li>
+                      <li
+                        class="page-item"
+                        th:classappend="${courses.number == courses.totalPages - 1} ? 'disabled'"
+                      >
+                        <a
+                          class="page-link"
+                          th:href="@{/courses(page=${courses.number + 1}, size=10)}"
+                          aria-label="Next"
                         >
+                          <span aria-hidden="true">&raquo;</span>
+                        </a>
                       </li>
                     </ul>
                   </nav>
@@ -158,8 +167,6 @@
     <a class="scroll-to-top rounded" href="#page-top"
       ><i class="fas fa-angle-up"></i
     ></a>
-    <div th:replace="~{fragments/sb-admin-topbar :: logoutModal}"></div>
-    <div th:replace="~{fragments/delete-modal :: deleteModal}"></div>
 
     <script th:src="@{/vendor/jquery/jquery.min.js}"></script>
     <script th:src="@{/vendor/bootstrap/js/bootstrap.bundle.min.js}"></script>
@@ -170,13 +177,8 @@
       th:src="@{/vendor/datatables/dataTables.bootstrap4.min.js}"
     ></script>
     <script th:src="@{/js/demo/datatables-demo.js}"></script>
-    <script>
-      $("#deleteModal").on("show.bs.modal", function (event) {
-        var button = $(event.relatedTarget);
-        var url = button.data("url");
-        var modal = $(this);
-        modal.find("#deleteForm").attr("action", url);
-      });
-    </script>
+
+    <div th:replace="~{fragments/sb-admin-topbar :: logoutModal}"></div>
+    <div th:replace="~{fragments/delete-modal :: deleteModal}"></div>
   </body>
 </html>

@@ -27,4 +27,7 @@ public interface ParentRepository extends JpaRepository<Parent, Long> {
 
     @Query("SELECT p FROM Parent p WHERE LOWER(p.firstName) LIKE LOWER(CONCAT('%', :name, '%')) OR LOWER(p.lastName) LIKE LOWER(CONCAT('%', :name, '%'))")
     Page<Parent> findByNameContaining(@Param("name") String name, Pageable pageable);
+
+    org.springframework.data.domain.Page<Parent> findByDeletedFalse(org.springframework.data.domain.Pageable pageable);
+
 }

@@ -65,6 +65,7 @@
                         <input
                           type="text"
                           class="form-control"
+                          th:classappend="${#fields.hasErrors('code')} ? 'is-invalid'"
                           id="code"
                           th:field="*{code}"
                           placeholder="Ej: MATH101"
@@ -84,6 +85,7 @@
                         <input
                           type="text"
                           class="form-control"
+                          th:classappend="${#fields.hasErrors('name')} ? 'is-invalid'"
                           id="name"
                           th:field="*{name}"
                           placeholder="Nombre del curso"
@@ -106,6 +108,7 @@
                         <input
                           type="number"
                           class="form-control"
+                          th:classappend="${#fields.hasErrors('credits')} ? 'is-invalid'"
                           id="credits"
                           th:field="*{credits}"
                           min="1"
@@ -125,6 +128,7 @@
                         <input
                           type="number"
                           class="form-control"
+                          th:classappend="${#fields.hasErrors('gradeLevel')} ? 'is-invalid'"
                           id="gradeLevel"
                           th:field="*{gradeLevel}"
                           min="1"
@@ -144,6 +148,7 @@
                     <label for="description">Descripción</label>
                     <textarea
                       class="form-control"
+                      th:classappend="${#fields.hasErrors('description')} ? 'is-invalid'"
                       id="description"
                       th:field="*{description}"
                       rows="3"

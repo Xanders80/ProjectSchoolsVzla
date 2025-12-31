@@ -33,11 +33,11 @@ public class StaffService {
 
     public org.springframework.data.domain.Page<Staff> getAllStaff(
             @NonNull org.springframework.data.domain.Pageable pageable) {
-        return staffRepository.findAll(pageable);
+        return staffRepository.findByDeletedFalse(pageable);
     }
 
     public List<Staff> getAllStaff() {
-        return staffRepository.findAll();
+        return staffRepository.findByDeletedFalse();
     }
 
     public org.springframework.data.domain.Page<Staff> getTeachers(org.springframework.data.domain.Pageable pageable) {
@@ -53,6 +53,16 @@ public class StaffService {
     }
 
     public Staff saveStaff(@NonNull Staff staff) {
+        // Verificar DNI único
+        if (staff.getDni() != null) {
+            staffRepository.findByDni(staff.getDni())
+                    .ifPresent(existing -> {
+                        if (staff.getId() == null || !existing.getId().equals(staff.getId())) {
+                            throw new IllegalArgumentException(
+                                    "El DNI ya está registrado para otro miembro del personal.");
+                        }
+                    });
+        }
         return staffRepository.save(staff);
     }
 
@@ -82,8 +92,10 @@ public class StaffService {
         }
     }
 
+    @NonNull
     private String getCurrentUser() {
-        return SecurityContextHolder.getContext().getAuthentication().getName();
+        org.springframework.security.core.Authentication auth = SecurityContextHolder.getContext().getAuthentication();
+        return (auth != null) ? auth.getName() : "system";
     }
 
     public long countStaff() {

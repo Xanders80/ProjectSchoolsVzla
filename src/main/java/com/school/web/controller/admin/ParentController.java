@@ -56,6 +56,10 @@ public class ParentController {
         try {
             parentService.saveParent(parent);
             redirectAttributes.addFlashAttribute("successMessage", "Representante guardado exitosamente.");
+        } catch (IllegalArgumentException e) {
+            model.addAttribute("errorMessage", e.getMessage());
+            model.addAttribute("students", academicService.getAllStudents());
+            return PARENT_FORM_VIEW;
         } catch (Exception e) {
             redirectAttributes.addFlashAttribute("errorMessage",
                     "Error al guardar el representante: " + e.getMessage());

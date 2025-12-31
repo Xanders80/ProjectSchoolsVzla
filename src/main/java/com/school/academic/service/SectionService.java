@@ -26,9 +26,9 @@ public class SectionService {
     private final AuditService auditService;
 
     public SectionService(SectionRepository sectionRepository,
-                         EnrollmentRepository enrollmentRepository,
-                         AttendanceRepository attendanceRepository,
-                         AuditService auditService) {
+            EnrollmentRepository enrollmentRepository,
+            AttendanceRepository attendanceRepository,
+            AuditService auditService) {
         this.sectionRepository = sectionRepository;
         this.enrollmentRepository = enrollmentRepository;
         this.attendanceRepository = attendanceRepository;
@@ -37,12 +37,12 @@ public class SectionService {
 
     @Transactional(readOnly = true)
     public Page<Section> getAllActiveSections(@NonNull Pageable pageable) {
-        return sectionRepository.findAllActive(pageable);
+        return sectionRepository.findByDeletedFalse(pageable);
     }
 
     @Transactional(readOnly = true)
     public Optional<Section> getSectionById(@NonNull Long id) {
-        return sectionRepository.findByIdAndNotDeleted(id);
+        return sectionRepository.findByIdAndDeletedFalse(id);
     }
 
     public Section saveSection(@NonNull Section section) {
@@ -50,8 +50,8 @@ public class SectionService {
     }
 
     public void deleteSection(@NonNull Long id) {
-        Section section = sectionRepository.findByIdAndNotDeleted(id)
-            .orElseThrow(() -> new IllegalArgumentException("Sección no encontrada"));
+        Section section = sectionRepository.findByIdAndDeletedFalse(id)
+                .orElseThrow(() -> new IllegalArgumentException("Sección no encontrada"));
 
         // Validar dependencias
         validateSectionDependencies(id);
@@ -60,9 +60,9 @@ public class SectionService {
         section.setDeleted(true);
         section.setDeletedAt(LocalDateTime.now());
         section.setDeletedBy(getCurrentUser());
-        
+
         sectionRepository.save(section);
-        
+
         // Auditoría
         auditService.logSectionDeletion(id, getCurrentUser());
     }
@@ -77,17 +77,21 @@ public class SectionService {
         long enrollmentCount = enrollmentRepository.countBySectionId(sectionId);
         if (enrollmentCount > 0) {
             throw new IllegalStateException(
-                String.format("No se puede eliminar la sección. Tiene %d estudiante(s) matriculado(s)", enrollmentCount));
+                    String.format("No se puede eliminar la sección. Tiene %d estudiante(s) matriculado(s)",
+                            enrollmentCount));
         }
 
         long attendanceCount = attendanceRepository.countBySectionId(sectionId);
         if (attendanceCount > 0) {
             throw new IllegalStateException(
-                String.format("No se puede eliminar la sección. Tiene %d registro(s) de asistencia", attendanceCount));
+                    String.format("No se puede eliminar la sección. Tiene %d registro(s) de asistencia",
+                            attendanceCount));
         }
     }
 
+    @NonNull
     private String getCurrentUser() {
-        return SecurityContextHolder.getContext().getAuthentication().getName();
+        org.springframework.security.core.Authentication auth = SecurityContextHolder.getContext().getAuthentication();
+        return (auth != null) ? auth.getName() : "system";
     }
 }

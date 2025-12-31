@@ -52,14 +52,21 @@ public class StaffController {
             model.addAttribute("roles", Role.values());
             return STAFF_FORM_VIEW;
         }
-        staffService.saveStaff(staff);
+        try {
+            staffService.saveStaff(staff);
+        } catch (IllegalArgumentException e) {
+            model.addAttribute("roles", Role.values());
+            model.addAttribute("errorMessage", e.getMessage());
+            return STAFF_FORM_VIEW;
+        }
         return "redirect:/staff";
     }
 
     @GetMapping("/edit/{id}")
     public String editStaffForm(@PathVariable @NonNull Long id, Model model) {
-        model.addAttribute("staff", 
-                staffService.getStaffById(id).orElseThrow(() -> new IllegalArgumentException("Invalid staff Id:" + id)));
+        model.addAttribute("staff",
+                staffService.getStaffById(id)
+                        .orElseThrow(() -> new IllegalArgumentException("Invalid staff Id:" + id)));
         model.addAttribute("roles", Role.values());
         return STAFF_FORM_VIEW;
     }

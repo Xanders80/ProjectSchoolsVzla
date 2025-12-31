@@ -44,7 +44,10 @@ public class AnomalyDetectionFilter extends OncePerRequestFilter {
     }
 
     private boolean isAnonymousRequest(HttpServletRequest request) {
-        return request.getUserPrincipal() == null;
+        org.springframework.security.core.Authentication auth = org.springframework.security.core.context.SecurityContextHolder
+                .getContext().getAuthentication();
+        return auth == null || !auth.isAuthenticated() ||
+                auth instanceof org.springframework.security.authentication.AnonymousAuthenticationToken;
     }
 
     private boolean isProtectedEndpoint(String endpoint) {

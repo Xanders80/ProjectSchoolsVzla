@@ -22,7 +22,7 @@ public class ParentService {
     }
 
     public Page<Parent> getAllParents(@NonNull Pageable pageable) {
-        return parentRepository.findAll(pageable);
+        return parentRepository.findByDeletedFalse(pageable);
     }
 
     public Optional<Parent> getParentById(@NonNull Long id) {
@@ -30,11 +30,40 @@ public class ParentService {
     }
 
     public Parent saveParent(@NonNull Parent parent) {
+        // Verificar DNI único
+        if (parent.getDni() != null) {
+            parentRepository.findByDni(parent.getDni())
+                    .ifPresent(existing -> {
+                        if (parent.getId() == null || !existing.getId().equals(parent.getId())) {
+                            throw new IllegalArgumentException("El DNI ya está registrado para otro representante.");
+                        }
+                    });
+        }
         return parentRepository.save(parent);
     }
 
     public void deleteParent(@NonNull Long id) {
-        parentRepository.deleteById(id);
+        Parent parent = parentRepository.findById(id)
+                .orElseThrow(() -> new IllegalArgumentException("Representante no encontrado"));
+
+        parent.setDeleted(true);
+        parent.setDeletedAt(java.time.LocalDateTime.now());
+        parent.setDeletedBy(getCurrentUser());
+
+        parentRepository.save(parent);
+    }
+
+    @NonNull
+    private String getCurrentUser() {
+        org.springframework.security.core.Authentication auth = org.springframework.security.core.context.SecurityContextHolder
+                .getContext().getAuthentication();
+        if (auth != null) {
+            String name = auth.getName();
+            if (name != null) {
+                return name;
+            }
+        }
+        return "system";
     }
 
     public Optional<Parent> findByDni(String dni) {

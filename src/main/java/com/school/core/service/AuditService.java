@@ -58,4 +58,15 @@ public class AuditService {
     log.setTimestamp(java.time.LocalDateTime.now());
     auditLogRepository.save(log);
   }
+
+  public void logGenericAction(@NonNull String action, @NonNull String details, @NonNull String currentUser) {
+    AuditLog log = new AuditLog();
+    log.setAction(action);
+    log.setEntityName("System");
+    log.setEntityId("0");
+    log.setPerformedBy(currentUser);
+    log.setTimestamp(java.time.LocalDateTime.now());
+    log.setDetails(details); // Assuming AuditLog has a details field, let's check
+    auditLogRepository.save(log);
+  }
 }

@@ -6,6 +6,8 @@ import org.springframework.lang.NonNull;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import com.school.academic.entity.Section;
+import com.school.academic.entity.Enrollment;
 import com.school.academic.entity.Student;
 import com.school.academic.repository.StudentRepository;
 
@@ -62,11 +64,16 @@ public class AcademicService {
     }
 
     public java.util.List<com.school.academic.entity.Grade> getGradesByStudent(@NonNull Long studentId) {
-        return gradeRepository.findByStudentIdOrderByDateDesc(studentId);
+        return gradeRepository.findByStudentIdAndDeletedFalseOrderByDateDesc(studentId);
     }
 
     public void deleteGrade(@NonNull Long id) {
-        gradeRepository.deleteById(id);
+        com.school.academic.entity.Grade grade = gradeRepository.findById(id)
+                .orElseThrow(() -> new IllegalArgumentException("Grade not found"));
+        grade.setDeleted(true);
+        grade.setDeletedAt(java.time.LocalDateTime.now());
+        grade.setDeletedBy(getCurrentUser());
+        gradeRepository.save(grade);
     }
 
     public Optional<com.school.academic.entity.Grade> getGradeById(@NonNull Long id) {
@@ -74,7 +81,7 @@ public class AcademicService {
     }
 
     public java.util.List<com.school.academic.entity.Grade> getAllGrades() {
-        return gradeRepository.findAll();
+        return gradeRepository.findByDeletedFalse();
     }
 
     // Course Ops - Delegated to CourseService
@@ -101,7 +108,7 @@ public class AcademicService {
 
     public org.springframework.data.domain.Page<Student> getAllStudents(
             @NonNull org.springframework.data.domain.Pageable pageable) {
-        return studentRepository.findAll(pageable);
+        return studentRepository.findByDeletedFalse(pageable);
     }
 
     public Optional<Student> getStudentById(@NonNull Long id) {
@@ -109,6 +116,26 @@ public class AcademicService {
     }
 
     public Student saveStudent(@NonNull Student student) {
+        // Verificar DNI único
+        if (student.getDni() != null) {
+            studentRepository.findByDni(student.getDni())
+                    .ifPresent(existing -> {
+                        if (student.getId() == null || !existing.getId().equals(student.getId())) {
+                            throw new IllegalArgumentException("El DNI ya está registrado para otro estudiante.");
+                        }
+                    });
+        }
+
+        // Verificar Número de Registro único
+        if (student.getRegistrationNumber() != null) {
+            studentRepository.findByRegistrationNumber(student.getRegistrationNumber())
+                    .ifPresent(existing -> {
+                        if (student.getId() == null || !existing.getId().equals(student.getId())) {
+                            throw new IllegalArgumentException(
+                                    "El número de registro ya está asignado a otro estudiante.");
+                        }
+                    });
+        }
         return studentRepository.save(student);
     }
 
@@ -145,9 +172,67 @@ public class AcademicService {
         auditService.logStudentDeletion(id, getCurrentUser());
     }
 
+    // Enrollment Ops
+    public java.util.List<Enrollment> getEnrollmentsBySection(@NonNull Long sectionId) {
+        return enrollmentRepository.findBySectionIdAndStudentDeletedFalse(sectionId);
+    }
+
+    public void enrollStudent(@NonNull Long studentId, @NonNull Long sectionId) {
+        Section section = sectionService.getSectionById(sectionId)
+                .orElseThrow(() -> new IllegalArgumentException("Section not found"));
+        Student student = studentRepository.findById(studentId)
+                .orElseThrow(() -> new IllegalArgumentException("Student not found"));
+
+        if (enrollmentRepository.findBySectionId(sectionId).stream()
+                .anyMatch(e -> e.getStudent().getId().equals(studentId))) {
+            throw new IllegalStateException("El estudiante ya está inscrito en esta sección.");
+        }
+
+        Enrollment enrollment = new Enrollment();
+        enrollment.setStudent(student);
+        enrollment.setSection(section);
+        enrollment.setEnrollmentDate(java.time.LocalDateTime.now());
+
+        enrollmentRepository.save(enrollment);
+        auditService.logGenericAction("ENROLL_STUDENT", "Student " + studentId + " enrolled in section " + sectionId,
+                getCurrentUser());
+    }
+
+    public void unenrollStudent(@NonNull Long enrollmentId) {
+        Enrollment enrollment = enrollmentRepository.findById(enrollmentId)
+                .orElseThrow(() -> new IllegalArgumentException("Enrollment not found"));
+
+        enrollmentRepository.delete(enrollment);
+        auditService.logGenericAction("UNENROLL_STUDENT",
+                "Enrollment " + enrollmentId + " removed (Student: " + enrollment.getStudent().getId() + ")",
+                getCurrentUser());
+    }
+
+    public java.util.List<Student> getStudentsNotInSection(@NonNull Long sectionId) {
+        java.util.List<Long> enrolledStudentIds = enrollmentRepository.findBySectionId(sectionId).stream()
+                .map(e -> e.getStudent().getId())
+                .collect(java.util.stream.Collectors.toList());
+
+        if (enrolledStudentIds.isEmpty()) {
+            return studentRepository.findAllActive();
+        }
+
+        return studentRepository.findAllActive().stream()
+                .filter(s -> !enrolledStudentIds.contains(s.getId()))
+                .collect(java.util.stream.Collectors.toList());
+    }
+
+    @NonNull
     private String getCurrentUser() {
-        return org.springframework.security.core.context.SecurityContextHolder
-                .getContext().getAuthentication().getName();
+        org.springframework.security.core.Authentication auth = org.springframework.security.core.context.SecurityContextHolder
+                .getContext().getAuthentication();
+        if (auth != null) {
+            String name = auth.getName();
+            if (name != null) {
+                return name;
+            }
+        }
+        return "system";
     }
 
     public long countStudents() {
@@ -155,7 +240,7 @@ public class AcademicService {
     }
 
     public java.util.List<Student> getAllStudents() {
-        return studentRepository.findAll();
+        return studentRepository.findAllActive();
     }
 
     public Optional<Student> getStudentByEmail(String email) {

@@ -21,6 +21,7 @@ public class AuditLog {
     private String action; // INSERT, UPDATE, DELETE
     private String performedBy; // Username
     private LocalDateTime timestamp;
+    private String details;
 
     public AuditLog() {
     }
@@ -80,5 +81,13 @@ public class AuditLog {
 
     public void setTimestamp(LocalDateTime timestamp) {
         this.timestamp = timestamp;
+    }
+
+    public String getDetails() {
+        return details;
+    }
+
+    public void setDetails(String details) {
+        this.details = details;
     }
 }

@@ -19,4 +19,6 @@ public interface StudentRepository extends JpaRepository<Student, Long> {
 
     Optional<Student> findByUserId(Long userId);
 
+    org.springframework.data.domain.Page<Student> findByDeletedFalse(org.springframework.data.domain.Pageable pageable);
+
 }

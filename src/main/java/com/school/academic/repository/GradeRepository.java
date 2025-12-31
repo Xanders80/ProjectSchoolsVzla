@@ -13,7 +13,7 @@ import com.school.academic.entity.Student;
 public interface GradeRepository extends JpaRepository<Grade, Long> {
     List<Grade> findByStudentAndCourseAndPeriod(Student student, Course course, AcademicPeriod period);
 
-    List<Grade> findByStudentIdOrderByDateDesc(Long studentId);
+    List<Grade> findByStudentIdAndDeletedFalseOrderByDateDesc(Long studentId);
 
     List<Grade> findByCourseId(Long courseId);
 
@@ -25,4 +25,6 @@ public interface GradeRepository extends JpaRepository<Grade, Long> {
 
     @org.springframework.data.jpa.repository.Query("SELECT COUNT(g) FROM Grade g WHERE g.course.id = ?1")
     long countByCourseId(Long courseId);
+
+    List<Grade> findByDeletedFalse();
 }

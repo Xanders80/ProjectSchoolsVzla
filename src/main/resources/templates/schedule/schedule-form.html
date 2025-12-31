@@ -82,6 +82,7 @@
                         <select
                           th:field="*{dayOfWeek}"
                           class="form-control"
+                          th:classappend="${#fields.hasErrors('dayOfWeek')} ? 'is-invalid'"
                           required
                         >
                           <option value="">Seleccionar Día</option>
@@ -92,6 +93,13 @@
                           <option value="FRIDAY">Viernes</option>
                           <option value="SATURDAY">Sábado</option>
                         </select>
+                        <div
+                          class="invalid-feedback"
+                          th:if="${#fields.hasErrors('dayOfWeek')}"
+                          th:errors="*{dayOfWeek}"
+                        >
+                          Error en Día
+                        </div>
                       </div>
                     </div>
                     <div class="col-md-4">
@@ -101,8 +109,16 @@
                           type="time"
                           th:field="*{startTime}"
                           class="form-control"
+                          th:classappend="${#fields.hasErrors('startTime')} ? 'is-invalid'"
                           required
                         />
+                        <div
+                          class="invalid-feedback"
+                          th:if="${#fields.hasErrors('startTime')}"
+                          th:errors="*{startTime}"
+                        >
+                          Error en Hora Inicio
+                        </div>
                       </div>
                     </div>
                     <div class="col-md-4">
@@ -112,8 +128,16 @@
                           type="time"
                           th:field="*{endTime}"
                           class="form-control"
+                          th:classappend="${#fields.hasErrors('endTime')} ? 'is-invalid'"
                           required
                         />
+                        <div
+                          class="invalid-feedback"
+                          th:if="${#fields.hasErrors('endTime')}"
+                          th:errors="*{endTime}"
+                        >
+                          Error en Hora Fin
+                        </div>
                       </div>
                     </div>
                   </div>
