@@ -41,10 +41,12 @@ public class PortalController {
             return "redirect:/login"; // Should be handled by security, but extra safety
         }
 
-        // Reload parent to fetch children eagerly if needed, or rely on
-        // service/Hibernate
-        // Ideally getParentByIdWithChildren
-        Parent parentWithChildren = parentService.getParentById(parent.getId()).orElse(parent);
+        Long parentId = parent.getId();
+        if (parentId == null) {
+            throw new IllegalStateException("Parent entity has null ID - invalid state");
+        }
+
+        Parent parentWithChildren = parentService.getParentById(parentId).orElse(parent);
 
         model.addAttribute("parent", parentWithChildren);
         model.addAttribute("children", parentWithChildren.getChildren());
@@ -57,8 +59,16 @@ public class PortalController {
         if (parent == null)
             return "redirect:/login";
 
+        // Verificación de nulabilidad para parent.getId()
+        Long parentId = parent.getId();
+        if (parentId == null) {
+            redirectAttributes.addFlashAttribute("errorMessage",
+                    "Error de acceso: El registro del padre no contiene un ID válido.");
+            return "redirect:/portal";
+        }
+
         // Verify access: Is this student a child of the logged parent?
-        boolean isChild = parentService.getParentById(parent.getId())
+        boolean isChild = parentService.getParentById(parentId)
                 .map(p -> p.getChildren().stream().anyMatch(s -> s.getId().equals(id)))
                 .orElse(false);
 

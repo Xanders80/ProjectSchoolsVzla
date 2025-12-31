@@ -49,6 +49,11 @@ public class GradeController {
 
     @PostMapping
     public String saveGrade(@ModelAttribute Grade grade, RedirectAttributes redirectAttributes) {
+        // Verificación de campos críticos en el objeto Grade
+        if (grade == null) {
+            redirectAttributes.addFlashAttribute("errorMessage", "El objeto de calificación no puede ser nulo");
+            return "redirect:/grades";
+        }
         academicService.saveGrade(grade);
         redirectAttributes.addFlashAttribute("success", "Calificación guardada exitosamente");
         return "redirect:/grades";

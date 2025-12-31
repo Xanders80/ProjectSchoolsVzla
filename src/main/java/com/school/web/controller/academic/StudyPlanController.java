@@ -104,7 +104,7 @@ public class StudyPlanController {
     }
 
     @PostMapping("/{id}/scales")
-    public String addGradingScale(@PathVariable Long id,
+    public String addGradingScale(@PathVariable @NonNull Long id,
             @ModelAttribute com.school.academic.entity.GradingScale newScale,
             RedirectAttributes redirectAttributes) {
         try {
@@ -119,7 +119,7 @@ public class StudyPlanController {
     }
 
     @PostMapping("/scales/delete/{scaleId}")
-    public String deleteGradingScale(@PathVariable Long scaleId, @RequestParam Long studyPlanId,
+    public String deleteGradingScale(@PathVariable @NonNull Long scaleId, @RequestParam @NonNull Long studyPlanId,
             RedirectAttributes redirectAttributes) {
         try {
             gradingScaleService.deleteGradingScale(scaleId);

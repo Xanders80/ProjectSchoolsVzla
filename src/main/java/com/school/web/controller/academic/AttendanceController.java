@@ -41,6 +41,7 @@ public class AttendanceController {
             model.addAttribute("selectedSectionId", sectionId);
             model.addAttribute("selectedDate", date);
 
+            @SuppressWarnings("null")
             List<Attendance> attendanceList = academicService.getAttendanceBySectionAndDate(sectionId, date);
 
             // If no records exist, create a template list for all students in the section
@@ -76,8 +77,10 @@ public class AttendanceController {
 
     @PostMapping("/save")
     public String saveAttendance(@ModelAttribute AttendanceWrapper wrapper, RedirectAttributes redirectAttributes) {
-        if (wrapper.getAttendanceList() != null) {
-            academicService.saveAttendanceList(wrapper.getAttendanceList());
+        // Verificación de nulabilidad para el getter
+        List<Attendance> attendanceList = wrapper.getAttendanceList();
+        if (attendanceList != null) {
+            academicService.saveAttendanceList(attendanceList);
             redirectAttributes.addFlashAttribute("success", "Asistencia guardada exitosamente");
         }
         // Redirect back to the same sheet view if possible, else root

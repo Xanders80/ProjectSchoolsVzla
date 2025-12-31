@@ -89,6 +89,7 @@ public class SectionService {
         }
     }
 
+    @SuppressWarnings("null")
     @NonNull
     private String getCurrentUser() {
         org.springframework.security.core.Authentication auth = SecurityContextHolder.getContext().getAuthentication();

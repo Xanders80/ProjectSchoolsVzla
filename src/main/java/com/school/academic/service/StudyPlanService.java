@@ -5,6 +5,7 @@ import java.util.Optional;
 
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
+import org.springframework.lang.NonNull;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -21,7 +22,7 @@ public class StudyPlanService {
         this.studyPlanRepository = studyPlanRepository;
     }
 
-    public Page<StudyPlan> getAllStudyPlans(Pageable pageable) {
+    public Page<StudyPlan> getAllStudyPlans(@NonNull Pageable pageable) {
         return studyPlanRepository.findAll(pageable);
     }
 
@@ -29,15 +30,15 @@ public class StudyPlanService {
         return studyPlanRepository.findAll();
     }
 
-    public Optional<StudyPlan> getStudyPlanById(Long id) {
+    public Optional<StudyPlan> getStudyPlanById(@NonNull Long id) {
         return studyPlanRepository.findById(id);
     }
 
-    public StudyPlan saveStudyPlan(StudyPlan studyPlan) {
+    public StudyPlan saveStudyPlan(@NonNull StudyPlan studyPlan) {
         return studyPlanRepository.save(studyPlan);
     }
 
-    public void deleteStudyPlan(Long id) {
+    public void deleteStudyPlan(@NonNull Long id) {
         studyPlanRepository.deleteById(id);
     }
 }

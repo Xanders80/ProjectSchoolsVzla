@@ -109,7 +109,7 @@ public class CourseController {
     }
 
     @PostMapping("/{id}/resources")
-    public String addResource(@PathVariable Long id,
+    public String addResource(@PathVariable @NonNull Long id,
             @ModelAttribute com.school.academic.entity.CourseResource newResource,
             RedirectAttributes redirectAttributes) {
         try {
@@ -129,7 +129,7 @@ public class CourseController {
     }
 
     @PostMapping("/resources/delete/{resourceId}")
-    public String deleteResource(@PathVariable Long resourceId, @RequestParam Long courseId,
+    public String deleteResource(@PathVariable @NonNull Long resourceId, @RequestParam Long courseId,
             RedirectAttributes redirectAttributes) {
         try {
             courseResourceService.deleteResource(resourceId);

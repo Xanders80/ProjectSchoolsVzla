@@ -3,6 +3,7 @@ package com.school.academic.service;
 import java.util.List;
 import java.util.Optional;
 
+import org.springframework.lang.NonNull;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -24,15 +25,15 @@ public class CourseResourceService {
         return courseResourceRepository.findByCourseId(courseId);
     }
 
-    public CourseResource saveResource(CourseResource resource) {
+    public CourseResource saveResource(@NonNull CourseResource resource) {
         return courseResourceRepository.save(resource);
     }
 
-    public void deleteResource(Long id) {
+    public void deleteResource(@NonNull Long id) {
         courseResourceRepository.deleteById(id);
     }
 
-    public Optional<CourseResource> getResourceById(Long id) {
+    public Optional<CourseResource> getResourceById(@NonNull Long id) {
         return courseResourceRepository.findById(id);
     }
 

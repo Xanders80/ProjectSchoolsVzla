@@ -5,6 +5,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import org.springframework.lang.NonNull;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -27,7 +28,7 @@ public class CertificateService {
         this.gradeRepository = gradeRepository;
     }
 
-    public Map<String, Object> generateCourseCertificateData(Long studentId, Long courseId) {
+    public Map<String, Object> generateCourseCertificateData(@NonNull Long studentId, Long courseId) {
         Student student = studentRepository.findById(studentId)
                 .orElseThrow(() -> new IllegalArgumentException("Student not found"));
 

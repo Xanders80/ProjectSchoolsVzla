@@ -23,6 +23,7 @@ public class TeacherProfileService {
         return teacherProfileRepository.findByStaffId(staffId);
     }
 
+    @SuppressWarnings("null")
     public TeacherProfile saveProfile(TeacherProfile profile) {
         return teacherProfileRepository.save(profile);
     }

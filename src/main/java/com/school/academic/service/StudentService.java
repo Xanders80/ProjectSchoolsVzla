@@ -6,6 +6,7 @@ import java.util.Optional;
 
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
+import org.springframework.lang.NonNull;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -22,15 +23,15 @@ public class StudentService {
         this.studentRepository = studentRepository;
     }
 
-    public Page<Student> getAllStudents(Pageable pageable) {
+    public Page<Student> getAllStudents(@NonNull Pageable pageable) {
         return studentRepository.findAll(pageable);
     }
 
-    public Optional<Student> getStudentById(Long id) {
+    public Optional<Student> getStudentById(@NonNull Long id) {
         return studentRepository.findById(id);
     }
 
-    public Optional<Student> getStudentByDni(String dni) {
+    public Optional<Student> getStudentByDni(@NonNull String dni) {
         return studentRepository.findByDni(dni);
     }
 
@@ -48,7 +49,7 @@ public class StudentService {
         return studentRepository.save(student);
     }
 
-    public void deleteStudent(Long id) {
+    public void deleteStudent(@NonNull Long id) {
         Student student = studentRepository.findById(id)
                 .orElseThrow(() -> new IllegalArgumentException("Estudiante no encontrado"));
         student.setDeleted(true);

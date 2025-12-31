@@ -20,8 +20,8 @@ import com.school.core.entity.User;
 import com.school.core.enums.Role;
 import com.school.core.repository.PasswordResetTokenRepository;
 import com.school.core.repository.UserRepository;
-import com.school.core.service.UserService;
 import com.school.core.service.ParentService;
+import com.school.core.service.UserService;
 
 @Service
 @Transactional
@@ -296,8 +296,10 @@ public class UserServiceImpl implements UserService {
         return userRepository.save(user);
     }
 
-    @Override
     public Optional<User> findById(Long id) {
+        if (id == null) {
+            return Optional.empty();
+        }
         return userRepository.findById(id);
     }
 

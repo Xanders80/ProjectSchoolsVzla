@@ -202,6 +202,15 @@ public class AcademicService {
         Enrollment enrollment = enrollmentRepository.findById(enrollmentId)
                 .orElseThrow(() -> new IllegalArgumentException("Enrollment not found"));
 
+        // Verificación de nulabilidad para enrollment.getStudent()
+        if (enrollment.getStudent() == null) {
+            throw new IllegalStateException("Enrollment has no associated student: " + enrollmentId);
+        }
+
+        if (enrollment.getStudent().getId() == null) {
+            throw new IllegalStateException("Associated student has no valid ID: " + enrollmentId);
+        }
+
         enrollmentRepository.delete(enrollment);
         auditService.logGenericAction("UNENROLL_STUDENT",
                 "Enrollment " + enrollmentId + " removed (Student: " + enrollment.getStudent().getId() + ")",

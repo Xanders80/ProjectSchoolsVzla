@@ -5,6 +5,7 @@ import java.util.concurrent.ConcurrentHashMap;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.lang.NonNull;
 import org.springframework.stereotype.Component;
 import org.springframework.web.filter.OncePerRequestFilter;
 
@@ -21,15 +22,20 @@ public class AnomalyDetectionFilter extends OncePerRequestFilter {
     private static final int THRESHOLD = 10;
 
     @Override
-    protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response,
-            FilterChain filterChain) throws ServletException, IOException {
+    protected void doFilterInternal(@NonNull HttpServletRequest request,
+            @NonNull HttpServletResponse response,
+            @NonNull FilterChain filterChain) throws ServletException, IOException {
 
         String clientIp = getClientIpAddress(request);
         String endpoint = request.getRequestURI();
 
         if (isAnonymousRequest(request) && isProtectedEndpoint(endpoint)) {
             String key = clientIp + ":" + endpoint;
-            int count = requestCount.merge(key, 1, Integer::sum);
+            int count = requestCount.merge(key, 1, (Integer existing, Integer increment) -> {
+                int existingInt = (existing != null) ? existing : 0;
+                int incrementInt = (increment != null) ? increment : 0;
+                return Integer.valueOf(existingInt + incrementInt);
+            });
 
             log.warn("ANONYMOUS_ACCESS_ATTEMPT | IP={} | ENDPOINT={} | COUNT={}",
                     clientIp, endpoint, count);
@@ -43,7 +49,7 @@ public class AnomalyDetectionFilter extends OncePerRequestFilter {
         filterChain.doFilter(request, response);
     }
 
-    private boolean isAnonymousRequest(HttpServletRequest request) {
+    private boolean isAnonymousRequest(@NonNull HttpServletRequest request) {
         org.springframework.security.core.Authentication auth = org.springframework.security.core.context.SecurityContextHolder
                 .getContext().getAuthentication();
         return auth == null || !auth.isAuthenticated() ||
@@ -55,7 +61,7 @@ public class AnomalyDetectionFilter extends OncePerRequestFilter {
                 endpoint.startsWith("/admin");
     }
 
-    private String getClientIpAddress(HttpServletRequest request) {
+    private String getClientIpAddress(@NonNull HttpServletRequest request) {
         String xForwardedFor = request.getHeader("X-Forwarded-For");
         if (xForwardedFor != null && !xForwardedFor.isEmpty() && !"unknown".equalsIgnoreCase(xForwardedFor)) {
             return xForwardedFor.split(",")[0].trim();

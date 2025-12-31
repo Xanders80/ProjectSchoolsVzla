@@ -1,7 +1,10 @@
 package com.school.web.controller.library;
 
+import java.time.LocalDate;
+
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.web.PageableDefault;
+import org.springframework.lang.NonNull;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
@@ -35,6 +38,7 @@ public class LibraryController {
 
     // Books
     @GetMapping("/books")
+    @SuppressWarnings("null")
     public String listBooks(Model model, @PageableDefault(size = 10, sort = "title") Pageable pageable) {
         model.addAttribute("books", libraryService.getAllBooks(pageable));
         return "library/book-list";
@@ -47,7 +51,7 @@ public class LibraryController {
     }
 
     @PostMapping("/books")
-    public String saveBook(@Valid @ModelAttribute @org.springframework.lang.NonNull Book book, 
+    public String saveBook(@Valid @ModelAttribute @org.springframework.lang.NonNull Book book,
             BindingResult result, Model model) {
         if (result.hasErrors()) {
             return "library/book-form";
@@ -58,8 +62,9 @@ public class LibraryController {
 
     @GetMapping("/books/edit/{id}")
     public String editBookForm(@PathVariable @org.springframework.lang.NonNull Long id, Model model) {
-        model.addAttribute("book", 
-                libraryService.getBookById(id).orElseThrow(() -> new IllegalArgumentException("Invalid book Id:" + id)));
+        model.addAttribute("book",
+                libraryService.getBookById(id)
+                        .orElseThrow(() -> new IllegalArgumentException("Invalid book Id:" + id)));
         return "library/book-form";
     }
 
@@ -91,10 +96,22 @@ public class LibraryController {
 
     @PostMapping("/loans")
     public String createLoan(
-            @RequestParam @org.springframework.lang.NonNull Long bookId,
-            @RequestParam @org.springframework.lang.NonNull Long userId,
-            @RequestParam @org.springframework.lang.NonNull String dueDate) {
-        libraryService.borrowBook(bookId, userId, java.time.LocalDate.parse(dueDate));
+            @RequestParam @NonNull Long bookId,
+            @RequestParam @NonNull Long userId,
+            @RequestParam @NonNull String dueDate) {
+
+        try {
+            LocalDate parsedDate = java.time.LocalDate.parse(dueDate);
+            if (parsedDate != null) {
+                libraryService.borrowBook(bookId, userId, parsedDate);
+            } else {
+                // Esto no debería ocurrir con LocalDate.parse(), pero para el warning
+                throw new IllegalArgumentException("Fecha inválida: " + dueDate);
+            }
+        } catch (java.time.format.DateTimeParseException e) {
+            throw new IllegalArgumentException("Formato de fecha inválido: " + dueDate, e);
+        }
+
         return "redirect:/library/loans";
     }
 

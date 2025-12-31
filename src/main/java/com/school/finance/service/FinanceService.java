@@ -33,6 +33,7 @@ public class FinanceService {
 
     public com.school.finance.entity.Payment registerPayment(
             @org.springframework.lang.NonNull com.school.finance.entity.Payment payment) {
+        @SuppressWarnings("null")
         StudentFee fee = studentFeeRepository.findById(payment.getStudentFee().getId())
                 .orElseThrow(() -> new IllegalArgumentException("Invalid Fee ID"));
 

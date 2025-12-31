@@ -1,10 +1,10 @@
 package com.school.academic.service;
 
-import java.util.List;
 import java.util.Optional;
 
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
+import org.springframework.lang.NonNull;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -27,30 +27,30 @@ public class AdmissionExamService {
         this.userService = userService;
     }
 
-    public Page<AdmissionExam> getAllExams(Pageable pageable) {
+    public Page<AdmissionExam> getAllExams(@NonNull Pageable pageable) {
         return admissionExamRepository.findAll(pageable);
     }
 
-    public Optional<AdmissionExam> getExamById(Long id) {
+    public Optional<AdmissionExam> getExamById(@NonNull Long id) {
         return admissionExamRepository.findById(id);
     }
 
-    public AdmissionExam saveExam(AdmissionExam exam) {
+    public AdmissionExam saveExam(@NonNull AdmissionExam exam) {
         return admissionExamRepository.save(exam);
     }
 
-    public void deleteExam(Long id) {
+    public void deleteExam(@NonNull Long id) {
         admissionExamRepository.deleteById(id);
     }
 
-    public Optional<AdmissionExam> findByApplicantDni(String dni) {
+    public Optional<AdmissionExam> findByApplicantDni(@NonNull String dni) {
         return admissionExamRepository.findByApplicantDni(dni);
     }
 
     /**
      * Approves an admission exam
      */
-    public AdmissionExam approveExam(Long examId) {
+    public AdmissionExam approveExam(@NonNull Long examId) {
         AdmissionExam exam = admissionExamRepository.findById(examId)
                 .orElseThrow(() -> new IllegalArgumentException("Examen de admisión no encontrado"));
 
@@ -65,7 +65,7 @@ public class AdmissionExamService {
     /**
      * Rejects an admission exam
      */
-    public AdmissionExam rejectExam(Long examId, String reason) {
+    public AdmissionExam rejectExam(@NonNull Long examId, String reason) {
         AdmissionExam exam = admissionExamRepository.findById(examId)
                 .orElseThrow(() -> new IllegalArgumentException("Examen de admisión no encontrado"));
 
@@ -82,7 +82,7 @@ public class AdmissionExamService {
      * Enrolls an approved applicant as a student
      * Creates a Student entity and associated User account
      */
-    public com.school.academic.entity.Student enrollApplicant(Long examId) {
+    public com.school.academic.entity.Student enrollApplicant(@NonNull Long examId) {
         AdmissionExam exam = admissionExamRepository.findById(examId)
                 .orElseThrow(() -> new IllegalArgumentException("Examen de admisión no encontrado"));
 
@@ -91,6 +91,7 @@ public class AdmissionExamService {
         }
 
         // Check if already enrolled
+        @SuppressWarnings("null")
         Optional<com.school.academic.entity.Student> existing = studentService.getStudentByDni(exam.getApplicantDni());
         if (existing.isPresent()) {
             throw new IllegalStateException("El postulante ya está inscrito como estudiante");

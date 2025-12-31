@@ -46,6 +46,15 @@ public class HRController {
 
     @PostMapping("/contracts/save")
     public String saveContract(@ModelAttribute Contract contract, RedirectAttributes redirectAttributes) {
+
+        // Verificar campos LocalDate antes de guardar
+        if (contract.getStartDate() == null) {
+            throw new IllegalArgumentException("Fecha de inicio es requerida");
+        }
+        if (contract.getEndDate() == null) {
+            throw new IllegalArgumentException("Fecha de finalización es requerida");
+        }
+
         hrService.saveContract(contract);
         redirectAttributes.addFlashAttribute("successMessage", "Contrato guardado correctamente.");
         return "redirect:/hr/contracts";

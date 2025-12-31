@@ -57,7 +57,7 @@ public class FinanceController {
 
     @GetMapping("/fees/edit/{id}")
     public String editFeeForm(@PathVariable @NonNull Long id, Model model) {
-        model.addAttribute("fee", 
+        model.addAttribute("fee",
                 financeService.getFeeById(id).orElseThrow(() -> new IllegalArgumentException("Invalid fee Id:" + id)));
         model.addAttribute("students", financeService.getAllStudents());
         return FEE_FORM_VIEW;
@@ -85,15 +85,36 @@ public class FinanceController {
     }
 
     @PostMapping("/payments")
-    public String savePayment(@jakarta.validation.Valid @ModelAttribute @NonNull com.school.finance.entity.Payment payment,
+    public String savePayment(
+            @jakarta.validation.Valid @ModelAttribute @NonNull com.school.finance.entity.Payment payment,
             org.springframework.validation.BindingResult result, Model model) {
+
         if (result.hasErrors()) {
-            StudentFee fee = financeService.getFeeById(payment.getStudentFee().getId())
+            // Verificación de nulabilidad para payment.getStudentFee()
+            com.school.finance.entity.StudentFee studentFee = payment.getStudentFee();
+            if (studentFee == null) {
+                // Manejo del caso donde studentFee es null
+                model.addAttribute("errorMessage", "La tarifa del estudiante es requerida");
+                model.addAttribute("paymentMethods", com.school.finance.enums.PaymentMethod.values());
+                return PAYMENT_FORM_VIEW;
+            }
+
+            // Verificación de nulabilidad para studentFee.getId()
+            Long feeId = studentFee.getId();
+            if (feeId == null) {
+                // Manejo del caso donde el ID de la tarifa es null
+                model.addAttribute("errorMessage", "La tarifa del estudiante no tiene un ID válido");
+                model.addAttribute("paymentMethods", com.school.finance.enums.PaymentMethod.values());
+                return PAYMENT_FORM_VIEW;
+            }
+
+            StudentFee fee = financeService.getFeeById(feeId)
                     .orElseThrow(() -> new IllegalArgumentException("Invalid Fee ID"));
             model.addAttribute("fee", fee);
             model.addAttribute("paymentMethods", com.school.finance.enums.PaymentMethod.values());
             return PAYMENT_FORM_VIEW;
         }
+
         financeService.registerPayment(payment);
         return "redirect:/finance/fees";
     }

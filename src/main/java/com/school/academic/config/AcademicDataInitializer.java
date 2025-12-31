@@ -17,6 +17,7 @@ public class AcademicDataInitializer {
 
     private static final Logger log = LoggerFactory.getLogger(AcademicDataInitializer.class);
 
+    @SuppressWarnings("null")
     @Bean
     CommandLineRunner initAcademicPeriods(AcademicPeriodRepository repository) {
         return args -> {

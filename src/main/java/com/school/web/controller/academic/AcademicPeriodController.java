@@ -38,6 +38,7 @@ public class AcademicPeriodController {
         return "academic/period-form";
     }
 
+    @SuppressWarnings("null")
     @PostMapping
     public String savePeriod(@Valid @ModelAttribute("period") AcademicPeriod period,
             BindingResult result,
