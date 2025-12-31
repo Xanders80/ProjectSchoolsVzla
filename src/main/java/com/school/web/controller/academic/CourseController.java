@@ -39,9 +39,12 @@ public class CourseController {
 
     private static final String COURSE_FORM_VIEW = "academic/course-form";
     private final CourseService courseService;
+    private final com.school.academic.service.CourseResourceService courseResourceService;
 
-    public CourseController(CourseService courseService) {
+    public CourseController(CourseService courseService,
+            com.school.academic.service.CourseResourceService courseResourceService) {
         this.courseService = courseService;
+        this.courseResourceService = courseResourceService;
     }
 
     @GetMapping
@@ -80,7 +83,13 @@ public class CourseController {
 
     @GetMapping("/edit/{id}")
     public String editCourseForm(@PathVariable @NonNull Long id, Model model) {
-        model.addAttribute("course", courseService.getCourseById(id).orElseThrow());
+        Course course = courseService.getCourseById(id).orElseThrow();
+        model.addAttribute("course", course);
+
+        // Resources
+        model.addAttribute("resources", courseResourceService.getResourcesByCourseId(id));
+        model.addAttribute("newResource", new com.school.academic.entity.CourseResource());
+
         return COURSE_FORM_VIEW;
     }
 
@@ -97,5 +106,37 @@ public class CourseController {
             redirectAttributes.addFlashAttribute("errorMessage", "Error interno del sistema");
         }
         return "redirect:/courses";
+    }
+
+    @PostMapping("/{id}/resources")
+    public String addResource(@PathVariable Long id,
+            @ModelAttribute com.school.academic.entity.CourseResource newResource,
+            RedirectAttributes redirectAttributes) {
+        try {
+            Course course = courseService.getCourseById(id).orElseThrow();
+
+            // Simple logic: if URL is empty but we wanted a file, we'd handle MultipartFile
+            // here.
+            // For now assuming URL/Text entry.
+            courseResourceService.createResource(course, newResource.getTitle(), newResource.getUrl(),
+                    newResource.getResourceType());
+
+            redirectAttributes.addFlashAttribute("successMessage", "Recurso agregado correctamente");
+        } catch (Exception e) {
+            redirectAttributes.addFlashAttribute("errorMessage", "Error al agregar recurso: " + e.getMessage());
+        }
+        return "redirect:/courses/edit/" + id;
+    }
+
+    @PostMapping("/resources/delete/{resourceId}")
+    public String deleteResource(@PathVariable Long resourceId, @RequestParam Long courseId,
+            RedirectAttributes redirectAttributes) {
+        try {
+            courseResourceService.deleteResource(resourceId);
+            redirectAttributes.addFlashAttribute("successMessage", "Recurso eliminado correctamente");
+        } catch (Exception e) {
+            redirectAttributes.addFlashAttribute("errorMessage", "Error al eliminar recurso: " + e.getMessage());
+        }
+        return "redirect:/courses/edit/" + courseId;
     }
 }

@@ -120,4 +120,8 @@ public class CommunicationService {
             notificationRepository.save(n);
         });
     }
+
+    public long countUnreadNotifications(Long userId) {
+        return notificationRepository.countByUserIdAndIsReadFalse(userId);
+    }
 }

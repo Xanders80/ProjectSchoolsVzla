@@ -21,4 +21,7 @@ public interface StudentRepository extends JpaRepository<Student, Long> {
 
     org.springframework.data.domain.Page<Student> findByDeletedFalse(org.springframework.data.domain.Pageable pageable);
 
+    Optional<Student> findTopByRegistrationNumberStartingWithOrderByRegistrationNumberDesc(String prefix);
+
+    long countByDeletedFalse();
 }

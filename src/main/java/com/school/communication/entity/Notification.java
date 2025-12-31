@@ -33,6 +33,12 @@ public class Notification {
     @Column(nullable = false)
     private NotificationType type;
 
+    @Enumerated(EnumType.STRING)
+    private com.school.communication.enums.Priority priority;
+
+    @Column(length = 100)
+    private String title;
+
     @Column(nullable = false)
     private String message;
 
@@ -93,5 +99,21 @@ public class Notification {
 
     public void setRead(boolean read) {
         isRead = read;
+    }
+
+    public com.school.communication.enums.Priority getPriority() {
+        return priority;
+    }
+
+    public void setPriority(com.school.communication.enums.Priority priority) {
+        this.priority = priority;
+    }
+
+    public String getTitle() {
+        return title;
+    }
+
+    public void setTitle(String title) {
+        this.title = title;
     }
 }

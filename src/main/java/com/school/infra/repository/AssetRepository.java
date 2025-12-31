@@ -8,4 +8,6 @@ import com.school.infra.entity.Asset;
 
 public interface AssetRepository extends JpaRepository<Asset, Long> {
     List<Asset> findByRoomId(Long roomId);
+
+    List<Asset> findByType(String type);
 }

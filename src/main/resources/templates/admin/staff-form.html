@@ -286,6 +286,65 @@
                     ></textarea>
                   </div>
 
+                  <!-- Teacher Profile Section (Hidden by default, shown via JS) -->
+                  <div id="teacherProfileSection" style="display: none">
+                    <h6 class="text-primary font-weight-bold mt-4 mb-3">
+                      Perfil Académico del Docente
+                    </h6>
+                    <div class="row">
+                      <div class="col-md-6">
+                        <div class="form-group">
+                          <label>Título Académico</label>
+                          <input
+                            type="text"
+                            name="academicTitle"
+                            class="form-control"
+                            th:value="${teacherProfile?.academicTitle}"
+                            placeholder="Ej. Licenciado en Educación"
+                          />
+                        </div>
+                      </div>
+                      <div class="col-md-6">
+                        <div class="form-group">
+                          <label>Área de Especialización</label>
+                          <input
+                            type="text"
+                            name="specializationArea"
+                            class="form-control"
+                            th:value="${teacherProfile?.specializationArea}"
+                            placeholder="Ej. Matemáticas"
+                          />
+                        </div>
+                      </div>
+                    </div>
+                    <div class="row">
+                      <div class="col-md-6">
+                        <div class="form-group">
+                          <label>Máx. Horas Semanales</label>
+                          <input
+                            type="number"
+                            name="maxHoursPerWeek"
+                            class="form-control"
+                            th:value="${teacherProfile?.maxHoursPerWeek}"
+                            placeholder="Ej. 40"
+                          />
+                        </div>
+                      </div>
+                      <div class="col-md-6">
+                        <div class="form-group">
+                          <label>Biografía Breve</label>
+                          <textarea
+                            name="bio"
+                            class="form-control"
+                            rows="2"
+                            th:text="${teacherProfile?.bio}"
+                          ></textarea>
+                        </div>
+                      </div>
+                    </div>
+                    <hr />
+                  </div>
+
                   <button type="submit" class="btn btn-primary">
                     <i class="fas fa-save"></i> Guardar Personal
                   </button>
@@ -311,5 +370,26 @@
     <script th:src="@{/vendor/bootstrap/js/bootstrap.bundle.min.js}"></script>
     <script th:src="@{/vendor/jquery-easing/jquery.easing.min.js}"></script>
     <script th:src="@{/js/sb-admin-2.min.js}"></script>
+
+    <script>
+      $(document).ready(function () {
+        function toggleTeacherProfile() {
+          var jobTitle = $("#jobTitle").val();
+          if (jobTitle === "TEACHER") {
+            $("#teacherProfileSection").slideDown();
+          } else {
+            $("#teacherProfileSection").slideUp();
+          }
+        }
+
+        // Initial check
+        toggleTeacherProfile();
+
+        // On change listener
+        $("#jobTitle").change(function () {
+          toggleTeacherProfile();
+        });
+      });
+    </script>
   </body>
 </html>

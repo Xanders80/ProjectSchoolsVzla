@@ -22,9 +22,12 @@ public class StaffController {
 
     private static final String STAFF_FORM_VIEW = "admin/staff-form";
     private final StaffService staffService;
+    private final com.school.academic.service.TeacherProfileService teacherProfileService;
 
-    public StaffController(StaffService staffService) {
+    public StaffController(StaffService staffService,
+            com.school.academic.service.TeacherProfileService teacherProfileService) {
         this.staffService = staffService;
+        this.teacherProfileService = teacherProfileService;
     }
 
     @GetMapping
@@ -42,18 +45,41 @@ public class StaffController {
     public String newStaffForm(Model model) {
         model.addAttribute("staff", new Staff());
         model.addAttribute("roles", Role.values());
+        model.addAttribute("teacherProfile", new com.school.academic.entity.TeacherProfile());
         return STAFF_FORM_VIEW;
     }
 
     @PostMapping
     public String saveStaff(@jakarta.validation.Valid @ModelAttribute @NonNull Staff staff,
-            org.springframework.validation.BindingResult result, Model model) {
+            org.springframework.validation.BindingResult result,
+            @RequestParam(required = false) String academicTitle,
+            @RequestParam(required = false) String specializationArea,
+            @RequestParam(required = false) Integer maxHoursPerWeek,
+            @RequestParam(required = false) String bio,
+            Model model) {
         if (result.hasErrors()) {
             model.addAttribute("roles", Role.values());
+            // Restore profile data on error so user doesn't lose it
+            com.school.academic.entity.TeacherProfile dto = new com.school.academic.entity.TeacherProfile();
+            dto.setAcademicTitle(academicTitle);
+            dto.setSpecializationArea(specializationArea);
+            dto.setMaxHoursPerWeek(maxHoursPerWeek);
+            dto.setBio(bio);
+            model.addAttribute("teacherProfile", dto);
             return STAFF_FORM_VIEW;
         }
         try {
-            staffService.saveStaff(staff);
+            Staff savedStaff = staffService.saveStaff(staff);
+
+            // If role is TEACHER, save profile
+            if (savedStaff.getJobTitle() == Role.TEACHER) {
+                teacherProfileService.createOrUpdateProfile(savedStaff, academicTitle, specializationArea,
+                        maxHoursPerWeek, bio);
+            } else {
+                // If converted from Teacher to something else, maybe delete profile?
+                // For now, let's keep it but optional optimization
+            }
+
         } catch (IllegalArgumentException e) {
             model.addAttribute("roles", Role.values());
             model.addAttribute("errorMessage", e.getMessage());
@@ -64,10 +90,15 @@ public class StaffController {
 
     @GetMapping("/edit/{id}")
     public String editStaffForm(@PathVariable @NonNull Long id, Model model) {
-        model.addAttribute("staff",
-                staffService.getStaffById(id)
-                        .orElseThrow(() -> new IllegalArgumentException("Invalid staff Id:" + id)));
+        Staff staff = staffService.getStaffById(id)
+                .orElseThrow(() -> new IllegalArgumentException("Invalid staff Id:" + id));
+        model.addAttribute("staff", staff);
         model.addAttribute("roles", Role.values());
+
+        com.school.academic.entity.TeacherProfile profile = teacherProfileService.getProfileByStaffId(id)
+                .orElse(new com.school.academic.entity.TeacherProfile());
+        model.addAttribute("teacherProfile", profile);
+
         return STAFF_FORM_VIEW;
     }
 

@@ -28,6 +28,9 @@ import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.Index;
+import jakarta.persistence.JoinColumn;
+import jakarta.persistence.ManyToOne;
+import jakarta.persistence.FetchType;
 import jakarta.persistence.Table;
 import jakarta.validation.constraints.Max;
 import jakarta.validation.constraints.Min;
@@ -37,11 +40,10 @@ import jakarta.validation.constraints.Pattern;
 import jakarta.validation.constraints.Size;
 
 @Entity
-@Table(name = "courses",
-       indexes = {
-           @Index(name = "idx_course_code", columnList = "code", unique = true),
-           @Index(name = "idx_course_grade_level", columnList = "gradeLevel")
-       })
+@Table(name = "courses", indexes = {
+        @Index(name = "idx_course_code", columnList = "code", unique = true),
+        @Index(name = "idx_course_grade_level", columnList = "gradeLevel")
+})
 @EntityListeners(com.school.core.listener.AuditEntityListener.class)
 public class Course {
 
@@ -49,9 +51,12 @@ public class Course {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @NotBlank(message = "El código del curso es obligatorio", groups = {ValidationGroups.Create.class, ValidationGroups.Update.class})
-    @Size(min = 3, max = 10, message = "El código debe tener entre 3 y 10 caracteres", groups = {ValidationGroups.Create.class, ValidationGroups.Update.class})
-    @Pattern(regexp = "^[A-Z0-9]+$", message = "El código solo puede contener letras mayúsculas y números", groups = {ValidationGroups.Create.class, ValidationGroups.Update.class})
+    @NotBlank(message = "El código del curso es obligatorio", groups = { ValidationGroups.Create.class,
+            ValidationGroups.Update.class })
+    @Size(min = 3, max = 10, message = "El código debe tener entre 3 y 10 caracteres", groups = {
+            ValidationGroups.Create.class, ValidationGroups.Update.class })
+    @Pattern(regexp = "^[A-Z0-9]+$", message = "El código solo puede contener letras mayúsculas y números", groups = {
+            ValidationGroups.Create.class, ValidationGroups.Update.class })
     @Column(name = "code", unique = true, nullable = false, length = 10)
     private String code;
 
@@ -61,24 +66,31 @@ public class Course {
     @Column(name = "code_changed_at")
     private LocalDateTime codeChangedAt;
 
-    @NotBlank(message = "El nombre del curso es obligatorio", groups = {ValidationGroups.Create.class, ValidationGroups.Update.class})
-    @Size(min = 3, max = 100, message = "El nombre debe tener entre 3 y 100 caracteres", groups = {ValidationGroups.Create.class, ValidationGroups.Update.class})
+    @NotBlank(message = "El nombre del curso es obligatorio", groups = { ValidationGroups.Create.class,
+            ValidationGroups.Update.class })
+    @Size(min = 3, max = 100, message = "El nombre debe tener entre 3 y 100 caracteres", groups = {
+            ValidationGroups.Create.class, ValidationGroups.Update.class })
     @Column(name = "name", nullable = false, length = 100)
     private String name;
 
-    @Size(max = 500, message = "La descripción no puede exceder los 500 caracteres", groups = {ValidationGroups.Create.class, ValidationGroups.Update.class})
+    @Size(max = 500, message = "La descripción no puede exceder los 500 caracteres", groups = {
+            ValidationGroups.Create.class, ValidationGroups.Update.class })
     @Column(name = "description", length = 500)
     private String description;
 
     @NotNull(message = "Los créditos son obligatorios", groups = ValidationGroups.Create.class)
-    @Min(value = 1, message = "Mínimo 1 crédito", groups = {ValidationGroups.Create.class, ValidationGroups.Update.class})
-    @Max(value = 10, message = "Máximo 10 créditos", groups = {ValidationGroups.Create.class, ValidationGroups.Update.class})
+    @Min(value = 1, message = "Mínimo 1 crédito", groups = { ValidationGroups.Create.class,
+            ValidationGroups.Update.class })
+    @Max(value = 10, message = "Máximo 10 créditos", groups = { ValidationGroups.Create.class,
+            ValidationGroups.Update.class })
     @Column(name = "credits", nullable = false)
     private Integer credits;
 
     @NotNull(message = "El grado es obligatorio", groups = ValidationGroups.Create.class)
-    @Min(value = 1, message = "Grado mínimo 1", groups = {ValidationGroups.Create.class, ValidationGroups.Update.class})
-    @Max(value = 12, message = "Grado máximo 12", groups = {ValidationGroups.Create.class, ValidationGroups.Update.class})
+    @Min(value = 1, message = "Grado mínimo 1", groups = { ValidationGroups.Create.class,
+            ValidationGroups.Update.class })
+    @Max(value = 12, message = "Grado máximo 12", groups = { ValidationGroups.Create.class,
+            ValidationGroups.Update.class })
     @Column(name = "grade_level", nullable = false)
     private Integer gradeLevel;
 
@@ -90,6 +102,10 @@ public class Course {
 
     @Column(name = "deleted_by", length = 100)
     private String deletedBy;
+
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "study_plan_id")
+    private StudyPlan studyPlan;
 
     public Course() {
         /*
@@ -159,17 +175,44 @@ public class Course {
         this.gradeLevel = gradeLevel;
     }
 
-    public boolean isDeleted() { return deleted; }
-    public void setDeleted(boolean deleted) { this.deleted = deleted; }
-    public LocalDateTime getDeletedAt() { return deletedAt; }
-    public void setDeletedAt(LocalDateTime deletedAt) { this.deletedAt = deletedAt; }
-    public String getDeletedBy() { return deletedBy; }
-    public void setDeletedBy(String deletedBy) { this.deletedBy = deletedBy; }
+    public boolean isDeleted() {
+        return deleted;
+    }
+
+    public void setDeleted(boolean deleted) {
+        this.deleted = deleted;
+    }
+
+    public LocalDateTime getDeletedAt() {
+        return deletedAt;
+    }
+
+    public void setDeletedAt(LocalDateTime deletedAt) {
+        this.deletedAt = deletedAt;
+    }
+
+    public String getDeletedBy() {
+        return deletedBy;
+    }
+
+    public void setDeletedBy(String deletedBy) {
+        this.deletedBy = deletedBy;
+    }
+
+    public StudyPlan getStudyPlan() {
+        return studyPlan;
+    }
+
+    public void setStudyPlan(StudyPlan studyPlan) {
+        this.studyPlan = studyPlan;
+    }
 
     @Override
     public boolean equals(Object o) {
-        if (this == o) return true;
-        if (!(o instanceof Course course)) return false;
+        if (this == o)
+            return true;
+        if (!(o instanceof Course course))
+            return false;
         return Objects.equals(id, course.id) && Objects.equals(code, course.code);
     }
 

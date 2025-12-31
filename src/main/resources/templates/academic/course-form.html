@@ -171,6 +171,138 @@
                 </form>
               </div>
             </div>
+
+            <!-- Course Resources Section (Only in Edit Mode) -->
+            <div class="card shadow mb-4" th:if="${course.id != null}">
+              <div
+                class="card-header py-3 d-flex flex-row align-items-center justify-content-between"
+              >
+                <h6 class="m-0 font-weight-bold text-primary">
+                  Recursos del Curso
+                </h6>
+              </div>
+              <div class="card-body">
+                <div class="row">
+                  <div class="col-md-8">
+                    <div class="table-responsive">
+                      <table
+                        class="table table-bordered"
+                        width="100%"
+                        cellspacing="0"
+                      >
+                        <thead>
+                          <tr>
+                            <th>Título</th>
+                            <th>Tipo</th>
+                            <th>Enlace/Info</th>
+                            <th>Acción</th>
+                          </tr>
+                        </thead>
+                        <tbody>
+                          <tr th:each="resource : ${resources}">
+                            <td th:text="${resource.title}">Guía</td>
+                            <td th:text="${resource.resourceType}">PDF</td>
+                            <td>
+                              <a
+                                th:href="${resource.url}"
+                                target="_blank"
+                                th:text="${#strings.abbreviate(resource.url, 40)}"
+                                th:if="${resource.resourceType == 'LINK' or #strings.startsWith(resource.url, 'http')}"
+                                >Link</a
+                              >
+                              <span
+                                th:text="${resource.url}"
+                                th:unless="${resource.resourceType == 'LINK' or #strings.startsWith(resource.url, 'http')}"
+                                >Info</span
+                              >
+                            </td>
+                            <td>
+                              <form
+                                th:action="@{/courses/resources/delete/{resourceId}(resourceId=${resource.id})}"
+                                method="post"
+                                style="display: inline"
+                              >
+                                <input
+                                  type="hidden"
+                                  name="courseId"
+                                  th:value="${course.id}"
+                                />
+                                <button
+                                  type="submit"
+                                  class="btn btn-sm btn-danger"
+                                  onclick="return confirm('¿Seguro de eliminar este recurso?');"
+                                >
+                                  <i class="fas fa-trash"></i>
+                                </button>
+                              </form>
+                            </td>
+                          </tr>
+                          <tr th:if="${#lists.isEmpty(resources)}">
+                            <td colspan="4" class="text-center text-muted">
+                              No hay recursos asignados.
+                            </td>
+                          </tr>
+                        </tbody>
+                      </table>
+                    </div>
+                  </div>
+                  <div class="col-md-4">
+                    <div class="card border-left-info shadow h-100 py-2">
+                      <div class="card-body">
+                        <h6 class="font-weight-bold text-info mb-3">
+                          Agregar Recurso
+                        </h6>
+                        <form
+                          th:action="@{/courses/{id}/resources(id=${course.id})}"
+                          th:object="${newResource}"
+                          method="post"
+                        >
+                          <div class="form-group">
+                            <label>Título</label>
+                            <input
+                              type="text"
+                              th:field="*{title}"
+                              class="form-control"
+                              placeholder="Ej. Sílabo 2024"
+                              required
+                            />
+                          </div>
+                          <div class="form-group">
+                            <label>Tipo</label>
+                            <select
+                              th:field="*{resourceType}"
+                              class="form-control"
+                            >
+                              <option value="LINK">Enlace Web</option>
+                              <option value="PDF">Documento PDF</option>
+                              <option value="VIDEO">Video</option>
+                              <option value="OTHER">Otro</option>
+                            </select>
+                          </div>
+                          <div class="form-group">
+                            <label>URL / Enlace</label>
+                            <input
+                              type="text"
+                              th:field="*{url}"
+                              class="form-control"
+                              placeholder="https://..."
+                              required
+                            />
+                            <small class="form-text text-muted"
+                              >Pegue aquí el enlace al material (Drive, YouTube,
+                              etc.)</small
+                            >
+                          </div>
+                          <button type="submit" class="btn btn-info btn-block">
+                            <i class="fas fa-plus"></i> Agregar Recurso
+                          </button>
+                        </form>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
           </div>
         </div>
 

@@ -22,13 +22,16 @@ public class GradeService {
     private final GradeRepository gradeRepository;
     private final EvaluationWeightRepository evaluationWeightRepository;
     private final com.school.academic.repository.StudentRepository studentRepository;
+    private final com.school.academic.repository.GradingScaleRepository gradingScaleRepository;
 
     public GradeService(GradeRepository gradeRepository,
             EvaluationWeightRepository evaluationWeightRepository,
-            com.school.academic.repository.StudentRepository studentRepository) {
+            com.school.academic.repository.StudentRepository studentRepository,
+            com.school.academic.repository.GradingScaleRepository gradingScaleRepository) {
         this.gradeRepository = gradeRepository;
         this.evaluationWeightRepository = evaluationWeightRepository;
         this.studentRepository = studentRepository;
+        this.gradingScaleRepository = gradingScaleRepository;
     }
 
     @Transactional(readOnly = true)
@@ -87,7 +90,20 @@ public class GradeService {
         }
     }
 
-    public String getLetterGrade(Double score) {
+    public String getLetterGrade(Double score, Course course) {
+        if (score == null)
+            return "-";
+
+        // Try to find dynamic scale if course belongs to a study plan
+        if (course.getStudyPlan() != null) {
+            com.school.academic.entity.GradingScale scale = gradingScaleRepository
+                    .findByStudyPlanAndScore(course.getStudyPlan().getId(), java.math.BigDecimal.valueOf(score));
+            if (scale != null) {
+                return scale.getLabel();
+            }
+        }
+
+        // Fallback to static converter
         return GradingScaleConverter.toLetter(score);
     }
 }

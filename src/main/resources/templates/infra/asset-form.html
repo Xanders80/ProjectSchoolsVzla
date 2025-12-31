@@ -1,0 +1,213 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+  <head>
+    <meta charset="utf-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta
+      name="viewport"
+      content="width=device-width, initial-scale=1, shrink-to-fit=no"
+    />
+    <title>Formulario de Activo - Sistema de Gestión Escolar</title>
+
+    <link
+      th:href="@{/vendor/fontawesome-free/css/all.min.css}"
+      rel="stylesheet"
+      type="text/css"
+    />
+    <link
+      href="https://fonts.googleapis.com/css?family=Nunito:200,200i,300,300i,400,400i,600,600i,700,700i,800,800i,900,900i"
+      rel="stylesheet"
+    />
+    <link th:href="@{/css/sb-admin-2.min.css}" rel="stylesheet" />
+  </head>
+
+  <body id="page-top">
+    <div id="wrapper">
+      <div th:replace="~{fragments/sb-admin-sidebar :: sidebar}"></div>
+      <div id="content-wrapper" class="d-flex flex-column">
+        <div id="content">
+          <div th:replace="~{fragments/sb-admin-topbar :: topbar}"></div>
+
+          <div class="container-fluid">
+            <div
+              class="d-sm-flex align-items-center justify-content-between mb-4"
+            >
+              <h1
+                class="h3 mb-0 text-gray-800"
+                th:text="${asset.id != null ? 'Editar Activo' : 'Nuevo Activo'}"
+              >
+                Nuevo Activo
+              </h1>
+              <a th:href="@{/infra/assets}" class="btn btn-secondary">
+                <i class="fas fa-arrow-left"></i> Volver
+              </a>
+            </div>
+
+            <div
+              th:if="${errorMessage}"
+              class="alert alert-danger alert-dismissible fade show"
+              role="alert"
+            >
+              <span th:text="${errorMessage}"></span>
+              <button
+                type="button"
+                class="close"
+                data-dismiss="alert"
+                aria-label="Close"
+              >
+                <span aria-hidden="true">&times;</span>
+              </button>
+            </div>
+
+            <div class="card shadow mb-4">
+              <div class="card-header py-3">
+                <h6 class="m-0 font-weight-bold text-primary">
+                  Información del Activo
+                </h6>
+              </div>
+              <div class="card-body">
+                <form
+                  th:action="@{/infra/assets}"
+                  th:object="${asset}"
+                  method="post"
+                >
+                  <input type="hidden" th:field="*{id}" />
+
+                  <div class="row">
+                    <div class="col-md-6">
+                      <div class="form-group">
+                        <label for="name"
+                          >Nombre del Activo
+                          <span class="text-danger">*</span></label
+                        >
+                        <input
+                          type="text"
+                          class="form-control"
+                          id="name"
+                          th:field="*{name}"
+                          placeholder="Ej: Proyector Epson EB-X41"
+                          required
+                        />
+                        <small
+                          class="form-text text-danger"
+                          th:if="${#fields.hasErrors('name')}"
+                          th:errors="*{name}"
+                        ></small>
+                      </div>
+                    </div>
+
+                    <div class="col-md-6">
+                      <div class="form-group">
+                        <label for="type"
+                          >Tipo de Activo
+                          <span class="text-danger">*</span></label
+                        >
+                        <select
+                          class="form-control"
+                          id="type"
+                          th:field="*{type}"
+                          required
+                        >
+                          <option value="">Seleccione un tipo</option>
+                          <option value="Electronics">Electrónica</option>
+                          <option value="Furniture">Mobiliario</option>
+                          <option value="Computer">Computación</option>
+                          <option value="Laboratory">Laboratorio</option>
+                          <option value="Sports">Deportes</option>
+                          <option value="Other">Otro</option>
+                        </select>
+                        <small
+                          class="form-text text-danger"
+                          th:if="${#fields.hasErrors('type')}"
+                          th:errors="*{type}"
+                        ></small>
+                      </div>
+                    </div>
+                  </div>
+
+                  <div class="row">
+                    <div class="col-md-6">
+                      <div class="form-group">
+                        <label for="serialNumber">Número de Serie</label>
+                        <input
+                          type="text"
+                          class="form-control"
+                          id="serialNumber"
+                          th:field="*{serialNumber}"
+                          placeholder="Ej: SN123456789"
+                        />
+                        <small class="form-text text-muted"
+                          >Opcional - Identificador único del fabricante</small
+                        >
+                      </div>
+                    </div>
+
+                    <div class="col-md-6">
+                      <div class="form-group">
+                        <label for="purchaseDate">Fecha de Compra</label>
+                        <input
+                          type="date"
+                          class="form-control"
+                          id="purchaseDate"
+                          th:field="*{purchaseDate}"
+                        />
+                      </div>
+                    </div>
+                  </div>
+
+                  <div class="row">
+                    <div class="col-md-6">
+                      <div class="form-group">
+                        <label for="room">Ubicación (Sala)</label>
+                        <select
+                          class="form-control"
+                          id="room"
+                          th:field="*{room}"
+                        >
+                          <option value="">Sin asignar</option>
+                          <option
+                            th:each="room : ${rooms}"
+                            th:value="${room.id}"
+                            th:text="${room.name}"
+                          >
+                            Sala 101
+                          </option>
+                        </select>
+                        <small class="form-text text-muted"
+                          >Seleccione la sala donde se encuentra el
+                          activo</small
+                        >
+                      </div>
+                    </div>
+                  </div>
+
+                  <hr />
+
+                  <div class="form-group">
+                    <button type="submit" class="btn btn-primary">
+                      <i class="fas fa-save"></i> Guardar
+                    </button>
+                    <a th:href="@{/infra/assets}" class="btn btn-secondary">
+                      <i class="fas fa-times"></i> Cancelar
+                    </a>
+                  </div>
+                </form>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div th:replace="~{fragments/sb-admin-footer :: footer}"></div>
+      </div>
+    </div>
+
+    <a class="scroll-to-top rounded" href="#page-top"
+      ><i class="fas fa-angle-up"></i
+    ></a>
+    <div th:replace="~{fragments/sb-admin-topbar :: logoutModal}"></div>
+
+    <script th:src="@{/vendor/jquery/jquery.min.js}"></script>
+    <script th:src="@{/vendor/bootstrap/js/bootstrap.bundle.min.js}"></script>
+    <script th:src="@{/vendor/jquery-easing/jquery.easing.min.js}"></script>
+    <script th:src="@{/js/sb-admin-2.min.js}"></script>
+  </body>
+</html>

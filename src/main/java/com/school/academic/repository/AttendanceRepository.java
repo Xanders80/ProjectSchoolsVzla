@@ -13,11 +13,16 @@ public interface AttendanceRepository extends JpaRepository<Attendance, Long> {
 
     List<Attendance> findByStudentId(Long studentId);
 
+    List<Attendance> findByDateAndStatus(java.time.LocalDate date, com.school.academic.enums.AttendanceStatus status);
+
+    long countByStudentIdAndStatusAndDateAfter(Long studentId, com.school.academic.enums.AttendanceStatus status,
+            java.time.LocalDate date);
+
     @Modifying
     void deleteByStudentId(Long studentId);
-    
+
     boolean existsBySectionId(Long sectionId);
-    
+
     @org.springframework.data.jpa.repository.Query("SELECT COUNT(a) FROM Attendance a WHERE a.section.id = ?1")
     long countBySectionId(Long sectionId);
 }
