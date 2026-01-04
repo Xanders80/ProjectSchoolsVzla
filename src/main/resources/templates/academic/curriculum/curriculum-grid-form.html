@@ -1,0 +1,112 @@
+<!DOCTYPE html>
+<html lang="es" xmlns:th="http://www.thymeleaf.org" xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
+<head>
+    <meta charset="utf-8">
+    <title>Malla Curricular - Sistema Escolar</title>
+    <link th:href="@{/vendor/fontawesome-free/css/all.min.css}" rel="stylesheet">
+    <link th:href="@{/css/sb-admin-2.min.css}" rel="stylesheet">
+</head>
+
+<body id="page-top">
+    <div id="wrapper">
+        <div th:replace="~{fragments/sb-admin-sidebar :: sidebar}"></div>
+        
+        <div id="content-wrapper" class="d-flex flex-column">
+            <div id="content">
+                <div th:replace="~{fragments/sb-admin-topbar :: topbar}"></div>
+                
+                <div class="container-fluid">
+                    <div class="d-sm-flex align-items-center justify-content-between mb-4">
+                        <h1 class="h3 mb-0 text-gray-800">Nueva Malla Curricular</h1>
+                        <a th:href="@{/academic/curriculum}" class="btn btn-secondary">
+                            <i class="fas fa-arrow-left"></i> Volver
+                        </a>
+                    </div>
+
+                    <div class="card shadow mb-4">
+                        <div class="card-header py-3">
+                            <h6 class="m-0 font-weight-bold text-primary">Configurar Malla Curricular</h6>
+                        </div>
+                        <div class="card-body">
+                            <form th:action="@{/academic/curriculum/save}" th:object="${curriculumGrid}" method="post">
+                                <div class="row">
+                                    <div class="col-md-6">
+                                        <div class="form-group">
+                                            <label for="studyPlan">Plan de Estudio</label>
+                                            <select class="form-control" th:field="*{studyPlan}" id="studyPlan" required>
+                                                <option value="">Seleccionar Plan</option>
+                                                <option th:each="plan : ${studyPlans}" 
+                                                        th:value="${plan.id}" 
+                                                        th:text="${plan.name}"
+                                                        th:selected="${selectedStudyPlanId != null && selectedStudyPlanId == plan.id}">
+                                                </option>
+                                            </select>
+                                        </div>
+                                    </div>
+                                    <div class="col-md-6">
+                                        <div class="form-group">
+                                            <label for="gradeLevel">Nivel de Grado</label>
+                                            <input type="number" class="form-control" th:field="*{gradeLevel}" 
+                                                   id="gradeLevel" min="1" max="12" required>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <div class="row">
+                                    <div class="col-md-6">
+                                        <div class="form-group">
+                                            <label>Materias Obligatorias</label>
+                                            <select multiple class="form-control" th:field="*{requiredCourses}" size="8">
+                                                <option th:each="course : ${courses}" 
+                                                        th:value="${course.id}" 
+                                                        th:text="${course.name + ' (' + course.credits + ' créditos)'}">
+                                                </option>
+                                            </select>
+                                            <small class="form-text text-muted">Mantén Ctrl presionado para seleccionar múltiples</small>
+                                        </div>
+                                    </div>
+                                    <div class="col-md-6">
+                                        <div class="form-group">
+                                            <label>Materias Electivas</label>
+                                            <select multiple class="form-control" th:field="*{electiveCourses}" size="8">
+                                                <option th:each="course : ${courses}" 
+                                                        th:value="${course.id}" 
+                                                        th:text="${course.name + ' (' + course.credits + ' créditos)'}">
+                                                </option>
+                                            </select>
+                                            <small class="form-text text-muted">Mantén Ctrl presionado para seleccionar múltiples</small>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <div class="row">
+                                    <div class="col-md-6">
+                                        <div class="form-group">
+                                            <label for="minElectives">Mínimo de Electivas Requeridas</label>
+                                            <input type="number" class="form-control" th:field="*{minElectives}" 
+                                                   id="minElectives" min="0" value="0">
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <div class="form-group">
+                                    <button type="submit" class="btn btn-primary">
+                                        <i class="fas fa-save"></i> Guardar Malla Curricular
+                                    </button>
+                                    <a th:href="@{/academic/curriculum}" class="btn btn-secondary ml-2">Cancelar</a>
+                                </div>
+                            </form>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <div th:replace="~{fragments/sb-admin-footer :: footer}"></div>
+        </div>
+    </div>
+
+    <script th:src="@{/vendor/jquery/jquery.min.js}"></script>
+    <script th:src="@{/vendor/bootstrap/js/bootstrap.bundle.min.js}"></script>
+    <script th:src="@{/js/sb-admin-2.min.js}"></script>
+</body>
+</html>

@@ -22,18 +22,16 @@ import jakarta.persistence.Index;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.OneToOne;
 import jakarta.persistence.Table;
-import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.PastOrPresent;
 import jakarta.validation.constraints.Pattern;
 import jakarta.validation.constraints.Size;
 
 @Entity
-@Table(name = "students", 
-       indexes = {
-           @Index(name = "idx_student_registration", columnList = "registrationNumber", unique = true),
-           @Index(name = "idx_student_enrollment_date", columnList = "enrollmentDate")
-       })
+@Table(name = "students", indexes = {
+        @Index(name = "idx_student_registration", columnList = "registrationNumber", unique = true),
+        @Index(name = "idx_student_enrollment_date", columnList = "enrollmentDate")
+})
 @EntityListeners(com.school.core.listener.AuditEntityListener.class)
 public class Student extends Person {
 
@@ -45,9 +43,10 @@ public class Student extends Person {
     @JoinColumn(name = "user_id", foreignKey = @ForeignKey(name = "fk_student_user"))
     private User user;
 
-    @NotBlank(message = "El número de registro es obligatorio", groups = {ValidationGroups.Create.class, ValidationGroups.Update.class})
-    @Size(min = 3, max = 20, message = "El número de registro debe tener entre 3 y 20 caracteres", groups = {ValidationGroups.Create.class, ValidationGroups.Update.class})
-    @Pattern(regexp = "^[A-Z0-9-]+$", message = "El número de registro solo puede contener letras mayúsculas, números y guiones", groups = {ValidationGroups.Create.class, ValidationGroups.Update.class})
+    @Size(min = 3, max = 20, message = "El número de registro debe tener entre 3 y 20 caracteres", groups = {
+            ValidationGroups.Update.class })
+    @Pattern(regexp = "^[A-Z0-9-]+$", message = "El número de registro solo puede contener letras mayúsculas, números y guiones", groups = {
+            ValidationGroups.Update.class })
     @Column(name = "registration_number", nullable = false, unique = true, length = 20)
     private String registrationNumber;
 
@@ -58,7 +57,8 @@ public class Student extends Person {
     private LocalDateTime registrationChangedAt;
 
     @NotNull(message = "La fecha de inscripción es obligatoria", groups = ValidationGroups.Create.class)
-    @PastOrPresent(message = "La fecha de inscripción no puede ser futura", groups = {ValidationGroups.Create.class, ValidationGroups.Update.class})
+    @PastOrPresent(message = "La fecha de inscripción no puede ser futura", groups = { ValidationGroups.Create.class,
+            ValidationGroups.Update.class })
     @DateTimeFormat(pattern = "yyyy-MM-dd")
     @Column(name = "enrollment_date", nullable = false)
     private LocalDate enrollmentDate;
@@ -134,10 +134,12 @@ public class Student extends Person {
 
     @Override
     public boolean equals(Object o) {
-        if (this == o) return true;
-        if (!(o instanceof Student student)) return false;
-        return Objects.equals(id, student.id) && 
-               Objects.equals(registrationNumber, student.registrationNumber);
+        if (this == o)
+            return true;
+        if (!(o instanceof Student student))
+            return false;
+        return Objects.equals(id, student.id) &&
+                Objects.equals(registrationNumber, student.registrationNumber);
     }
 
     @Override

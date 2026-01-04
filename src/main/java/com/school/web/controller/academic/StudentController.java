@@ -1,8 +1,11 @@
 package com.school.web.controller.academic;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.lang.NonNull;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
+import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.ModelAttribute;
@@ -16,11 +19,16 @@ import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import com.school.academic.entity.Student;
 import com.school.academic.service.AcademicService;
+import com.school.core.validation.ValidId;
+
+import jakarta.servlet.http.HttpServletRequest;
 
 @Controller
 @RequestMapping("/students")
+@Validated
 public class StudentController {
 
+    private static final Logger logger = LoggerFactory.getLogger(StudentController.class);
     private static final String STUDENT_FORM_VIEW = "academic/student-form";
     private final AcademicService academicService;
 
@@ -50,17 +58,19 @@ public class StudentController {
             @org.springframework.validation.annotation.Validated({
                     com.school.academic.validation.ValidationGroups.Create.class,
                     jakarta.validation.groups.Default.class }) @ModelAttribute @NonNull Student student,
-            org.springframework.validation.BindingResult result, Model model) {
+            org.springframework.validation.BindingResult result, Model model, RedirectAttributes redirectAttributes) {
         if (result.hasErrors()) {
             return STUDENT_FORM_VIEW;
         }
         try {
-            academicService.saveStudent(student);
+            Student savedStudent = academicService.saveStudent(student);
+            redirectAttributes.addFlashAttribute("successMessage",
+                    "Estudiante guardado exitosamente. Número de registro: " + savedStudent.getRegistrationNumber());
+            return "redirect:/students";
         } catch (IllegalArgumentException e) {
             model.addAttribute("errorMessage", e.getMessage());
             return STUDENT_FORM_VIEW;
         }
-        return "redirect:/students";
     }
 
     @GetMapping("/edit/{id}")
@@ -75,15 +85,24 @@ public class StudentController {
 
     @RequestMapping(value = "/delete/{id}", method = { RequestMethod.POST, RequestMethod.DELETE })
     @org.springframework.security.access.prepost.PreAuthorize("hasRole('ADMIN')")
-    public String deleteStudent(@PathVariable @NonNull Long id, RedirectAttributes redirectAttributes) {
+    public String deleteStudent(@PathVariable @ValidId String id,
+            RedirectAttributes redirectAttributes,
+            HttpServletRequest request) {
+        String clientIp = request.getRemoteAddr();
+
         try {
-            academicService.deleteStudent(id);
+            Long studentId = Long.parseLong(id);
+            academicService.deleteStudent(studentId);
+            logger.info("Student {} deleted successfully by IP: {}", studentId, clientIp);
             redirectAttributes.addFlashAttribute("successMessage", "Estudiante eliminado exitosamente");
         } catch (IllegalArgumentException e) {
+            logger.warn("Attempt to delete non-existent student ID: {} from IP: {}", id, clientIp);
             redirectAttributes.addFlashAttribute("errorMessage", "Estudiante no encontrado");
         } catch (IllegalStateException e) {
+            logger.warn("Business rule violation deleting student ID: {} from IP: {}", id, clientIp);
             redirectAttributes.addFlashAttribute("errorMessage", e.getMessage());
         } catch (Exception e) {
+            logger.error("Unexpected error deleting student ID: {} from IP: {}", id, clientIp, e);
             redirectAttributes.addFlashAttribute("errorMessage", "Error interno del sistema");
         }
         return "redirect:/students";
@@ -92,12 +111,18 @@ public class StudentController {
     @DeleteMapping("/api/{id}")
     @org.springframework.security.access.prepost.PreAuthorize("hasRole('ADMIN')")
     @ResponseBody
-    public org.springframework.http.ResponseEntity<?> deleteStudentApi(@PathVariable @NonNull Long id) {
+    public org.springframework.http.ResponseEntity<?> deleteStudentApi(@PathVariable @ValidId String id,
+            HttpServletRequest request) {
+        String clientIp = request.getRemoteAddr();
+
         try {
-            academicService.deleteStudent(id);
+            Long studentId = Long.parseLong(id);
+            academicService.deleteStudent(studentId);
+            logger.info("Student {} deleted via API by IP: {}", studentId, clientIp);
             return org.springframework.http.ResponseEntity
                     .ok(java.util.Map.of("message", "Student deleted successfully"));
         } catch (Exception e) {
+            logger.error("API delete error for student ID: {} from IP: {}", id, clientIp, e);
             return org.springframework.http.ResponseEntity.status(500)
                     .body(java.util.Map.of("error", "Error deleting student"));
         }

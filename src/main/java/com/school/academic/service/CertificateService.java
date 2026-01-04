@@ -9,7 +9,6 @@ import org.springframework.lang.NonNull;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import com.school.academic.entity.AcademicPeriod;
 import com.school.academic.entity.Grade;
 import com.school.academic.entity.Student;
 import com.school.academic.repository.GradeRepository;

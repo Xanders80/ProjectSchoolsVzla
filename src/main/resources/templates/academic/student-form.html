@@ -190,8 +190,12 @@
                           th:field="*{registrationNumber}"
                           class="form-control"
                           th:classappend="${#fields.hasErrors('registrationNumber')} ? 'is-invalid'"
-                          required
+                          placeholder="Se generará automáticamente"
+                          readonly
                         />
+                        <small class="form-text text-muted">
+                          El número de registro se genera automáticamente al guardar
+                        </small>
                         <div
                           class="invalid-feedback"
                           th:if="${#fields.hasErrors('registrationNumber')}"

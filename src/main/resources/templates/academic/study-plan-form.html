@@ -62,66 +62,92 @@
                 >
                   <input type="hidden" th:field="*{id}" />
 
-                  <div class="form-group">
-                    <label>Nombre del Plan</label>
-                    <input
-                      type="text"
-                      th:field="*{name}"
-                      class="form-control"
-                      th:classappend="${#fields.hasErrors('name')} ? 'is-invalid' : ''"
-                      required
-                    />
-                    <div
-                      class="invalid-feedback"
-                      th:if="${#fields.hasErrors('name')}"
-                      th:errors="*{name}"
-                    >
-                      Error
+                  <div class="row">
+                    <div class="col-md-6">
+                      <div class="form-group">
+                        <label for="name">Nombre del Plan *</label>
+                        <input
+                          type="text"
+                          id="name"
+                          th:field="*{name}"
+                          class="form-control"
+                          th:classappend="${#fields.hasErrors('name')} ? 'is-invalid' : ''"
+                          required
+                        />
+                        <div
+                          class="invalid-feedback"
+                          th:if="${#fields.hasErrors('name')}"
+                          th:errors="*{name}"
+                        >
+                          Error
+                        </div>
+                      </div>
+                    </div>
+                    <div class="col-md-6">
+                      <div class="form-group">
+                        <label for="academicLevel">Nivel Académico *</label>
+                        <select
+                          id="academicLevel"
+                          th:field="*{academicLevel}"
+                          class="form-control"
+                          th:classappend="${#fields.hasErrors('academicLevel')} ? 'is-invalid' : ''"
+                          required
+                        >
+                          <option value="">Seleccionar Nivel...</option>
+                          <option
+                            th:each="level : ${academicLevels}"
+                            th:value="${level}"
+                            th:text="${level.name() + ' (' + level.getDescription() + ')'}"
+                          ></option>
+                        </select>
+                        <div
+                          class="invalid-feedback"
+                          th:if="${#fields.hasErrors('academicLevel')}"
+                          th:errors="*{academicLevel}"
+                        >
+                          Error
+                        </div>
+                      </div>
                     </div>
                   </div>
 
                   <div class="form-group">
-                    <label>Nivel Académico</label>
-                    <select
-                      th:field="*{academicLevel}"
-                      class="form-control"
-                      th:classappend="${#fields.hasErrors('academicLevel')} ? 'is-invalid' : ''"
-                      required
-                    >
-                      <option value="">Seleccionar Nivel...</option>
-                      <option
-                        th:each="level : ${academicLevels}"
-                        th:value="${level}"
-                        th:text="${level.name() + ' (' + level.getDescription() + ')'}"
-                      ></option>
-                    </select>
-                    <div
-                      class="invalid-feedback"
-                      th:if="${#fields.hasErrors('academicLevel')}"
-                      th:errors="*{academicLevel}"
-                    >
-                      Error
-                    </div>
-                  </div>
-
-                  <div class="form-group">
-                    <label>Descripción</label>
+                    <label for="description">Descripción</label>
                     <textarea
+                      id="description"
                       th:field="*{description}"
                       class="form-control"
                       rows="3"
+                      placeholder="Descripción opcional del plan de estudio"
                     ></textarea>
                   </div>
 
-                  <button type="submit" class="btn btn-primary">
-                    <i class="fas fa-save"></i> Guardar Plan
-                  </button>
-                  <a
-                    th:href="@{/academic/study-plans}"
-                    class="btn btn-secondary"
-                  >
-                    <i class="fas fa-times"></i> Cancelar
-                  </a>
+                  <!-- Configuración de Escala (Solo para nuevos planes) -->
+                  <div class="form-group" th:if="${studyPlan.id == null}">
+                    <label for="scaleType">Configurar Escala de Calificación (Opcional)</label>
+                    <select id="scaleType" name="scaleType" class="form-control">
+                      <option value="">Sin configurar ahora</option>
+                      <option th:each="scaleType : ${scaleTypes}" 
+                              th:value="${scaleType}" 
+                              th:text="${scaleType.description}">
+                      </option>
+                    </select>
+                    <small class="form-text text-muted">
+                      Puede configurar la escala después de crear el plan
+                    </small>
+                  </div>
+
+                  <div class="form-group mt-4">
+                    <button type="submit" class="btn btn-primary mr-2">
+                      <i class="fas fa-save"></i> Guardar Plan
+                    </button>
+                    <a
+                      th:href="@{/academic/study-plans}"
+                      class="btn btn-secondary"
+                    >
+                      <i class="fas fa-times"></i> Cancelar
+                    </a>
+                  </div>
                 </form>
               </div>
             </div>

@@ -35,6 +35,9 @@ public class SecurityConfig {
         private RateLimitingFilter rateLimitingFilter;
 
         @Autowired
+        private DeleteRateLimitFilter deleteRateLimitFilter;
+
+        @Autowired
         private com.school.core.filter.AuditLoggingFilter auditLoggingFilter;
 
         @Autowired
@@ -59,7 +62,8 @@ public class SecurityConfig {
                                 .addFilterAfter(anomalyDetectionFilter,
                                                 org.springframework.security.web.context.SecurityContextHolderFilter.class)
                                 .addFilterAfter(rateLimitingFilter, anomalyDetectionFilter.getClass())
-                                .addFilterAfter(auditLoggingFilter, rateLimitingFilter.getClass())
+                                .addFilterAfter(deleteRateLimitFilter, rateLimitingFilter.getClass())
+                                .addFilterAfter(auditLoggingFilter, deleteRateLimitFilter.getClass())
                                 .csrf(csrf -> csrf
                                                 .ignoringRequestMatchers("/h2-console/**"))
                                 .sessionManagement(session -> session

@@ -27,4 +27,7 @@ public interface GradeRepository extends JpaRepository<Grade, Long> {
     long countByCourseId(Long courseId);
 
     List<Grade> findByDeletedFalse();
+
+    @org.springframework.data.jpa.repository.Query("SELECT AVG(g.score) FROM Grade g")
+    Double findAverageGrade();
 }

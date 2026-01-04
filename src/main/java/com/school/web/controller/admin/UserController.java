@@ -20,6 +20,7 @@ import org.springframework.lang.NonNull;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
+import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -27,14 +28,19 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.servlet.mvc.support.RedirectAttributes;
+import jakarta.servlet.http.HttpServletRequest;
 
+import com.school.core.controller.BaseDeleteController;
 import com.school.core.entity.User;
 import com.school.core.enums.Role;
 import com.school.core.repository.UserRepository;
+import com.school.core.validation.ValidId;
 
 @Controller
 @RequestMapping("/admin/users")
-public class UserController {
+@Validated
+public class UserController extends BaseDeleteController {
 
     private static final String USER_FORM_VIEW = "admin/user-form";
     private final UserRepository userRepository;
@@ -88,13 +94,23 @@ public class UserController {
     }
 
     @RequestMapping(value = "/delete/{id}", method = { RequestMethod.POST, RequestMethod.DELETE })
-    public String deleteUser(@PathVariable @NonNull Long id) {
-        User user = userRepository.findById(id).orElseThrow();
-        user.setDeleted(true);
-        user.setDeletedAt(java.time.LocalDateTime.now());
-        user.setDeletedBy(getCurrentUser());
-
-        userRepository.save(user);
+    public String deleteUser(@PathVariable @ValidId String id, 
+                           RedirectAttributes redirectAttributes,
+                           HttpServletRequest request) {
+        try {
+            Long userId = Long.parseLong(id);
+            User user = userRepository.findById(userId).orElseThrow();
+            user.setDeleted(true);
+            user.setDeletedAt(java.time.LocalDateTime.now());
+            user.setDeletedBy(getCurrentUser());
+            userRepository.save(user);
+            
+            logDeleteAttempt("User", id, request, true, null);
+            handleDeleteResult(true, "Usuario eliminado exitosamente", null, redirectAttributes);
+        } catch (Exception e) {
+            logDeleteAttempt("User", id, request, false, e.getMessage());
+            handleDeleteResult(false, null, "Error al eliminar usuario", redirectAttributes);
+        }
         return "redirect:/admin/users";
     }
 

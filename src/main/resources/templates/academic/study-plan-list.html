@@ -110,6 +110,12 @@
                         </td>
                         <td>
                           <a
+                            th:href="@{/academic/study-plans/{id}(id=${plan.id})}"
+                            class="btn btn-sm btn-primary"
+                          >
+                            <i class="fas fa-eye"></i> Ver
+                          </a>
+                          <a
                             th:href="@{/academic/study-plans/edit/{id}(id=${plan.id})}"
                             class="btn btn-sm btn-info"
                           >

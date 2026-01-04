@@ -38,8 +38,9 @@ public class AdmissionExam {
     @Column(name = "applicant_name", nullable = false, length = 150)
     private String applicantName;
 
+    @NotBlank(message = "El correo electrónico es obligatorio")
     @Email(message = "El email debe ser válido")
-    @Column(name = "applicant_email", length = 100)
+    @Column(name = "applicant_email", nullable = false, length = 100)
     private String applicantEmail;
 
     @NotNull(message = "La fecha del examen es obligatoria")

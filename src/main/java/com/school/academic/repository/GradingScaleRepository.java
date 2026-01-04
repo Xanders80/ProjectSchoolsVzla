@@ -13,8 +13,12 @@ import com.school.academic.entity.GradingScale;
 public interface GradingScaleRepository extends JpaRepository<GradingScale, Long> {
 
     List<GradingScale> findByStudyPlanId(Long studyPlanId);
+    
+    long countByStudyPlanId(Long studyPlanId);
 
     @Query("SELECT gs FROM GradingScale gs WHERE gs.studyPlan.id = :studyPlanId AND :score BETWEEN gs.minScore AND gs.maxScore")
     GradingScale findByStudyPlanAndScore(@Param("studyPlanId") Long studyPlanId,
             @Param("score") java.math.BigDecimal score);
+
+    void deleteByStudyPlan(com.school.academic.entity.StudyPlan studyPlan);
 }

@@ -3,5 +3,6 @@ package com.school.communication.enums;
 public enum NotificationType {
     INFO,
     WARNING,
-    ALERT
+    ALERT,
+    ATTENDANCE_ALERT
 }

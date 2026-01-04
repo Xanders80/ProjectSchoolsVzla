@@ -45,7 +45,7 @@
             </button>
             <form
               id="globalDeleteForm"
-              action="/students/delete/not-set"
+              action="#"
               method="post"
               style="display: inline"
             >
@@ -60,22 +60,9 @@
           </div>
         </div>
       </div>
-      <!-- SCRIPTS DEBEN ESTAR DENTRO DEL FRAGMENTO PARA SER INCLUIDOS -->
-      <script>
-        /**
-         * Función global para preparar el formulario de borrado.
-         * Se llama desde el atributo onclick de los botones de la tabla.
-         */
-        function confirmDelete(url) {
-          console.log("Configurando borrado para:", url);
-          var form = document.getElementById("globalDeleteForm");
-          if (form) {
-            form.action = url;
-          } else {
-            console.error("Error: No se encontró 'globalDeleteForm'");
-          }
-        }
-      </script>
+      
+      <!-- Scripts modernos -->
+      <script th:src="@{/js/validation.js}"></script>
     </div>
   </body>
 </html>

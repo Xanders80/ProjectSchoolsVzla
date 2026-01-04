@@ -122,7 +122,9 @@ public class AdmissionExamController {
         try {
             com.school.academic.entity.Student student = admissionExamService.enrollApplicant(id);
             redirectAttributes.addFlashAttribute("successMessage",
-                    "Postulante inscrito exitosamente. Matrícula: " + student.getRegistrationNumber());
+                    "Postulante inscrito exitosamente. Matrícula: " + student.getRegistrationNumber() + 
+                    ". Se ha generado una contraseña temporal segura.");
+            redirectAttributes.addFlashAttribute("showPasswordInfo", true);
         } catch (IllegalStateException e) {
             redirectAttributes.addFlashAttribute("errorMessage", e.getMessage());
         } catch (Exception e) {

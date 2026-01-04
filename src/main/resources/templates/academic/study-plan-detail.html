@@ -1,0 +1,195 @@
+<!DOCTYPE html>
+<html lang="es" xmlns:th="http://www.thymeleaf.org" xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
+<head>
+    <meta charset="utf-8">
+    <title>Plan de Estudio - Sistema Escolar</title>
+    <link th:href="@{/vendor/fontawesome-free/css/all.min.css}" rel="stylesheet">
+    <link th:href="@{/css/sb-admin-2.min.css}" rel="stylesheet">
+</head>
+
+<body id="page-top">
+    <div id="wrapper">
+        <div th:replace="~{fragments/sb-admin-sidebar :: sidebar}"></div>
+        
+        <div id="content-wrapper" class="d-flex flex-column">
+            <div id="content">
+                <div th:replace="~{fragments/sb-admin-topbar :: topbar}"></div>
+                
+                <div class="container-fluid">
+                    <div class="d-sm-flex align-items-center justify-content-between mb-4">
+                        <h1 class="h3 mb-0 text-gray-800" th:text="${summary.studyPlan.name}">Plan de Estudio</h1>
+                        <div>
+                            <a th:href="@{/academic/study-plans/edit/{id}(id=${summary.studyPlan.id})}" 
+                               class="btn btn-warning btn-sm">
+                                <i class="fas fa-edit"></i> Editar
+                            </a>
+                            <a th:href="@{/academic/curriculum/new(studyPlanId=${summary.studyPlan.id})}" 
+                               class="btn btn-success btn-sm">
+                                <i class="fas fa-plus"></i> Agregar Malla
+                            </a>
+                            <a th:href="@{/academic/study-plans}" class="btn btn-secondary btn-sm">
+                                <i class="fas fa-arrow-left"></i> Volver
+                            </a>
+                        </div>
+                    </div>
+
+                    <!-- Información General -->
+                    <div class="row">
+                        <div class="col-lg-8">
+                            <div class="card shadow mb-4">
+                                <div class="card-header py-3">
+                                    <h6 class="m-0 font-weight-bold text-primary">Información General</h6>
+                                </div>
+                                <div class="card-body">
+                                    <div class="row">
+                                        <div class="col-md-6">
+                                            <p><strong>Nombre:</strong> <span th:text="${summary.studyPlan.name}"></span></p>
+                                            <p><strong>Nivel Académico:</strong> 
+                                               <span class="badge badge-info" th:text="${summary.studyPlan.academicLevel}"></span>
+                                            </p>
+                                            <p><strong>Estado:</strong> 
+                                               <span th:class="${summary.studyPlan.active} ? 'badge badge-success' : 'badge badge-danger'"
+                                                     th:text="${summary.studyPlan.active} ? 'Activo' : 'Inactivo'"></span>
+                                            </p>
+                                        </div>
+                                        <div class="col-md-6">
+                                            <p><strong>Total de Grados:</strong> <span th:text="${summary.totalGrades}"></span></p>
+                                            <p><strong>Total de Materias:</strong> <span th:text="${summary.totalCourses}"></span></p>
+                                            <p><strong>Total de Horas:</strong> <span th:text="${summary.totalHours}"></span></p>
+                                        </div>
+                                    </div>
+                                    <div class="row" th:if="${summary.studyPlan.description}">
+                                        <div class="col-12">
+                                            <p><strong>Descripción:</strong></p>
+                                            <p th:text="${summary.studyPlan.description}" class="text-muted"></p>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Estadísticas -->
+                        <div class="col-lg-4">
+                            <div class="card shadow mb-4">
+                                <div class="card-header py-3">
+                                    <h6 class="m-0 font-weight-bold text-primary">Estadísticas</h6>
+                                </div>
+                                <div class="card-body">
+                                    <div class="text-center">
+                                        <div class="mb-3">
+                                            <h4 class="text-primary" th:text="${summary.totalGrades}">0</h4>
+                                            <small class="text-muted">Grados Configurados</small>
+                                        </div>
+                                        <div class="mb-3">
+                                            <h4 class="text-success" th:text="${summary.totalCourses}">0</h4>
+                                            <small class="text-muted">Materias Totales</small>
+                                        </div>
+                                        <div class="mb-3">
+                                            <h4 class="text-info" th:text="${summary.totalHours}">0</h4>
+                                            <small class="text-muted">Horas Académicas</small>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Escalas de Calificación -->
+                    <div class="card shadow mb-4">
+                        <div class="card-header py-3 d-flex justify-content-between align-items-center">
+                            <h6 class="m-0 font-weight-bold text-primary">Escalas de Calificación</h6>
+                            <div class="dropdown">
+                                <button class="btn btn-primary btn-sm dropdown-toggle" type="button" 
+                                        data-toggle="dropdown">
+                                    <i class="fas fa-cog"></i> Configurar Escala
+                                </button>
+                                <div class="dropdown-menu">
+                                    <form th:action="@{/academic/study-plans/{id}/setup-scale(id=${summary.studyPlan.id})}" 
+                                          method="post" style="display: inline;">
+                                        <button type="submit" name="scaleType" value="NUMERIC_20" 
+                                                class="dropdown-item">Numérica 0-20</button>
+                                        <button type="submit" name="scaleType" value="NUMERIC_100" 
+                                                class="dropdown-item">Numérica 0-100</button>
+                                        <button type="submit" name="scaleType" value="LETTERS" 
+                                                class="dropdown-item">Letras A-F</button>
+                                    </form>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="card-body">
+                            <div th:if="${gradingScales != null and !gradingScales.empty}">
+                                <div class="table-responsive">
+                                    <table class="table table-bordered">
+                                        <thead>
+                                            <tr>
+                                                <th>Etiqueta</th>
+                                                <th>Rango Mínimo</th>
+                                                <th>Rango Máximo</th>
+                                                <th>Descripción</th>
+                                            </tr>
+                                        </thead>
+                                        <tbody>
+                                            <tr th:each="scale : ${gradingScales}">
+                                                <td><span class="badge badge-secondary" th:text="${scale.label}"></span></td>
+                                                <td th:text="${scale.minScore}"></td>
+                                                <td th:text="${scale.maxScore}"></td>
+                                                <td th:text="${scale.description}"></td>
+                                            </tr>
+                                        </tbody>
+                                    </table>
+                                </div>
+                            </div>
+                            <div th:if="${gradingScales == null or gradingScales.empty}" class="text-center text-muted">
+                                <i class="fas fa-info-circle fa-2x mb-3"></i>
+                                <p>No hay escalas de calificación configuradas.</p>
+                                <p>Use el botón "Configurar Escala" para agregar una.</p>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Acciones Rápidas -->
+                    <div class="card shadow mb-4">
+                        <div class="card-header py-3">
+                            <h6 class="m-0 font-weight-bold text-primary">Acciones Rápidas</h6>
+                        </div>
+                        <div class="card-body">
+                            <div class="row">
+                                <div class="col-md-3">
+                                    <a th:href="@{/academic/curriculum/study-plan/{id}(id=${summary.studyPlan.id})}" 
+                                       class="btn btn-info btn-block">
+                                        <i class="fas fa-th-large"></i> Ver Mallas Curriculares
+                                    </a>
+                                </div>
+                                <div class="col-md-3">
+                                    <a th:href="@{/courses?studyPlan={id}(id=${summary.studyPlan.id})}" 
+                                       class="btn btn-success btn-block">
+                                        <i class="fas fa-book"></i> Ver Materias
+                                    </a>
+                                </div>
+                                <div class="col-md-3">
+                                    <a th:href="@{/students?studyPlan={id}(id=${summary.studyPlan.id})}" 
+                                       class="btn btn-primary btn-block">
+                                        <i class="fas fa-users"></i> Ver Estudiantes
+                                    </a>
+                                </div>
+                                <div class="col-md-3">
+                                    <a th:href="@{/academic/study-plans/edit/{id}(id=${summary.studyPlan.id})}" 
+                                       class="btn btn-warning btn-block">
+                                        <i class="fas fa-edit"></i> Editar Plan
+                                    </a>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <div th:replace="~{fragments/sb-admin-footer :: footer}"></div>
+        </div>
+    </div>
+
+    <script th:src="@{/vendor/jquery/jquery.min.js}"></script>
+    <script th:src="@{/vendor/bootstrap/js/bootstrap.bundle.min.js}"></script>
+    <script th:src="@{/js/sb-admin-2.min.js}"></script>
+</body>
+</html>

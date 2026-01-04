@@ -51,6 +51,14 @@ public class GradingScale {
     public GradingScale() {
     }
 
+    public GradingScale(StudyPlan studyPlan, BigDecimal minScore, BigDecimal maxScore, String label, String description) {
+        this.studyPlan = studyPlan;
+        this.minScore = minScore;
+        this.maxScore = maxScore;
+        this.label = label;
+        this.description = description;
+    }
+
     public Long getId() {
         return id;
     }

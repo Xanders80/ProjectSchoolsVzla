@@ -44,6 +44,21 @@ public class TeacherProfile {
     @Column(name = "bio", columnDefinition = "TEXT")
     private String bio;
 
+    @Column(name = "certifications", columnDefinition = "TEXT")
+    private String certifications;
+
+    @Column(name = "last_evaluation_date")
+    private java.time.LocalDate lastEvaluationDate;
+
+    @Column(name = "evaluation_score")
+    private Double evaluationScore;
+
+    @Column(name = "years_experience")
+    private Integer yearsExperience;
+
+    @Column(name = "preferred_subjects", columnDefinition = "TEXT")
+    private String preferredSubjects;
+
     public TeacherProfile() {
     }
 
@@ -94,4 +109,19 @@ public class TeacherProfile {
     public void setBio(String bio) {
         this.bio = bio;
     }
+
+    public String getCertifications() { return certifications; }
+    public void setCertifications(String certifications) { this.certifications = certifications; }
+
+    public java.time.LocalDate getLastEvaluationDate() { return lastEvaluationDate; }
+    public void setLastEvaluationDate(java.time.LocalDate lastEvaluationDate) { this.lastEvaluationDate = lastEvaluationDate; }
+
+    public Double getEvaluationScore() { return evaluationScore; }
+    public void setEvaluationScore(Double evaluationScore) { this.evaluationScore = evaluationScore; }
+
+    public Integer getYearsExperience() { return yearsExperience; }
+    public void setYearsExperience(Integer yearsExperience) { this.yearsExperience = yearsExperience; }
+
+    public String getPreferredSubjects() { return preferredSubjects; }
+    public void setPreferredSubjects(String preferredSubjects) { this.preferredSubjects = preferredSubjects; }
 }

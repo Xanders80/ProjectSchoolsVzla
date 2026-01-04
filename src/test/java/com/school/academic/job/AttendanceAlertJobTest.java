@@ -58,7 +58,7 @@ public class AttendanceAlertJobTest {
                                 .thenReturn(3L);
 
                 // Act
-                attendanceAlertJob.checkAttendanceAndNotify();
+                attendanceAlertJob.checkAttendanceAlerts();
 
                 // Assert
                 verify(notificationRepository, times(1)).save(any(Notification.class));
@@ -82,7 +82,7 @@ public class AttendanceAlertJobTest {
                                 .thenReturn(2L); // 2 < 3
 
                 // Act
-                attendanceAlertJob.checkAttendanceAndNotify();
+                attendanceAlertJob.checkAttendanceAlerts();
 
                 // Assert
                 verify(notificationRepository, times(0)).save(any(Notification.class));

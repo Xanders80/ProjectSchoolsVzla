@@ -8,6 +8,7 @@ import org.springframework.lang.NonNull;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import com.school.academic.dto.AdmissionResult;
 import com.school.academic.entity.AdmissionExam;
 import com.school.academic.repository.AdmissionExamRepository;
 
@@ -79,15 +80,53 @@ public class AdmissionExamService {
     }
 
     /**
-     * Enrolls an approved applicant as a student
-     * Creates a Student entity and associated User account
+     * Processes exam results and determines admission status
      */
+    public AdmissionResult processExam(@NonNull Long examId, Double score) {
+        AdmissionExam exam = admissionExamRepository.findById(examId)
+                .orElseThrow(() -> new IllegalArgumentException("Examen de admisión no encontrado"));
+
+        exam.setScore(score);
+
+        // Determine approval based on score
+        boolean approved = score >= 70.0; // Minimum passing score
+        String status = approved ? "APPROVED" : "REJECTED";
+        String recommendation = generateRecommendation(score);
+
+        exam.setStatus(status);
+        exam.setComments(recommendation);
+        admissionExamRepository.save(exam);
+
+        return new AdmissionResult(
+                examId, exam.getApplicantName(), status, score, approved);
+    }
+
+    private String generateRecommendation(Double score) {
+        if (score >= 90)
+            return "Excelente candidato - Admisión inmediata";
+        if (score >= 80)
+            return "Buen candidato - Admisión recomendada";
+        if (score >= 70)
+            return "Candidato aceptable - Admisión condicional";
+        return "Puntaje insuficiente - No admitido";
+    }
+
     public com.school.academic.entity.Student enrollApplicant(@NonNull Long examId) {
         AdmissionExam exam = admissionExamRepository.findById(examId)
                 .orElseThrow(() -> new IllegalArgumentException("Examen de admisión no encontrado"));
 
         if (!"APPROVED".equals(exam.getStatus())) {
             throw new IllegalStateException("Solo se pueden inscribir postulantes aprobados");
+        }
+
+        // Validar email único
+        if (userService.findByEmail(exam.getApplicantEmail()).isPresent()) {
+            throw new IllegalStateException("El email ya está registrado en el sistema");
+        }
+
+        // Validar DNI único
+        if (userService.findByUsername(exam.getApplicantDni()).isPresent()) {
+            throw new IllegalStateException("El DNI ya está registrado como usuario");
         }
 
         // Check if already enrolled
@@ -97,13 +136,18 @@ public class AdmissionExamService {
             throw new IllegalStateException("El postulante ya está inscrito como estudiante");
         }
 
+        // Validar formato de nombre
+        if (exam.getApplicantName() == null || exam.getApplicantName().trim().length() < 3) {
+            throw new IllegalStateException("El nombre del postulante es inválido");
+        }
+
         // Create Student entity
         com.school.academic.entity.Student student = new com.school.academic.entity.Student();
 
         // Parse name (simple split - in production you'd want better name parsing)
         String[] nameParts = exam.getApplicantName().trim().split("\\s+", 2);
         student.setFirstName(nameParts[0]);
-        student.setLastName(nameParts.length > 1 ? nameParts[1] : "");
+        student.setLastName(nameParts.length > 1 ? nameParts[1] : "Sin Apellido");
 
         student.setDni(exam.getApplicantDni());
         student.setEmail(exam.getApplicantEmail());
@@ -112,14 +156,14 @@ public class AdmissionExamService {
         // Save student (registration number generated automatically)
         student = studentService.saveStudent(student);
 
-        // Create User account using registerNewUser
+        // Create User account using registerNewUser with secure password
+        String securePassword = com.school.core.util.PasswordGenerator.generateSecurePassword();
         com.school.core.entity.User user = userService.registerNewUser(
                 student.getFirstName(),
                 student.getLastName(),
                 student.getEmail(),
                 exam.getApplicantDni(), // Use DNI as username
-                exam.getApplicantDni() + "2024!" // Simple password that meets requirements
-        );
+                securePassword);
 
         // Link user to student
         student.setUser(user);
@@ -127,6 +171,7 @@ public class AdmissionExamService {
 
         // Update exam status
         exam.setStatus("ENROLLED");
+        exam.setComments("Inscrito exitosamente. Contraseña temporal generada.");
         admissionExamRepository.save(exam);
 
         return student;
