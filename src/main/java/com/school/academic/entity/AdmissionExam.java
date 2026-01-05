@@ -3,6 +3,8 @@ package com.school.academic.entity;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 
+import org.springframework.format.annotation.DateTimeFormat;
+
 import com.school.core.listener.AuditEntityListener;
 
 import jakarta.persistence.Column;
@@ -44,6 +46,7 @@ public class AdmissionExam {
     private String applicantEmail;
 
     @NotNull(message = "La fecha del examen es obligatoria")
+    @DateTimeFormat(pattern = "yyyy-MM-dd")
     @Column(name = "exam_date", nullable = false)
     private LocalDate examDate;
 

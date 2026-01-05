@@ -26,7 +26,14 @@
         <div id="content">
           <div th:replace="~{fragments/sb-admin-topbar :: topbar}"></div>
           <div class="container-fluid">
-            <h1 class="h3 mb-4 text-gray-800">Registrar Préstamo</h1>
+            <div
+              class="d-sm-flex align-items-center justify-content-between mb-4"
+            >
+              <h1 class="h3 mb-4 text-gray-800">Registrar Préstamo</h1>
+              <a th:href="@{/library/loans}" class="btn btn-secondary">
+                <i class="fas fa-arrow-left"></i> Volver
+              </a>
+            </div>
 
             <div class="card shadow mb-4">
               <div class="card-body">

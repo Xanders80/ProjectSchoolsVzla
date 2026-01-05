@@ -1,6 +1,7 @@
 package com.school.academic.entity;
 
 import java.time.LocalDate;
+import org.springframework.format.annotation.DateTimeFormat;
 
 import com.school.academic.enums.EvaluationType;
 import com.school.core.listener.AuditEntityListener;
@@ -56,7 +57,8 @@ public class Grade {
     @NotNull(message = "El tipo de evaluación es obligatorio")
     private EvaluationType evaluationType;
 
-    @Column(nullable = false)
+    @DateTimeFormat(pattern = "yyyy-MM-dd")
+    @Column(name = "date", nullable = false)
     @NotNull(message = "La fecha es obligatoria")
     private LocalDate date;
 

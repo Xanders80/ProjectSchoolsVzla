@@ -2,6 +2,7 @@ package com.school.finance.entity;
 
 import java.math.BigDecimal;
 import java.time.LocalDate;
+import org.springframework.format.annotation.DateTimeFormat;
 
 import com.school.core.listener.AuditEntityListener;
 import com.school.finance.enums.PaymentMethod;
@@ -41,6 +42,7 @@ public class Payment {
     private BigDecimal amount;
 
     @Column(nullable = false)
+    @DateTimeFormat(pattern = "yyyy-MM-dd")
     @NotNull(message = "La fecha de pago es obligatoria")
     private LocalDate paymentDate;
 

@@ -1,6 +1,7 @@
 package com.school.academic.entity;
 
 import java.time.LocalDate;
+import org.springframework.format.annotation.DateTimeFormat;
 
 import com.school.core.listener.AuditEntityListener;
 
@@ -32,10 +33,12 @@ public class AcademicPeriod {
     private String name;
 
     @NotNull(message = "La fecha de inicio es obligatoria")
+    @DateTimeFormat(pattern = "yyyy-MM-dd")
     @Column(name = "start_date", nullable = false)
     private LocalDate startDate;
 
     @NotNull(message = "La fecha de fin es obligatoria")
+    @DateTimeFormat(pattern = "yyyy-MM-dd")
     @Column(name = "end_date", nullable = false)
     private LocalDate endDate;
 

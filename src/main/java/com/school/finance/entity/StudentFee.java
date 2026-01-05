@@ -3,6 +3,8 @@ package com.school.finance.entity;
 import java.math.BigDecimal;
 import java.time.LocalDate;
 
+import org.springframework.format.annotation.DateTimeFormat;
+
 import com.school.academic.entity.Student;
 import com.school.core.listener.AuditEntityListener;
 import com.school.finance.enums.FeeStatus;
@@ -47,6 +49,7 @@ public class StudentFee {
     private BigDecimal amount;
 
     @Column(nullable = false)
+    @DateTimeFormat(pattern = "yyyy-MM-dd")
     @NotNull(message = "La fecha de vencimiento es obligatoria")
     private LocalDate dueDate;
 

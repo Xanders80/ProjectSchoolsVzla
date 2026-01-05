@@ -1,7 +1,7 @@
 /*
  * BSD 3-Clause License
  *
- * Copyright (c) 2025 [Tu Nombre o Empresa]
+ * Copyright (c) 2025 Xander
  *
  * Redistribution and use in source and binary forms, with or without modification, are permitted provided that the following conditions are met:
  *
@@ -94,9 +94,9 @@ public class UserController extends BaseDeleteController {
     }
 
     @RequestMapping(value = "/delete/{id}", method = { RequestMethod.POST, RequestMethod.DELETE })
-    public String deleteUser(@PathVariable @ValidId String id, 
-                           RedirectAttributes redirectAttributes,
-                           HttpServletRequest request) {
+    public String deleteUser(@PathVariable @ValidId String id,
+            RedirectAttributes redirectAttributes,
+            HttpServletRequest request) {
         try {
             Long userId = Long.parseLong(id);
             User user = userRepository.findById(userId).orElseThrow();
@@ -104,7 +104,7 @@ public class UserController extends BaseDeleteController {
             user.setDeletedAt(java.time.LocalDateTime.now());
             user.setDeletedBy(getCurrentUser());
             userRepository.save(user);
-            
+
             logDeleteAttempt("User", id, request, true, null);
             handleDeleteResult(true, "Usuario eliminado exitosamente", null, redirectAttributes);
         } catch (Exception e) {

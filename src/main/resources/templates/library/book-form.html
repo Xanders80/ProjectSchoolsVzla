@@ -26,12 +26,19 @@
         <div id="content">
           <div th:replace="~{fragments/sb-admin-topbar :: topbar}"></div>
           <div class="container-fluid">
-            <h1
-              class="h3 mb-4 text-gray-800"
-              th:text="${book.id == null ? 'Nuevo Libro' : 'Editar Libro'}"
+            <div
+              class="d-sm-flex align-items-center justify-content-between mb-4"
             >
-              Formulario
-            </h1>
+              <h1
+                class="h3 mb-0 text-gray-800"
+                th:text="${book.id == null ? 'Nuevo Libro' : 'Editar Libro'}"
+              >
+                Formulario
+              </h1>
+              <a th:href="@{/library/books}" class="btn btn-secondary">
+                <i class="fas fa-arrow-left"></i> Volver
+              </a>
+            </div>
 
             <div class="card shadow mb-4">
               <div class="card-body">

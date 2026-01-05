@@ -8,18 +8,17 @@ import org.springframework.lang.NonNull;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.ModelAttribute;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import com.school.academic.entity.StudyPlan;
 import com.school.academic.enums.AcademicLevel;
 import com.school.academic.service.StudyPlanService;
+import com.school.academic.entity.GradingScale;
+import com.school.academic.dto.StudyPlanSummary;
+import com.school.academic.enums.ScaleType;
+
+import jakarta.persistence.EntityNotFoundException;
 
 @Controller
 @RequestMapping("/academic/study-plans")
@@ -56,22 +55,21 @@ public class StudyPlanController {
     public String newStudyPlanForm(Model model) {
         model.addAttribute("studyPlan", new StudyPlan());
         model.addAttribute("academicLevels", AcademicLevel.values());
-        model.addAttribute("scaleTypes", com.school.academic.enums.ScaleType.values());
+        model.addAttribute("scaleTypes", ScaleType.values());
         return FORM_VIEW;
     }
 
     @PostMapping
     public String saveStudyPlan(@jakarta.validation.Valid @ModelAttribute @NonNull StudyPlan studyPlan,
-            BindingResult result, 
-            @RequestParam(required = false) com.school.academic.enums.ScaleType scaleType,
+            BindingResult result,
+            @RequestParam(required = false) ScaleType scaleType,
             Model model, RedirectAttributes redirectAttributes) {
-        
+
         if (result.hasErrors()) {
-            model.addAttribute("academicLevels", AcademicLevel.values());
-            model.addAttribute("scaleTypes", com.school.academic.enums.ScaleType.values());
+            addCommonAttributes(model);
             return FORM_VIEW;
         }
-        
+
         try {
             StudyPlan saved;
             if (scaleType != null) {
@@ -79,13 +77,11 @@ public class StudyPlanController {
             } else {
                 saved = studyPlanService.saveStudyPlan(studyPlan);
             }
-            
-            redirectAttributes.addFlashAttribute("successMessage", 
-                "Plan de estudio guardado exitosamente");
+
+            redirectAttributes.addFlashAttribute("successMessage", "Plan de estudio guardado exitosamente");
             return "redirect:/academic/study-plans/" + saved.getId();
         } catch (Exception e) {
-            model.addAttribute("academicLevels", AcademicLevel.values());
-            model.addAttribute("scaleTypes", com.school.academic.enums.ScaleType.values());
+            addCommonAttributes(model);
             model.addAttribute("errorMessage", "Error al guardar: " + e.getMessage());
             return FORM_VIEW;
         }
@@ -94,11 +90,11 @@ public class StudyPlanController {
     @GetMapping("/{id}")
     public String viewStudyPlan(@PathVariable @NonNull Long id, Model model, RedirectAttributes redirectAttributes) {
         try {
-            com.school.academic.dto.StudyPlanSummary summary = studyPlanService.getStudyPlanSummary(id);
+            StudyPlanSummary summary = studyPlanService.getStudyPlanSummary(id);
             model.addAttribute("summary", summary);
             model.addAttribute("gradingScales", gradingScaleService.getScalesByStudyPlanId(id));
             return DETAIL_VIEW;
-        } catch (Exception e) {
+        } catch (EntityNotFoundException e) {
             redirectAttributes.addFlashAttribute("errorMessage", "Plan de estudio no encontrado");
             return "redirect:/academic/study-plans";
         }
@@ -108,36 +104,37 @@ public class StudyPlanController {
     public String editStudyPlan(@PathVariable @NonNull Long id, Model model, RedirectAttributes redirectAttributes) {
         try {
             StudyPlan studyPlan = studyPlanService.getStudyPlanById(id)
-                .orElseThrow(() -> new RuntimeException("Plan de estudio no encontrado"));
+                    .orElseThrow(() -> new EntityNotFoundException("Plan de estudio no encontrado con id: " + id));
             model.addAttribute("studyPlan", studyPlan);
             model.addAttribute("academicLevels", AcademicLevel.values());
             model.addAttribute("gradingScales", gradingScaleService.getScalesByStudyPlanId(id));
-            model.addAttribute("newScale", new com.school.academic.entity.GradingScale());
+            model.addAttribute("newScale", new GradingScale());
             return FORM_VIEW;
-        } catch (Exception e) {
+        } catch (EntityNotFoundException e) {
             redirectAttributes.addFlashAttribute("errorMessage", "Plan de estudio no encontrado");
             return "redirect:/academic/study-plans";
         }
     }
 
     @RequestMapping(value = "/delete/{id}", method = { RequestMethod.POST, RequestMethod.DELETE })
-    public String deleteStudyPlan(@PathVariable @NonNull Long id, 
-                                 @RequestParam(defaultValue = "false") boolean force,
-                                 RedirectAttributes redirectAttributes) {
+    public String deleteStudyPlan(@PathVariable @NonNull Long id,
+            @RequestParam(defaultValue = "false") boolean force,
+            RedirectAttributes redirectAttributes) {
         try {
             if (force) {
                 studyPlanService.forceDeleteStudyPlan(id);
-                redirectAttributes.addFlashAttribute("successMessage", "Plan de estudio y dependencias eliminados exitosamente");
+                redirectAttributes.addFlashAttribute("successMessage",
+                        "Plan de estudio y dependencias eliminados exitosamente");
             } else {
                 studyPlanService.deleteStudyPlan(id);
                 redirectAttributes.addFlashAttribute("successMessage", "Plan de estudio eliminado exitosamente");
             }
+        } catch (EntityNotFoundException e) {
+            redirectAttributes.addFlashAttribute("errorMessage", "Plan de estudio no encontrado");
         } catch (IllegalStateException e) {
             redirectAttributes.addFlashAttribute("errorMessage", e.getMessage());
             redirectAttributes.addFlashAttribute("showForceOption", true);
             redirectAttributes.addFlashAttribute("studyPlanId", id);
-        } catch (IllegalArgumentException e) {
-            redirectAttributes.addFlashAttribute("errorMessage", "Plan de estudio no encontrado");
         } catch (Exception e) {
             redirectAttributes.addFlashAttribute("errorMessage", "Error interno del sistema");
         }
@@ -146,13 +143,16 @@ public class StudyPlanController {
 
     @PostMapping("/{id}/scales")
     public String addGradingScale(@PathVariable @NonNull Long id,
-            @ModelAttribute com.school.academic.entity.GradingScale newScale,
+            @ModelAttribute GradingScale newScale,
             RedirectAttributes redirectAttributes) {
         try {
-            StudyPlan plan = studyPlanService.getStudyPlanById(id).orElseThrow();
+            StudyPlan plan = studyPlanService.getStudyPlanById(id)
+                    .orElseThrow(() -> new EntityNotFoundException("Plan de estudio no encontrado con id: " + id));
             newScale.setStudyPlan(plan);
             gradingScaleService.saveGradingScale(newScale);
             redirectAttributes.addFlashAttribute("successMessage", "Escala agregada correctamente");
+        } catch (EntityNotFoundException e) {
+            redirectAttributes.addFlashAttribute("errorMessage", "Plan de estudio no encontrado");
         } catch (Exception e) {
             redirectAttributes.addFlashAttribute("errorMessage", "Error al agregar escala: " + e.getMessage());
         }
@@ -169,5 +169,11 @@ public class StudyPlanController {
             redirectAttributes.addFlashAttribute("errorMessage", "Error al eliminar escala: " + e.getMessage());
         }
         return "redirect:/academic/study-plans/edit/" + studyPlanId;
+    }
+
+    // Método auxiliar para reducir duplicación
+    private void addCommonAttributes(Model model) {
+        model.addAttribute("academicLevels", AcademicLevel.values());
+        model.addAttribute("scaleTypes", ScaleType.values());
     }
 }
