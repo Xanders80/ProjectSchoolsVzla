@@ -26,7 +26,12 @@ public class StudyPlanController {
 
     private static final String FORM_VIEW = "academic/study-plan-form";
     private static final String LIST_VIEW = "academic/study-plan-list";
-    private static final String DETAIL_VIEW = "academic/study-plan-detail";
+    private static final String DETAIL_VIEW = "redirect:/academic/study-plans";
+    private static final String REDIRECT_STUDY_PLAN = "redirect:/academic/study-plans";
+    private static final String ACADEMIC_LV = "academicLevels";
+    private static final String MSG_SUCCESS = "successMessage";
+    private static final String MSG_ERROR = "errorMessage";
+    private static final String ERROR_MSG = "Plan de estudio no encontrado";
 
     private final StudyPlanService studyPlanService;
     private final com.school.academic.service.GradingScaleService gradingScaleService;
@@ -47,14 +52,14 @@ public class StudyPlanController {
         Pageable pageable = PageRequest.of(page, size, Sort.by(Sort.Direction.DESC, "id"));
         Page<StudyPlan> studyPlans = studyPlanService.getAllStudyPlans(pageable);
         model.addAttribute("studyPlans", studyPlans);
-        model.addAttribute("academicLevels", AcademicLevel.values());
+        model.addAttribute(ACADEMIC_LV, AcademicLevel.values());
         return LIST_VIEW;
     }
 
     @GetMapping("/new")
     public String newStudyPlanForm(Model model) {
         model.addAttribute("studyPlan", new StudyPlan());
-        model.addAttribute("academicLevels", AcademicLevel.values());
+        model.addAttribute(ACADEMIC_LV, AcademicLevel.values());
         model.addAttribute("scaleTypes", ScaleType.values());
         return FORM_VIEW;
     }
@@ -78,11 +83,11 @@ public class StudyPlanController {
                 saved = studyPlanService.saveStudyPlan(studyPlan);
             }
 
-            redirectAttributes.addFlashAttribute("successMessage", "Plan de estudio guardado exitosamente");
+            redirectAttributes.addFlashAttribute(MSG_SUCCESS, "Plan de estudio guardado exitosamente");
             return "redirect:/academic/study-plans/" + saved.getId();
         } catch (Exception e) {
             addCommonAttributes(model);
-            model.addAttribute("errorMessage", "Error al guardar: " + e.getMessage());
+            model.addAttribute(MSG_ERROR, "Error al guardar: " + e.getMessage());
             return FORM_VIEW;
         }
     }
@@ -95,8 +100,8 @@ public class StudyPlanController {
             model.addAttribute("gradingScales", gradingScaleService.getScalesByStudyPlanId(id));
             return DETAIL_VIEW;
         } catch (EntityNotFoundException e) {
-            redirectAttributes.addFlashAttribute("errorMessage", "Plan de estudio no encontrado");
-            return "redirect:/academic/study-plans";
+            redirectAttributes.addFlashAttribute(MSG_ERROR, ERROR_MSG);
+            return REDIRECT_STUDY_PLAN;
         }
     }
 
@@ -106,13 +111,13 @@ public class StudyPlanController {
             StudyPlan studyPlan = studyPlanService.getStudyPlanById(id)
                     .orElseThrow(() -> new EntityNotFoundException("Plan de estudio no encontrado con id: " + id));
             model.addAttribute("studyPlan", studyPlan);
-            model.addAttribute("academicLevels", AcademicLevel.values());
+            model.addAttribute(ACADEMIC_LV, AcademicLevel.values());
             model.addAttribute("gradingScales", gradingScaleService.getScalesByStudyPlanId(id));
             model.addAttribute("newScale", new GradingScale());
             return FORM_VIEW;
         } catch (EntityNotFoundException e) {
-            redirectAttributes.addFlashAttribute("errorMessage", "Plan de estudio no encontrado");
-            return "redirect:/academic/study-plans";
+            redirectAttributes.addFlashAttribute(MSG_ERROR, ERROR_MSG);
+            return REDIRECT_STUDY_PLAN;
         }
     }
 
@@ -123,22 +128,22 @@ public class StudyPlanController {
         try {
             if (force) {
                 studyPlanService.forceDeleteStudyPlan(id);
-                redirectAttributes.addFlashAttribute("successMessage",
+                redirectAttributes.addFlashAttribute(MSG_SUCCESS,
                         "Plan de estudio y dependencias eliminados exitosamente");
             } else {
                 studyPlanService.deleteStudyPlan(id);
-                redirectAttributes.addFlashAttribute("successMessage", "Plan de estudio eliminado exitosamente");
+                redirectAttributes.addFlashAttribute(MSG_SUCCESS, "Plan de estudio eliminado exitosamente");
             }
         } catch (EntityNotFoundException e) {
-            redirectAttributes.addFlashAttribute("errorMessage", "Plan de estudio no encontrado");
+            redirectAttributes.addFlashAttribute(MSG_ERROR, ERROR_MSG);
         } catch (IllegalStateException e) {
-            redirectAttributes.addFlashAttribute("errorMessage", e.getMessage());
+            redirectAttributes.addFlashAttribute(MSG_ERROR, e.getMessage());
             redirectAttributes.addFlashAttribute("showForceOption", true);
             redirectAttributes.addFlashAttribute("studyPlanId", id);
         } catch (Exception e) {
-            redirectAttributes.addFlashAttribute("errorMessage", "Error interno del sistema");
+            redirectAttributes.addFlashAttribute(MSG_ERROR, "Error interno del sistema");
         }
-        return "redirect:/academic/study-plans";
+        return REDIRECT_STUDY_PLAN;
     }
 
     @PostMapping("/{id}/scales")
@@ -150,11 +155,11 @@ public class StudyPlanController {
                     .orElseThrow(() -> new EntityNotFoundException("Plan de estudio no encontrado con id: " + id));
             newScale.setStudyPlan(plan);
             gradingScaleService.saveGradingScale(newScale);
-            redirectAttributes.addFlashAttribute("successMessage", "Escala agregada correctamente");
+            redirectAttributes.addFlashAttribute(MSG_SUCCESS, "Escala agregada correctamente");
         } catch (EntityNotFoundException e) {
-            redirectAttributes.addFlashAttribute("errorMessage", "Plan de estudio no encontrado");
+            redirectAttributes.addFlashAttribute(MSG_ERROR, ERROR_MSG);
         } catch (Exception e) {
-            redirectAttributes.addFlashAttribute("errorMessage", "Error al agregar escala: " + e.getMessage());
+            redirectAttributes.addFlashAttribute(MSG_ERROR, "Error al agregar escala: " + e.getMessage());
         }
         return "redirect:/academic/study-plans/edit/" + id;
     }
@@ -164,16 +169,16 @@ public class StudyPlanController {
             RedirectAttributes redirectAttributes) {
         try {
             gradingScaleService.deleteGradingScale(scaleId);
-            redirectAttributes.addFlashAttribute("successMessage", "Escala eliminada correctamente");
+            redirectAttributes.addFlashAttribute(MSG_SUCCESS, "Escala eliminada correctamente");
         } catch (Exception e) {
-            redirectAttributes.addFlashAttribute("errorMessage", "Error al eliminar escala: " + e.getMessage());
+            redirectAttributes.addFlashAttribute(MSG_ERROR, "Error al eliminar escala: " + e.getMessage());
         }
         return "redirect:/academic/study-plans/edit/" + studyPlanId;
     }
 
     // Método auxiliar para reducir duplicación
     private void addCommonAttributes(Model model) {
-        model.addAttribute("academicLevels", AcademicLevel.values());
+        model.addAttribute(ACADEMIC_LV, AcademicLevel.values());
         model.addAttribute("scaleTypes", ScaleType.values());
     }
 }

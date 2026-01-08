@@ -123,7 +123,8 @@
                         <th>Ubicación</th>
                         <th>Descripción</th>
                         <th>Solicitante</th>
-                        <th>Fecha</th>
+                        <th>Fecha Solicitud</th>
+                        <th>Fecha Completado</th>
                         <th>Estado</th>
                         <th>Acciones</th>
                       </tr>
@@ -150,6 +151,11 @@
                           th:text="${#temporals.format(request.requestDate, 'dd/MM/yyyy HH:mm')}"
                         >
                           01/01/2024 10:00
+                        </td>
+                        <td
+                          th:text="${request.completionDate != null ? #temporals.format(request.completionDate, 'dd/MM/yyyy HH:mm') : '-'}"
+                        >
+                          -
                         </td>
                         <td>
                           <span

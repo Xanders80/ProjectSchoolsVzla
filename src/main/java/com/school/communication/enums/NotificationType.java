@@ -4,5 +4,7 @@ public enum NotificationType {
     INFO,
     WARNING,
     ALERT,
-    ATTENDANCE_ALERT
+    ATTENDANCE_ALERT,
+    ACADEMIC,
+    DISCIPLINARY
 }

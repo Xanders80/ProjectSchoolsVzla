@@ -28,30 +28,40 @@ public class AttendanceAlertJob {
         this.notificationService = notificationService;
     }
 
-    @Scheduled(cron = "0 0 8 * * MON-FRI") // 8 AM, weekdays
+    // Run at 6:00 PM every weekday to catch absences recorded during the day
+    @Scheduled(cron = "0 0 18 * * MON-FRI")
     @Transactional
     public void checkAttendanceAlerts() {
-        LocalDate weekAgo = LocalDate.now().minusDays(7);
-        List<Student> students = studentRepository.findAllActive();
+        LocalDate endDate = LocalDate.now();
+        LocalDate startDate = endDate.minusDays(7); // Last 7 days window
+        long threshold = 3;
 
-        for (Student student : students) {
+        // Optimized: only fetch students who actually exceed the threshold
+        List<Student> excessiveAbsenceStudents = studentRepository.findStudentsWithAbsencesMoreThan(startDate, endDate,
+                threshold);
+
+        for (Student student : excessiveAbsenceStudents) {
+            // Double check count to be precise for the message (though query guarantees >=
+            // threshold)
             long absences = attendanceRepository.countAbsencesByStudentAndDateRange(
-                    student.getId(), weekAgo, LocalDate.now());
+                    student.getId(), startDate, endDate);
 
-            if (absences >= 3) {
-                createAttendanceAlert(student, absences);
-            }
+            createAttendanceAlert(student, absences);
         }
     }
 
     private void createAttendanceAlert(Student student, long absences) {
-        String message = String.format("Estudiante %s %s tiene %d inasistencias en la última semana",
+        String message = String.format(
+                "ALERTA: El estudiante %s %s ha acumulado %d inasistencias en los últimos 7 días.",
                 student.getFirstName(), student.getLastName(), absences);
 
-        notificationService.createNotification(
-                "Alerta de Asistencia",
-                message,
-                NotificationType.ATTENDANCE_ALERT,
-                student.getUser());
+        // Only create notification if user is linked
+        if (student.getUser() != null) {
+            notificationService.createNotification(
+                    "Alerta de Asistencia Crítica",
+                    message,
+                    NotificationType.ATTENDANCE_ALERT,
+                    student.getUser());
+        }
     }
 }

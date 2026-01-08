@@ -33,5 +33,16 @@ public interface AttendanceRepository extends JpaRepository<Attendance, Long> {
     long countByDateBetween(LocalDate startDate, LocalDate endDate);
 
     @org.springframework.data.jpa.repository.Query("SELECT COUNT(a) FROM Attendance a WHERE a.date BETWEEN ?1 AND ?2 AND a.status = ?3")
-    long countByDateBetweenAndStatus(LocalDate startDate, LocalDate endDate, com.school.academic.enums.AttendanceStatus status);
+    long countByDateBetweenAndStatus(LocalDate startDate, LocalDate endDate,
+            com.school.academic.enums.AttendanceStatus status);
+
+    List<Attendance> findByStudentIdAndDateBetween(Long studentId, LocalDate startDate, LocalDate endDate);
+
+    java.util.Optional<Attendance> findByStudentIdAndSectionIdAndDate(Long studentId, Long sectionId, LocalDate date);
+
+    @org.springframework.data.jpa.repository.Query("SELECT a.status, COUNT(a) FROM Attendance a WHERE a.student.id = :studentId AND a.date BETWEEN :startDate AND :endDate GROUP BY a.status")
+    List<Object[]> countStatusByStudentAndDateRange(
+            @org.springframework.data.repository.query.Param("studentId") Long studentId,
+            @org.springframework.data.repository.query.Param("startDate") LocalDate startDate,
+            @org.springframework.data.repository.query.Param("endDate") LocalDate endDate);
 }

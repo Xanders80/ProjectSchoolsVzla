@@ -38,13 +38,13 @@ public class TeacherAssignmentService {
                 .orElseThrow(() -> new IllegalArgumentException("Perfil docente no encontrado"));
 
         // Validar carga académica
-        validateTeacherWorkload(teacher, course.getCredits());
+        validateTeacherWorkload(teacher, course.getWeeklyHours());
 
         TeacherAssignment assignment = new TeacherAssignment();
         assignment.setTeacherProfile(teacher);
         assignment.setCourse(course);
         assignment.setAcademicPeriod(period);
-        assignment.setAssignedHours(course.getCredits());
+        assignment.setAssignedHours(course.getWeeklyHours());
         assignment.setCompatibilityScore(calculateCompatibility(teacher, course));
 
         return assignmentRepository.save(assignment);
@@ -54,7 +54,7 @@ public class TeacherAssignmentService {
         List<TeacherProfile> availableTeachers = teacherProfileRepository.findAll();
 
         return availableTeachers.stream()
-                .filter(teacher -> isTeacherAvailable(teacher, course.getCredits()))
+                .filter(teacher -> isTeacherAvailable(teacher, course.getWeeklyHours()))
                 .max((t1, t2) -> Double.compare(
                         calculateCompatibility(t1, course),
                         calculateCompatibility(t2, course)));
@@ -67,7 +67,8 @@ public class TeacherAssignmentService {
         Integer maxHours = teacher.getMaxHoursPerWeek() != null ? teacher.getMaxHoursPerWeek() : 40;
 
         if (currentHours + additionalHours > maxHours) {
-            throw new IllegalArgumentException("El docente excedería su carga máxima de horas");
+            throw new IllegalArgumentException("El docente excedería su carga máxima de " + maxHours
+                    + " horas semanales (Actual: " + currentHours + ", Requerido: " + additionalHours + ")");
         }
     }
 

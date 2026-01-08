@@ -16,8 +16,9 @@ import com.school.academic.repository.StudentRepository;
 public class AcademicService {
 
     private final StudentRepository studentRepository;
-    private final com.school.academic.service.CourseService courseService;
-    private final com.school.academic.service.SectionService sectionService;
+    private final StudentService studentService;
+    private final CourseService courseService;
+    private final SectionService sectionService;
     private final com.school.academic.repository.GradeRepository gradeRepository;
     private final com.school.academic.repository.AttendanceRepository attendanceRepository;
     private final com.school.academic.repository.EnrollmentRepository enrollmentRepository;
@@ -25,14 +26,16 @@ public class AcademicService {
     private final com.school.core.service.AuditService auditService;
 
     public AcademicService(StudentRepository studentRepository,
-            com.school.academic.service.CourseService courseService,
-            com.school.academic.service.SectionService sectionService,
+            StudentService studentService,
+            CourseService courseService,
+            SectionService sectionService,
             com.school.academic.repository.GradeRepository gradeRepository,
             com.school.academic.repository.AttendanceRepository attendanceRepository,
             com.school.academic.repository.EnrollmentRepository enrollmentRepository,
             com.school.health.service.HealthService healthService,
             com.school.core.service.AuditService auditService) {
         this.studentRepository = studentRepository;
+        this.studentService = studentService;
         this.courseService = courseService;
         this.sectionService = sectionService;
         this.gradeRepository = gradeRepository;
@@ -116,27 +119,9 @@ public class AcademicService {
     }
 
     public Student saveStudent(@NonNull Student student) {
-        // Verificar DNI único
-        if (student.getDni() != null) {
-            studentRepository.findByDni(student.getDni())
-                    .ifPresent(existing -> {
-                        if (student.getId() == null || !existing.getId().equals(student.getId())) {
-                            throw new IllegalArgumentException("El DNI ya está registrado para otro estudiante.");
-                        }
-                    });
-        }
-
-        // Verificar Número de Registro único
-        if (student.getRegistrationNumber() != null) {
-            studentRepository.findByRegistrationNumber(student.getRegistrationNumber())
-                    .ifPresent(existing -> {
-                        if (student.getId() == null || !existing.getId().equals(student.getId())) {
-                            throw new IllegalArgumentException(
-                                    "El número de registro ya está asignado a otro estudiante.");
-                        }
-                    });
-        }
-        return studentRepository.save(student);
+        // Delegate to StudentService which handles logic like auto-generation of
+        // registration number
+        return studentService.saveStudent(student);
     }
 
     public void deleteStudent(@NonNull Long id) {
@@ -183,9 +168,12 @@ public class AcademicService {
         Student student = studentRepository.findById(studentId)
                 .orElseThrow(() -> new IllegalArgumentException("Student not found"));
 
-        if (enrollmentRepository.findBySectionId(sectionId).stream()
-                .anyMatch(e -> e.getStudent().getId().equals(studentId))) {
-            throw new IllegalStateException("El estudiante ya está inscrito en esta sección.");
+        // Validar que el estudiante no esté ya en ninguna sección del MISMO periodo
+        // académico
+        Long periodId = section.getPeriod().getId();
+        java.util.List<Long> enrolledInPeriod = enrollmentRepository.findActiveStudentIdsByPeriodId(periodId);
+        if (enrolledInPeriod.contains(studentId)) {
+            throw new IllegalStateException("El estudiante ya tiene una inscripción activa en este periodo académico.");
         }
 
         Enrollment enrollment = new Enrollment();
@@ -217,18 +205,76 @@ public class AcademicService {
                 getCurrentUser());
     }
 
-    public java.util.List<Student> getStudentsNotInSection(@NonNull Long sectionId) {
-        java.util.List<Long> enrolledStudentIds = enrollmentRepository.findBySectionId(sectionId).stream()
-                .map(e -> e.getStudent().getId())
-                .collect(java.util.stream.Collectors.toList());
-
-        if (enrolledStudentIds.isEmpty()) {
-            return studentRepository.findAllActive();
+    /**
+     * Transfiere un estudiante de una sección a otra en una operación atómica.
+     */
+    public void transferStudent(@NonNull Long studentId, @NonNull Long fromSectionId, @NonNull Long toSectionId) {
+        if (fromSectionId.equals(toSectionId)) {
+            throw new IllegalArgumentException("La sección de origen y destino deben ser diferentes.");
         }
 
-        return studentRepository.findAllActive().stream()
-                .filter(s -> !enrolledStudentIds.contains(s.getId()))
-                .collect(java.util.stream.Collectors.toList());
+        Enrollment currentEnrollment = enrollmentRepository.findBySectionId(fromSectionId).stream()
+                .filter(e -> e.getStudent().getId().equals(studentId))
+                .findFirst()
+                .orElseThrow(
+                        () -> new IllegalArgumentException("El estudiante no está inscrito en la sección de origen."));
+
+        Section toSection = sectionService.getSectionById(toSectionId)
+                .orElseThrow(() -> new IllegalArgumentException("La sección de destino no existe."));
+
+        // Verificar si ya está en la de destino
+        if (enrollmentRepository.findBySectionId(toSectionId).stream()
+                .anyMatch(e -> e.getStudent().getId().equals(studentId))) {
+            throw new IllegalStateException("El estudiante ya está inscrito en la sección de destino.");
+        }
+
+        // Realizar la transferencia
+        currentEnrollment.setSection(toSection);
+        currentEnrollment.setEnrollmentDate(java.time.LocalDateTime.now());
+        enrollmentRepository.save(currentEnrollment);
+
+        auditService.logGenericAction("TRANSFER_STUDENT",
+                "Student " + studentId + " transferred from section " + fromSectionId + " to " + toSectionId,
+                getCurrentUser());
+    }
+
+    /**
+     * Reinscribe estudiantes de forma masiva para un nuevo periodo académico.
+     */
+    public void batchReenroll(@NonNull Long nextSectionId, @NonNull java.util.List<Long> studentIds) {
+        Section section = sectionService.getSectionById(nextSectionId)
+                .orElseThrow(() -> new IllegalArgumentException("Sección no encontrada"));
+
+        for (Long studentId : studentIds) {
+            java.util.Objects.requireNonNull(studentId, "Student id in list cannot be null");
+
+            Student student = studentRepository.findById(studentId)
+                    .orElseThrow(() -> new IllegalArgumentException("Estudiante no encontrado: " + studentId));
+
+            // Evitar duplicados en el mismo periodo/sección
+            boolean alreadyEnrolled = enrollmentRepository.findBySectionId(nextSectionId).stream()
+                    .anyMatch(e -> e.getStudent().getId().equals(studentId));
+
+            if (!alreadyEnrolled) {
+                Enrollment enrollment = new Enrollment();
+                enrollment.setStudent(student);
+                enrollment.setSection(section);
+                enrollment.setStatus(com.school.academic.enums.EnrollmentStatus.ACTIVE);
+                enrollment.setEnrollmentDate(java.time.LocalDateTime.now());
+                enrollmentRepository.save(enrollment);
+            }
+        }
+
+        auditService.logGenericAction("BATCH_REENROLL",
+                "Batch enrollment completed for section " + nextSectionId + " students: " + studentIds.size(),
+                getCurrentUser());
+    }
+
+    public java.util.List<Student> getStudentsNotInSection(@NonNull Long sectionId) {
+        Section section = sectionService.getSectionById(sectionId)
+                .orElseThrow(() -> new IllegalArgumentException("Section not found"));
+
+        return enrollmentRepository.findStudentsNotEnrolledInPeriod(section.getPeriod().getId());
     }
 
     @NonNull

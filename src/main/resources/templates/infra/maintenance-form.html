@@ -1,5 +1,8 @@
 <!DOCTYPE html>
-<html xmlns:th="http://www.thymeleaf.org">
+<html
+  xmlns:th="http://www.thymeleaf.org"
+  xmlns:sec="http://www.thymeleaf.org/extras/spring-security"
+>
   <head>
     <meta charset="utf-8" />
     <meta http-equiv="X-UA-Compatible" content="IE=edge" />
@@ -76,6 +79,47 @@
                   <input type="hidden" th:field="*{requestDate}" />
                   <input type="hidden" th:field="*{completionDate}" />
 
+                  <!-- Read-only Context Fields (Only if editing) -->
+                  <div class="row" th:if="${request.id != null}">
+                    <div class="col-md-4">
+                      <div class="form-group">
+                        <label>Solicitado Por</label>
+                        <input
+                          type="text"
+                          class="form-control"
+                          th:value="${request.requestedBy != null ? request.requestedBy.username : 'N/A'}"
+                          readonly
+                        />
+                      </div>
+                    </div>
+                    <div class="col-md-4">
+                      <div class="form-group">
+                        <label>Fecha Solicitud</label>
+                        <input
+                          type="text"
+                          class="form-control"
+                          th:value="${#temporals.format(request.requestDate, 'dd/MM/yyyy HH:mm')}"
+                          readonly
+                        />
+                      </div>
+                    </div>
+                    <!-- Completion Date (Only if completed) -->
+                    <div
+                      class="col-md-4"
+                      th:if="${request.completionDate != null}"
+                    >
+                      <div class="form-group">
+                        <label>Fecha Completado</label>
+                        <input
+                          type="text"
+                          class="form-control"
+                          th:value="${#temporals.format(request.completionDate, 'dd/MM/yyyy HH:mm')}"
+                          readonly
+                        />
+                      </div>
+                    </div>
+                  </div>
+
                   <div class="row">
                     <div class="col-md-6">
                       <div class="form-group">
@@ -133,17 +177,13 @@
                           th:field="*{description}"
                           rows="5"
                           required
-                          placeholder="Describa detalladamente el problema o necesidad de mantenimiento..."
+                          placeholder="Describa detalladamente el problema..."
                         ></textarea>
                         <small
                           class="form-text text-danger"
                           th:if="${#fields.hasErrors('description')}"
                           th:errors="*{description}"
                         ></small>
-                        <small class="form-text text-muted"
-                          >Sea lo más específico posible para facilitar la
-                          atención</small
-                        >
                       </div>
                     </div>
                   </div>
@@ -151,8 +191,7 @@
                   <div class="alert alert-info" role="alert">
                     <i class="fas fa-info-circle"></i>
                     <strong>Nota:</strong> La solicitud será registrada a su
-                    nombre y con la fecha actual. El personal de mantenimiento
-                    será notificado automáticamente.
+                    nombre.
                   </div>
 
                   <hr />

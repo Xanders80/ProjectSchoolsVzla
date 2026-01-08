@@ -39,6 +39,11 @@ public class StudentController {
 
     private static final Logger logger = LoggerFactory.getLogger(StudentController.class);
     private static final String STUDENT_FORM_VIEW = "academic/student-form";
+    private static final String REDIRECT_STUDENTS = "redirect:/students";
+    private static final String MSG_SUCCESS = "successMessage";
+    private static final String MSG_ERROR = "errorMessage";
+    private static final String STR_ERROR = "error";
+
     private final AcademicService academicService;
 
     public StudentController(AcademicService academicService) {
@@ -73,11 +78,11 @@ public class StudentController {
         }
         try {
             Student savedStudent = academicService.saveStudent(student);
-            redirectAttributes.addFlashAttribute("successMessage",
+            redirectAttributes.addFlashAttribute(MSG_SUCCESS,
                     "Estudiante guardado exitosamente. Número de registro: " + savedStudent.getRegistrationNumber());
-            return "redirect:/students";
+            return REDIRECT_STUDENTS;
         } catch (IllegalArgumentException e) {
-            model.addAttribute("errorMessage", e.getMessage());
+            model.addAttribute(MSG_ERROR, e.getMessage());
             return STUDENT_FORM_VIEW;
         }
     }
@@ -102,25 +107,25 @@ public class StudentController {
             studentId = Long.parseLong(id);
         } catch (NumberFormatException e) {
             logger.warn("Invalid student ID format: {} from IP: {}", id, clientIp);
-            redirectAttributes.addFlashAttribute("errorMessage", "ID de estudiante inválido");
-            return "redirect:/students";
+            redirectAttributes.addFlashAttribute(MSG_ERROR, "ID de estudiante inválido");
+            return REDIRECT_STUDENTS;
         }
 
         try {
             academicService.deleteStudent(studentId);
             logger.info("Student {} deleted successfully by IP: {}", studentId, clientIp);
-            redirectAttributes.addFlashAttribute("successMessage", "Estudiante eliminado exitosamente");
+            redirectAttributes.addFlashAttribute(MSG_SUCCESS, "Estudiante eliminado exitosamente");
         } catch (EntityNotFoundException e) {
             logger.warn("Attempt to delete non-existent student ID: {} from IP: {}", id, clientIp);
-            redirectAttributes.addFlashAttribute("errorMessage", "Estudiante no encontrado");
+            redirectAttributes.addFlashAttribute(MSG_ERROR, "Estudiante no encontrado");
         } catch (IllegalStateException e) {
             logger.warn("Business rule violation deleting student ID: {} from IP: {}", id, clientIp);
-            redirectAttributes.addFlashAttribute("errorMessage", e.getMessage());
+            redirectAttributes.addFlashAttribute(MSG_ERROR, e.getMessage());
         } catch (Exception e) {
             logger.error("Unexpected error deleting student ID: {} from IP: {}", id, clientIp, e);
-            redirectAttributes.addFlashAttribute("errorMessage", "Error interno del sistema");
+            redirectAttributes.addFlashAttribute(MSG_ERROR, "Error interno del sistema");
         }
-        return "redirect:/students";
+        return REDIRECT_STUDENTS;
     }
 
     @DeleteMapping("/api/{id}")
@@ -135,7 +140,7 @@ public class StudentController {
             studentId = Long.parseLong(id);
         } catch (NumberFormatException e) {
             logger.warn("Invalid student ID format in API call: {} from IP: {}", id, clientIp);
-            return ResponseEntity.badRequest().body(java.util.Map.of("error", "ID de estudiante inválido"));
+            return ResponseEntity.badRequest().body(java.util.Map.of(STR_ERROR, "ID de estudiante inválido"));
         }
 
         try {
@@ -144,17 +149,17 @@ public class StudentController {
             return ResponseEntity.ok(java.util.Map.of("message", "Student deleted successfully"));
         } catch (EntityNotFoundException e) {
             logger.warn("API call to delete non-existent student ID: {} from IP: {}", id, clientIp);
-            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(java.util.Map.of("error", "Student not found"));
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(java.util.Map.of(STR_ERROR, "Student not found"));
         } catch (Exception e) {
             logger.error("API delete error for student ID: {} from IP: {}", id, clientIp, e);
-            return ResponseEntity.status(500).body(java.util.Map.of("error", "Error deleting student"));
+            return ResponseEntity.status(500).body(java.util.Map.of(STR_ERROR, "Error deleting student"));
         }
     }
 
     @ExceptionHandler(EntityNotFoundException.class)
     @ResponseStatus(HttpStatus.NOT_FOUND)
     public String handleEntityNotFoundException(EntityNotFoundException ex, Model model) {
-        model.addAttribute("errorMessage", ex.getMessage());
-        return "error"; // Asegúrate de que esta vista existe
+        model.addAttribute(MSG_ERROR, ex.getMessage());
+        return STR_ERROR; // Asegúrate de que esta vista existe
     }
 }

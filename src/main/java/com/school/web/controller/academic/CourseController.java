@@ -119,7 +119,7 @@ public class CourseController {
             // here.
             // For now assuming URL/Text entry.
             courseResourceService.createResource(course, newResource.getTitle(), newResource.getUrl(),
-                    newResource.getResourceType());
+                    newResource.getCategory(), newResource.getDescription());
 
             redirectAttributes.addFlashAttribute("successMessage", "Recurso agregado correctamente");
         } catch (Exception e) {

@@ -1,0 +1,96 @@
+<!DOCTYPE html>
+<html
+  xmlns:th="http://www.thymeleaf.org"
+  xmlns:sec="http://www.thymeleaf.org/extras/spring-security"
+>
+  <head>
+    <meta charset="utf-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta
+      name="viewport"
+      content="width=device-width, initial-scale=1, shrink-to-fit=no"
+    />
+    <title>Control de Asistencia - Sistema Escolar</title>
+    <link
+      th:href="@{/vendor/fontawesome-free/css/all.min.css}"
+      rel="stylesheet"
+      type="text/css"
+    />
+    <link
+      href="https://fonts.googleapis.com/css?family=Nunito:200,200i,300,300i,400,400i,600,600i,700,700i,800,800i,900,900i"
+      rel="stylesheet"
+    />
+    <link th:href="@{/css/sb-admin-2.min.css}" rel="stylesheet" />
+  </head>
+  <body id="page-top">
+    <div id="wrapper">
+      <div th:replace="~{fragments/sb-admin-sidebar :: sidebar}"></div>
+      <div id="content-wrapper" class="d-flex flex-column">
+        <div id="content">
+          <div th:replace="~{fragments/sb-admin-topbar :: topbar}"></div>
+          <div class="container-fluid">
+            <div
+              class="d-sm-flex align-items-center justify-content-between mb-4"
+            >
+              <h1 class="h3 mb-0 text-gray-800">Control de Asistencia</h1>
+              <a
+                href="/attendance/report"
+                class="btn btn-sm btn-info shadow-sm"
+              >
+                <i class="fas fa-chart-bar fa-sm text-white-50 mr-1"></i> Ver
+                Reportes
+              </a>
+            </div>
+
+            <div class="row">
+              <div
+                class="col-md-6 col-lg-4 mb-4"
+                th:each="section : ${sections}"
+              >
+                <div class="card h-100 shadow-sm border-0 border-left-primary">
+                  <div class="card-body">
+                    <h5
+                      class="card-title fw-bold text-primary"
+                      th:text="${section.name}"
+                    >
+                      Sección A
+                    </h5>
+                    <p class="card-text text-muted">
+                      <i class="fas fa-book mr-2"></i
+                      ><span th:text="${section.course.name}">Matemáticas</span
+                      ><br />
+                      <i class="fas fa-clock mr-2"></i
+                      ><span th:text="${section.period.name}">2026-1</span>
+                    </p>
+                    <a
+                      th:href="@{/attendance/section/{id}(id=${section.id})}"
+                      class="btn btn-outline-primary btn-block stretched-link"
+                    >
+                      <i class="fas fa-clipboard-list mr-2"></i>Tomar Asistencia
+                    </a>
+                  </div>
+                </div>
+              </div>
+
+              <div class="col-12" th:if="${#lists.isEmpty(sections)}">
+                <div class="alert alert-info shadow-sm">
+                  <i class="fas fa-info-circle mr-2"></i> No se encontraron
+                  secciones asignadas.
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div th:replace="~{fragments/sb-admin-footer :: footer}"></div>
+      </div>
+    </div>
+    <a class="scroll-to-top rounded" href="#page-top">
+      <i class="fas fa-angle-up"></i>
+    </a>
+    <div th:replace="~{fragments/sb-admin-topbar :: logoutModal}"></div>
+    <script th:src="@{/vendor/jquery/jquery.min.js}"></script>
+    <script th:src="@{/vendor/bootstrap/js/bootstrap.bundle.min.js}"></script>
+    <script th:src="@{/vendor/jquery-easing/jquery.easing.min.js}"></script>
+    <script th:src="@{/js/sb-admin-2.min.js}"></script>
+  </body>
+</html>

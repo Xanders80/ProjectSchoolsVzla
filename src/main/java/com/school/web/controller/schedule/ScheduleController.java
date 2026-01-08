@@ -16,6 +16,7 @@ import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 import jakarta.validation.Valid;
 
 import com.school.academic.repository.SectionRepository;
+import com.school.academic.service.BatchScheduleService;
 import com.school.schedule.entity.ScheduleEntry;
 import com.school.schedule.service.ScheduleService;
 
@@ -25,10 +26,14 @@ public class ScheduleController {
 
     private final ScheduleService scheduleService;
     private final SectionRepository sectionRepository;
+    private final BatchScheduleService batchService;
 
-    public ScheduleController(ScheduleService scheduleService, SectionRepository sectionRepository) {
+    public ScheduleController(ScheduleService scheduleService,
+            SectionRepository sectionRepository,
+            BatchScheduleService batchService) {
         this.scheduleService = scheduleService;
         this.sectionRepository = sectionRepository;
+        this.batchService = batchService;
     }
 
     @GetMapping
@@ -86,6 +91,16 @@ public class ScheduleController {
     @RequestMapping(value = "/delete/{id}", method = { RequestMethod.POST, RequestMethod.DELETE })
     public String deleteSchedule(@PathVariable @NonNull Long id) {
         scheduleService.deleteSchedule(id);
+        return "redirect:/schedules";
+    }
+
+    @PostMapping("/batch/start")
+    public String startBatchProcess(RedirectAttributes redirectAttributes) {
+        // Obtenemos todos los horarios actuales para re-procesar/validar masivamente
+        var entries = scheduleService.getAllSchedules();
+        batchService.processBulkSchedules(entries);
+
+        redirectAttributes.addFlashAttribute("successMessage", "Proceso masivo de horarios iniciado en segundo plano");
         return "redirect:/schedules";
     }
 }

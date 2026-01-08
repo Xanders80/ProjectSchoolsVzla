@@ -318,7 +318,7 @@
                       </div>
                     </div>
                     <div class="row">
-                      <div class="col-md-6">
+                      <div class="col-md-4">
                         <div class="form-group">
                           <label>Máx. Horas Semanales</label>
                           <input
@@ -330,14 +330,52 @@
                           />
                         </div>
                       </div>
+                      <div class="col-md-4">
+                        <div class="form-group">
+                          <label>Años de Experiencia</label>
+                          <input
+                            type="number"
+                            name="yearsExperience"
+                            class="form-control"
+                            th:value="${teacherProfile?.yearsExperience}"
+                            placeholder="Ej. 5"
+                          />
+                        </div>
+                      </div>
+                      <div class="col-md-4">
+                        <div class="form-group">
+                          <label>Materias Preferidas</label>
+                          <input
+                            type="text"
+                            name="preferredSubjects"
+                            class="form-control"
+                            th:value="${teacherProfile?.preferredSubjects}"
+                            placeholder="Ej. Matemáticas, Física"
+                          />
+                        </div>
+                      </div>
+                    </div>
+                    <div class="row">
                       <div class="col-md-6">
                         <div class="form-group">
                           <label>Biografía Breve</label>
                           <textarea
                             name="bio"
                             class="form-control"
-                            rows="2"
+                            rows="3"
                             th:text="${teacherProfile?.bio}"
+                          ></textarea>
+                        </div>
+                      </div>
+                      <div class="col-md-6">
+                        <div class="form-group">
+                          <label>Certificaciones</label>
+                          <textarea
+                            name="certifications"
+                            class="form-control"
+                            rows="3"
+                            th:text="${teacherProfile?.certifications}"
+                            placeholder="Listado de certificaciones..."
                           ></textarea>
                         </div>
                       </div>

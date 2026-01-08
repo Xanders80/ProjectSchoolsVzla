@@ -65,14 +65,53 @@ public class EnrollmentController {
         return "redirect:/enrollments/section/" + sectionId;
     }
 
-    @PostMapping("/delete/{id}")
-    public String unenrollStudent(@PathVariable @NonNull Long id, @RequestParam @NonNull Long sectionId,
+    @PostMapping("/delete")
+    public String unenrollStudent(@RequestParam @NonNull Long enrollmentId, @RequestParam @NonNull Long sectionId,
             RedirectAttributes redirectAttributes) {
         try {
-            academicService.unenrollStudent(id);
+            academicService.unenrollStudent(enrollmentId);
             redirectAttributes.addFlashAttribute("successMessage", "Inscripción eliminada");
         } catch (Exception e) {
             redirectAttributes.addFlashAttribute("errorMessage", "Error al eliminar inscripción: " + e.getMessage());
+        }
+        return "redirect:/enrollments/section/" + sectionId;
+    }
+
+    @GetMapping("/transfer/{studentId}")
+    public String showTransferForm(@PathVariable @NonNull Long studentId, @RequestParam @NonNull Long currentSectionId,
+            Model model) {
+        Student student = academicService.getStudentById(studentId)
+                .orElseThrow(() -> new IllegalArgumentException("Invalid student Id:" + studentId));
+        List<Section> availableSections = academicService.getAllSections().stream()
+                .filter(s -> !s.getId().equals(currentSectionId))
+                .toList();
+
+        model.addAttribute("student", student);
+        model.addAttribute("currentSectionId", currentSectionId);
+        model.addAttribute("sections", availableSections);
+        return "academic/enrollment-transfer";
+    }
+
+    @PostMapping("/transfer")
+    public String transferStudent(@RequestParam @NonNull Long studentId, @RequestParam @NonNull Long fromSectionId,
+            @RequestParam @NonNull Long toSectionId, RedirectAttributes redirectAttributes) {
+        try {
+            academicService.transferStudent(studentId, fromSectionId, toSectionId);
+            redirectAttributes.addFlashAttribute("successMessage", "Estudiante transferido exitosamente");
+        } catch (Exception e) {
+            redirectAttributes.addFlashAttribute("errorMessage", "Error al transferir: " + e.getMessage());
+        }
+        return "redirect:/enrollments/section/" + toSectionId;
+    }
+
+    @PostMapping("/batch-reenroll")
+    public String batchReenroll(@RequestParam @NonNull Long sectionId, @RequestParam @NonNull List<Long> studentIds,
+            RedirectAttributes redirectAttributes) {
+        try {
+            academicService.batchReenroll(sectionId, studentIds);
+            redirectAttributes.addFlashAttribute("successMessage", "Reinscripción masiva completada");
+        } catch (Exception e) {
+            redirectAttributes.addFlashAttribute("errorMessage", "Error en reinscripción: " + e.getMessage());
         }
         return "redirect:/enrollments/section/" + sectionId;
     }

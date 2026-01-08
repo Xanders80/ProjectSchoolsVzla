@@ -72,13 +72,22 @@
                     </div>
                     <div class="col-md-4">
                       <div class="form-group">
-                        <label>Tipo</label>
-                        <input
-                          type="text"
+                        <label>Tipo *</label>
+                        <select
                           th:field="*{type}"
                           class="form-control"
                           required
-                        />
+                        >
+                          <option value="">Seleccione un tipo</option>
+                          <option value="CLASSROOM">Aula Regular</option>
+                          <option value="LAB">Laboratorio</option>
+                          <option value="OFFICE">Oficina</option>
+                          <option value="AUDITORIUM">Auditorio</option>
+                          <option value="LIBRARY">Biblioteca</option>
+                        </select>
+                        <small class="form-text text-muted">
+                          Seleccione "Laboratorio" para habilitar reservas
+                        </small>
                       </div>
                     </div>
                     <div class="col-md-4">

@@ -34,9 +34,20 @@
               class="d-sm-flex align-items-center justify-content-between mb-4"
             >
               <h1 class="h3 mb-0 text-gray-800">Lista de Horarios</h1>
-              <a th:href="@{/schedules/new}" class="btn btn-primary">
-                <i class="fas fa-plus"></i> Agregar Nuevo Horario
-              </a>
+              <div>
+                <form
+                  th:action="@{/schedules/batch/start}"
+                  method="post"
+                  style="display: inline-block"
+                >
+                  <button type="submit" class="btn btn-info mr-2">
+                    <i class="fas fa-sync"></i> Procesamiento Masivo
+                  </button>
+                </form>
+                <a th:href="@{/schedules/new}" class="btn btn-primary">
+                  <i class="fas fa-plus"></i> Agregar Nuevo Horario
+                </a>
+              </div>
             </div>
 
             <div th:if="${successMessage}" class="alert alert-success">

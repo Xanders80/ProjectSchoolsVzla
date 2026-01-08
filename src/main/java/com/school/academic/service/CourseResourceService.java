@@ -37,12 +37,14 @@ public class CourseResourceService {
         return courseResourceRepository.findById(id);
     }
 
-    public CourseResource createResource(Course course, String title, String url, String type) {
+    public CourseResource createResource(Course course, String title, String url,
+            com.school.academic.enums.ResourceCategory category, String description) {
         CourseResource resource = new CourseResource();
         resource.setCourse(course);
         resource.setTitle(title);
-        resource.setUrl(url); // In a real app, this might be a file path after upload
-        resource.setResourceType(type);
+        resource.setUrl(url);
+        resource.setCategory(category);
+        resource.setDescription(description);
         return saveResource(resource);
     }
 }

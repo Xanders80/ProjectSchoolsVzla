@@ -25,10 +25,12 @@ import org.springframework.security.core.session.SessionRegistry;
 import org.springframework.security.core.session.SessionRegistryImpl;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
+import org.springframework.security.config.annotation.method.configuration.EnableMethodSecurity;
 import org.springframework.security.web.SecurityFilterChain;
 
 @Configuration
 @EnableWebSecurity
+@EnableMethodSecurity
 public class SecurityConfig {
 
         @Autowired
@@ -90,6 +92,7 @@ public class SecurityConfig {
                                                 .requestMatchers("/admin/**").hasRole("ADMIN")
                                                 .requestMatchers("/students/**").hasAnyRole("ADMIN", "STAFF")
                                                 .requestMatchers("/sections/**").hasAnyRole("ADMIN", "STAFF")
+                                                .requestMatchers("/enrollments/**").hasAnyRole("ADMIN", "STAFF")
                                                 .requestMatchers("/library/**").hasAnyRole("ADMIN", "STAFF")
                                                 .requestMatchers("/actuator/**").hasRole("ADMIN")
                                                 .requestMatchers("/reports/**").hasAnyRole("ADMIN", "DIRECTOR")

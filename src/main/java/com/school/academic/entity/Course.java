@@ -94,6 +94,18 @@ public class Course {
     @Column(name = "grade_level", nullable = false)
     private Integer gradeLevel;
 
+    @NotNull(message = "Las horas semanales son obligatorias", groups = { ValidationGroups.Create.class,
+            ValidationGroups.Update.class })
+    @Min(value = 1, message = "Mínimo 1 hora semanal")
+    @Column(name = "weekly_hours", nullable = false)
+    private Integer weeklyHours = 0;
+
+    @Column(name = "learning_objectives", columnDefinition = "TEXT")
+    private String learningObjectives;
+
+    @Column(name = "content_summary", columnDefinition = "TEXT")
+    private String contentSummary;
+
     @Column(name = "deleted", nullable = false)
     private boolean deleted = false;
 
@@ -173,6 +185,30 @@ public class Course {
 
     public void setGradeLevel(Integer gradeLevel) {
         this.gradeLevel = gradeLevel;
+    }
+
+    public Integer getWeeklyHours() {
+        return weeklyHours;
+    }
+
+    public void setWeeklyHours(Integer weeklyHours) {
+        this.weeklyHours = weeklyHours;
+    }
+
+    public String getLearningObjectives() {
+        return learningObjectives;
+    }
+
+    public void setLearningObjectives(String learningObjectives) {
+        this.learningObjectives = learningObjectives;
+    }
+
+    public String getContentSummary() {
+        return contentSummary;
+    }
+
+    public void setContentSummary(String contentSummary) {
+        this.contentSummary = contentSummary;
     }
 
     public boolean isDeleted() {

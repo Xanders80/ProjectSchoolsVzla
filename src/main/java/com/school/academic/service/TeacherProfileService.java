@@ -24,12 +24,18 @@ public class TeacherProfileService {
     }
 
     @SuppressWarnings("null")
+    public Optional<TeacherProfile> getProfileById(Long id) {
+        return teacherProfileRepository.findById(id);
+    }
+
+    @SuppressWarnings("null")
     public TeacherProfile saveProfile(TeacherProfile profile) {
         return teacherProfileRepository.save(profile);
     }
 
     public void createOrUpdateProfile(Staff staff, String academicTitle, String specialization, Integer maxHours,
-            String bio) {
+            String bio, Integer yearsExperience, String preferredSubjects, String certifications,
+            String escalafonCategory, java.time.LocalDate seniorityDate, Double currentPoints) {
         TeacherProfile profile = teacherProfileRepository.findByStaffId(staff.getId())
                 .orElse(new TeacherProfile());
 
@@ -38,6 +44,12 @@ public class TeacherProfileService {
         profile.setSpecializationArea(specialization);
         profile.setMaxHoursPerWeek(maxHours);
         profile.setBio(bio);
+        profile.setYearsExperience(yearsExperience);
+        profile.setPreferredSubjects(preferredSubjects);
+        profile.setCertifications(certifications);
+        profile.setEscalafonCategory(escalafonCategory);
+        profile.setSeniorityDate(seniorityDate);
+        profile.setCurrentPoints(currentPoints != null ? currentPoints : 0.0);
 
         teacherProfileRepository.save(profile);
     }

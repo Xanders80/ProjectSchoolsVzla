@@ -36,9 +36,28 @@ public class StudentService {
     }
 
     public Student saveStudent(Student student) {
+        // Validation: Verify unique DNI
+        if (student.getDni() != null) {
+            studentRepository.findByDni(student.getDni())
+                    .ifPresent(existing -> {
+                        if (student.getId() == null || !existing.getId().equals(student.getId())) {
+                            throw new IllegalArgumentException("El DNI ya está registrado para otro estudiante.");
+                        }
+                    });
+        }
+
         // Generate registration number if not set
         if (student.getRegistrationNumber() == null || student.getRegistrationNumber().isEmpty()) {
             student.setRegistrationNumber(generateRegistrationNumber());
+        } else {
+            // Validation: Verify unique Registration Number if provided
+            studentRepository.findByRegistrationNumber(student.getRegistrationNumber())
+                    .ifPresent(existing -> {
+                        if (student.getId() == null || !existing.getId().equals(student.getId())) {
+                            throw new IllegalArgumentException(
+                                    "El número de registro ya está asignado a otro estudiante.");
+                        }
+                    });
         }
 
         // Set enrollment date if not set

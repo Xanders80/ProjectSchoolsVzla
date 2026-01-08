@@ -1,0 +1,444 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+  <head>
+    <meta charset="utf-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta
+      name="viewport"
+      content="width=device-width, initial-scale=1, shrink-to-fit=no"
+    />
+    <title>Estadísticas de Laboratorios</title>
+    <link
+      th:href="@{/vendor/fontawesome-free/css/all.min.css}"
+      rel="stylesheet"
+      type="text/css"
+    />
+    <link
+      href="https://fonts.googleapis.com/css?family=Nunito:200,200i,300,300i,400,400i,600,600i,700,700i,800,800i,900,900i"
+      rel="stylesheet"
+    />
+    <link th:href="@{/css/sb-admin-2.min.css}" rel="stylesheet" />
+  </head>
+  <body id="page-top">
+    <div id="wrapper">
+      <div th:replace="~{fragments/sb-admin-sidebar :: sidebar}"></div>
+      <div id="content-wrapper" class="d-flex flex-column">
+        <div id="content">
+          <div th:replace="~{fragments/sb-admin-topbar :: topbar}"></div>
+          <div class="container-fluid">
+            <div
+              class="d-sm-flex align-items-center justify-content-between mb-4"
+            >
+              <h1 class="h3 mb-0 text-gray-800">
+                Estadísticas de Uso de Laboratorios
+              </h1>
+              <a
+                th:href="@{/infra/labs/reservations}"
+                class="btn btn-secondary"
+              >
+                <i class="fas fa-arrow-left"></i> Volver
+              </a>
+            </div>
+
+            <!-- Summary Cards -->
+            <div class="row">
+              <div class="col-xl-3 col-md-6 mb-4">
+                <div class="card border-left-primary shadow h-100 py-2">
+                  <div class="card-body">
+                    <div class="row no-gutters align-items-center">
+                      <div class="col mr-2">
+                        <div
+                          class="text-xs font-weight-bold text-primary text-uppercase mb-1"
+                        >
+                          Total Reservas
+                        </div>
+                        <div
+                          class="h5 mb-0 font-weight-bold text-gray-800"
+                          id="totalReservations"
+                          th:text="${generalStats.totalReservations}"
+                        >
+                          0
+                        </div>
+                      </div>
+                      <div class="col-auto">
+                        <i class="fas fa-calendar fa-2x text-gray-300"></i>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+
+              <div class="col-xl-3 col-md-6 mb-4">
+                <div class="card border-left-success shadow h-100 py-2">
+                  <div class="card-body">
+                    <div class="row no-gutters align-items-center">
+                      <div class="col mr-2">
+                        <div
+                          class="text-xs font-weight-bold text-success text-uppercase mb-1"
+                        >
+                          Tasa de Aprobación
+                        </div>
+                        <div
+                          class="h5 mb-0 font-weight-bold text-gray-800"
+                          id="approvalRate"
+                          th:text="${generalStats.approvalRate} + '%'"
+                        >
+                          0%
+                        </div>
+                      </div>
+                      <div class="col-auto">
+                        <i class="fas fa-check-circle fa-2x text-gray-300"></i>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+
+              <div class="col-xl-3 col-md-6 mb-4">
+                <div class="card border-left-info shadow h-100 py-2">
+                  <div class="card-body">
+                    <div class="row no-gutters align-items-center">
+                      <div class="col mr-2">
+                        <div
+                          class="text-xs font-weight-bold text-info text-uppercase mb-1"
+                        >
+                          Horas Totales
+                        </div>
+                        <div
+                          class="h5 mb-0 font-weight-bold text-gray-800"
+                          id="totalHoursReserved"
+                          th:text="${generalStats.totalHoursReserved}"
+                        >
+                          0
+                        </div>
+                      </div>
+                      <div class="col-auto">
+                        <i class="fas fa-clock fa-2x text-gray-300"></i>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+
+              <div class="col-xl-3 col-md-6 mb-4">
+                <div class="card border-left-warning shadow h-100 py-2">
+                  <div class="card-body">
+                    <div class="row no-gutters align-items-center">
+                      <div class="col mr-2">
+                        <div
+                          class="text-xs font-weight-bold text-warning text-uppercase mb-1"
+                        >
+                          Promedio Horas/Reserva
+                        </div>
+                        <div
+                          class="h5 mb-0 font-weight-bold text-gray-800"
+                          id="averageHoursPerReservation"
+                          th:text="${generalStats.averageHoursPerReservation}"
+                        >
+                          0
+                        </div>
+                      </div>
+                      <div class="col-auto">
+                        <i class="fas fa-chart-line fa-2x text-gray-300"></i>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <!-- Filters -->
+            <div class="card shadow mb-4">
+              <div class="card-header py-3">
+                <h6 class="m-0 font-weight-bold text-primary">
+                  Filtros de Fecha
+                </h6>
+              </div>
+              <div class="card-body">
+                <form id="filterForm" class="form-inline">
+                  <div class="form-group mr-3">
+                    <label for="fromDate" class="mr-2">Desde:</label>
+                    <input
+                      type="date"
+                      class="form-control"
+                      id="fromDate"
+                      th:value="${from}"
+                    />
+                  </div>
+                  <div class="form-group mr-3">
+                    <label for="toDate" class="mr-2">Hasta:</label>
+                    <input
+                      type="date"
+                      class="form-control"
+                      id="toDate"
+                      th:value="${to}"
+                    />
+                  </div>
+                  <button
+                    type="button"
+                    class="btn btn-primary"
+                    id="filterButton"
+                    onclick="loadStatistics()"
+                  >
+                    <i class="fas fa-search"></i> Filtrar
+                  </button>
+                  <div id="loadingIndicator" class="ml-3 d-none">
+                    <div
+                      class="spinner-border spinner-border-sm text-primary"
+                      role="status"
+                    >
+                      <span class="sr-only">Cargando...</span>
+                    </div>
+                    <span class="ml-2">Cargando datos...</span>
+                  </div>
+                </form>
+              </div>
+            </div>
+
+            <!-- Charts Row -->
+            <div class="row">
+              <!-- Lab Usage Chart -->
+              <div class="col-xl-6 col-lg-6">
+                <div class="card shadow mb-4">
+                  <div class="card-header py-3">
+                    <h6 class="m-0 font-weight-bold text-primary">
+                      Reservas por Laboratorio
+                    </h6>
+                  </div>
+                  <div class="card-body">
+                    <canvas id="labUsageChart"></canvas>
+                  </div>
+                </div>
+              </div>
+
+              <!-- Status Distribution Chart -->
+              <div class="col-xl-6 col-lg-6">
+                <div class="card shadow mb-4">
+                  <div class="card-header py-3">
+                    <h6 class="m-0 font-weight-bold text-primary">
+                      Distribución por Estado
+                    </h6>
+                  </div>
+                  <div class="card-body">
+                    <canvas id="statusChart"></canvas>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <!-- Top Teachers & Peak Hours -->
+            <div class="row">
+              <div class="col-xl-6 col-lg-6">
+                <div class="card shadow mb-4">
+                  <div class="card-header py-3">
+                    <h6 class="m-0 font-weight-bold text-primary">
+                      Top 10 Docentes
+                    </h6>
+                  </div>
+                  <div class="card-body">
+                    <canvas id="topTeachersChart"></canvas>
+                  </div>
+                </div>
+              </div>
+
+              <div class="col-xl-6 col-lg-6">
+                <div class="card shadow mb-4">
+                  <div class="card-header py-3">
+                    <h6 class="m-0 font-weight-bold text-primary">
+                      Horarios Pico
+                    </h6>
+                  </div>
+                  <div class="card-body">
+                    <canvas id="peakHoursChart"></canvas>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <!-- Export Buttons -->
+            <div class="card shadow mb-4">
+              <div class="card-body text-center">
+                <p class="text-muted mb-3">
+                  Exportar reportes con los filtros aplicados
+                </p>
+                <button class="btn btn-danger mr-2" onclick="exportToPdf()">
+                  <i class="fas fa-file-pdf"></i> Exportar a PDF
+                </button>
+                <button class="btn btn-success" onclick="exportToExcel()">
+                  <i class="fas fa-file-excel"></i> Exportar a Excel
+                </button>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div th:replace="~{fragments/sb-admin-footer :: footer}"></div>
+      </div>
+    </div>
+
+    <script th:src="@{/vendor/jquery/jquery.min.js}"></script>
+    <script th:src="@{/vendor/bootstrap/js/bootstrap.bundle.min.js}"></script>
+    <script th:src="@{/js/sb-admin-2.min.js}"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js@2.9.4/dist/Chart.min.js"></script>
+
+    <script>
+      let labChart, statusChart, teachersChart, peakChart;
+
+      function loadStatistics() {
+        const from = document.getElementById("fromDate").value;
+        const to = document.getElementById("toDate").value;
+
+        // Validación de fechas
+        if (!from || !to) {
+          alert("Por favor, selecciona ambas fechas.");
+          return;
+        }
+
+        const fromDate = new Date(from);
+        const toDate = new Date(to);
+
+        if (fromDate > toDate) {
+          alert("La fecha de inicio no puede ser posterior a la fecha de fin.");
+          return;
+        }
+
+        // Mostrar indicador de carga
+        const button = document.getElementById("filterButton");
+        const loading = document.getElementById("loadingIndicator");
+        button.disabled = true;
+        loading.classList.remove("d-none");
+
+        fetch(`/infra/labs/statistics/data?from=${from}&to=${to}`)
+          .then((response) => response.json())
+          .then((data) => {
+            renderCharts(data);
+          })
+          .catch((error) => {
+            alert(
+              "Error al cargar las estadísticas. Verifica tu conexión e inténtalo de nuevo."
+            );
+          })
+          .finally(() => {
+            // Ocultar indicador de carga
+            button.disabled = false;
+            loading.classList.add("d-none");
+          });
+      }
+
+      function renderCharts(data) {
+        // Lab Usage Chart
+        const labLabels = data.labStatistics.map((s) => s.roomNumber);
+        const labData = data.labStatistics.map((s) => s.totalReservations);
+
+        if (labChart) labChart.destroy();
+        labChart = new Chart(document.getElementById("labUsageChart"), {
+          type: "bar",
+          data: {
+            labels: labLabels,
+            datasets: [
+              {
+                label: "Total Reservas",
+                data: labData,
+                backgroundColor: "rgba(78, 115, 223, 0.5)",
+                borderColor: "rgba(78, 115, 223, 1)",
+                borderWidth: 1,
+              },
+            ],
+          },
+          options: {
+            responsive: true,
+            maintainAspectRatio: false,
+            scales: { y: { beginAtZero: true } },
+          },
+        });
+
+        // Status Distribution Chart
+        const statusLabels = Object.keys(data.statusDistribution);
+        const statusData = Object.values(data.statusDistribution);
+
+        if (statusChart) statusChart.destroy();
+        statusChart = new Chart(document.getElementById("statusChart"), {
+          type: "doughnut",
+          data: {
+            labels: statusLabels,
+            datasets: [
+              {
+                data: statusData,
+                backgroundColor: [
+                  "rgba(255, 193, 7, 0.5)",
+                  "rgba(28, 200, 138, 0.5)",
+                  "rgba(231, 74, 59, 0.5)",
+                  "rgba(133, 135, 150, 0.5)",
+                ],
+              },
+            ],
+          },
+          options: { responsive: true, maintainAspectRatio: false },
+        });
+
+        // Top Teachers Chart
+        const teacherLabels = data.topTeachers.map((t) => t.teacherName);
+        const teacherData = data.topTeachers.map((t) => t.reservationCount);
+
+        if (teachersChart) teachersChart.destroy();
+        teachersChart = new Chart(document.getElementById("topTeachersChart"), {
+          type: "horizontalBar",
+          data: {
+            labels: teacherLabels,
+            datasets: [
+              {
+                label: "Reservas",
+                data: teacherData,
+                backgroundColor: "rgba(54, 185, 204, 0.5)",
+              },
+            ],
+          },
+          options: { responsive: true, maintainAspectRatio: false },
+        });
+
+        // Peak Hours Chart
+        const hourLabels = Object.keys(data.peakHours).map((h) => h + ":00");
+        const hourData = Object.values(data.peakHours);
+
+        if (peakChart) peakChart.destroy();
+        peakChart = new Chart(document.getElementById("peakHoursChart"), {
+          type: "line",
+          data: {
+            labels: hourLabels,
+            datasets: [
+              {
+                label: "Reservas por Hora",
+                data: hourData,
+                borderColor: "rgba(231, 74, 59, 1)",
+                backgroundColor: "rgba(231, 74, 59, 0.1)",
+                tension: 0.4,
+              },
+            ],
+          },
+          options: {
+            responsive: true,
+            maintainAspectRatio: false,
+            scales: { y: { beginAtZero: true } },
+          },
+        });
+      }
+
+      // Load initial data
+      document.addEventListener("DOMContentLoaded", function () {
+        loadStatistics();
+      });
+
+      // Export functions
+      function exportToPdf() {
+        const from = document.getElementById("fromDate").value;
+        const to = document.getElementById("toDate").value;
+        window.location.href = `/infra/labs/statistics/export/pdf?from=${from}&to=${to}`;
+      }
+
+      function exportToExcel() {
+        const from = document.getElementById("fromDate").value;
+        const to = document.getElementById("toDate").value;
+        window.location.href = `/infra/labs/statistics/export/excel?from=${from}&to=${to}`;
+      }
+    </script>
+  </body>
+</html>

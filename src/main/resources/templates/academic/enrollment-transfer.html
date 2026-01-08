@@ -1,0 +1,85 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+  <head>
+    <meta charset="utf-8" />
+    <title>Transferir Estudiante - Sistema Escolar</title>
+    <link
+      th:href="@{/vendor/fontawesome-free/css/all.min.css}"
+      rel="stylesheet"
+      type="text/css"
+    />
+    <link th:href="@{/css/sb-admin-2.min.css}" rel="stylesheet" />
+  </head>
+  <body id="page-top">
+    <div id="wrapper">
+      <div th:replace="~{fragments/sb-admin-sidebar :: sidebar}"></div>
+      <div id="content-wrapper" class="d-flex flex-column">
+        <div id="content">
+          <div th:replace="~{fragments/sb-admin-topbar :: topbar}"></div>
+          <div class="container-fluid">
+            <div class="card shadow mb-4">
+              <div class="card-header py-3">
+                <h6 class="m-0 font-weight-bold text-primary">
+                  Transferencia de Sección
+                </h6>
+              </div>
+              <div class="card-body">
+                <div class="alert alert-info">
+                  <i class="fas fa-info-circle"></i> Vas a transferir a
+                  <strong
+                    ><span
+                      th:text="${student.firstName + ' ' + student.lastName}"
+                    ></span></strong
+                  >.
+                </div>
+                <form th:action="@{/enrollments/transfer}" method="post">
+                  <input
+                    type="hidden"
+                    name="studentId"
+                    th:value="${student.id}"
+                  />
+                  <input
+                    type="hidden"
+                    name="fromSectionId"
+                    th:value="${currentSectionId}"
+                  />
+
+                  <div class="form-group">
+                    <label for="toSectionId"
+                      >Seleccionar Sección de Destino:</label
+                    >
+                    <select
+                      name="toSectionId"
+                      id="toSectionId"
+                      class="form-control"
+                      required
+                    >
+                      <option value="">-- Seleccione Sección --</option>
+                      <option
+                        th:each="sec : ${sections}"
+                        th:value="${sec.id}"
+                        th:text="${sec.name + ' (' + sec.course.name + ')'}"
+                      ></option>
+                    </select>
+                  </div>
+                  <div class="mt-4">
+                    <button type="submit" class="btn btn-primary">
+                      <i class="fas fa-exchange-alt"></i> Confirmar
+                      Transferencia
+                    </button>
+                    <a
+                      th:href="@{/enrollments/section/{id}(id=${currentSectionId})}"
+                      class="btn btn-secondary"
+                      >Cancelar</a
+                    >
+                  </div>
+                </form>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div th:replace="~{fragments/sb-admin-footer :: footer}"></div>
+      </div>
+    </div>
+  </body>
+</html>

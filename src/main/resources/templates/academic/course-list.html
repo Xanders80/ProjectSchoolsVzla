@@ -66,6 +66,7 @@
                         <th>Código</th>
                         <th>Nombre</th>
                         <th>Créditos</th>
+                        <th>Hrs/Sem</th>
                         <th>Nivel de Grado</th>
                         <th>Descripción</th>
                         <th>Acciones</th>
@@ -79,6 +80,7 @@
                           Introduction to Programming
                         </td>
                         <td th:text="${course.credits}">3</td>
+                        <td th:text="${course.weeklyHours}">4</td>
                         <td th:text="${course.gradeLevel}">1</td>
                         <td th:text="${course.description}">
                           Basic programming concepts

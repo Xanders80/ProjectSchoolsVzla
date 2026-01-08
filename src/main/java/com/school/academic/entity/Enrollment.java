@@ -27,19 +27,63 @@ public class Enrollment {
     @JoinColumn(name = "section_id", nullable = false)
     private Section section;
 
+    @jakarta.persistence.Column(name = "grade")
     private Double grade;
+
+    @jakarta.persistence.Enumerated(jakarta.persistence.EnumType.STRING)
+    @jakarta.persistence.Column(name = "status", nullable = false, length = 20)
+    private com.school.academic.enums.EnrollmentStatus status = com.school.academic.enums.EnrollmentStatus.ACTIVE;
+
     private LocalDateTime enrollmentDate = LocalDateTime.now();
 
-    public Enrollment() {}
+    public Enrollment() {
+    }
 
-    public Long getId() { return id; }
-    public void setId(Long id) { this.id = id; }
-    public Student getStudent() { return student; }
-    public void setStudent(Student student) { this.student = student; }
-    public Section getSection() { return section; }
-    public void setSection(Section section) { this.section = section; }
-    public Double getGrade() { return grade; }
-    public void setGrade(Double grade) { this.grade = grade; }
-    public LocalDateTime getEnrollmentDate() { return enrollmentDate; }
-    public void setEnrollmentDate(LocalDateTime enrollmentDate) { this.enrollmentDate = enrollmentDate; }
+    public Long getId() {
+        return id;
+    }
+
+    public void setId(Long id) {
+        this.id = id;
+    }
+
+    public Student getStudent() {
+        return student;
+    }
+
+    public void setStudent(Student student) {
+        this.student = student;
+    }
+
+    public Section getSection() {
+        return section;
+    }
+
+    public void setSection(Section section) {
+        this.section = section;
+    }
+
+    public Double getGrade() {
+        return grade;
+    }
+
+    public void setGrade(Double grade) {
+        this.grade = grade;
+    }
+
+    public com.school.academic.enums.EnrollmentStatus getStatus() {
+        return status;
+    }
+
+    public void setStatus(com.school.academic.enums.EnrollmentStatus status) {
+        this.status = status;
+    }
+
+    public LocalDateTime getEnrollmentDate() {
+        return enrollmentDate;
+    }
+
+    public void setEnrollmentDate(LocalDateTime enrollmentDate) {
+        this.enrollmentDate = enrollmentDate;
+    }
 }

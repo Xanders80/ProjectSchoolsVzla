@@ -47,6 +47,7 @@ public class TeacherProfile {
     @Column(name = "certifications", columnDefinition = "TEXT")
     private String certifications;
 
+    @org.springframework.format.annotation.DateTimeFormat(pattern = "yyyy-MM-dd")
     @Column(name = "last_evaluation_date")
     private java.time.LocalDate lastEvaluationDate;
 
@@ -58,6 +59,16 @@ public class TeacherProfile {
 
     @Column(name = "preferred_subjects", columnDefinition = "TEXT")
     private String preferredSubjects;
+
+    @Column(name = "escalafon_category", length = 50)
+    private String escalafonCategory;
+
+    @org.springframework.format.annotation.DateTimeFormat(pattern = "yyyy-MM-dd")
+    @Column(name = "seniority_date")
+    private java.time.LocalDate seniorityDate;
+
+    @Column(name = "current_points")
+    private Double currentPoints = 0.0;
 
     public TeacherProfile() {
     }
@@ -110,18 +121,67 @@ public class TeacherProfile {
         this.bio = bio;
     }
 
-    public String getCertifications() { return certifications; }
-    public void setCertifications(String certifications) { this.certifications = certifications; }
+    public String getCertifications() {
+        return certifications;
+    }
 
-    public java.time.LocalDate getLastEvaluationDate() { return lastEvaluationDate; }
-    public void setLastEvaluationDate(java.time.LocalDate lastEvaluationDate) { this.lastEvaluationDate = lastEvaluationDate; }
+    public void setCertifications(String certifications) {
+        this.certifications = certifications;
+    }
 
-    public Double getEvaluationScore() { return evaluationScore; }
-    public void setEvaluationScore(Double evaluationScore) { this.evaluationScore = evaluationScore; }
+    public java.time.LocalDate getLastEvaluationDate() {
+        return lastEvaluationDate;
+    }
 
-    public Integer getYearsExperience() { return yearsExperience; }
-    public void setYearsExperience(Integer yearsExperience) { this.yearsExperience = yearsExperience; }
+    public void setLastEvaluationDate(java.time.LocalDate lastEvaluationDate) {
+        this.lastEvaluationDate = lastEvaluationDate;
+    }
 
-    public String getPreferredSubjects() { return preferredSubjects; }
-    public void setPreferredSubjects(String preferredSubjects) { this.preferredSubjects = preferredSubjects; }
+    public Double getEvaluationScore() {
+        return evaluationScore;
+    }
+
+    public void setEvaluationScore(Double evaluationScore) {
+        this.evaluationScore = evaluationScore;
+    }
+
+    public Integer getYearsExperience() {
+        return yearsExperience;
+    }
+
+    public void setYearsExperience(Integer yearsExperience) {
+        this.yearsExperience = yearsExperience;
+    }
+
+    public String getPreferredSubjects() {
+        return preferredSubjects;
+    }
+
+    public void setPreferredSubjects(String preferredSubjects) {
+        this.preferredSubjects = preferredSubjects;
+    }
+
+    public String getEscalafonCategory() {
+        return escalafonCategory;
+    }
+
+    public void setEscalafonCategory(String escalafonCategory) {
+        this.escalafonCategory = escalafonCategory;
+    }
+
+    public java.time.LocalDate getSeniorityDate() {
+        return seniorityDate;
+    }
+
+    public void setSeniorityDate(java.time.LocalDate seniorityDate) {
+        this.seniorityDate = seniorityDate;
+    }
+
+    public Double getCurrentPoints() {
+        return currentPoints;
+    }
+
+    public void setCurrentPoints(Double currentPoints) {
+        this.currentPoints = currentPoints;
+    }
 }

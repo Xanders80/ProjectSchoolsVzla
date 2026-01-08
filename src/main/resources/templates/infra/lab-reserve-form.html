@@ -1,0 +1,180 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+  <head>
+    <meta charset="utf-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta
+      name="viewport"
+      content="width=device-width, initial-scale=1, shrink-to-fit=no"
+    />
+    <title>Reservar Laboratorio</title>
+    <link
+      th:href="@{/vendor/fontawesome-free/css/all.min.css}"
+      rel="stylesheet"
+      type="text/css"
+    />
+    <link
+      href="https://fonts.googleapis.com/css?family=Nunito:200,200i,300,300i,400,400i,600,600i,700,700i,800,800i,900,900i"
+      rel="stylesheet"
+    />
+    <link th:href="@{/css/sb-admin-2.min.css}" rel="stylesheet" />
+  </head>
+  <body id="page-top">
+    <div id="wrapper">
+      <div th:replace="~{fragments/sb-admin-sidebar :: sidebar}"></div>
+      <div id="content-wrapper" class="d-flex flex-column">
+        <div id="content">
+          <div th:replace="~{fragments/sb-admin-topbar :: topbar}"></div>
+          <div class="container-fluid">
+            <h1 class="h3 mb-4 text-gray-800">
+              Reservar Laboratorio: <span th:text="${room.roomNumber}"></span>
+            </h1>
+
+            <div class="row">
+              <div class="col-lg-6">
+                <div class="card shadow mb-4">
+                  <div class="card-header py-3">
+                    <h6 class="m-0 font-weight-bold text-primary">
+                      Formulario de Reserva
+                    </h6>
+                  </div>
+                  <div class="card-body">
+                    <form
+                      th:action="@{/infra/labs/reserve}"
+                      th:object="${reservation}"
+                      method="post"
+                    >
+                      <input
+                        type="hidden"
+                        name="room.id"
+                        th:value="${room.id}"
+                      />
+
+                      <div class="form-group">
+                        <label>Docente Responsable *</label>
+                        <select name="teacher.id" class="form-control" required>
+                          <option value="">Seleccione un docente</option>
+                          <option
+                            th:each="teacher : ${teachers}"
+                            th:value="${teacher.id}"
+                            th:text="${teacher.firstName + ' ' + teacher.lastName + ' (' + teacher.dni + ')'}"
+                          ></option>
+                        </select>
+                      </div>
+
+                      <div class="form-group">
+                        <label>Número de Estudiantes</label>
+                        <input
+                          type="number"
+                          name="numberOfStudents"
+                          class="form-control"
+                          min="1"
+                          th:placeholder="'Capacidad del lab: ' + ${room.capacity}"
+                        />
+                        <small class="form-text text-muted"
+                          >Opcional. Máximo:
+                          <span th:text="${room.capacity}"></span>
+                          estudiantes</small
+                        >
+                      </div>
+
+                      <div class="form-group">
+                        <label>Fecha y Hora Inicio</label>
+                        <input
+                          type="datetime-local"
+                          th:field="*{startTime}"
+                          class="form-control"
+                          required
+                        />
+                      </div>
+
+                      <div class="form-group">
+                        <label>Fecha y Hora Fin</label>
+                        <input
+                          type="datetime-local"
+                          th:field="*{endTime}"
+                          class="form-control"
+                          required
+                        />
+                      </div>
+
+                      <div class="form-group">
+                        <label>Propósito / Actividad *</label>
+                        <textarea
+                          th:field="*{purpose}"
+                          class="form-control"
+                          rows="3"
+                          required
+                          placeholder="Describa el propósito de la reserva"
+                        ></textarea>
+                      </div>
+
+                      <div class="alert alert-info" role="alert">
+                        <strong>Restricciones:</strong>
+                        <ul class="mb-0">
+                          <li>Anticipación mínima: 24 horas</li>
+                          <li>Duración: 30 minutos - 4 horas</li>
+                          <li>Lunes-Viernes: 7:00 - 20:00</li>
+                          <li>Sábados: 8:00 - 14:00</li>
+                          <li>Domingos: No disponible</li>
+                        </ul>
+                      </div>
+
+                      <button type="submit" class="btn btn-primary btn-block">
+                        Confirmar Reserva
+                      </button>
+                    </form>
+                  </div>
+                </div>
+              </div>
+              <div class="col-lg-6">
+                <div class="card shadow mb-4">
+                  <div class="card-header py-3">
+                    <h6 class="m-0 font-weight-bold text-primary">
+                      Reservas Existentes
+                    </h6>
+                  </div>
+                  <div class="card-body">
+                    <div class="table-responsive">
+                      <table class="table table-sm">
+                        <thead>
+                          <tr>
+                            <th>Inicio</th>
+                            <th>Fin</th>
+                            <th>Docente</th>
+                          </tr>
+                        </thead>
+                        <tbody>
+                          <tr th:each="res : ${existingReservations}">
+                            <td
+                              th:text="${#temporals.format(res.startTime, 'dd/MM HH:mm')}"
+                            ></td>
+                            <td
+                              th:text="${#temporals.format(res.endTime, 'dd/MM HH:mm')}"
+                            ></td>
+                            <td
+                              th:text="${res.teacher.firstName + ' ' + res.teacher.lastName}"
+                            ></td>
+                          </tr>
+                          <tr th:if="${existingReservations.empty}">
+                            <td colspan="3" class="text-center text-muted">
+                              No hay reservas para este aula.
+                            </td>
+                          </tr>
+                        </tbody>
+                      </table>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div th:replace="~{fragments/sb-admin-footer :: footer}"></div>
+      </div>
+    </div>
+    <script th:src="@{/vendor/jquery/jquery.min.js}"></script>
+    <script th:src="@{/vendor/bootstrap/js/bootstrap.bundle.min.js}"></script>
+    <script th:src="@{/js/sb-admin-2.min.js}"></script>
+  </body>
+</html>

@@ -1,0 +1,113 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+  <head>
+    <meta charset="UTF-8" />
+    <title>Acta de Calificaciones</title>
+    <style>
+      body {
+        font-family: "Inter", sans-serif;
+        padding: 20px;
+        font-size: 14px;
+      }
+      .header {
+        text-align: center;
+        margin-bottom: 30px;
+        border-bottom: 2px solid #333;
+        padding-bottom: 10px;
+      }
+      .acta-title {
+        font-size: 18px;
+        font-weight: bold;
+      }
+      .info-grid {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 10px;
+        margin-bottom: 20px;
+      }
+      .grades-table {
+        width: 100%;
+        border-collapse: collapse;
+      }
+      .grades-table th,
+      .grades-table td {
+        border: 1px solid #000;
+        padding: 8px;
+        text-align: center;
+      }
+      .grades-table th {
+        background-color: #eee;
+      }
+      .footer {
+        margin-top: 50px;
+        display: flex;
+        justify-content: space-around;
+      }
+      .signature-box {
+        text-align: center;
+        width: 200px;
+      }
+      .signature-line {
+        border-top: 1px solid #000;
+        margin-bottom: 5px;
+      }
+    </style>
+  </head>
+  <body>
+    <div class="header">
+      <div class="acta-title">ACTA DE CALIFICACIONES FINALES</div>
+      <div th:text="${schoolName}">COMPLEJO EDUCATIVO DE PRUEBA</div>
+    </div>
+
+    <div class="info-grid">
+      <div>
+        <strong>Sección:</strong> <span th:text="${sectionName}">1-A</span>
+      </div>
+      <div>
+        <strong>Periodo:</strong> <span th:text="${periodName}">2026-I</span>
+      </div>
+      <div>
+        <strong>Profesor:</strong>
+        <span th:text="${teacherName}">DOCENTE RESPONSABLE</span>
+      </div>
+      <div>
+        <strong>Fecha Emisión:</strong>
+        <span th:text="${#temporals.format(issueDate, 'dd/MM/yyyy')}"
+          >07/01/2026</span
+        >
+      </div>
+    </div>
+
+    <table class="grades-table">
+      <thead>
+        <tr>
+          <th>N°</th>
+          <th>Estudiante</th>
+          <th>Promedio Final</th>
+          <th>Estado</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr th:each="row, stat : ${results}">
+          <td th:text="${stat.count}">1</td>
+          <td th:text="${row.studentName}" style="text-align: left">
+            JUAN PEREZ
+          </td>
+          <td th:text="${#numbers.formatDecimal(row.average, 1, 2)}">85.50</td>
+          <td th:text="${row.status}">PROMOVIDO</td>
+        </tr>
+      </tbody>
+    </table>
+
+    <div class="footer">
+      <div class="signature-box">
+        <div class="signature-line"></div>
+        Docente de Sección
+      </div>
+      <div class="signature-box">
+        <div class="signature-line"></div>
+        Secretaría General
+      </div>
+    </div>
+  </body>
+</html>

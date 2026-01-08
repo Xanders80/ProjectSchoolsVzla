@@ -56,6 +56,9 @@ public class StaffController {
             @RequestParam(required = false) String specializationArea,
             @RequestParam(required = false) Integer maxHoursPerWeek,
             @RequestParam(required = false) String bio,
+            @RequestParam(required = false) Integer yearsExperience,
+            @RequestParam(required = false) String preferredSubjects,
+            @RequestParam(required = false) String certifications,
             Model model) {
         if (result.hasErrors()) {
             model.addAttribute("roles", Role.values());
@@ -65,6 +68,9 @@ public class StaffController {
             dto.setSpecializationArea(specializationArea);
             dto.setMaxHoursPerWeek(maxHoursPerWeek);
             dto.setBio(bio);
+            dto.setYearsExperience(yearsExperience);
+            dto.setPreferredSubjects(preferredSubjects);
+            dto.setCertifications(certifications);
             model.addAttribute("teacherProfile", dto);
             return STAFF_FORM_VIEW;
         }
@@ -73,11 +79,16 @@ public class StaffController {
 
             // If role is TEACHER, save profile
             if (savedStaff.getJobTitle() == Role.TEACHER) {
+                // Fetch current profile to preserve escalafon fields
+                com.school.academic.entity.TeacherProfile currentProfile = teacherProfileService
+                        .getProfileByStaffId(savedStaff.getId())
+                        .orElse(new com.school.academic.entity.TeacherProfile());
+
                 teacherProfileService.createOrUpdateProfile(savedStaff, academicTitle, specializationArea,
-                        maxHoursPerWeek, bio);
-            } else {
-                // If converted from Teacher to something else, maybe delete profile?
-                // For now, let's keep it but optional optimization
+                        maxHoursPerWeek, bio, yearsExperience, preferredSubjects, certifications,
+                        currentProfile.getEscalafonCategory(),
+                        currentProfile.getSeniorityDate(),
+                        currentProfile.getCurrentPoints());
             }
 
         } catch (IllegalArgumentException e) {

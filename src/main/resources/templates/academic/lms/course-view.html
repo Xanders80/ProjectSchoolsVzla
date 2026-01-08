@@ -1,0 +1,162 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+  <head>
+    <meta charset="utf-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta
+      name="viewport"
+      content="width=device-width, initial-scale=1, shrink-to-fit=no"
+    />
+    <title th:text="${course.name} + ' - LMS'"></title>
+    <link
+      th:href="@{/vendor/fontawesome-free/css/all.min.css}"
+      rel="stylesheet"
+      type="text/css"
+    />
+    <link
+      href="https://fonts.googleapis.com/css?family=Nunito:200,200i,300,300i,400,400i,600,600i,700,700i,800,800i,900,900i"
+      rel="stylesheet"
+    />
+    <link th:href="@{/css/sb-admin-2.min.css}" rel="stylesheet" />
+  </head>
+  <body id="page-top">
+    <div id="wrapper">
+      <div th:replace="~{fragments/sb-admin-sidebar :: sidebar}"></div>
+      <div id="content-wrapper" class="d-flex flex-column">
+        <div id="content">
+          <div th:replace="~{fragments/sb-admin-topbar :: topbar}"></div>
+          <div class="container-fluid">
+            <h1 class="h3 mb-4 text-gray-800" th:text="${course.name}">
+              Nombre del Curso
+            </h1>
+
+            <div class="row">
+              <div class="col-lg-8">
+                <div th:each="module : ${modules}" class="card shadow mb-4">
+                  <div class="card-header py-3">
+                    <h6
+                      class="m-0 font-weight-bold text-primary"
+                      th:text="${module.name}"
+                    >
+                      Módulo
+                    </h6>
+                  </div>
+                  <div class="card-body">
+                    <p
+                      th:text="${module.description}"
+                      class="text-muted small"
+                    ></p>
+                    <div class="list-group list-group-flush">
+                      <div
+                        th:each="lesson : ${module.lessons}"
+                        class="list-group-item d-flex justify-content-between align-items-center"
+                      >
+                        <div>
+                          <i class="fas fa-file-alt mr-2 text-info"></i>
+                          <span th:text="${lesson.title}">Lección</span>
+                        </div>
+                        <div>
+                          <button
+                            th:if="${lesson.content != null && lesson.content.endsWith('.pdf')}"
+                            class="btn btn-sm btn-outline-info mr-2 preview-btn"
+                            th:data-url="${lesson.content}"
+                          >
+                            Vista Previa
+                          </button>
+                          <a
+                            th:href="@{/academic/lms/lesson/{id}(id=${lesson.id})}"
+                            class="btn btn-sm btn-outline-primary"
+                            >Ver</a
+                          >
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+              <div class="col-lg-4">
+                <div class="card shadow mb-4">
+                  <div class="card-header py-3">
+                    <h6 class="m-0 font-weight-bold text-primary">
+                      Información del Curso
+                    </h6>
+                  </div>
+                  <div class="card-body">
+                    <p th:text="${course.description}"></p>
+                    <hr />
+                    <div class="small font-weight-bold">
+                      Código:
+                      <span
+                        th:text="${course.code}"
+                        class="text-secondary"
+                      ></span>
+                    </div>
+                    <div class="small font-weight-bold">
+                      Créditos:
+                      <span
+                        th:text="${course.credits}"
+                        class="text-secondary"
+                      ></span>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- PDF Preview Modal -->
+          <div
+            class="modal fade"
+            id="pdfModal"
+            tabindex="-1"
+            role="dialog"
+            aria-hidden="true"
+          >
+            <div class="modal-dialog modal-xl" role="document">
+              <div class="modal-content">
+                <div class="modal-header">
+                  <h5 class="modal-title">Vista Previa de Recurso</h5>
+                  <button
+                    type="button"
+                    class="close"
+                    data-dismiss="modal"
+                    aria-label="Close"
+                  >
+                    <span aria-hidden="true">&times;</span>
+                  </button>
+                </div>
+                <div class="modal-body p-0">
+                  <iframe
+                    id="pdfFrame"
+                    src=""
+                    width="100%"
+                    height="600px"
+                    style="border: none"
+                  ></iframe>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div th:replace="~{fragments/sb-admin-footer :: footer}"></div>
+        </div>
+      </div>
+    </div>
+    <script th:src="@{/vendor/jquery/jquery.min.js}"></script>
+    <script th:src="@{/vendor/bootstrap/js/bootstrap.bundle.min.js}"></script>
+    <script th:src="@{/js/sb-admin-2.min.js}"></script>
+    <script>
+      $(document).ready(function () {
+        $(".preview-btn").on("click", function () {
+          var url = $(this).data("url");
+          $("#pdfFrame").attr("src", url);
+          $("#pdfModal").modal("show");
+        });
+
+        $("#pdfModal").on("hidden.bs.modal", function () {
+          $("#pdfFrame").attr("src", "");
+        });
+      });
+    </script>
+  </body>
+</html>

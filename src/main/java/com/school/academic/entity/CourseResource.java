@@ -37,8 +37,14 @@ public class CourseResource {
     @Column(nullable = false, length = 100)
     private String title;
 
-    @Column(name = "resource_type", length = 20)
-    private String resourceType; // PDF, VIDEO, LINK, etc.
+    @NotNull(message = "La categoría es obligatoria")
+    @jakarta.persistence.Enumerated(jakarta.persistence.EnumType.STRING)
+    @Column(name = "category", nullable = false, length = 30)
+    private com.school.academic.enums.ResourceCategory category;
+
+    @Size(max = 500)
+    @Column(name = "description", length = 500)
+    private String description;
 
     @NotBlank(message = "La URL o ruta es obligatoria")
     @Column(name = "url", nullable = false, columnDefinition = "TEXT")
@@ -76,12 +82,20 @@ public class CourseResource {
         this.title = title;
     }
 
-    public String getResourceType() {
-        return resourceType;
+    public com.school.academic.enums.ResourceCategory getCategory() {
+        return category;
     }
 
-    public void setResourceType(String resourceType) {
-        this.resourceType = resourceType;
+    public void setCategory(com.school.academic.enums.ResourceCategory category) {
+        this.category = category;
+    }
+
+    public String getDescription() {
+        return description;
+    }
+
+    public void setDescription(String description) {
+        this.description = description;
     }
 
     public String getUrl() {

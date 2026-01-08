@@ -125,15 +125,32 @@
                           01/01/2025
                         </td>
                         <td class="text-center">
-                          <button
-                            type="button"
-                            class="btn btn-sm btn-outline-danger"
-                            data-toggle="modal"
-                            data-target="#deleteModal"
-                            th:onclick="'confirmDeleteEnrol(\'' + ${enrollment.id} + '\', \'' + ${section.id} + '\')'"
-                          >
-                            <i class="fas fa-user-minus"></i> Desvincular
-                          </button>
+                          <div class="btn-group">
+                            <a
+                              th:href="@{/enrollments/transfer/{studentId}(studentId=${enrollment.student.id}, currentSectionId=${section.id})}"
+                              class="btn btn-sm btn-outline-primary"
+                              title="Transferir a otra sección"
+                            >
+                              <i class="fas fa-exchange-alt"></i>
+                            </a>
+                            <a
+                              th:href="@{/academic/documents/download/certificate/{studentId}(studentId=${enrollment.student.id})}"
+                              class="btn btn-sm btn-outline-success"
+                              title="Descargar PDF Oficial"
+                            >
+                              <i class="fas fa-file-download"></i>
+                            </a>
+                            <button
+                              type="button"
+                              class="btn btn-sm btn-outline-danger"
+                              data-toggle="modal"
+                              data-target="#deleteModal"
+                              th:onclick="'confirmDeleteEnrol(\'' + ${enrollment.id} + '\', \'' + ${section.id} + '\')'"
+                              title="Desvincular de sección"
+                            >
+                              <i class="fas fa-user-minus"></i>
+                            </button>
+                          </div>
                         </td>
                       </tr>
                       <tr th:if="${#lists.isEmpty(enrollments)}">
@@ -193,7 +210,17 @@
             >
               Cancelar
             </button>
-            <form id="deleteForm" method="post">
+            <form
+              id="deleteForm"
+              th:action="@{/enrollments/delete}"
+              method="post"
+            >
+              <input
+                type="hidden"
+                th:name="${_csrf.parameterName}"
+                th:value="${_csrf.token}"
+              />
+              <input type="hidden" name="enrollmentId" id="modalEnrollmentId" />
               <input type="hidden" name="sectionId" id="modalSectionId" />
               <button class="btn btn-danger" type="submit">Confirmar</button>
             </form>
@@ -218,8 +245,7 @@
 
     <script th:inline="javascript">
       function confirmDeleteEnrol(enrollmentId, sectionId) {
-        document.getElementById("deleteForm").action =
-          /*[[@{/enrollments/delete/}]]*/ "/enrollments/delete/" + enrollmentId;
+        document.getElementById("modalEnrollmentId").value = enrollmentId;
         document.getElementById("modalSectionId").value = sectionId;
       }
     </script>

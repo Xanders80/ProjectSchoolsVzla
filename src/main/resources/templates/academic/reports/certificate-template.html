@@ -1,0 +1,138 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+  <head>
+    <meta charset="UTF-8" />
+    <title>Certificado de Estudios</title>
+    <style>
+      body {
+        font-family: "Inter", sans-serif;
+        padding: 40px;
+        color: #333;
+      }
+      .header {
+        text-align: center;
+        margin-bottom: 50px;
+      }
+      .school-name {
+        font-size: 24px;
+        font-weight: bold;
+        color: #2c3e50;
+      }
+      .document-title {
+        font-size: 20px;
+        text-decoration: underline;
+        margin-top: 10px;
+      }
+      .student-info {
+        margin-bottom: 30px;
+        line-height: 1.6;
+      }
+      .grades-table {
+        width: 100%;
+        border-collapse: collapse;
+        margin-top: 20px;
+      }
+      .grades-table th,
+      .grades-table td {
+        border: 1px solid #bdc3c7;
+        padding: 12px;
+        text-align: left;
+      }
+      .grades-table th {
+        background-color: #f8f9fa;
+      }
+      .footer {
+        margin-top: 100px;
+        text-align: center;
+      }
+      .signature-line {
+        border-top: 1px solid #000;
+        width: 250px;
+        margin: 0 auto;
+        padding-top: 5px;
+      }
+      @media print {
+        .no-print {
+          display: none;
+        }
+        body {
+          padding: 0;
+        }
+      }
+    </style>
+  </head>
+  <body>
+    <div class="no-print" style="margin-bottom: 20px; text-align: right">
+      <button onclick="window.print()">Imprimir PDF</button>
+    </div>
+
+    <div class="header">
+      <div class="school-name" th:text="${schoolName}">
+        NOMBRE DE LA INSTITUCIÓN
+      </div>
+      <div class="document-title">CERTIFICADO DE ESTUDIOS OFICIAL</div>
+    </div>
+
+    <div class="student-info">
+      <p>
+        Se certifica que el estudiante
+        <strong
+          ><span th:text="${studentName}">NOMBRE DEL ESTUDIANTE</span></strong
+        >, identificado con DNI
+        <strong><span th:text="${dni}">DNI</span></strong> y número de matrícula
+        <strong><span th:text="${registrationNumber}">MATRICULA</span></strong
+        >, ha cursado y aprobado las siguientes materias:
+      </p>
+    </div>
+
+    <table class="grades-table">
+      <thead>
+        <tr>
+          <th>Materia / Curso</th>
+          <th>Calificación Numérica</th>
+          <th>Literal</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr th:each="course : ${courses}">
+          <td th:text="${course.name}">Lenguaje</td>
+          <td th:text="${#numbers.formatDecimal(course.score, 1, 2)}">95.00</td>
+          <td th:text="${course.letter}">A</td>
+        </tr>
+      </tbody>
+    </table>
+
+    <div class="footer">
+      <p>
+        Dado a los
+        <span th:text="${#temporals.format(issueDate, 'dd')}">01</span> días del
+        mes de
+        <span th:text="${#temporals.format(issueDate, 'MMMM')}">Enero</span> de
+        <span th:text="${#temporals.format(issueDate, 'yyyy')}">2026</span>.
+      </p>
+
+      <div style="margin-top: 80px">
+        <div class="signature-line">Director Académico</div>
+      </div>
+    </div>
+
+    <div
+      style="
+        margin-top: 50px;
+        font-size: 10px;
+        color: #7f8c8d;
+        border-top: 1px dotted #ccc;
+        padding-top: 10px;
+      "
+    >
+      <p>
+        Código de Verificación Digital (SHA-256): <br />
+        <strong th:text="${verificationHash}">VERIFICATION_HASH_CODE</strong>
+      </p>
+      <p>
+        Este documento cuenta con firma digital de integridad. Puede ser
+        verificado en el portal oficial de la institución.
+      </p>
+    </div>
+  </body>
+</html>

@@ -1,116 +1,184 @@
 <!DOCTYPE html>
 <html xmlns:th="http://www.thymeleaf.org">
-<head>
+  <head>
     <meta charset="utf-8" />
     <meta http-equiv="X-UA-Compatible" content="IE=edge" />
-    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no" />
+    <meta
+      name="viewport"
+      content="width=device-width, initial-scale=1, shrink-to-fit=no"
+    />
     <title>Malla Curricular</title>
-    
-    <link th:href="@{/vendor/fontawesome-free/css/all.min.css}" rel="stylesheet" type="text/css" />
-    <link href="https://fonts.googleapis.com/css?family=Nunito:200,200i,300,300i,400,400i,600,600i,700,700i,800,800i,900,900i" rel="stylesheet" />
+
+    <link
+      th:href="@{/vendor/fontawesome-free/css/all.min.css}"
+      rel="stylesheet"
+      type="text/css"
+    />
+    <link
+      href="https://fonts.googleapis.com/css?family=Nunito:200,200i,300,300i,400,400i,600,600i,700,700i,800,800i,900,900i"
+      rel="stylesheet"
+    />
     <link th:href="@{/css/sb-admin-2.min.css}" rel="stylesheet" />
-</head>
+  </head>
 
-<body id="page-top">
+  <body id="page-top">
     <div id="wrapper">
-        <div th:replace="~{fragments/sb-admin-sidebar :: sidebar}"></div>
-        
-        <div id="content-wrapper" class="d-flex flex-column">
-            <div id="content">
-                <div th:replace="~{fragments/sb-admin-topbar :: topbar}"></div>
-                
-                <div class="container-fluid">
-                    <div class="d-sm-flex align-items-center justify-content-between mb-4">
-                        <h1 class="h3 mb-0 text-gray-800">
-                            Malla Curricular - <span th:text="${studyPlan?.name}">Plan</span>
-                        </h1>
-                        <div>
-                            <a th:href="@{/academic/curriculum/new(studyPlanId=${studyPlan?.id})}" class="btn btn-primary">
-                                <i class="fas fa-plus"></i> Agregar Curso
-                            </a>
-                            <a th:href="@{/academic/curriculum}" class="btn btn-secondary">
-                                <i class="fas fa-arrow-left"></i> Volver
-                            </a>
-                        </div>
-                    </div>
+      <div th:replace="~{fragments/sb-admin-sidebar :: sidebar}"></div>
 
-                    <div class="card shadow mb-4">
-                        <div class="card-header py-3">
-                            <h6 class="m-0 font-weight-bold text-primary">Cursos por Grado</h6>
-                        </div>
-                        <div class="card-body">
-                            <div th:if="${#lists.isEmpty(curriculumGrids)}" class="text-center text-muted py-4">
-                                <i class="fas fa-book fa-3x mb-3"></i>
-                                <p>No hay cursos definidos en esta malla curricular</p>
-                                <a th:href="@{/academic/curriculum/new(studyPlanId=${studyPlan?.id})}" class="btn btn-primary">
-                                    <i class="fas fa-plus"></i> Agregar Primer Curso
-                                </a>
-                            </div>
-                            
-                            <div th:unless="${#lists.isEmpty(curriculumGrids)}">
-                                <div th:each="grid : ${curriculumGrids}" class="mb-4">
-                                    <div class="card">
-                                        <div class="card-header bg-primary text-white">
-                                            <h5 class="mb-0">Grado <span th:text="${grid.gradeLevel}">1</span></h5>
-                                            <small>Total de horas: <span th:text="${grid.totalHours ?: 0}">0</span></small>
-                                        </div>
-                                        <div class="card-body">
-                                            <div class="row">
-                                                <!-- Cursos Obligatorios -->
-                                                <div class="col-md-6">
-                                                    <h6 class="text-success"><i class="fas fa-check-circle"></i> Cursos Obligatorios</h6>
-                                                    <div th:if="${#lists.isEmpty(grid.requiredCourses)}" class="text-muted">
-                                                        No hay cursos obligatorios definidos
-                                                    </div>
-                                                    <div th:unless="${#lists.isEmpty(grid.requiredCourses)}">
-                                                        <div th:each="course : ${grid.requiredCourses}" class="border-left border-success pl-3 mb-2">
-                                                            <strong th:text="${course.name}">Matemáticas</strong><br>
-                                                            <small class="text-muted">
-                                                                Créditos: <span th:text="${course.credits ?: 0}">3</span> | 
-                                                                Código: <span th:text="${course.code}">MAT101</span>
-                                                            </small>
-                                                        </div>
-                                                    </div>
-                                                </div>
-                                                
-                                                <!-- Cursos Electivos -->
-                                                <div class="col-md-6">
-                                                    <h6 class="text-info"><i class="fas fa-star"></i> Cursos Electivos</h6>
-                                                    <div th:if="${#lists.isEmpty(grid.electiveCourses)}" class="text-muted">
-                                                        No hay cursos electivos definidos
-                                                    </div>
-                                                    <div th:unless="${#lists.isEmpty(grid.electiveCourses)}">
-                                                        <div th:each="course : ${grid.electiveCourses}" class="border-left border-info pl-3 mb-2">
-                                                            <strong th:text="${course.name}">Arte</strong><br>
-                                                            <small class="text-muted">
-                                                                Créditos: <span th:text="${course.credits ?: 0}">2</span> | 
-                                                                Código: <span th:text="${course.code}">ART101</span>
-                                                            </small>
-                                                        </div>
-                                                        <small class="text-info">
-                                                            Mínimo electivos requeridos: <span th:text="${grid.minElectives ?: 0}">0</span>
-                                                        </small>
-                                                    </div>
-                                                </div>
-                                            </div>
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                </div>
+      <div id="content-wrapper" class="d-flex flex-column">
+        <div id="content">
+          <div th:replace="~{fragments/sb-admin-topbar :: topbar}"></div>
+
+          <div class="container-fluid">
+            <div
+              class="d-sm-flex align-items-center justify-content-between mb-4"
+            >
+              <h1 class="h3 mb-0 text-gray-800">
+                Malla Curricular -
+                <span th:text="${studyPlan?.name}">Plan</span>
+              </h1>
+              <div>
+                <a
+                  th:href="@{/academic/curriculum/new(studyPlanId=${studyPlan?.id})}"
+                  class="btn btn-primary"
+                >
+                  <i class="fas fa-plus"></i> Agregar Curso
+                </a>
+                <a th:href="@{/academic/curriculum}" class="btn btn-secondary">
+                  <i class="fas fa-arrow-left"></i> Volver
+                </a>
+              </div>
             </div>
-            <div th:replace="~{fragments/sb-admin-footer :: footer}"></div>
+
+            <div class="card shadow mb-4">
+              <div class="card-header py-3">
+                <h6 class="m-0 font-weight-bold text-primary">
+                  Cursos por Grado
+                </h6>
+              </div>
+              <div class="card-body">
+                <div
+                  th:if="${#lists.isEmpty(curriculumGrids)}"
+                  class="text-center text-muted py-4"
+                >
+                  <i class="fas fa-book fa-3x mb-3"></i>
+                  <p>No hay cursos definidos en esta malla curricular</p>
+                  <a
+                    th:href="@{/academic/curriculum/new(studyPlanId=${studyPlan?.id})}"
+                    class="btn btn-primary"
+                  >
+                    <i class="fas fa-plus"></i> Agregar Primer Curso
+                  </a>
+                </div>
+
+                <div th:unless="${#lists.isEmpty(curriculumGrids)}">
+                  <div th:each="grid : ${curriculumGrids}" class="mb-4">
+                    <div class="card">
+                      <div class="card-header bg-primary text-white">
+                        <h5 class="mb-0">
+                          Grado <span th:text="${grid.gradeLevel}">1</span>
+                        </h5>
+                        <small
+                          >Total de horas:
+                          <span th:text="${grid.totalHours ?: 0}"
+                            >0</span
+                          ></small
+                        >
+                      </div>
+                      <div class="card-body">
+                        <div class="row">
+                          <!-- Cursos Obligatorios -->
+                          <div class="col-md-6">
+                            <h6 class="text-success">
+                              <i class="fas fa-check-circle"></i> Cursos
+                              Obligatorios
+                            </h6>
+                            <div
+                              th:if="${#lists.isEmpty(grid.requiredCourses)}"
+                              class="text-muted"
+                            >
+                              No hay cursos obligatorios definidos
+                            </div>
+                            <div
+                              th:unless="${#lists.isEmpty(grid.requiredCourses)}"
+                            >
+                              <div
+                                th:each="course : ${grid.requiredCourses}"
+                                class="border-left border-success pl-3 mb-2"
+                              >
+                                <strong th:text="${course.name}"
+                                  >Matemáticas</strong
+                                ><br />
+                                <small class="text-muted">
+                                  Hrs/Sem:
+                                  <span th:text="${course.weeklyHours ?: 0}"
+                                    >0</span
+                                  >
+                                  | Código:
+                                  <span th:text="${course.code}">MAT101</span>
+                                </small>
+                              </div>
+                            </div>
+                          </div>
+
+                          <!-- Cursos Electivos -->
+                          <div class="col-md-6">
+                            <h6 class="text-info">
+                              <i class="fas fa-star"></i> Cursos Electivos
+                            </h6>
+                            <div
+                              th:if="${#lists.isEmpty(grid.electiveCourses)}"
+                              class="text-muted"
+                            >
+                              No hay cursos electivos definidos
+                            </div>
+                            <div
+                              th:unless="${#lists.isEmpty(grid.electiveCourses)}"
+                            >
+                              <div
+                                th:each="course : ${grid.electiveCourses}"
+                                class="border-left border-info pl-3 mb-2"
+                              >
+                                <strong th:text="${course.name}">Arte</strong
+                                ><br />
+                                <small class="text-muted">
+                                  Créditos:
+                                  <span th:text="${course.credits ?: 0}"
+                                    >2</span
+                                  >
+                                  | Código:
+                                  <span th:text="${course.code}">ART101</span>
+                                </small>
+                              </div>
+                              <small class="text-info">
+                                Mínimo electivos requeridos:
+                                <span th:text="${grid.minElectives ?: 0}"
+                                  >0</span
+                                >
+                              </small>
+                            </div>
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
         </div>
+        <div th:replace="~{fragments/sb-admin-footer :: footer}"></div>
+      </div>
     </div>
 
-    <a class="scroll-to-top rounded" href="#page-top"><i class="fas fa-angle-up"></i></a>
+    <a class="scroll-to-top rounded" href="#page-top"
+      ><i class="fas fa-angle-up"></i
+    ></a>
     <div th:replace="~{fragments/sb-admin-topbar :: logoutModal}"></div>
 
     <script th:src="@{/vendor/jquery/jquery.min.js}"></script>
     <script th:src="@{/vendor/bootstrap/js/bootstrap.bundle.min.js}"></script>
     <script th:src="@{/vendor/jquery-easing/jquery.easing.min.js}"></script>
     <script th:src="@{/js/sb-admin-2.min.js}"></script>
-</body>
+  </body>
 </html>

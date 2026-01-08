@@ -48,6 +48,15 @@ public class Book {
     @NotNull(message = "El estado es obligatorio")
     private BookStatus status;
 
+    @Column(name = "is_digital", nullable = false)
+    private boolean digital = false;
+
+    @Column(name = "digital_url")
+    private String digitalUrl;
+
+    @Column(name = "file_format", length = 20)
+    private String fileFormat;
+
     @Column(name = "deleted", nullable = false)
     private boolean deleted = false;
 
@@ -132,5 +141,29 @@ public class Book {
 
     public void setStatus(BookStatus status) {
         this.status = status;
+    }
+
+    public boolean isDigital() {
+        return digital;
+    }
+
+    public void setDigital(boolean digital) {
+        this.digital = digital;
+    }
+
+    public String getDigitalUrl() {
+        return digitalUrl;
+    }
+
+    public void setDigitalUrl(String digitalUrl) {
+        this.digitalUrl = digitalUrl;
+    }
+
+    public String getFileFormat() {
+        return fileFormat;
+    }
+
+    public void setFileFormat(String fileFormat) {
+        this.fileFormat = fileFormat;
     }
 }

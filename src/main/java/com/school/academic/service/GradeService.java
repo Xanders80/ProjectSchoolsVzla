@@ -95,7 +95,7 @@ public class GradeService {
             return "-";
 
         // Try to find dynamic scale if course belongs to a study plan
-        if (course.getStudyPlan() != null) {
+        if (course != null && course.getStudyPlan() != null) {
             com.school.academic.entity.GradingScale scale = gradingScaleRepository
                     .findByStudyPlanAndScore(course.getStudyPlan().getId(), java.math.BigDecimal.valueOf(score));
             if (scale != null) {

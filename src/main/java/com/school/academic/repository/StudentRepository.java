@@ -27,4 +27,8 @@ public interface StudentRepository extends JpaRepository<Student, Long> {
 
     @org.springframework.data.jpa.repository.Query("SELECT COUNT(DISTINCT s.id) FROM Student s WHERE s.id IN (SELECT a.student.id FROM Attendance a WHERE a.status = 'ABSENT' AND a.date BETWEEN ?1 AND ?2 GROUP BY a.student.id HAVING COUNT(a.id) >= 3)")
     long countStudentsWithExcessiveAbsences(java.time.LocalDate startDate, java.time.LocalDate endDate);
+
+    @org.springframework.data.jpa.repository.Query("SELECT DISTINCT s FROM Student s JOIN Attendance a ON s.id = a.student.id WHERE a.status = 'ABSENT' AND a.date BETWEEN ?1 AND ?2 GROUP BY s HAVING COUNT(a) >= ?3")
+    java.util.List<Student> findStudentsWithAbsencesMoreThan(java.time.LocalDate startDate, java.time.LocalDate endDate,
+            long threshold);
 }

@@ -99,8 +99,8 @@ public class StudyPlanService {
                 .mapToInt(grid -> grid.getRequiredCourses().size() + grid.getElectiveCourses().size())
                 .sum();
 
-        int totalHours = grids.stream()
-                .mapToInt(grid -> grid.getTotalHours() != null ? grid.getTotalHours() : 0)
+        int totalHours = plan.getCourses().stream()
+                .mapToInt(course -> course.getWeeklyHours() != null ? course.getWeeklyHours() : 0)
                 .sum();
 
         return new StudyPlanSummary(plan, grids.size(), totalCourses, totalHours);
