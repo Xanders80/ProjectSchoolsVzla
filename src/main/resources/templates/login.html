@@ -24,11 +24,15 @@
     <link th:href="@{/css/sb-admin-2.min.css}" rel="stylesheet" />
   </head>
 
-  <body class="bg-gradient-primary">
-    <div class="container">
+  <body class="bg-gradient-primary" role="main">
+    <div class="container" role="main">
       <!-- Outer Row -->
-      <div class="row justify-content-center">
-        <div class="col-xl-10 col-lg-12 col-md-9">
+      <div
+        class="row justify-content-center"
+        role="region"
+        aria-label="Acceso al sistema"
+      >
+        <div class="col-xl-10 col-lg-12 col-md-9" tabindex="-1">
           <div class="card o-hidden border-0 shadow-lg my-5">
             <div class="card-body p-0">
               <!-- Nested Row within Card Body -->
@@ -75,28 +79,42 @@
                       Ha cerrado sesión exitosamente.
                     </div>
 
-                    <form class="user" th:action="@{/login}" method="post">
+                    <form
+                      class="user"
+                      th:action="@{/login}"
+                      method="post"
+                      aria-label="Formulario de inicio de sesión"
+                    >
                       <div class="form-group">
+                        <label for="username" class="sr-only">Usuario</label>
                         <input
                           type="text"
                           class="form-control form-control-user"
                           name="username"
+                          id="username"
                           placeholder="Ingrese su Usuario..."
                           required
+                          aria-required="true"
+                          autocomplete="username"
                         />
                       </div>
                       <div class="form-group">
+                        <label for="password" class="sr-only">Contraseña</label>
                         <input
                           type="password"
                           class="form-control form-control-user"
                           name="password"
+                          id="password"
                           placeholder="Contraseña"
                           required
+                          aria-required="true"
+                          autocomplete="current-password"
                         />
                       </div>
                       <button
                         type="submit"
                         class="btn btn-primary btn-user btn-block"
+                        aria-label="Iniciar sesión"
                       >
                         Iniciar Sesión
                       </button>

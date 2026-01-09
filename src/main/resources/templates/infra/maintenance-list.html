@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html xmlns:th="http://www.thymeleaf.org">
+<html lang="es" xmlns:th="http://www.thymeleaf.org">
   <head>
     <meta charset="utf-8" />
     <meta http-equiv="X-UA-Compatible" content="IE=edge" />
@@ -26,28 +26,28 @@
   </head>
 
   <body id="page-top">
-    <div id="wrapper">
-      <div th:replace="~{fragments/sb-admin-sidebar :: sidebar}"></div>
+    <main id="wrapper">
+      <nav aria-label="Menú principal" th:replace="~{fragments/sb-admin-sidebar :: sidebar}"></nav>
       <div id="content-wrapper" class="d-flex flex-column">
         <div id="content">
-          <div th:replace="~{fragments/sb-admin-topbar :: topbar}"></div>
+          <header th:replace="~{fragments/sb-admin-topbar :: topbar}" aria-label="Barra superior"></header>
 
-          <div class="container-fluid">
+          <main class="container-fluid" aria-labelledby="maintenance-title">
             <div
               class="d-sm-flex align-items-center justify-content-between mb-4"
             >
-              <h1 class="h3 mb-0 text-gray-800">
+              <h1 id="maintenance-title" class="h3 mb-0 text-gray-800">
                 Solicitudes de Mantenimiento
               </h1>
-              <a th:href="@{/infra/maintenance/new}" class="btn btn-primary">
-                <i class="fas fa-plus"></i> Nueva Solicitud
+              <a th:href="@{/infra/maintenance/new}" class="btn btn-primary" aria-label="Nueva solicitud de mantenimiento">
+                <i class="fas fa-plus" aria-hidden="true"></i> Nueva Solicitud
               </a>
             </div>
 
             <!-- Stats Cards -->
-            <div class="row mb-4">
+            <div class="row mb-4" aria-label="Resumen de estado de solicitudes">
               <div class="col-xl-3 col-md-6 mb-4">
-                <div class="card border-left-warning shadow h-100 py-2">
+                <section class="card border-left-warning shadow h-100 py-2" aria-label="Solicitudes pendientes">
                   <div class="card-body">
                     <div class="row no-gutters align-items-center">
                       <div class="col mr-2">
@@ -58,6 +58,9 @@
                         </div>
                         <div
                           class="h5 mb-0 font-weight-bold text-gray-800"
+                          aria-label="Cantidad de solicitudes pendientes"
+                        >
+                          <!-- ...existing code... -->
                           th:text="${pendingCount}"
                         >
                           0
@@ -114,8 +117,6 @@
                   <table
                     class="table table-bordered"
                     id="dataTable"
-                    width="100%"
-                    cellspacing="0"
                   >
                     <thead>
                       <tr>
@@ -239,7 +240,7 @@
 
                 <!-- Pagination -->
                 <div th:if="${requests.totalPages > 1}" class="mt-3">
-                  <nav>
+                  <nav aria-label="Navegación de mantenimiento">
                     <ul class="pagination justify-content-center">
                       <li
                         class="page-item"

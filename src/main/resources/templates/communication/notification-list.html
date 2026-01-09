@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html xmlns:th="http://www.thymeleaf.org">
+<html lang="es" xmlns:th="http://www.thymeleaf.org">
   <head>
     <meta charset="utf-8" />
     <meta http-equiv="X-UA-Compatible" content="IE=edge" />
@@ -22,42 +22,49 @@
   </head>
 
   <body id="page-top">
-    <div id="wrapper">
-      <div th:replace="~{fragments/sb-admin-sidebar :: sidebar}"></div>
+    <main id="wrapper">
+      <nav aria-label="Menú principal" th:replace="~{fragments/sb-admin-sidebar :: sidebar}"></nav>
 
       <div id="content-wrapper" class="d-flex flex-column">
         <div id="content">
-          <div th:replace="~{fragments/sb-admin-topbar :: topbar}"></div>
+          <header th:replace="~{fragments/sb-admin-topbar :: topbar}" aria-label="Barra superior"></header>
 
-          <div class="container-fluid">
-            <h1 class="h3 mb-4 text-gray-800">Mis Notificaciones</h1>
+          <main class="container-fluid" aria-labelledby="notifications-title">
+            <h1 id="notifications-title" class="h3 mb-4 text-gray-800">Mis Notificaciones</h1>
 
             <div class="row">
               <div class="col-lg-12">
-                <div class="card shadow mb-4">
+                <section class="card shadow mb-4" aria-label="Historial de alertas">
                   <div class="card-header py-3">
                     <h6 class="m-0 font-weight-bold text-primary">
                       Historial de Alertas
                     </h6>
                   </div>
                   <div class="card-body">
-                    <div class="list-group">
-                      <div
-                        th:each="note : ${notifications}"
-                        class="list-group-item list-group-item-action flex-column align-items-start"
-                        th:classappend="${!note.read} ? 'bg-gray-100 border-left-primary' : ''"
-                      >
+                    <ul class="list-group" aria-label="Lista de notificaciones">
+                        <li
+                          th:each="note : ${notifications}"
+                          class="list-group-item list-group-item-action flex-column align-items-start"
+                          th:classappend="${!note.read} ? 'bg-gray-100 border-left-primary' : ''"
+                          aria-label="Notificación de tipo [[${note.type}]]"
+                          aria-live="polite"
+                        >
                         <div class="d-flex w-100 justify-content-between">
                           <h5 class="mb-1">
                             <i
                               class="fas mr-2"
                               th:classappend="${note.type.name() == 'INFO'} ? 'fa-info-circle text-info' :
                                                                       (${note.type.name() == 'WARNING'} ? 'fa-exclamation-triangle text-warning' : 'fa-bell text-danger')"
+                              aria-hidden="true"
                             ></i>
                             <span th:text="${note.type}">Tipo</span>
                           </h5>
                           <small
                             th:text="${#temporals.format(note.createdAt, 'dd/MM/yyyy HH:mm')}"
+                            aria-label="Fecha de notificación"
+                          ></small>
+                        </div>
+                        <!-- ...existing code... -->
                             >Hace 3 días</small
                           >
                         </div>
@@ -94,7 +101,7 @@
 
                     <!-- Pagination -->
                     <div th:if="${notifications.totalPages > 1}" class="mt-3">
-                      <nav>
+                      <nav aria-label="Navegación de notificaciones">
                         <ul class="pagination justify-content-center">
                           <li
                             class="page-item"

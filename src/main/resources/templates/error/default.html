@@ -5,17 +5,24 @@
     <title>Error Inesperado</title>
     <link th:href="@{/css/sb-admin-2.min.css}" rel="stylesheet" />
   </head>
-  <body>
-    <div class="container text-center mt-5">
-      <div class="alert alert-dark" role="alert">
-        <h1 class="display-3">Error</h1>
-        <h2 class="alert-heading">Ha ocurrido un error inesperado</h2>
+  <body role="main">
+    <div class="container text-center mt-5" role="main">
+      <div class="alert alert-dark" role="alert" aria-live="assertive">
+        <h1 class="display-3" role="heading" aria-level="1">Error</h1>
+        <h2 class="alert-heading" role="heading" aria-level="2">
+          Ha ocurrido un error inesperado
+        </h2>
         <p>
           Por favor, intenta de nuevo más tarde o contacta al administrador del
           sistema.
         </p>
         <hr />
-        <a th:href="@{/}" class="btn btn-secondary">Ir a la página de inicio</a>
+        <a
+          th:href="@{/}"
+          class="btn btn-secondary"
+          aria-label="Ir a la página de inicio"
+          >Ir a la página de inicio</a
+        >
       </div>
     </div>
   </body>

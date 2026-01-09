@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html xmlns:th="http://www.thymeleaf.org">
+<html lang="es" xmlns:th="http://www.thymeleaf.org">
   <head>
     <meta charset="utf-8" />
     <meta http-equiv="X-UA-Compatible" content="IE=edge" />
@@ -26,19 +26,19 @@
   </head>
 
   <body id="page-top">
-    <div id="wrapper">
-      <div th:replace="~{fragments/sb-admin-sidebar :: sidebar}"></div>
+    <main id="wrapper">
+      <nav aria-label="Menú principal" th:replace="~{fragments/sb-admin-sidebar :: sidebar}"></nav>
       <div id="content-wrapper" class="d-flex flex-column">
         <div id="content">
-          <div th:replace="~{fragments/sb-admin-topbar :: topbar}"></div>
+          <header th:replace="~{fragments/sb-admin-topbar :: topbar}" aria-label="Barra superior"></header>
 
-          <div class="container-fluid">
+          <main class="container-fluid" aria-labelledby="asset-list-title">
             <div
               class="d-sm-flex align-items-center justify-content-between mb-4"
             >
-              <h1 class="h3 mb-0 text-gray-800">Inventario de Activos</h1>
-              <a th:href="@{/infra/assets/new}" class="btn btn-primary">
-                <i class="fas fa-plus"></i> Nuevo Activo
+              <h1 id="asset-list-title" class="h3 mb-0 text-gray-800">Inventario de Activos</h1>
+              <a th:href="@{/infra/assets/new}" class="btn btn-primary" aria-label="Nuevo activo">
+                <i class="fas fa-plus" aria-hidden="true"></i> Nuevo Activo
               </a>
             </div>
 
@@ -46,13 +46,14 @@
               th:if="${successMessage}"
               class="alert alert-success alert-dismissible fade show"
               role="alert"
+              aria-live="polite"
             >
               <span th:text="${successMessage}"></span>
               <button
                 type="button"
                 class="close"
                 data-dismiss="alert"
-                aria-label="Close"
+                aria-label="Cerrar alerta"
               >
                 <span aria-hidden="true">&times;</span>
               </button>
@@ -84,8 +85,6 @@
                   <table
                     class="table table-bordered"
                     id="dataTable"
-                    width="100%"
-                    cellspacing="0"
                   >
                     <thead>
                       <tr>
@@ -149,7 +148,7 @@
 
                 <!-- Pagination -->
                 <div th:if="${assets.totalPages > 1}" class="mt-3">
-                  <nav>
+                  <nav aria-label="Navegación de activos">
                     <ul class="pagination justify-content-center">
                       <li
                         class="page-item"

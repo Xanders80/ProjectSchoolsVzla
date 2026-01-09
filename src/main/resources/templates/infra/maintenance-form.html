@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html
+<html lang="es"
   xmlns:th="http://www.thymeleaf.org"
   xmlns:sec="http://www.thymeleaf.org/extras/spring-security"
 >
@@ -25,24 +25,25 @@
   </head>
 
   <body id="page-top">
-    <div id="wrapper">
-      <div th:replace="~{fragments/sb-admin-sidebar :: sidebar}"></div>
+    <main id="wrapper">
+      <nav aria-label="Menú principal" th:replace="~{fragments/sb-admin-sidebar :: sidebar}"></nav>
       <div id="content-wrapper" class="d-flex flex-column">
         <div id="content">
-          <div th:replace="~{fragments/sb-admin-topbar :: topbar}"></div>
+          <header th:replace="~{fragments/sb-admin-topbar :: topbar}" aria-label="Barra superior"></header>
 
-          <div class="container-fluid">
+          <main class="container-fluid" aria-labelledby="maintenance-form-title">
             <div
               class="d-sm-flex align-items-center justify-content-between mb-4"
             >
               <h1
+                id="maintenance-form-title"
                 class="h3 mb-0 text-gray-800"
                 th:text="${request.id != null ? 'Editar Solicitud' : 'Nueva Solicitud de Mantenimiento'}"
               >
                 Nueva Solicitud
               </h1>
-              <a th:href="@{/infra/maintenance}" class="btn btn-secondary">
-                <i class="fas fa-arrow-left"></i> Volver
+              <a th:href="@{/infra/maintenance}" class="btn btn-secondary" aria-label="Volver a la lista de solicitudes">
+                <i class="fas fa-arrow-left" aria-hidden="true"></i> Volver
               </a>
             </div>
 
@@ -50,13 +51,14 @@
               th:if="${errorMessage}"
               class="alert alert-danger alert-dismissible fade show"
               role="alert"
+              aria-live="assertive"
             >
               <span th:text="${errorMessage}"></span>
               <button
                 type="button"
                 class="close"
                 data-dismiss="alert"
-                aria-label="Close"
+                aria-label="Cerrar alerta"
               >
                 <span aria-hidden="true">&times;</span>
               </button>
@@ -83,7 +85,7 @@
                   <div class="row" th:if="${request.id != null}">
                     <div class="col-md-4">
                       <div class="form-group">
-                        <label>Solicitado Por</label>
+                        <label for="requestedBy">Solicitado Por</label>
                         <input
                           type="text"
                           class="form-control"
@@ -94,7 +96,7 @@
                     </div>
                     <div class="col-md-4">
                       <div class="form-group">
-                        <label>Fecha Solicitud</label>
+                        <label for="requestDate">Fecha Solicitud</label>
                         <input
                           type="text"
                           class="form-control"
@@ -109,7 +111,7 @@
                       th:if="${request.completionDate != null}"
                     >
                       <div class="form-group">
-                        <label>Fecha Completado</label>
+                        <label for="completedDate">Fecha Completado</label>
                         <input
                           type="text"
                           class="form-control"

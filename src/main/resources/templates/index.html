@@ -50,10 +50,10 @@
             </div>
 
             <!-- Content Row -->
-            <div class="row">
+            <div class="row" role="region" aria-label="Indicadores principales">
               <!-- Total de Estudiantes Card -->
               <div class="col-xl-3 col-md-6 mb-4">
-                <div class="card border-left-primary shadow h-100 py-2">
+                <div class="card border-left-primary shadow h-100 py-2" role="region" aria-label="Total de Estudiantes">
                   <div class="card-body">
                     <div class="row no-gutters align-items-center">
                       <div class="col mr-2">
@@ -70,7 +70,7 @@
                         </div>
                       </div>
                       <div class="col-auto">
-                        <i class="fas fa-user-graduate fa-2x text-gray-300"></i>
+                        <i class="fas fa-user-graduate fa-2x text-gray-300" aria-label="Icono estudiantes" tabindex="0"></i>
                       </div>
                     </div>
                   </div>
@@ -79,7 +79,7 @@
 
               <!-- Teachers Card -->
               <div class="col-xl-3 col-md-6 mb-4">
-                <div class="card border-left-success shadow h-100 py-2">
+                <div class="card border-left-success shadow h-100 py-2" role="region" aria-label="Profesores">
                   <div class="card-body">
                     <div class="row no-gutters align-items-center">
                       <div class="col mr-2">
@@ -96,9 +96,7 @@
                         </div>
                       </div>
                       <div class="col-auto">
-                        <i
-                          class="fas fa-chalkboard-teacher fa-2x text-gray-300"
-                        ></i>
+                        <i class="fas fa-chalkboard-teacher fa-2x text-gray-300" aria-label="Icono profesores" tabindex="0"></i>
                       </div>
                     </div>
                   </div>
@@ -107,7 +105,7 @@
 
               <!-- Clases Activas Card -->
               <div class="col-xl-3 col-md-6 mb-4">
-                <div class="card border-left-info shadow h-100 py-2">
+                <div class="card border-left-info shadow h-100 py-2" role="region" aria-label="Clases Activas">
                   <div class="card-body">
                     <div class="row no-gutters align-items-center">
                       <div class="col mr-2">
@@ -124,7 +122,7 @@
                         </div>
                       </div>
                       <div class="col-auto">
-                        <i class="fas fa-book-open fa-2x text-gray-300"></i>
+                        <i class="fas fa-book-open fa-2x text-gray-300" aria-label="Icono clases activas" tabindex="0"></i>
                       </div>
                     </div>
                   </div>
@@ -133,7 +131,7 @@
 
               <!-- Miembros del Personal Card -->
               <div class="col-xl-3 col-md-6 mb-4">
-                <div class="card border-left-warning shadow h-100 py-2">
+                <div class="card border-left-warning shadow h-100 py-2" role="region" aria-label="Miembros del Personal">
                   <div class="card-body">
                     <div class="row no-gutters align-items-center">
                       <div class="col mr-2">
@@ -150,7 +148,7 @@
                         </div>
                       </div>
                       <div class="col-auto">
-                        <i class="fas fa-users fa-2x text-gray-300"></i>
+                        <i class="fas fa-users fa-2x text-gray-300" aria-label="Icono personal" tabindex="0"></i>
                       </div>
                     </div>
                   </div>
@@ -159,10 +157,10 @@
             </div>
 
             <!-- Content Row -->
-            <div class="row">
+            <div class="row" role="region" aria-label="Acciones rápidas y sistema">
               <!-- Acciones Rápidas -->
               <div class="col-lg-6 mb-4">
-                <div class="card shadow mb-4">
+                <div class="card shadow mb-4" role="region" aria-label="Acciones rápidas">
                   <div class="card-header py-3">
                     <h6 class="m-0 font-weight-bold text-primary">
                       Acciones Rápidas
@@ -172,27 +170,30 @@
                     <a
                       th:href="@{/students/new}"
                       class="btn btn-primary btn-icon-split mb-2"
+                      aria-label="Agregar Nuevo Estudiante"
                     >
                       <span class="icon text-white-50">
-                        <i class="fas fa-user-plus"></i>
+                        <i class="fas fa-user-plus" aria-hidden="true"></i>
                       </span>
                       <span class="text">Agregar Nuevo Estudiante</span>
                     </a>
                     <a
                       th:href="@{/courses/new}"
                       class="btn btn-success btn-icon-split mb-2"
+                      aria-label="Crear Curso"
                     >
                       <span class="icon text-white-50">
-                        <i class="fas fa-book"></i>
+                        <i class="fas fa-book" aria-hidden="true"></i>
                       </span>
                       <span class="text">Crear Curso</span>
                     </a>
                     <a
                       th:href="@{/schedules/new}"
                       class="btn btn-info btn-icon-split mb-2"
+                      aria-label="Agregar Entrada de Horario"
                     >
                       <span class="icon text-white-50">
-                        <i class="fas fa-calendar-plus"></i>
+                        <i class="fas fa-calendar-plus" aria-hidden="true"></i>
                       </span>
                       <span class="text">Agregar Entrada de Horario</span>
                     </a>
@@ -202,7 +203,7 @@
 
               <!-- System Info -->
               <div class="col-lg-6 mb-4">
-                <div class="card shadow mb-4">
+                <div class="card shadow mb-4" role="region" aria-label="Información del Sistema">
                   <div class="card-header py-3">
                     <h6 class="m-0 font-weight-bold text-primary">
                       Información del Sistema
@@ -212,22 +213,26 @@
                     <div class="mb-2">
                       <strong>Semestre Actual:</strong>
                       <span th:text="${currentSemester}">-</span>
+                                          <span th:text="${currentSemester}" aria-label="Semestre actual">-</span>
                     </div>
                     <div class="mb-2">
                       <strong>Año Académico:</strong>
                       <span th:text="${academicYear}">-</span>
+                                          <span th:text="${academicYear}" aria-label="Año académico">-</span>
                     </div>
                     <div class="mb-2">
                       <strong>Estado del Sistema:</strong>
                       <span
                         class="badge badge-success"
                         th:text="${systemStatus}"
+                        aria-label="Estado del sistema"
                         >-</span
                       >
                     </div>
                     <div class="mb-0">
                       <strong>Último Respaldo:</strong>
                       <span th:text="${lastBackup}">-</span>
+                                          <span th:text="${lastBackup}" aria-label="Último respaldo">-</span>
                     </div>
                   </div>
                 </div>
@@ -246,8 +251,8 @@
     <!-- End of Page Wrapper -->
 
     <!-- Scroll to Top Button-->
-    <a class="scroll-to-top rounded" href="#page-top">
-      <i class="fas fa-angle-up"></i>
+    <a class="scroll-to-top rounded" href="#page-top" aria-label="Volver arriba">
+      <i class="fas fa-angle-up" aria-hidden="true"></i>
     </a>
 
     <!-- Logout Modal-->

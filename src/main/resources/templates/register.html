@@ -57,9 +57,9 @@
                     <select class="form-control form-control-user" name="userType" id="userType" required onchange="toggleFields()">
                       <option value="">Seleccionar Tipo de Usuario</option>
                       <option value="STUDENT">Estudiante</option>
-                      <option value="PARENT">Representante</option>
+              <body class="bg-gradient-primary" role="main">
                       <option value="TEACHER">Profesor</option>
-                      <option value="STAFF">Personal Administrativo</option>
+                  <div class="card o-hidden border-0 shadow-lg my-5" role="region" aria-label="Registro de usuario">
                     </select>
                   </div>
                   
@@ -67,7 +67,7 @@
                     <div class="col-sm-6 mb-3 mb-sm-0">
                       <input
                         type="text"
-                        class="form-control form-control-user"
+                              <h1 class="h4 text-gray-900 mb-4" role="heading" aria-level="1">¡Crear una Cuenta!</h1>
                         name="firstName"
                         placeholder="Nombre"
                         required
@@ -87,7 +87,8 @@
                   <div class="form-group row">
                     <div class="col-sm-6 mb-3 mb-sm-0">
                       <input
-                        type="email"
+                                <label for="userType" class="sr-only">Tipo de Usuario</label>
+                                <select class="form-control form-control-user" name="userType" id="userType" required aria-required="true" onchange="toggleFields()">
                         class="form-control form-control-user"
                         name="email"
                         placeholder="Correo Electrónico"

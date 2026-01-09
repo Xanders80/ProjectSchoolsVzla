@@ -17,29 +17,33 @@
     <nav
       class="navbar navbar-expand navbar-light bg-white topbar mb-4 static-top shadow"
       th:fragment="topbar"
+      role="navigation"
+      aria-label="Barra superior"
     >
       <!-- Sidebar Toggle (Topbar) -->
       <button
         id="sidebarToggleTop"
         class="btn btn-link d-md-none rounded-circle mr-3"
+        aria-label="Mostrar/Ocultar menú lateral"
       >
-        <i class="fa fa-bars"></i>
+        <i class="fa fa-bars" aria-hidden="true"></i>
       </button>
 
       <!-- Topbar Navbar -->
-      <ul class="navbar-nav ml-auto">
+      <ul class="navbar-nav ml-auto" role="menubar">
         <!-- Nav Item - Alerts -->
-        <li class="nav-item dropdown no-arrow mx-1">
+        <li class="nav-item dropdown no-arrow mx-1" role="none">
           <a
             class="nav-link dropdown-toggle"
             href="#"
             id="alertsDropdown"
-            role="button"
-            data-toggle="dropdown"
+            role="menuitem"
+            tabindex="0"
             aria-haspopup="true"
             aria-expanded="false"
+            aria-label="Notificaciones"
           >
-            <i class="fas fa-bell fa-fw"></i>
+            <i class="fas fa-bell fa-fw" aria-hidden="true"></i>
             <!-- Counter - Alerts -->
             <span
               class="badge badge-danger badge-counter"
@@ -65,24 +69,27 @@
         <div class="topbar-divider d-none d-sm-block"></div>
 
         <!-- Nav Item - User Information -->
-        <li class="nav-item dropdown no-arrow">
+        <li class="nav-item dropdown no-arrow" role="none">
           <a
             class="nav-link dropdown-toggle"
             href="#"
             id="userDropdown"
-            role="button"
-            data-toggle="dropdown"
+            role="menuitem"
+            tabindex="0"
             aria-haspopup="true"
             aria-expanded="false"
+            aria-label="Opciones de usuario"
           >
             <span
               class="mr-2 d-none d-lg-inline text-gray-600 small"
               sec:authentication="principal.username"
+              aria-label="Usuario actual"
               >Usuario</span
             >
             <img
               class="img-profile rounded-circle"
               src="/img/undraw_profile.svg"
+              alt="Avatar de usuario"
             />
           </a>
           <!-- Dropdown - User Information -->

@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html xmlns:th="http://www.thymeleaf.org">
+<html lang="es" xmlns:th="http://www.thymeleaf.org">
   <head>
     <meta charset="utf-8" />
     <meta http-equiv="X-UA-Compatible" content="IE=edge" />
@@ -22,31 +22,31 @@
   </head>
 
   <body id="page-top">
-    <div id="wrapper">
-      <div th:replace="~{fragments/sb-admin-sidebar :: sidebar}"></div>
+    <main id="wrapper">
+      <nav aria-label="Menú principal" th:replace="~{fragments/sb-admin-sidebar :: sidebar}"></nav>
 
       <div id="content-wrapper" class="d-flex flex-column">
         <div id="content">
-          <div th:replace="~{fragments/sb-admin-topbar :: topbar}"></div>
+          <header th:replace="~{fragments/sb-admin-topbar :: topbar}" aria-label="Barra superior"></header>
 
-          <div class="container-fluid">
+          <main class="container-fluid" aria-labelledby="building-list-title">
             <div
               class="d-sm-flex align-items-center justify-content-between mb-4"
             >
-              <h1 class="h3 mb-0 text-gray-800">Lista de Edificios</h1>
-              <a th:href="@{/infra/buildings/new}" class="btn btn-primary">
-                <i class="fas fa-plus"></i> Agregar Nuevo Edificio
+              <h1 id="building-list-title" class="h3 mb-0 text-gray-800">Lista de Edificios</h1>
+              <a th:href="@{/infra/buildings/new}" class="btn btn-primary" aria-label="Agregar nuevo edificio">
+                <i class="fas fa-plus" aria-hidden="true"></i> Agregar Nuevo Edificio
               </a>
             </div>
 
-            <div th:if="${successMessage}" class="alert alert-success">
+            <div th:if="${successMessage}" class="alert alert-success" role="alert" aria-live="polite">
               <span th:text="${successMessage}"></span>
             </div>
-            <div th:if="${errorMessage}" class="alert alert-danger">
+            <div th:if="${errorMessage}" class="alert alert-danger" role="alert" aria-live="assertive">
               <span th:text="${errorMessage}"></span>
             </div>
 
-            <div class="card shadow mb-4">
+            <section class="card shadow mb-4" aria-label="Tabla de edificios">
               <div class="card-header py-3">
                 <h6 class="m-0 font-weight-bold text-primary">
                   Edificios del Sistema
@@ -57,7 +57,9 @@
                   <table
                     class="table table-bordered"
                     id="dataTable"
-                    width="100%"
+                    aria-label="Lista de edificios"
+                  >
+                    <!-- ...existing code... -->
                     cellspacing="0"
                   >
                     <thead>
@@ -105,7 +107,7 @@
                   th:if="${buildings.totalPages > 1}"
                   class="d-flex justify-content-center"
                 >
-                  <nav aria-label="Page navigation">
+                  <nav aria-label="Navegación de edificios">
                     <ul class="pagination">
                       <li
                         class="page-item"

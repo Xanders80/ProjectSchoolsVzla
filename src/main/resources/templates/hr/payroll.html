@@ -21,23 +21,24 @@
     <link th:href="@{/css/sb-admin-2.min.css}" rel="stylesheet" />
   </head>
 
-  <body id="page-top">
-    <div id="wrapper">
+  <body id="page-top" role="main">
+    <div id="wrapper" role="region" aria-label="Contenedor principal">
       <div th:replace="~{fragments/sb-admin-sidebar :: sidebar}"></div>
 
-      <div id="content-wrapper" class="d-flex flex-column">
-        <div id="content">
+      <div id="content-wrapper" class="d-flex flex-column" role="region" aria-label="Contenido principal">
+        <div id="content" tabindex="-1">
           <div th:replace="~{fragments/sb-admin-topbar :: topbar}"></div>
 
-          <div class="container-fluid">
-      <div class="d-sm-flex align-items-center justify-content-between mb-4">
+          <div class="container-fluid" role="main">
+      <div class="d-sm-flex align-items-center justify-content-between mb-4" role="heading" aria-level="1">
         <h1 class="h3 mb-0 text-gray-800">Nómina / Pagos</h1>
 
-        <form class="form-inline" method="get" th:action="@{/hr/payroll}">
-          <label class="mr-2">Período (AAAA-MM):</label>
+        <form class="form-inline" method="get" th:action="@{/hr/payroll}" aria-label="Filtrar por período">
+          <label class="mr-2" for="period">Período (AAAA-MM):</label>
           <input
             type="month"
             name="period"
+            id="period"
             class="form-control form-control-sm mr-2"
             th:value="${period}"
           />

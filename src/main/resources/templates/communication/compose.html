@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html xmlns:th="http://www.thymeleaf.org">
+<html lang="es" xmlns:th="http://www.thymeleaf.org">
   <head>
     <meta charset="utf-8" />
     <meta http-equiv="X-UA-Compatible" content="IE=edge" />
@@ -24,23 +24,26 @@
     />
   </head>
   <body id="page-top">
-    <div id="wrapper">
-      <div th:replace="~{fragments/sb-admin-sidebar :: sidebar}"></div>
+    <main id="wrapper">
+      <nav aria-label="Menú principal" th:replace="~{fragments/sb-admin-sidebar :: sidebar}"></nav>
       <div id="content-wrapper" class="d-flex flex-column">
         <div id="content">
-          <div th:replace="~{fragments/sb-admin-topbar :: topbar}"></div>
-          <div class="container-fluid">
-            <h1 class="h3 mb-4 text-gray-800">Nuevo Mensaje</h1>
+          <header th:replace="~{fragments/sb-admin-topbar :: topbar}" aria-label="Barra superior"></header>
+          <main class="container-fluid" aria-labelledby="compose-title">
+            <h1 id="compose-title" class="h3 mb-4 text-gray-800">Nuevo Mensaje</h1>
 
-            <div class="card shadow mb-4">
+            <section class="card shadow mb-4" aria-label="Formulario de mensaje">
               <div class="card-body">
-                <form th:action="@{/messages/send}" method="post">
+                <form th:action="@{/messages/send}" method="post" aria-describedby="compose-title">
                   <div class="form-group">
                     <label for="receiverId">Destinatario</label>
                     <select
                       class="form-control select2"
                       name="receiverId"
+                      id="receiverId"
                       required
+                      aria-required="true"
+                      aria-label="Buscar usuario destinatario"
                     >
                       <option value="" disabled selected>
                         Buscar usuario...
@@ -58,6 +61,13 @@
                     <input
                       type="text"
                       class="form-control"
+                      id="subject"
+                      name="subject"
+                      aria-label="Asunto del mensaje"
+                      required
+                    />
+                  </div>
+                  <!-- ...existing code... -->
                       name="subject"
                       required
                     />

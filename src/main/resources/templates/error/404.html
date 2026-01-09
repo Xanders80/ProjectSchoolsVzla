@@ -24,23 +24,32 @@
     <link th:href="@{/css/sb-admin-2.min.css}" rel="stylesheet" />
   </head>
 
-  <body id="page-top">
+  <body id="page-top" role="main">
     <!-- Page Wrapper -->
-    <div id="wrapper">
+    <div id="wrapper" role="region" aria-label="Contenedor principal">
       <!-- Content Wrapper -->
-      <div id="content-wrapper" class="d-flex flex-column">
+      <div
+        id="content-wrapper"
+        class="d-flex flex-column"
+        role="region"
+        aria-label="Contenido principal"
+      >
         <!-- Main Content -->
-        <div id="content">
+        <div id="content" tabindex="-1">
           <!-- Begin Page Content -->
-          <div class="container-fluid">
+          <div class="container-fluid" role="main">
             <!-- 404 Error Text -->
-            <div class="text-center">
-              <div class="error mx-auto" data-text="404">404</div>
+            <div class="text-center" role="alert" aria-live="assertive">
+              <div class="error mx-auto" data-text="404" aria-label="404">
+                404
+              </div>
               <p class="lead text-gray-800 mb-5">Página No Encontrada</p>
               <p class="text-gray-500 mb-0">
                 Parece que encontró un error en la matriz...
               </p>
-              <a th:href="@{/}">&larr; Volver al Panel Principal</a>
+              <a th:href="@{/}" aria-label="Volver al Panel Principal"
+                >&larr; Volver al Panel Principal</a
+              >
             </div>
           </div>
           <!-- /.container-fluid -->

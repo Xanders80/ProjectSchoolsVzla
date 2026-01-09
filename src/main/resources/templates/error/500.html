@@ -1,32 +1,52 @@
 <!DOCTYPE html>
 <html xmlns:th="http://www.thymeleaf.org">
-<head>
-    <meta charset="utf-8">
+  <head>
+    <meta charset="utf-8" />
     <title>Error del Servidor - Sistema Escolar</title>
-    <link th:href="@{/css/sb-admin-2.min.css}" rel="stylesheet">
-</head>
-<body class="bg-gradient-primary">
-    <div class="container">
-        <div class="row justify-content-center">
-            <div class="col-xl-10 col-lg-12 col-md-9">
-                <div class="card o-hidden border-0 shadow-lg my-5">
-                    <div class="card-body p-0">
-                        <div class="row">
-                            <div class="col-lg-12">
-                                <div class="p-5">
-                                    <div class="text-center">
-                                        <h1 class="h4 text-gray-900 mb-4">Error del Servidor</h1>
-                                        <p class="mb-4">Ha ocurrido un error interno. Por favor contacte al administrador.</p>
-                                        <p class="text-muted small" th:if="${errorId}">ID de Error: <span th:text="${errorId}"></span></p>
-                                        <a th:href="@{/}" class="btn btn-primary">Volver al Inicio</a>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
+    <link th:href="@{/css/sb-admin-2.min.css}" rel="stylesheet" />
+  </head>
+  <body class="bg-gradient-primary" role="main">
+    <div class="container" role="main">
+      <div
+        class="row justify-content-center"
+        role="region"
+        aria-label="Error del servidor"
+      >
+        <div class="col-xl-10 col-lg-12 col-md-9">
+          <div class="card o-hidden border-0 shadow-lg my-5">
+            <div class="card-body p-0">
+              <div class="row">
+                <div class="col-lg-12">
+                  <div class="p-5">
+                    <div class="text-center" role="alert" aria-live="assertive">
+                      <h1
+                        class="h4 text-gray-900 mb-4"
+                        role="heading"
+                        aria-level="1"
+                      >
+                        Error del Servidor
+                      </h1>
+                      <p class="mb-4">
+                        Ha ocurrido un error interno. Por favor contacte al
+                        administrador.
+                      </p>
+                      <p class="text-muted small" th:if="${errorId}">
+                        ID de Error: <span th:text="${errorId}"></span>
+                      </p>
+                      <a
+                        th:href="@{/}"
+                        class="btn btn-primary"
+                        aria-label="Volver al inicio"
+                        >Volver al Inicio</a
+                      >
                     </div>
+                  </div>
                 </div>
+              </div>
             </div>
+          </div>
         </div>
+      </div>
     </div>
-</body>
+  </body>
 </html>

@@ -18,11 +18,14 @@
       class="navbar-nav bg-gradient-primary sidebar sidebar-dark accordion"
       id="accordionSidebar"
       th:fragment="sidebar"
+      role="navigation"
+      aria-label="Menú lateral principal"
     >
       <!-- Sidebar - Brand -->
       <a
         class="sidebar-brand d-flex align-items-center justify-content-center"
         href="/"
+        aria-label="Inicio Sistema Escolar"
       >
         <div class="sidebar-brand-icon rotate-n-15">
           <i class="fas fa-school"></i>
@@ -34,9 +37,9 @@
       <hr class="sidebar-divider my-0" />
 
       <!-- Nav Item - Dashboard -->
-      <li class="nav-item active">
-        <a class="nav-link" href="/">
-          <i class="fas fa-fw fa-tachometer-alt"></i>
+      <li class="nav-item active" role="none">
+        <a class="nav-link" href="/" role="menuitem" tabindex="0">
+          <i class="fas fa-fw fa-tachometer-alt" aria-hidden="true"></i>
           <span>Panel Principal</span>
         </a>
       </li>
@@ -45,10 +48,10 @@
       <hr class="sidebar-divider" />
 
       <!-- Heading -->
-      <div class="sidebar-heading">Gestión</div>
+      <div class="sidebar-heading" aria-label="Gestión">Gestión</div>
 
       <!-- Nav Item - Academic -->
-      <li class="nav-item">
+      <li class="nav-item" role="none">
         <a
           class="nav-link collapsed"
           href="#"
@@ -56,8 +59,11 @@
           data-target="#collapseAcademic"
           aria-expanded="true"
           aria-controls="collapseAcademic"
+          role="menuitem"
+          tabindex="0"
+          aria-label="Menú Académico"
         >
-          <i class="fas fa-fw fa-graduation-cap"></i>
+          <i class="fas fa-fw fa-graduation-cap" aria-hidden="true"></i>
           <span>Académico</span>
         </a>
         <div
@@ -94,9 +100,14 @@
       </li>
 
       <!-- Nav Item - Reports -->
-      <li class="nav-item">
-        <a class="nav-link" href="/reports/dashboard">
-          <i class="fas fa-fw fa-chart-line"></i>
+      <li class="nav-item" role="none">
+        <a
+          class="nav-link"
+          href="/reports/dashboard"
+          role="menuitem"
+          tabindex="0"
+        >
+          <i class="fas fa-fw fa-chart-line" aria-hidden="true"></i>
           <span>Reportes</span>
         </a>
       </li>

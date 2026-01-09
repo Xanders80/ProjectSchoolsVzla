@@ -24,23 +24,30 @@
     <link th:href="@{/css/sb-admin-2.min.css}" rel="stylesheet" />
   </head>
 
-  <body id="page-top">
+  <body id="page-top" role="main">
     <!-- Page Wrapper -->
-    <div id="wrapper">
+    <div id="wrapper" role="region" aria-label="Contenedor principal">
       <!-- Sidebar -->
       <div th:replace="~{fragments/sb-admin-sidebar :: sidebar}"></div>
 
       <!-- Content Wrapper -->
-      <div id="content-wrapper" class="d-flex flex-column">
+      <div
+        id="content-wrapper"
+        class="d-flex flex-column"
+        role="region"
+        aria-label="Contenido principal"
+      >
         <!-- Main Content -->
-        <div id="content">
+        <div id="content" tabindex="-1">
           <!-- Topbar -->
           <div th:replace="~{fragments/sb-admin-topbar :: topbar}"></div>
 
           <!-- Begin Page Content -->
-          <div class="container-fluid">
+          <div class="container-fluid" role="main">
             <!-- Page Heading -->
-            <h1 class="h3 mb-4 text-gray-800">Configuración</h1>
+            <h1 class="h3 mb-4 text-gray-800" role="heading" aria-level="1">
+              Configuración
+            </h1>
 
             <div
               th:if="${success}"

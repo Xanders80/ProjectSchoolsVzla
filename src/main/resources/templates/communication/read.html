@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html xmlns:th="http://www.thymeleaf.org">
+<html lang="es" xmlns:th="http://www.thymeleaf.org">
   <head>
     <meta charset="utf-8" />
     <meta http-equiv="X-UA-Compatible" content="IE=edge" />
@@ -20,37 +20,40 @@
     <link th:href="@{/css/sb-admin-2.min.css}" rel="stylesheet" />
   </head>
   <body id="page-top">
-    <div id="wrapper">
-      <div th:replace="~{fragments/sb-admin-sidebar :: sidebar}"></div>
+    <main id="wrapper">
+      <nav aria-label="Menú principal" th:replace="~{fragments/sb-admin-sidebar :: sidebar}"></nav>
       <div id="content-wrapper" class="d-flex flex-column">
         <div id="content">
-          <div th:replace="~{fragments/sb-admin-topbar :: topbar}"></div>
-          <div class="container-fluid">
+          <header th:replace="~{fragments/sb-admin-topbar :: topbar}" aria-label="Barra superior"></header>
+          <main class="container-fluid" aria-labelledby="read-title">
             <div
               class="d-sm-flex align-items-center justify-content-between mb-4"
             >
-              <h1 class="h3 mb-0 text-gray-800">Lectura de Mensaje</h1>
+              <h1 id="read-title" class="h3 mb-0 text-gray-800">Lectura de Mensaje</h1>
               <a
                 th:href="@{/messages}"
                 class="btn btn-sm btn-secondary shadow-sm"
+                aria-label="Volver a la bandeja de mensajes"
               >
-                <i class="fas fa-arrow-left fa-sm"></i> Volver
+                <i class="fas fa-arrow-left fa-sm" aria-hidden="true"></i> Volver
               </a>
             </div>
 
-            <div class="card shadow mb-4">
+            <section class="card shadow mb-4" aria-label="Detalle del mensaje">
               <div
                 class="card-header py-3 d-flex flex-row align-items-center justify-content-between"
               >
                 <h6
                   class="m-0 font-weight-bold text-primary"
                   th:text="${message.subject}"
+                  aria-label="Asunto del mensaje"
                 >
                   Asunto
                 </h6>
                 <span
                   class="text-muted small"
                   th:text="${#temporals.format(message.sentAt, 'dd-MM-yyyy HH:mm')}"
+                  aria-label="Fecha de envío"
                   >Date</span
                 >
               </div>
@@ -58,6 +61,11 @@
                 <div class="mb-3">
                   <strong>De:</strong>
                   <span
+                    th:text="${message.sender.username}"
+                    aria-label="Remitente"
+                  ></span>
+                </div>
+                <!-- ...existing code... -->
                     th:text="${message.sender.firstName + ' ' + message.sender.lastName}"
                     >Sender</span
                   >

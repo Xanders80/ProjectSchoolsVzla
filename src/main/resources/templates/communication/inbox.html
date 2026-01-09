@@ -19,15 +19,22 @@
     />
     <link th:href="@{/css/sb-admin-2.min.css}" rel="stylesheet" />
   </head>
-  <body id="page-top">
-    <div id="wrapper">
+  <body id="page-top" role="main">
+    <div id="wrapper" role="region" aria-label="Contenedor principal">
       <div th:replace="~{fragments/sb-admin-sidebar :: sidebar}"></div>
-      <div id="content-wrapper" class="d-flex flex-column">
-        <div id="content">
+      <div
+        id="content-wrapper"
+        class="d-flex flex-column"
+        role="region"
+        aria-label="Contenido principal"
+      >
+        <div id="content" tabindex="-1">
           <div th:replace="~{fragments/sb-admin-topbar :: topbar}"></div>
-          <div class="container-fluid">
+          <div class="container-fluid" role="main">
             <div
               class="d-sm-flex align-items-center justify-content-between mb-4"
+              role="heading"
+              aria-level="1"
             >
               <h1 class="h3 mb-0 text-gray-800" th:text="${title}">Mensajes</h1>
               <div>
@@ -35,21 +42,29 @@
                   th:href="@{/messages}"
                   class="btn btn-sm btn-light shadow-sm"
                   th:classappend="${isInbox} ? 'active'"
+                  aria-label="Bandeja de entrada"
                 >
-                  <i class="fas fa-inbox fa-sm"></i> Entrada
+                  <i class="fas fa-inbox fa-sm" aria-hidden="true"></i> Entrada
                 </a>
                 <a
                   th:href="@{/messages/sent}"
                   class="btn btn-sm btn-light shadow-sm"
                   th:classappend="${!isInbox} ? 'active'"
+                  aria-label="Mensajes enviados"
                 >
-                  <i class="fas fa-paper-plane fa-sm"></i> Enviados
+                  <i class="fas fa-paper-plane fa-sm" aria-hidden="true"></i>
+                  Enviados
                 </a>
                 <a
                   th:href="@{/messages/compose}"
                   class="btn btn-sm btn-primary shadow-sm ml-2"
+                  aria-label="Redactar mensaje"
                 >
-                  <i class="fas fa-pen fa-sm text-white-50"></i> Redactar
+                  <i
+                    class="fas fa-pen fa-sm text-white-50"
+                    aria-hidden="true"
+                  ></i>
+                  Redactar
                 </a>
               </div>
             </div>
@@ -138,7 +153,9 @@
     <script th:src="@{/vendor/jquery-easing/jquery.easing.min.js}"></script>
     <script th:src="@{/js/sb-admin-2.min.js}"></script>
     <script th:src="@{/vendor/datatables/jquery.dataTables.min.js}"></script>
-    <script th:src="@{/vendor/datatables/dataTables.bootstrap4.min.js}"></script>
+    <script
+      th:src="@{/vendor/datatables/dataTables.bootstrap4.min.js}"
+    ></script>
     <script th:src="@{/js/demo/datatables-demo.js}"></script>
   </body>
 </html>

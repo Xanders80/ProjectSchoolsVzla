@@ -21,109 +21,153 @@
     <link th:href="@{/css/sb-admin-2.min.css}" rel="stylesheet" />
   </head>
 
-  <body id="page-top">
-    <div id="wrapper">
+  <body id="page-top" role="main">
+    <div id="wrapper" role="region" aria-label="Contenedor principal">
       <div th:replace="~{fragments/sb-admin-sidebar :: sidebar}"></div>
 
-      <div id="content-wrapper" class="d-flex flex-column">
-        <div id="content">
+      <div
+        id="content-wrapper"
+        class="d-flex flex-column"
+        role="region"
+        aria-label="Contenido principal"
+      >
+        <div id="content" tabindex="-1">
           <div th:replace="~{fragments/sb-admin-topbar :: topbar}"></div>
 
-          <div class="container-fluid">
-      <div class="d-sm-flex align-items-center justify-content-between mb-4">
-        <h1 class="h3 mb-0 text-gray-800">Inteligencia de Negocios</h1>
-      </div>
+          <div class="container-fluid" role="main">
+            <div
+              class="d-sm-flex align-items-center justify-content-between mb-4"
+              role="heading"
+              aria-level="1"
+            >
+              <h1 class="h3 mb-0 text-gray-800">Inteligencia de Negocios</h1>
+            </div>
 
-      <!-- KPI Cards Row -->
-      <div class="row">
-        <!-- Students Card -->
-        <div class="col-xl-3 col-md-6 mb-4">
-          <div class="card border-left-primary shadow h-100 py-2">
-            <div class="card-body">
-              <div class="row no-gutters align-items-center">
-                <div class="col mr-2">
-                  <div
-                    class="text-xs font-weight-bold text-primary text-uppercase mb-1"
-                  >
-                    Estudiantes Totales
-                  </div>
-                  <div
-                    class="h5 mb-0 font-weight-bold text-gray-800"
-                    th:text="${kpi['totalStudents']}"
-                  >
-                    0
+            <!-- KPI Cards Row -->
+            <div class="row" role="region" aria-label="Indicadores BI">
+              <!-- Students Card -->
+              <div class="col-xl-3 col-md-6 mb-4">
+                <div
+                  class="card border-left-primary shadow h-100 py-2"
+                  role="region"
+                  aria-label="Estudiantes Totales"
+                >
+                  <div class="card-body">
+                    <div class="row no-gutters align-items-center">
+                      <div class="col mr-2">
+                        <div
+                          class="text-xs font-weight-bold text-primary text-uppercase mb-1"
+                          id="kpi-students-label"
+                        >
+                          Estudiantes Totales
+                        </div>
+                        <div
+                          class="h5 mb-0 font-weight-bold text-gray-800"
+                          th:text="${kpi['totalStudents']}"
+                          aria-labelledby="kpi-students-label"
+                        >
+                          0
+                        </div>
+                      </div>
+                      <div class="col-auto">
+                        <i
+                          class="fas fa-user-graduate fa-2x text-gray-300"
+                          aria-label="Icono estudiantes"
+                          tabindex="0"
+                        ></i>
+                      </div>
+                    </div>
                   </div>
                 </div>
-                <div class="col-auto">
-                  <i class="fas fa-user-graduate fa-2x text-gray-300"></i>
+              </div>
+
+              <!-- Staff Card -->
+              <div class="col-xl-3 col-md-6 mb-4">
+                <div
+                  class="card border-left-success shadow h-100 py-2"
+                  role="region"
+                  aria-label="Personal Activo"
+                >
+                  <div class="card-body">
+                    <div class="row no-gutters align-items-center">
+                      <div class="col mr-2">
+                        <div
+                          class="text-xs font-weight-bold text-success text-uppercase mb-1"
+                          id="kpi-staff-label"
+                        >
+                          Personal Activo
+                        </div>
+                        <div
+                          class="h5 mb-0 font-weight-bold text-gray-800"
+                          th:text="${kpi['totalStaff']}"
+                          aria-labelledby="kpi-staff-label"
+                        >
+                          0
+                        </div>
+                      </div>
+                      <div class="col-auto">
+                        <i
+                          class="fas fa-chalkboard-teacher fa-2x text-gray-300"
+                          aria-label="Icono personal activo"
+                          tabindex="0"
+                        ></i>
+                      </div>
+                    </div>
+                  </div>
                 </div>
               </div>
             </div>
-          </div>
-        </div>
 
-        <!-- Staff Card -->
-        <div class="col-xl-3 col-md-6 mb-4">
-          <div class="card border-left-success shadow h-100 py-2">
-            <div class="card-body">
-              <div class="row no-gutters align-items-center">
-                <div class="col mr-2">
-                  <div
-                    class="text-xs font-weight-bold text-success text-uppercase mb-1"
-                  >
-                    Personal Activo
+            <!-- Charts Row -->
+            <div class="row" role="region" aria-label="Gráficos de indicadores">
+              <!-- Financial Chart -->
+              <div class="col-xl-8 col-lg-7">
+                <div
+                  class="card shadow mb-4"
+                  role="region"
+                  aria-label="Ingresos Mensuales"
+                >
+                  <div class="card-header py-3">
+                    <h6 class="m-0 font-weight-bold text-primary">
+                      Ingresos Mensuales
+                    </h6>
                   </div>
-                  <div
-                    class="h5 mb-0 font-weight-bold text-gray-800"
-                    th:text="${kpi['totalStaff']}"
-                  >
-                    0
+                  <div class="card-body">
+                    <div class="chart-area">
+                      <canvas
+                        id="financialChart"
+                        aria-label="Gráfico de ingresos mensuales"
+                        role="img"
+                      ></canvas>
+                    </div>
                   </div>
                 </div>
-                <div class="col-auto">
-                  <i class="fas fa-chalkboard-teacher fa-2x text-gray-300"></i>
+              </div>
+
+              <!-- Academic Chart -->
+              <div class="col-xl-4 col-lg-5">
+                <div
+                  class="card shadow mb-4"
+                  role="region"
+                  aria-label="Promedio por Materia"
+                >
+                  <div class="card-header py-3">
+                    <h6 class="m-0 font-weight-bold text-primary">
+                      Promedio por Materia
+                    </h6>
+                  </div>
+                  <div class="card-body">
+                    <div class="chart-bar">
+                      <canvas
+                        id="academicChart"
+                        aria-label="Gráfico de promedios por materia"
+                        role="img"
+                      ></canvas>
+                    </div>
+                  </div>
                 </div>
               </div>
             </div>
-          </div>
-        </div>
-      </div>
-
-      <!-- Charts Row -->
-      <div class="row">
-        <!-- Financial Chart -->
-        <div class="col-xl-8 col-lg-7">
-          <div class="card shadow mb-4">
-            <div class="card-header py-3">
-              <h6 class="m-0 font-weight-bold text-primary">
-                Ingresos Mensuales
-              </h6>
-            </div>
-            <div class="card-body">
-              <div class="chart-area">
-                <canvas id="financialChart"></canvas>
-              </div>
-            </div>
-          </div>
-        </div>
-
-        <!-- Academic Chart -->
-        <div class="col-xl-4 col-lg-5">
-          <div class="card shadow mb-4">
-            <div class="card-header py-3">
-              <h6 class="m-0 font-weight-bold text-primary">
-                Promedio por Materia
-              </h6>
-            </div>
-            <div class="card-body">
-              <div class="chart-bar">
-                <canvas id="academicChart"></canvas>
-              </div>
-            </div>
-          </div>
-        </div>
-      </div>
-
           </div>
         </div>
 
@@ -131,8 +175,8 @@
       </div>
     </div>
 
-    <a class="scroll-to-top rounded" href="#page-top"
-      ><i class="fas fa-angle-up"></i
+    <a class="scroll-to-top rounded" href="#page-top" aria-label="Volver arriba"
+      ><i class="fas fa-angle-up" aria-hidden="true"></i
     ></a>
     <div th:replace="~{fragments/sb-admin-topbar :: logoutModal}"></div>
 
@@ -140,7 +184,7 @@
     <script th:src="@{/vendor/bootstrap/js/bootstrap.bundle.min.js}"></script>
     <script th:src="@{/vendor/jquery-easing/jquery.easing.min.js}"></script>
     <script th:src="@{/js/sb-admin-2.min.js}"></script>
-    
+
     <!-- Chart.js and Custom Script -->
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <script>
