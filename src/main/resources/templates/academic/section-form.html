@@ -1,4 +1,4 @@
-<!DOCTYPE html>
+<!doctype html>
 <html xmlns:th="http://www.thymeleaf.org">
   <head>
     <meta charset="utf-8" />
@@ -33,11 +33,12 @@
             <div
               class="d-sm-flex align-items-center justify-content-between mb-4"
             >
-              <h1
-                class="h3 mb-0 text-gray-800"
-                th:text="${section.id != null ? 'Editar Sección' : 'Nueva Sección'}"
-              >
-                Sección
+              <h1 class="h3 mb-0 text-gray-800">
+                <i class="fas fa-layer-group mr-2 text-primary"></i
+                ><span
+                  th:text="${section.id != null ? 'Editar Sección' : 'Nueva Sección'}"
+                  >Sección</span
+                >
               </h1>
               <a th:href="@{/sections}" class="btn btn-secondary">
                 <i class="fas fa-arrow-left"></i> Volver
@@ -55,6 +56,8 @@
                   th:action="@{/sections}"
                   th:object="${section}"
                   method="post"
+                  class="needs-validation"
+                  novalidate
                 >
                   <!-- CSRF Token -->
                   <input
@@ -67,32 +70,53 @@
                   <div class="row">
                     <div class="col-md-6">
                       <div class="form-group">
-                        <label>Nombre de la Sección (ej. Grupo A)</label>
-                        <input
-                          type="text"
-                          th:field="*{name}"
-                          class="form-control"
-                          required
-                        />
+                        <label class="font-weight-bold"
+                          >Nombre de la Sección
+                          <span class="text-danger">*</span></label
+                        >
+                        <div class="input-group">
+                          <div class="input-group-prepend">
+                            <span class="input-group-text"
+                              ><i class="fas fa-users-cog"></i
+                            ></span>
+                          </div>
+                          <input
+                            type="text"
+                            th:field="*{name}"
+                            class="form-control"
+                            placeholder="Ej: Grupo A, Sección 1"
+                            required
+                          />
+                        </div>
                       </div>
                     </div>
                     <div class="col-md-6">
                       <div class="form-group">
-                        <label>Periodo Académico</label>
-                        <select
-                          th:field="*{period.id}"
-                          class="form-control"
-                          required
+                        <label class="font-weight-bold"
+                          >Periodo Académico
+                          <span class="text-danger">*</span></label
                         >
-                          <option value="">Seleccionar Periodo</option>
-                          <option
-                            th:each="p : ${periods}"
-                            th:value="${p.id}"
-                            th:text="${p.name + ' (' + p.code + ')'}"
+                        <div class="input-group">
+                          <div class="input-group-prepend">
+                            <span class="input-group-text"
+                              ><i class="fas fa-calendar-alt"></i
+                            ></span>
+                          </div>
+                          <select
+                            th:field="*{period.id}"
+                            class="form-control"
+                            required
                           >
-                            Period
-                          </option>
-                        </select>
+                            <option value="">Seleccionar Periodo</option>
+                            <option
+                              th:each="p : ${periods}"
+                              th:value="${p.id}"
+                              th:text="${p.name + ' (' + p.code + ')'}"
+                            >
+                              Period
+                            </option>
+                          </select>
+                        </div>
                       </div>
                     </div>
                   </div>
@@ -100,61 +124,96 @@
                   <div class="row">
                     <div class="col-md-4">
                       <div class="form-group">
-                        <label>Curso</label>
-                        <select
-                          th:field="*{course.id}"
-                          class="form-control"
-                          required
+                        <label class="font-weight-bold"
+                          >Curso <span class="text-danger">*</span></label
                         >
-                          <option value="">Seleccionar Curso</option>
-                          <option
-                            th:each="course : ${courses}"
-                            th:value="${course.id}"
-                            th:text="${course.code + ' - ' + course.name}"
+                        <div class="input-group">
+                          <div class="input-group-prepend">
+                            <span class="input-group-text"
+                              ><i class="fas fa-book-open"></i
+                            ></span>
+                          </div>
+                          <select
+                            th:field="*{course.id}"
+                            class="form-control"
+                            required
                           >
-                            Course
-                          </option>
-                        </select>
+                            <option value="">Seleccionar Curso</option>
+                            <option
+                              th:each="course : ${courses}"
+                              th:value="${course.id}"
+                              th:text="${course.code + ' - ' + course.name}"
+                            >
+                              Course
+                            </option>
+                          </select>
+                        </div>
                       </div>
                     </div>
                     <div class="col-md-4">
                       <div class="form-group">
-                        <label>Profesor Asignado</label>
-                        <select th:field="*{teacher.id}" class="form-control">
-                          <option value="">Seleccionar Profesor</option>
-                          <option
-                            th:each="teacher : ${teachers}"
-                            th:value="${teacher.id}"
-                            th:text="${teacher.fullName}"
-                          >
-                            Teacher
-                          </option>
-                        </select>
+                        <label class="font-weight-bold"
+                          >Profesor Asignado</label
+                        >
+                        <div class="input-group">
+                          <div class="input-group-prepend">
+                            <span class="input-group-text"
+                              ><i class="fas fa-chalkboard-teacher"></i
+                            ></span>
+                          </div>
+                          <select th:field="*{teacher.id}" class="form-control">
+                            <option value="">Seleccionar Profesor</option>
+                            <option
+                              th:each="teacher : ${teachers}"
+                              th:value="${teacher.id}"
+                              th:text="${teacher.fullName}"
+                            >
+                              Teacher
+                            </option>
+                          </select>
+                        </div>
                       </div>
                     </div>
                     <div class="col-md-4">
                       <div class="form-group">
-                        <label>Aula Asignada</label>
-                        <select th:field="*{room.id}" class="form-control">
-                          <option value="">Seleccionar Aula</option>
-                          <option
-                            th:each="room : ${rooms}"
-                            th:value="${room.id}"
-                            th:text="${room.building?.name + ' - ' + room.roomNumber}"
-                          >
-                            Room
-                          </option>
-                        </select>
+                        <label class="font-weight-bold">Aula Asignada</label>
+                        <div class="input-group">
+                          <div class="input-group-prepend">
+                            <span class="input-group-text"
+                              ><i class="fas fa-door-open"></i
+                            ></span>
+                          </div>
+                          <select th:field="*{room.id}" class="form-control">
+                            <option value="">Seleccionar Aula</option>
+                            <option
+                              th:each="room : ${rooms}"
+                              th:value="${room.id}"
+                              th:text="${room.building?.name + ' - ' + room.roomNumber}"
+                            >
+                              Room
+                            </option>
+                          </select>
+                        </div>
                       </div>
                     </div>
                   </div>
 
-                  <button type="submit" class="btn btn-primary">
-                    <i class="fas fa-save"></i> Guardar Sección
-                  </button>
-                  <a th:href="@{/sections}" class="btn btn-secondary">
-                    <i class="fas fa-times"></i> Cancelar
-                  </a>
+                  <hr />
+
+                  <div class="form-group text-right">
+                    <button
+                      type="submit"
+                      class="btn btn-primary px-4 shadow-sm"
+                    >
+                      <i class="fas fa-save mr-1"></i> Guardar Sección
+                    </button>
+                    <a
+                      th:href="@{/sections}"
+                      class="btn btn-secondary px-4 ml-2"
+                    >
+                      <i class="fas fa-times mr-1"></i> Cancelar
+                    </a>
+                  </div>
                 </form>
               </div>
             </div>

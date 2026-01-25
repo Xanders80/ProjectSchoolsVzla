@@ -1,4 +1,4 @@
-<!DOCTYPE html>
+<!doctype html>
 <html xmlns:th="http://www.thymeleaf.org">
   <head>
     <meta charset="utf-8" />
@@ -38,7 +38,10 @@
             <div
               class="d-sm-flex align-items-center justify-content-between mb-4"
             >
-              <h1 class="h3 mb-0 text-gray-800">Inscribir Alumno</h1>
+              <h1 class="h3 mb-0 text-gray-800">
+                <i class="fas fa-user-plus mr-2 text-primary"></i>Inscribir
+                Alumno
+              </h1>
               <a
                 th:href="@{/enrollments/section/{id}(id=${section.id})}"
                 class="btn btn-secondary"
@@ -67,7 +70,12 @@
                       ></small>
                     </div>
 
-                    <form th:action="@{/enrollments}" method="post">
+                    <form
+                      th:action="@{/enrollments}"
+                      method="post"
+                      class="needs-validation"
+                      novalidate
+                    >
                       <input
                         type="hidden"
                         name="sectionId"
@@ -75,23 +83,35 @@
                       />
 
                       <div class="form-group">
-                        <label for="studentId">Seleccione Estudiante</label>
-                        <select
-                          class="form-control select2"
-                          name="studentId"
-                          id="studentId"
-                          required
+                        <label for="studentId" class="font-weight-bold"
+                          >Seleccione Estudiante
+                          <span class="text-danger">*</span></label
                         >
-                          <option value="">Buscar estudiante...</option>
-                          <option
-                            th:each="student : ${students}"
-                            th:value="${student.id}"
-                            th:text="${student.registrationNumber + ' - ' + student.firstName + ' ' + student.lastName}"
-                          ></option>
-                        </select>
+                        <div class="input-group">
+                          <div class="input-group-prepend">
+                            <span class="input-group-text"
+                              ><i class="fas fa-user-graduate"></i
+                            ></span>
+                          </div>
+                          <select
+                            class="form-control select2"
+                            name="studentId"
+                            id="studentId"
+                            required
+                          >
+                            <option value="">
+                              Buscar estudiante por nombre o registro...
+                            </option>
+                            <option
+                              th:each="student : ${students}"
+                              th:value="${student.id}"
+                              th:text="${student.registrationNumber + ' - ' + student.firstName + ' ' + student.lastName}"
+                            ></option>
+                          </select>
+                        </div>
                         <small class="form-text text-muted">
-                          Solo se muestran los estudiantes activos que no están
-                          inscritos actualmente en esta sección.
+                          <i class="fas fa-info-circle mr-1"></i> Solo
+                          estudiantes activos no inscritos en esta sección.
                         </small>
                       </div>
 
@@ -104,13 +124,20 @@
                       </div>
 
                       <hr />
-                      <button
-                        type="submit"
-                        class="btn btn-success btn-block"
-                        th:disabled="${#lists.isEmpty(students)}"
-                      >
-                        <i class="fas fa-check"></i> Confirmar Inscripción
-                      </button>
+                      <div class="form-group text-right">
+                        <button
+                          type="submit"
+                          class="btn btn-primary px-4 shadow-sm"
+                        >
+                          <i class="fas fa-save mr-1"></i> Inscribir Alumno
+                        </button>
+                        <a
+                          th:href="@{/enrollments/section/{id}(id=${section.id})}"
+                          class="btn btn-secondary px-4 ml-2"
+                        >
+                          <i class="fas fa-times mr-1"></i> Cancelar
+                        </a>
+                      </div>
                     </form>
                   </div>
                 </div>

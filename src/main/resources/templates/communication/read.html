@@ -1,4 +1,4 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="es" xmlns:th="http://www.thymeleaf.org">
   <head>
     <meta charset="utf-8" />
@@ -20,22 +20,32 @@
     <link th:href="@{/css/sb-admin-2.min.css}" rel="stylesheet" />
   </head>
   <body id="page-top">
-    <main id="wrapper">
-      <nav aria-label="Menú principal" th:replace="~{fragments/sb-admin-sidebar :: sidebar}"></nav>
+    <div id="wrapper">
+      <nav
+        aria-label="Menú principal"
+        th:replace="~{fragments/sb-admin-sidebar :: sidebar}"
+      ></nav>
       <div id="content-wrapper" class="d-flex flex-column">
         <div id="content">
-          <header th:replace="~{fragments/sb-admin-topbar :: topbar}" aria-label="Barra superior"></header>
-          <main class="container-fluid" aria-labelledby="read-title">
+          <header
+            th:replace="~{fragments/sb-admin-topbar :: topbar}"
+            aria-label="Barra superior"
+          ></header>
+          <div class="container-fluid" aria-labelledby="read-title">
             <div
               class="d-sm-flex align-items-center justify-content-between mb-4"
             >
-              <h1 id="read-title" class="h3 mb-0 text-gray-800">Lectura de Mensaje</h1>
+              <h1 id="read-title" class="h3 mb-0 text-gray-800">
+                <i class="fas fa-envelope-open mr-2 text-primary"></i>Lectura de
+                Mensaje
+              </h1>
               <a
                 th:href="@{/messages}"
                 class="btn btn-sm btn-secondary shadow-sm"
                 aria-label="Volver a la bandeja de mensajes"
               >
-                <i class="fas fa-arrow-left fa-sm" aria-hidden="true"></i> Volver
+                <i class="fas fa-arrow-left fa-sm" aria-hidden="true"></i>
+                Volver
               </a>
             </div>
 
@@ -59,25 +69,14 @@
               </div>
               <div class="card-body">
                 <div class="mb-3">
-                  <strong>De:</strong>
-                  <span
-                    th:text="${message.sender.username}"
-                    aria-label="Remitente"
-                  ></span>
-                </div>
-                <!-- ...existing code... -->
-                    th:text="${message.sender.firstName + ' ' + message.sender.lastName}"
-                    >Sender</span
-                  >
-                </div>
-                <div class="mb-3">
+                  <i class="fas fa-user-circle mr-1 text-gray-400"></i>
                   <strong
-                    th:text="${message.sender.id == #authentication.principal.id ? 'Para: ' : ''}"
+                    th:text="${message.sender.username == #authentication.name ? 'Para: ' : 'De: '}"
                   ></strong>
                   <span
-                    th:if="${message.sender.id == #authentication.principal.id}"
-                    th:text="${message.receiver.firstName + ' ' + message.receiver.lastName}"
-                    >Receiver</span
+                    th:text="${message.sender.username == #authentication.name ? message.receiver.username : message.sender.username}"
+                    aria-label="Usuario"
+                    >Usuario</span
                   >
                 </div>
                 <hr />
@@ -101,7 +100,7 @@
                   <span class="text">Responder</span>
                 </a>
               </div>
-            </div>
+            </section>
           </div>
         </div>
         <div th:replace="~{fragments/sb-admin-footer :: footer}"></div>

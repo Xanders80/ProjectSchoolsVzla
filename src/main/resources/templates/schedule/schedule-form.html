@@ -1,4 +1,4 @@
-<!DOCTYPE html>
+<!doctype html>
 <html xmlns:th="http://www.thymeleaf.org">
   <head>
     <meta charset="utf-8" />
@@ -33,11 +33,12 @@
             <div
               class="d-sm-flex align-items-center justify-content-between mb-4"
             >
-              <h1
-                class="h3 mb-0 text-gray-800"
-                th:text="${scheduleEntry.id != null ? 'Editar Horario' : 'Nuevo Horario'}"
-              >
-                Horario
+              <h1 class="h3 mb-0 text-gray-800">
+                <i class="fas fa-clock mr-2 text-primary"></i
+                ><span
+                  th:text="${scheduleEntry.id != null ? 'Editar Horario' : 'Nuevo Horario'}"
+                  >Horario</span
+                >
               </h1>
               <a th:href="@{/schedules}" class="btn btn-secondary">
                 <i class="fas fa-arrow-left"></i> Volver
@@ -72,99 +73,143 @@
                   th:action="@{/schedules}"
                   th:object="${scheduleEntry}"
                   method="post"
+                  class="needs-validation"
+                  novalidate
                 >
                   <input type="hidden" th:field="*{id}" />
 
                   <div class="row">
                     <div class="col-md-4">
                       <div class="form-group">
-                        <label>Día de la Semana</label>
-                        <select
-                          th:field="*{dayOfWeek}"
-                          class="form-control"
-                          th:classappend="${#fields.hasErrors('dayOfWeek')} ? 'is-invalid'"
-                          required
+                        <label class="font-weight-bold"
+                          >Día de la Semana
+                          <span class="text-danger">*</span></label
                         >
-                          <option value="">Seleccionar Día</option>
-                          <option value="MONDAY">Lunes</option>
-                          <option value="TUESDAY">Martes</option>
-                          <option value="WEDNESDAY">Miércoles</option>
-                          <option value="THURSDAY">Jueves</option>
-                          <option value="FRIDAY">Viernes</option>
-                          <option value="SATURDAY">Sábado</option>
-                        </select>
+                        <div class="input-group">
+                          <div class="input-group-prepend">
+                            <span class="input-group-text"
+                              ><i class="fas fa-calendar-alt"></i
+                            ></span>
+                          </div>
+                          <select
+                            th:field="*{dayOfWeek}"
+                            class="form-control"
+                            th:classappend="${#fields.hasErrors('dayOfWeek')} ? 'is-invalid'"
+                            required
+                          >
+                            <option value="">Seleccionar Día</option>
+                            <option value="MONDAY">Lunes</option>
+                            <option value="TUESDAY">Martes</option>
+                            <option value="WEDNESDAY">Miércoles</option>
+                            <option value="THURSDAY">Jueves</option>
+                            <option value="FRIDAY">Viernes</option>
+                            <option value="SATURDAY">Sábado</option>
+                          </select>
+                        </div>
                         <div
                           class="invalid-feedback"
                           th:if="${#fields.hasErrors('dayOfWeek')}"
                           th:errors="*{dayOfWeek}"
-                        >
-                          Error en Día
-                        </div>
+                        ></div>
                       </div>
                     </div>
                     <div class="col-md-4">
                       <div class="form-group">
-                        <label>Hora de Inicio</label>
-                        <input
-                          type="time"
-                          th:field="*{startTime}"
-                          class="form-control"
-                          th:classappend="${#fields.hasErrors('startTime')} ? 'is-invalid'"
-                          required
-                        />
+                        <label class="font-weight-bold"
+                          >Hora de Inicio
+                          <span class="text-danger">*</span></label
+                        >
+                        <div class="input-group">
+                          <div class="input-group-prepend">
+                            <span class="input-group-text"
+                              ><i class="fas fa-clock"></i
+                            ></span>
+                          </div>
+                          <input
+                            type="time"
+                            th:field="*{startTime}"
+                            class="form-control"
+                            th:classappend="${#fields.hasErrors('startTime')} ? 'is-invalid'"
+                            required
+                          />
+                        </div>
                         <div
                           class="invalid-feedback"
                           th:if="${#fields.hasErrors('startTime')}"
                           th:errors="*{startTime}"
-                        >
-                          Error en Hora Inicio
-                        </div>
+                        ></div>
                       </div>
                     </div>
                     <div class="col-md-4">
                       <div class="form-group">
-                        <label>Hora de Fin</label>
-                        <input
-                          type="time"
-                          th:field="*{endTime}"
-                          class="form-control"
-                          th:classappend="${#fields.hasErrors('endTime')} ? 'is-invalid'"
-                          required
-                        />
+                        <label class="font-weight-bold"
+                          >Hora de Fin <span class="text-danger">*</span></label
+                        >
+                        <div class="input-group">
+                          <div class="input-group-prepend">
+                            <span class="input-group-text"
+                              ><i class="fas fa-hourglass-end"></i
+                            ></span>
+                          </div>
+                          <input
+                            type="time"
+                            th:field="*{endTime}"
+                            class="form-control"
+                            th:classappend="${#fields.hasErrors('endTime')} ? 'is-invalid'"
+                            required
+                          />
+                        </div>
                         <div
                           class="invalid-feedback"
                           th:if="${#fields.hasErrors('endTime')}"
                           th:errors="*{endTime}"
-                        >
-                          Error en Hora Fin
-                        </div>
+                        ></div>
                       </div>
                     </div>
                   </div>
                   <div class="form-group">
-                    <label>Sección</label>
-                    <select
-                      th:field="*{section.id}"
-                      class="form-control"
-                      required
+                    <label class="font-weight-bold"
+                      >Sección <span class="text-danger">*</span></label
                     >
-                      <option value="">Seleccionar Sección</option>
-                      <option
-                        th:each="section : ${sections}"
-                        th:value="${section.id}"
-                        th:text="${section.course?.name + ' - ' + section.name + ' (' + (section.teacher != null ? section.teacher.lastName : 'No Teacher') + ' - ' + (section.room != null ? section.room.roomNumber : 'No Room') + ')'}"
+                    <div class="input-group">
+                      <div class="input-group-prepend">
+                        <span class="input-group-text"
+                          ><i class="fas fa-chalkboard-teacher"></i
+                        ></span>
+                      </div>
+                      <select
+                        th:field="*{section.id}"
+                        class="form-control"
+                        required
                       >
-                        Section
-                      </option>
-                    </select>
+                        <option value="">Seleccionar Sección...</option>
+                        <option
+                          th:each="section : ${sections}"
+                          th:value="${section.id}"
+                          th:text="${section.course?.name + ' - ' + section.name + ' (' + (section.teacher != null ? section.teacher.lastName : 'No Teacher') + ' - ' + (section.room != null ? section.room.roomNumber : 'No Room') + ')'}"
+                        >
+                          Section
+                        </option>
+                      </select>
+                    </div>
                   </div>
 
-                  <button type="submit" class="btn btn-primary">
-                    <i class="fas fa-save"></i> Guardar Horario
-                  </button>
-                  <a th:href="@{/schedules}" class="btn btn-secondary">
-                    <i class="fas fa-times"></i> Cancelar
-                  </a>
+                  <hr />
+
+                  <div class="form-group text-right">
+                    <button
+                      type="submit"
+                      class="btn btn-primary px-4 shadow-sm"
+                    >
+                      <i class="fas fa-save mr-1"></i> Guardar Horario
+                    </button>
+                    <a
+                      th:href="@{/schedules}"
+                      class="btn btn-secondary px-4 ml-2"
+                    >
+                      <i class="fas fa-times mr-1"></i> Cancelar
+                    </a>
+                  </div>
                 </form>
               </div>
             </div>

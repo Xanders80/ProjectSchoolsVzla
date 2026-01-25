@@ -1,112 +1,222 @@
-<!DOCTYPE html>
-<html lang="es" xmlns:th="http://www.thymeleaf.org" xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
-<head>
-    <meta charset="utf-8">
+<!doctype html>
+<html
+  lang="es"
+  xmlns:th="http://www.thymeleaf.org"
+  xmlns:sec="http://www.thymeleaf.org/extras/spring-security"
+>
+  <head>
+    <meta charset="utf-8" />
     <title>Malla Curricular - Sistema Escolar</title>
-    <link th:href="@{/vendor/fontawesome-free/css/all.min.css}" rel="stylesheet">
-    <link th:href="@{/css/sb-admin-2.min.css}" rel="stylesheet">
-</head>
+    <link
+      th:href="@{/vendor/fontawesome-free/css/all.min.css}"
+      rel="stylesheet"
+    />
+    <link th:href="@{/css/sb-admin-2.min.css}" rel="stylesheet" />
+  </head>
 
-<body id="page-top">
+  <body id="page-top">
     <div id="wrapper">
-        <div th:replace="~{fragments/sb-admin-sidebar :: sidebar}"></div>
-        
-        <div id="content-wrapper" class="d-flex flex-column">
-            <div id="content">
-                <div th:replace="~{fragments/sb-admin-topbar :: topbar}"></div>
-                
-                <div class="container-fluid">
-                    <div class="d-sm-flex align-items-center justify-content-between mb-4">
-                        <h1 class="h3 mb-0 text-gray-800">Nueva Malla Curricular</h1>
-                        <a th:href="@{/academic/curriculum}" class="btn btn-secondary">
-                            <i class="fas fa-arrow-left"></i> Volver
-                        </a>
-                    </div>
+      <div th:replace="~{fragments/sb-admin-sidebar :: sidebar}"></div>
 
-                    <div class="card shadow mb-4">
-                        <div class="card-header py-3">
-                            <h6 class="m-0 font-weight-bold text-primary">Configurar Malla Curricular</h6>
-                        </div>
-                        <div class="card-body">
-                            <form th:action="@{/academic/curriculum/save}" th:object="${curriculumGrid}" method="post">
-                                <div class="row">
-                                    <div class="col-md-6">
-                                        <div class="form-group">
-                                            <label for="studyPlan">Plan de Estudio</label>
-                                            <select class="form-control" th:field="*{studyPlan}" id="studyPlan" required>
-                                                <option value="">Seleccionar Plan</option>
-                                                <option th:each="plan : ${studyPlans}" 
-                                                        th:value="${plan.id}" 
-                                                        th:text="${plan.name}"
-                                                        th:selected="${selectedStudyPlanId != null && selectedStudyPlanId == plan.id}">
-                                                </option>
-                                            </select>
-                                        </div>
-                                    </div>
-                                    <div class="col-md-6">
-                                        <div class="form-group">
-                                            <label for="gradeLevel">Nivel de Grado</label>
-                                            <input type="number" class="form-control" th:field="*{gradeLevel}" 
-                                                   id="gradeLevel" min="1" max="12" required>
-                                        </div>
-                                    </div>
-                                </div>
+      <div id="content-wrapper" class="d-flex flex-column">
+        <div id="content">
+          <div th:replace="~{fragments/sb-admin-topbar :: topbar}"></div>
 
-                                <div class="row">
-                                    <div class="col-md-6">
-                                        <div class="form-group">
-                                            <label>Materias Obligatorias</label>
-                                            <select multiple class="form-control" th:field="*{requiredCourses}" size="8">
-                                                <option th:each="course : ${courses}" 
-                                                        th:value="${course.id}" 
-                                                        th:text="${course.name + ' (' + course.credits + ' créditos)'}">
-                                                </option>
-                                            </select>
-                                            <small class="form-text text-muted">Mantén Ctrl presionado para seleccionar múltiples</small>
-                                        </div>
-                                    </div>
-                                    <div class="col-md-6">
-                                        <div class="form-group">
-                                            <label>Materias Electivas</label>
-                                            <select multiple class="form-control" th:field="*{electiveCourses}" size="8">
-                                                <option th:each="course : ${courses}" 
-                                                        th:value="${course.id}" 
-                                                        th:text="${course.name + ' (' + course.credits + ' créditos)'}">
-                                                </option>
-                                            </select>
-                                            <small class="form-text text-muted">Mantén Ctrl presionado para seleccionar múltiples</small>
-                                        </div>
-                                    </div>
-                                </div>
-
-                                <div class="row">
-                                    <div class="col-md-6">
-                                        <div class="form-group">
-                                            <label for="minElectives">Mínimo de Electivas Requeridas</label>
-                                            <input type="number" class="form-control" th:field="*{minElectives}" 
-                                                   id="minElectives" min="0" value="0">
-                                        </div>
-                                    </div>
-                                </div>
-
-                                <div class="form-group">
-                                    <button type="submit" class="btn btn-primary">
-                                        <i class="fas fa-save"></i> Guardar Malla Curricular
-                                    </button>
-                                    <a th:href="@{/academic/curriculum}" class="btn btn-secondary ml-2">Cancelar</a>
-                                </div>
-                            </form>
-                        </div>
-                    </div>
-                </div>
+          <div class="container-fluid">
+            <div
+              class="d-sm-flex align-items-center justify-content-between mb-4"
+            >
+              <h1 class="h3 mb-0 text-gray-800">
+                <i class="fas fa-th mr-2 text-primary"></i>Nueva Malla
+                Curricular
+              </h1>
+              <a th:href="@{/academic/curriculum}" class="btn btn-secondary">
+                <i class="fas fa-arrow-left"></i> Volver
+              </a>
             </div>
-            
-            <div th:replace="~{fragments/sb-admin-footer :: footer}"></div>
+
+            <div class="card shadow mb-4">
+              <div class="card-header py-3">
+                <h6 class="m-0 font-weight-bold text-primary">
+                  Configurar Malla Curricular
+                </h6>
+              </div>
+              <div class="card-body">
+                <form
+                  th:action="@{/academic/curriculum/save}"
+                  th:object="${curriculumGrid}"
+                  method="post"
+                  class="needs-validation"
+                  novalidate
+                >
+                  <div class="row">
+                    <div class="col-md-6">
+                      <div class="form-group">
+                        <label for="studyPlan" class="font-weight-bold"
+                          >Plan de Estudio
+                          <span class="text-danger">*</span></label
+                        >
+                        <div class="input-group">
+                          <div class="input-group-prepend">
+                            <span class="input-group-text"
+                              ><i class="fas fa-file-invoice"></i
+                            ></span>
+                          </div>
+                          <select
+                            class="form-control"
+                            th:field="*{studyPlan}"
+                            id="studyPlan"
+                            required
+                          >
+                            <option value="">Seleccionar Plan</option>
+                            <option
+                              th:each="plan : ${studyPlans}"
+                              th:value="${plan.id}"
+                              th:text="${plan.name}"
+                              th:selected="${selectedStudyPlanId != null && selectedStudyPlanId == plan.id}"
+                            ></option>
+                          </select>
+                        </div>
+                      </div>
+                    </div>
+                    <div class="col-md-6">
+                      <div class="form-group">
+                        <label for="gradeLevel" class="font-weight-bold"
+                          >Nivel de Grado
+                          <span class="text-danger">*</span></label
+                        >
+                        <div class="input-group">
+                          <div class="input-group-prepend">
+                            <span class="input-group-text"
+                              ><i class="fas fa-layer-group"></i
+                            ></span>
+                          </div>
+                          <input
+                            type="number"
+                            class="form-control"
+                            th:field="*{gradeLevel}"
+                            id="gradeLevel"
+                            min="1"
+                            max="12"
+                            required
+                          />
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+
+                  <div class="row">
+                    <div class="col-md-6">
+                      <div class="form-group">
+                        <label class="font-weight-bold text-primary"
+                          ><i class="fas fa-book-reader mr-1"></i> Materias
+                          Obligatorias</label
+                        >
+                        <div class="card bg-light border-0 shadow-sm">
+                          <div class="card-body p-2">
+                            <select
+                              multiple
+                              class="form-control border-0"
+                              th:field="*{requiredCourses}"
+                              size="8"
+                            >
+                              <option
+                                th:each="course : ${courses}"
+                                th:value="${course.id}"
+                                th:text="${course.name + ' (' + course.credits + ' créditos)'}"
+                              ></option>
+                            </select>
+                          </div>
+                        </div>
+                        <small class="form-text text-muted"
+                          ><i class="fas fa-info-circle mr-1"></i> Mantén Ctrl
+                          presionado para seleccionar múltiples</small
+                        >
+                      </div>
+                    </div>
+                    <div class="col-md-6">
+                      <div class="form-group">
+                        <label class="font-weight-bold text-success"
+                          ><i class="fas fa-toggle-on mr-1"></i> Materias
+                          Electivas</label
+                        >
+                        <div class="card bg-light border-0 shadow-sm">
+                          <div class="card-body p-2">
+                            <select
+                              multiple
+                              class="form-control border-0"
+                              th:field="*{electiveCourses}"
+                              size="8"
+                            >
+                              <option
+                                th:each="course : ${courses}"
+                                th:value="${course.id}"
+                                th:text="${course.name + ' (' + course.credits + ' créditos)'}"
+                              ></option>
+                            </select>
+                          </div>
+                        </div>
+                        <small class="form-text text-muted"
+                          ><i class="fas fa-info-circle mr-1"></i> Mantén Ctrl
+                          presionado para seleccionar múltiples</small
+                        >
+                      </div>
+                    </div>
+                  </div>
+
+                  <div class="row">
+                    <div class="col-md-6">
+                      <div class="form-group">
+                        <label for="minElectives" class="font-weight-bold"
+                          >Mínimo de Electivas Requeridas</label
+                        >
+                        <div class="input-group">
+                          <div class="input-group-prepend">
+                            <span class="input-group-text"
+                              ><i class="fas fa-check-double"></i
+                            ></span>
+                          </div>
+                          <input
+                            type="number"
+                            class="form-control"
+                            th:field="*{minElectives}"
+                            id="minElectives"
+                            min="0"
+                            value="0"
+                          />
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+
+                  <hr />
+
+                  <div class="form-group text-right">
+                    <button
+                      type="submit"
+                      class="btn btn-primary px-4 shadow-sm"
+                    >
+                      <i class="fas fa-save mr-1"></i> Guardar Malla Curricular
+                    </button>
+                    <a
+                      th:href="@{/academic/curriculum}"
+                      class="btn btn-secondary px-4 ml-2"
+                    >
+                      <i class="fas fa-times mr-1"></i> Cancelar
+                    </a>
+                  </div>
+                </form>
+              </div>
+            </div>
+          </div>
         </div>
+
+        <div th:replace="~{fragments/sb-admin-footer :: footer}"></div>
+      </div>
     </div>
 
     <script th:src="@{/vendor/jquery/jquery.min.js}"></script>
     <script th:src="@{/vendor/bootstrap/js/bootstrap.bundle.min.js}"></script>
     <script th:src="@{/js/sb-admin-2.min.js}"></script>
-</body>
+  </body>
 </html>

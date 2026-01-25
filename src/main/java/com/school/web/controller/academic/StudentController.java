@@ -74,6 +74,7 @@ public class StudentController {
             RedirectAttributes redirectAttributes) {
 
         if (result.hasErrors()) {
+            logger.warn("Validation errors while saving student: {}", result.getAllErrors());
             return STUDENT_FORM_VIEW;
         }
         try {
@@ -82,7 +83,17 @@ public class StudentController {
                     "Estudiante guardado exitosamente. Número de registro: " + savedStudent.getRegistrationNumber());
             return REDIRECT_STUDENTS;
         } catch (IllegalArgumentException e) {
+            logger.warn("Business rule violation saving student: {}", e.getMessage());
             model.addAttribute(MSG_ERROR, e.getMessage());
+            return STUDENT_FORM_VIEW;
+        } catch (org.springframework.dao.DataIntegrityViolationException e) {
+            logger.error("Data integrity violation saving student", e);
+            model.addAttribute(MSG_ERROR,
+                    "Error de integridad de datos. Es posible que el DNI o número de registro ya existan.");
+            return STUDENT_FORM_VIEW;
+        } catch (Exception e) {
+            logger.error("Unexpected error saving student", e);
+            model.addAttribute(MSG_ERROR, "Ocurrió un error inesperado al guardar el estudiante.");
             return STUDENT_FORM_VIEW;
         }
     }

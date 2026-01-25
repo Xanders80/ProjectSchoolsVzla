@@ -25,22 +25,18 @@
   </head>
 
   <body id="page-top">
-    <main id="wrapper">
+    <div id="wrapper">
       <nav aria-label="Menú principal" th:replace="~{fragments/sb-admin-sidebar :: sidebar}"></nav>
       <div id="content-wrapper" class="d-flex flex-column">
         <div id="content">
           <header th:replace="~{fragments/sb-admin-topbar :: topbar}" aria-label="Barra superior"></header>
 
-          <main class="container-fluid" aria-labelledby="maintenance-form-title">
+          <div class="container-fluid" aria-labelledby="maintenance-form-title">
             <div
               class="d-sm-flex align-items-center justify-content-between mb-4"
             >
-              <h1
-                id="maintenance-form-title"
-                class="h3 mb-0 text-gray-800"
-                th:text="${request.id != null ? 'Editar Solicitud' : 'Nueva Solicitud de Mantenimiento'}"
-              >
-                Nueva Solicitud
+              <h1 id="maintenance-form-title" class="h3 mb-0 text-gray-800">
+                <i class="fas fa-tools mr-2 text-primary"></i><span th:text="${request.id != null ? 'Editar Solicitud' : 'Nueva Solicitud de Mantenimiento'}">Nueva Solicitud</span>
               </h1>
               <a th:href="@{/infra/maintenance}" class="btn btn-secondary" aria-label="Volver a la lista de solicitudes">
                 <i class="fas fa-arrow-left" aria-hidden="true"></i> Volver
@@ -75,49 +71,30 @@
                   th:action="@{/infra/maintenance}"
                   th:object="${request}"
                   method="post"
+                  class="needs-validation"
+                  novalidate
                 >
                   <input type="hidden" th:field="*{id}" />
                   <input type="hidden" th:field="*{requestedBy}" />
                   <input type="hidden" th:field="*{requestDate}" />
                   <input type="hidden" th:field="*{completionDate}" />
 
-                  <!-- Read-only Context Fields (Only if editing) -->
-                  <div class="row" th:if="${request.id != null}">
-                    <div class="col-md-4">
-                      <div class="form-group">
-                        <label for="requestedBy">Solicitado Por</label>
-                        <input
-                          type="text"
-                          class="form-control"
-                          th:value="${request.requestedBy != null ? request.requestedBy.username : 'N/A'}"
-                          readonly
-                        />
-                      </div>
-                    </div>
-                    <div class="col-md-4">
-                      <div class="form-group">
-                        <label for="requestDate">Fecha Solicitud</label>
-                        <input
-                          type="text"
-                          class="form-control"
-                          th:value="${#temporals.format(request.requestDate, 'dd/MM/yyyy HH:mm')}"
-                          readonly
-                        />
-                      </div>
-                    </div>
-                    <!-- Completion Date (Only if completed) -->
-                    <div
-                      class="col-md-4"
-                      th:if="${request.completionDate != null}"
-                    >
-                      <div class="form-group">
-                        <label for="completedDate">Fecha Completado</label>
-                        <input
-                          type="text"
-                          class="form-control"
-                          th:value="${#temporals.format(request.completionDate, 'dd/MM/yyyy HH:mm')}"
-                          readonly
-                        />
+                  <!-- Context Information Card (Optional but premium) -->
+                  <div class="card bg-light mb-4" th:if="${request.id != null}">
+                    <div class="card-body py-3">
+                      <div class="row text-muted small">
+                        <div class="col-md-4">
+                          <strong><i class="fas fa-user mr-1"></i> Solicitado Por:</strong>
+                          <span th:text="${request.requestedBy != null ? request.requestedBy.username : 'Sistema'}"></span>
+                        </div>
+                        <div class="col-md-4">
+                          <strong><i class="fas fa-clock mr-1"></i> Fecha Solicitud:</strong>
+                          <span th:text="${#temporals.format(request.requestDate, 'dd/MM/yyyy HH:mm')}"></span>
+                        </div>
+                        <div class="col-md-4" th:if="${request.completionDate != null}">
+                          <strong><i class="fas fa-check-circle mr-1"></i> Completado el:</strong>
+                          <span th:text="${#temporals.format(request.completionDate, 'dd/MM/yyyy HH:mm')}"></span>
+                        </div>
                       </div>
                     </div>
                   </div>
@@ -125,43 +102,58 @@
                   <div class="row">
                     <div class="col-md-6">
                       <div class="form-group">
-                        <label for="room"
+                        <label for="room" class="font-weight-bold"
                           >Ubicación (Sala)
                           <span class="text-danger">*</span></label
                         >
-                        <select
-                          class="form-control"
-                          id="room"
-                          th:field="*{room}"
-                        >
-                          <option value="">Seleccione una sala</option>
-                          <option
-                            th:each="room : ${rooms}"
-                            th:value="${room.id}"
-                            th:text="${room.name}"
+                        <div class="input-group">
+                          <div class="input-group-prepend">
+                            <span class="input-group-text"><i class="fas fa-door-open"></i></span>
+                          </div>
+                          <select
+                            class="form-control"
+                            id="room"
+                            th:field="*{room}"
+                            th:classappend="${#fields.hasErrors('room')} ? 'is-invalid'"
+                            required
                           >
-                            Sala 101
-                          </option>
-                        </select>
+                            <option value="">Seleccione una sala</option>
+                            <option
+                              th:each="room : ${rooms}"
+                              th:value="${room.id}"
+                              th:text="${room.name}"
+                            >
+                              Sala 101
+                            </option>
+                          </select>
+                          <div class="invalid-feedback" th:if="${#fields.hasErrors('room')}" th:errors="*{room}">
+                            La ubicación es obligatoria.
+                          </div>
+                        </div>
                         <small class="form-text text-muted"
-                          >Seleccione el lugar donde se requiere el
-                          mantenimiento</small
+                          >Seleccione el lugar donde se requiere el mantenimiento</small
                         >
                       </div>
                     </div>
 
                     <div class="col-md-6">
                       <div class="form-group">
-                        <label for="status">Estado</label>
-                        <select
-                          class="form-control"
-                          id="status"
-                          th:field="*{status}"
-                        >
-                          <option value="PENDING">Pendiente</option>
-                          <option value="IN_PROGRESS">En Progreso</option>
-                          <option value="COMPLETED">Completado</option>
-                        </select>
+                        <label for="status" class="font-weight-bold">Estado</label>
+                        <div class="input-group">
+                          <div class="input-group-prepend">
+                            <span class="input-group-text"><i class="fas fa-tasks"></i></span>
+                          </div>
+                          <select
+                            class="form-control"
+                            id="status"
+                            th:field="*{status}"
+                            th:readonly="${request.id == null}"
+                          >
+                            <option value="PENDING">Pendiente</option>
+                            <option value="IN_PROGRESS">En Progreso</option>
+                            <option value="COMPLETED">Completado</option>
+                          </select>
+                        </div>
                       </div>
                     </div>
                   </div>
@@ -169,7 +161,7 @@
                   <div class="row">
                     <div class="col-md-12">
                       <div class="form-group">
-                        <label for="description"
+                        <label for="description" class="font-weight-bold"
                           >Descripción del Problema
                           <span class="text-danger">*</span></label
                         >
@@ -177,36 +169,34 @@
                           class="form-control"
                           id="description"
                           th:field="*{description}"
+                          th:classappend="${#fields.hasErrors('description')} ? 'is-invalid'"
                           rows="5"
                           required
-                          placeholder="Describa detalladamente el problema..."
+                          placeholder="Describa detalladamente el problema (ej: gotera en el techo, luz parpadeante...)"
                         ></textarea>
-                        <small
-                          class="form-text text-danger"
-                          th:if="${#fields.hasErrors('description')}"
-                          th:errors="*{description}"
-                        ></small>
+                        <div class="invalid-feedback" th:if="${#fields.hasErrors('description')}" th:errors="*{description}">
+                          La descripción es obligatoria.
+                        </div>
                       </div>
                     </div>
                   </div>
 
-                  <div class="alert alert-info" role="alert">
-                    <i class="fas fa-info-circle"></i>
-                    <strong>Nota:</strong> La solicitud será registrada a su
-                    nombre.
+                  <div class="alert alert-info border-left-info shadow-sm" role="alert">
+                    <i class="fas fa-info-circle mr-2"></i>
+                    Esta solicitud será registrada bajo su cuenta de usuario y notificada al personal de mantenimiento.
                   </div>
 
                   <hr />
 
-                  <div class="form-group">
-                    <button type="submit" class="btn btn-primary">
-                      <i class="fas fa-save"></i> Guardar Solicitud
+                  <div class="form-group text-right">
+                    <button type="submit" class="btn btn-primary px-4 shadow-sm">
+                      <i class="fas fa-paper-plane mr-1"></i> Enviar Solicitud
                     </button>
                     <a
                       th:href="@{/infra/maintenance}"
-                      class="btn btn-secondary"
+                      class="btn btn-secondary px-4 ml-2"
                     >
-                      <i class="fas fa-times"></i> Cancelar
+                      <i class="fas fa-times mr-1"></i> Cancelar
                     </a>
                   </div>
                 </form>
@@ -214,9 +204,11 @@
             </div>
           </div>
         </div>
-        <div th:replace="~{fragments/sb-admin-footer :: footer}"></div>
+            </div>
+          </div>
+          <div th:replace="~{fragments/sb-admin-footer :: footer}"></div>
+        </div>
       </div>
-    </div>
 
     <a class="scroll-to-top rounded" href="#page-top"
       ><i class="fas fa-angle-up"></i

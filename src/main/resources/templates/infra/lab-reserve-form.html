@@ -20,14 +20,14 @@
     <link th:href="@{/css/sb-admin-2.min.css}" rel="stylesheet" />
   </head>
   <body id="page-top">
-    <main id="wrapper">
+    <div id="wrapper">
       <nav aria-label="Menú principal" th:replace="~{fragments/sb-admin-sidebar :: sidebar}"></nav>
       <div id="content-wrapper" class="d-flex flex-column">
         <div id="content">
           <header th:replace="~{fragments/sb-admin-topbar :: topbar}" aria-label="Barra superior"></header>
-          <main class="container-fluid" aria-labelledby="lab-reserve-title">
+          <div class="container-fluid" aria-labelledby="lab-reserve-title">
             <h1 id="lab-reserve-title" class="h3 mb-4 text-gray-800">
-              Reservar Laboratorio: <span th:text="${room.roomNumber}"></span>
+              <i class="fas fa-flask mr-2 text-primary"></i>Reservar Laboratorio: <span th:text="${room.roomNumber}"></span>
             </h1>
 
             <div class="row">
@@ -43,6 +43,8 @@
                       th:action="@{/infra/labs/reserve}"
                       th:object="${reservation}"
                       method="post"
+                      class="needs-validation"
+                      novalidate
                       aria-describedby="lab-reserve-title"
                     >
                       <input
@@ -52,66 +54,83 @@
                       />
 
                       <div class="form-group">
-                        <label for="teacherId">Docente Responsable *</label>
-                        <select name="teacher.id" id="teacherId" class="form-control" required aria-required="true" aria-label="Docente responsable">
-                          <option value="">Seleccione un docente</option>
-                          <option
-                            th:each="teacher : ${teachers}"
-                            th:value="${teacher.id}"
-                            th:text="${teacher.firstName + ' ' + teacher.lastName + ' (' + teacher.dni + ')'}"
-                          ></option>
-                        </select>
-                      </div>
-                      <!-- ...existing code... -->
-                          ></option>
-                        </select>
-                      </div>
-
-                      <div class="form-group">
-                        <label for="studentCount">Número de Estudiantes</label>
-                        <input
-                          type="number"
-                          name="numberOfStudents"
-                          class="form-control"
-                          min="1"
-                          th:placeholder="'Capacidad del lab: ' + ${room.capacity}"
-                        />
-                        <small class="form-text text-muted"
-                          >Opcional. Máximo:
-                          <span th:text="${room.capacity}"></span>
-                          estudiantes</small
-                        >
+                        <label for="teacherId" class="font-weight-bold">Docente Responsable <span class="text-danger">*</span></label>
+                        <div class="input-group">
+                          <div class="input-group-prepend">
+                            <span class="input-group-text"><i class="fas fa-chalkboard-teacher"></i></span>
+                          </div>
+                          <select name="teacher.id" id="teacherId" class="form-control" required aria-required="true" aria-label="Docente responsable">
+                            <option value="">Seleccione un docente...</option>
+                            <option
+                              th:each="teacher : ${teachers}"
+                              th:value="${teacher.id}"
+                              th:text="${teacher.firstName + ' ' + teacher.lastName + ' (' + teacher.dni + ')'}"
+                            ></option>
+                          </select>
+                        </div>
                       </div>
 
                       <div class="form-group">
-                        <label for="startDate">Fecha y Hora Inicio</label>
-                        <input
-                          type="datetime-local"
-                          th:field="*{startTime}"
-                          class="form-control"
-                          required
-                        />
+                        <label for="studentCount" class="font-weight-bold">Número de Estudiantes</label>
+                        <div class="input-group">
+                          <div class="input-group-prepend">
+                            <span class="input-group-text"><i class="fas fa-users"></i></span>
+                          </div>
+                          <input
+                            type="number"
+                            name="numberOfStudents"
+                            class="form-control"
+                            min="1"
+                            th:placeholder="'Máximo: ' + ${room.capacity}"
+                          />
+                        </div>
+                        <small class="form-text text-muted">Afluencia estimada para la reserva.</small>
                       </div>
 
                       <div class="form-group">
-                        <label for="endDate">Fecha y Hora Fin</label>
-                        <input
-                          type="datetime-local"
-                          th:field="*{endTime}"
-                          class="form-control"
-                          required
-                        />
+                        <label for="startDate" class="font-weight-bold">Fecha y Hora Inicio <span class="text-danger">*</span></label>
+                        <div class="input-group">
+                          <div class="input-group-prepend">
+                            <span class="input-group-text"><i class="fas fa-calendar-plus"></i></span>
+                          </div>
+                          <input
+                            type="datetime-local"
+                            th:field="*{startTime}"
+                            class="form-control"
+                            required
+                          />
+                        </div>
                       </div>
 
                       <div class="form-group">
-                        <label for="purpose">Propósito / Actividad *</label>
-                        <textarea
-                          th:field="*{purpose}"
-                          class="form-control"
-                          rows="3"
-                          required
-                          placeholder="Describa el propósito de la reserva"
-                        ></textarea>
+                        <label for="endDate" class="font-weight-bold">Fecha y Hora Fin <span class="text-danger">*</span></label>
+                        <div class="input-group">
+                          <div class="input-group-prepend">
+                            <span class="input-group-text"><i class="fas fa-calendar-minus"></i></span>
+                          </div>
+                          <input
+                            type="datetime-local"
+                            th:field="*{endTime}"
+                            class="form-control"
+                            required
+                          />
+                        </div>
+                      </div>
+
+                      <div class="form-group">
+                        <label for="purpose" class="font-weight-bold">Propósito / Actividad <span class="text-danger">*</span></label>
+                        <div class="input-group">
+                          <div class="input-group-prepend">
+                            <span class="input-group-text"><i class="fas fa-clipboard-list"></i></span>
+                          </div>
+                          <textarea
+                            th:field="*{purpose}"
+                            class="form-control"
+                            rows="2"
+                            required
+                            placeholder="Describa brevemente la actividad a realizar..."
+                          ></textarea>
+                        </div>
                       </div>
 
                       <div class="alert alert-info" role="alert">
@@ -125,9 +144,13 @@
                         </ul>
                       </div>
 
-                      <button type="submit" class="btn btn-primary btn-block">
-                        Confirmar Reserva
-                      </button>
+                      <hr>
+
+                      <div class="form-group text-right">
+                        <button type="submit" class="btn btn-primary px-4 shadow-sm">
+                          <i class="fas fa-check-circle mr-1"></i> Confirmar Reserva
+                        </button>
+                      </div>
                     </form>
                   </div>
                 </div>

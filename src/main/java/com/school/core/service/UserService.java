@@ -9,7 +9,8 @@ public interface UserService {
         User registerNewUser(String firstName, String lastName, String email, String username, String password);
 
         User registerNewUserWithType(String firstName, String lastName, String email, String username, String password,
-                        String userType, String dni, String phoneNumber, String address, String relationship);
+                        String userType, String dni, String phoneNumber, String address, String relationship,
+                        java.time.LocalDate birthDate);
 
         Optional<User> findByEmail(String email);
 

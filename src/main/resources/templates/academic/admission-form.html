@@ -1,4 +1,4 @@
-<!DOCTYPE html>
+<!doctype html>
 <html xmlns:th="http://www.thymeleaf.org">
   <head>
     <meta charset="utf-8" />
@@ -37,11 +37,12 @@
             <div
               class="d-sm-flex align-items-center justify-content-between mb-4"
             >
-              <h1
-                class="h3 mb-0 text-gray-800"
-                th:text="${exam.id != null ? 'Editar Postulante' : 'Nuevo Postulante'}"
-              >
-                Postulante
+              <h1 class="h3 mb-0 text-gray-800">
+                <i class="fas fa-file-signature mr-2 text-primary"></i
+                ><span
+                  th:text="${exam.id != null ? 'Editar Postulante' : 'Nuevo Postulante'}"
+                  >Postulante</span
+                >
               </h1>
               <a th:href="@{/academic/admissions}" class="btn btn-secondary">
                 <i class="fas fa-arrow-left"></i> Volver
@@ -59,132 +60,205 @@
                   th:action="@{/academic/admissions}"
                   th:object="${exam}"
                   method="post"
+                  class="needs-validation"
+                  novalidate
                 >
                   <input type="hidden" th:field="*{id}" />
 
                   <div class="form-row">
                     <div class="form-group col-md-6">
-                      <label>Nombre Completo</label>
-                      <input
-                        type="text"
-                        th:field="*{applicantName}"
-                        class="form-control"
-                        th:classappend="${#fields.hasErrors('applicantName')} ? 'is-invalid' : ''"
-                        required
-                      />
-                      <div
-                        class="invalid-feedback"
-                        th:if="${#fields.hasErrors('applicantName')}"
-                        th:errors="*{applicantName}"
+                      <label class="font-weight-bold"
+                        >Nombre Completo
+                        <span class="text-danger">*</span></label
                       >
-                        Error
+                      <div class="input-group">
+                        <div class="input-group-prepend">
+                          <span class="input-group-text"
+                            ><i class="fas fa-user"></i
+                          ></span>
+                        </div>
+                        <input
+                          type="text"
+                          th:field="*{applicantName}"
+                          class="form-control"
+                          th:classappend="${#fields.hasErrors('applicantName')} ? 'is-invalid' : ''"
+                          placeholder="Nombre del postulante"
+                          required
+                        />
+                        <div
+                          class="invalid-feedback"
+                          th:if="${#fields.hasErrors('applicantName')}"
+                          th:errors="*{applicantName}"
+                        >
+                          Error
+                        </div>
                       </div>
                     </div>
                     <div class="form-group col-md-6">
-                      <label>DNI</label>
-                      <input
-                        type="text"
-                        th:field="*{applicantDni}"
-                        class="form-control"
-                        th:classappend="${#fields.hasErrors('applicantDni')} ? 'is-invalid' : ''"
-                        required
-                      />
-                      <div
-                        class="invalid-feedback"
-                        th:if="${#fields.hasErrors('applicantDni')}"
-                        th:errors="*{applicantDni}"
+                      <label class="font-weight-bold"
+                        >DNI <span class="text-danger">*</span></label
                       >
-                        Error
+                      <div class="input-group">
+                        <div class="input-group-prepend">
+                          <span class="input-group-text"
+                            ><i class="fas fa-id-card"></i
+                          ></span>
+                        </div>
+                        <input
+                          type="text"
+                          th:field="*{applicantDni}"
+                          class="form-control"
+                          th:classappend="${#fields.hasErrors('applicantDni')} ? 'is-invalid' : ''"
+                          placeholder="Documento de identidad"
+                          required
+                        />
+                        <div
+                          class="invalid-feedback"
+                          th:if="${#fields.hasErrors('applicantDni')}"
+                          th:errors="*{applicantDni}"
+                        >
+                          Error
+                        </div>
                       </div>
                     </div>
                   </div>
 
                   <div class="form-group">
-                    <label>Correo Electrónico</label>
-                    <input
-                      type="email"
-                      th:field="*{applicantEmail}"
-                      class="form-control"
-                      th:classappend="${#fields.hasErrors('applicantEmail')} ? 'is-invalid' : ''"
-                      required
-                    />
-                    <div
-                      class="invalid-feedback"
-                      th:if="${#fields.hasErrors('applicantEmail')}"
-                      th:errors="*{applicantEmail}"
+                    <label class="font-weight-bold"
+                      >Correo Electrónico
+                      <span class="text-danger">*</span></label
                     >
-                      Error
+                    <div class="input-group">
+                      <div class="input-group-prepend">
+                        <span class="input-group-text"
+                          ><i class="fas fa-envelope"></i
+                        ></span>
+                      </div>
+                      <input
+                        type="email"
+                        th:field="*{applicantEmail}"
+                        class="form-control"
+                        th:classappend="${#fields.hasErrors('applicantEmail')} ? 'is-invalid' : ''"
+                        placeholder="ejemplo@correo.com"
+                        required
+                      />
+                      <div
+                        class="invalid-feedback"
+                        th:if="${#fields.hasErrors('applicantEmail')}"
+                        th:errors="*{applicantEmail}"
+                      >
+                        Error
+                      </div>
                     </div>
                   </div>
 
                   <div class="form-row">
                     <div class="form-group col-md-4">
-                      <label>Fecha de Examen</label>
-                      <input
-                        type="date"
-                        th:field="*{examDate}"
-                        class="form-control"
-                        th:classappend="${#fields.hasErrors('examDate')} ? 'is-invalid' : ''"
-                        required
-                      />
-                      <div
-                        class="invalid-feedback"
-                        th:if="${#fields.hasErrors('examDate')}"
-                        th:errors="*{examDate}"
+                      <label class="font-weight-bold"
+                        >Fecha de Examen
+                        <span class="text-danger">*</span></label
                       >
-                        Error
+                      <div class="input-group">
+                        <div class="input-group-prepend">
+                          <span class="input-group-text"
+                            ><i class="fas fa-calendar-day"></i
+                          ></span>
+                        </div>
+                        <input
+                          type="date"
+                          th:field="*{examDate}"
+                          class="form-control"
+                          th:classappend="${#fields.hasErrors('examDate')} ? 'is-invalid' : ''"
+                          required
+                        />
+                        <div
+                          class="invalid-feedback"
+                          th:if="${#fields.hasErrors('examDate')}"
+                          th:errors="*{examDate}"
+                        >
+                          Error
+                        </div>
                       </div>
                     </div>
                     <div class="form-group col-md-4">
-                      <label>Puntaje (0-100)</label>
-                      <input
-                        type="number"
-                        step="0.01"
-                        th:field="*{score}"
-                        class="form-control"
-                        th:classappend="${#fields.hasErrors('score')} ? 'is-invalid' : ''"
-                      />
-                      <div
-                        class="invalid-feedback"
-                        th:if="${#fields.hasErrors('score')}"
-                        th:errors="*{score}"
-                      >
-                        Error
+                      <label class="font-weight-bold">Puntaje (0-100)</label>
+                      <div class="input-group">
+                        <div class="input-group-prepend">
+                          <span class="input-group-text"
+                            ><i class="fas fa-poll"></i
+                          ></span>
+                        </div>
+                        <input
+                          type="number"
+                          step="0.01"
+                          th:field="*{score}"
+                          class="form-control"
+                          th:classappend="${#fields.hasErrors('score')} ? 'is-invalid' : ''"
+                          placeholder="0.00"
+                        />
+                        <div
+                          class="invalid-feedback"
+                          th:if="${#fields.hasErrors('score')}"
+                          th:errors="*{score}"
+                        >
+                          Error
+                        </div>
                       </div>
                     </div>
                     <div class="form-group col-md-4">
-                      <label>Estado</label>
-                      <input
-                        type="text"
-                        th:field="*{status}"
-                        class="form-control"
-                        readonly
-                        placeholder="Calculado automáticamente"
-                      />
+                      <label class="font-weight-bold">Estado</label>
+                      <div class="input-group">
+                        <div class="input-group-prepend">
+                          <span class="input-group-text"
+                            ><i class="fas fa-info-circle"></i
+                          ></span>
+                        </div>
+                        <input
+                          type="text"
+                          th:field="*{status}"
+                          class="form-control bg-light"
+                          readonly
+                          placeholder="Automático"
+                        />
+                      </div>
                       <small class="form-text text-muted"
-                        >El estado se actualiza automáticamente según el
-                        puntaje.</small
+                        >Cálculo automático según el puntaje.</small
                       >
                     </div>
                   </div>
                   <div class="form-group">
-                    <label>Comentarios</label>
-                    <textarea
-                      th:field="*{comments}"
-                      class="form-control"
-                      rows="3"
-                    ></textarea>
+                    <label class="font-weight-bold">Comentarios</label>
+                    <div class="input-group">
+                      <div class="input-group-prepend">
+                        <span class="input-group-text"
+                          ><i class="fas fa-comment-dots"></i
+                        ></span>
+                      </div>
+                      <textarea
+                        th:field="*{comments}"
+                        class="form-control"
+                        rows="3"
+                        placeholder="Observaciones adicionales..."
+                      ></textarea>
+                    </div>
                   </div>
 
-                  <button type="submit" class="btn btn-primary">
-                    <i class="fas fa-save"></i> Guardar
-                  </button>
-                  <a
-                    th:href="@{/academic/admissions}"
-                    class="btn btn-secondary"
-                  >
-                    <i class="fas fa-times"></i> Cancelar
-                  </a>
+                  <hr />
+
+                  <div class="form-group text-right">
+                    <button
+                      type="submit"
+                      class="btn btn-primary px-4 shadow-sm"
+                    >
+                      <i class="fas fa-save mr-1"></i> Guardar Postulante
+                    </button>
+                    <a
+                      th:href="@{/academic/admissions}"
+                      class="btn btn-secondary px-4 ml-2"
+                    >
+                      <i class="fas fa-times mr-1"></i> Cancelar
+                    </a>
+                  </div>
                 </form>
               </div>
             </div>

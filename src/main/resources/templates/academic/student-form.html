@@ -1,4 +1,4 @@
-<!DOCTYPE html>
+<!doctype html>
 <html xmlns:th="http://www.thymeleaf.org">
   <head>
     <meta charset="utf-8" />
@@ -33,11 +33,12 @@
             <div
               class="d-sm-flex align-items-center justify-content-between mb-4"
             >
-              <h1
-                class="h3 mb-0 text-gray-800"
-                th:text="${student.id != null ? 'Editar Estudiante' : 'Nuevo Estudiante'}"
-              >
-                Estudiante
+              <h1 class="h3 mb-0 text-gray-800">
+                <i class="fas fa-user-graduate mr-2 text-primary"></i
+                ><span
+                  th:text="${student.id != null ? 'Editar Estudiante' : 'Nuevo Estudiante'}"
+                  >Estudiante</span
+                >
               </h1>
               <a th:href="@{/students}" class="btn btn-secondary">
                 <i class="fas fa-arrow-left"></i> Volver
@@ -55,6 +56,8 @@
                   th:action="@{/students}"
                   th:object="${student}"
                   method="post"
+                  class="needs-validation"
+                  novalidate
                 >
                   <input type="hidden" th:field="*{id}" />
 
@@ -78,73 +81,56 @@
                   <div class="row">
                     <div class="col-md-6">
                       <div class="form-group">
-                        <label>Nombre</label>
-                        <input
-                          type="text"
-                          th:field="*{firstName}"
-                          class="form-control"
-                          th:classappend="${#fields.hasErrors('firstName')} ? 'is-invalid'"
-                          required
-                        />
-                        <div
-                          class="invalid-feedback"
-                          th:if="${#fields.hasErrors('firstName')}"
-                          th:errors="*{firstName}"
-                        ></div>
+                        <label class="font-weight-bold"
+                          >Nombre <span class="text-danger">*</span></label
+                        >
+                        <div class="input-group">
+                          <div class="input-group-prepend">
+                            <span class="input-group-text"
+                              ><i class="fas fa-user"></i
+                            ></span>
+                          </div>
+                          <input
+                            type="text"
+                            th:field="*{firstName}"
+                            class="form-control"
+                            th:classappend="${#fields.hasErrors('firstName')} ? 'is-invalid'"
+                            placeholder="Nombre del estudiante"
+                            minlength="2"
+                            maxlength="50"
+                            required
+                          />
+                          <div class="invalid-feedback">
+                            El nombre es obligatorio (2-50 caracteres).
+                          </div>
+                        </div>
                       </div>
                     </div>
                     <div class="col-md-6">
                       <div class="form-group">
-                        <label>Apellido</label>
-                        <input
-                          type="text"
-                          th:field="*{lastName}"
-                          class="form-control"
-                          th:classappend="${#fields.hasErrors('lastName')} ? 'is-invalid'"
-                          required
-                        />
-                        <div
-                          class="invalid-feedback"
-                          th:if="${#fields.hasErrors('lastName')}"
-                          th:errors="*{lastName}"
-                        ></div>
-                      </div>
-                    </div>
-                  </div>
-
-                  <div class="row">
-                    <div class="col-md-6">
-                      <div class="form-group">
-                        <label>DNI</label>
-                        <input
-                          type="text"
-                          th:field="*{dni}"
-                          class="form-control"
-                          th:classappend="${#fields.hasErrors('dni')} ? 'is-invalid'"
-                          required
-                        />
-                        <div
-                          class="invalid-feedback"
-                          th:if="${#fields.hasErrors('dni')}"
-                          th:errors="*{dni}"
-                        ></div>
-                      </div>
-                    </div>
-                    <div class="col-md-6">
-                      <div class="form-group">
-                        <label>Correo Electrónico</label>
-                        <input
-                          type="email"
-                          th:field="*{email}"
-                          class="form-control"
-                          th:classappend="${#fields.hasErrors('email')} ? 'is-invalid'"
-                          required
-                        />
-                        <div
-                          class="invalid-feedback"
-                          th:if="${#fields.hasErrors('email')}"
-                          th:errors="*{email}"
-                        ></div>
+                        <label class="font-weight-bold"
+                          >Apellido <span class="text-danger">*</span></label
+                        >
+                        <div class="input-group">
+                          <div class="input-group-prepend">
+                            <span class="input-group-text"
+                              ><i class="fas fa-user"></i
+                            ></span>
+                          </div>
+                          <input
+                            type="text"
+                            th:field="*{lastName}"
+                            class="form-control"
+                            th:classappend="${#fields.hasErrors('lastName')} ? 'is-invalid'"
+                            placeholder="Apellido del estudiante"
+                            minlength="2"
+                            maxlength="50"
+                            required
+                          />
+                          <div class="invalid-feedback">
+                            El apellido es obligatorio (2-50 caracteres).
+                          </div>
+                        </div>
                       </div>
                     </div>
                   </div>
@@ -152,82 +138,210 @@
                   <div class="row">
                     <div class="col-md-6">
                       <div class="form-group">
-                        <label>Teléfono</label>
-                        <input
-                          type="text"
-                          th:field="*{phoneNumber}"
-                          class="form-control"
-                        />
+                        <label class="font-weight-bold"
+                          >DNI <span class="text-danger">*</span></label
+                        >
+                        <div class="input-group">
+                          <div class="input-group-prepend">
+                            <span class="input-group-text"
+                              ><i class="fas fa-id-card"></i
+                            ></span>
+                          </div>
+                          <input
+                            type="text"
+                            th:field="*{dni}"
+                            class="form-control"
+                            th:classappend="${#fields.hasErrors('dni')} ? 'is-invalid'"
+                            placeholder="Documento de identidad"
+                            minlength="5"
+                            maxlength="20"
+                            required
+                          />
+                          <div class="invalid-feedback">
+                            El DNI es obligatorio (5-20 caracteres).
+                          </div>
+                        </div>
                       </div>
                     </div>
                     <div class="col-md-6">
                       <div class="form-group">
-                        <label>Fecha de Nacimiento</label>
-                        <input
-                          type="date"
-                          th:field="*{birthDate}"
-                          class="form-control"
-                        />
+                        <label class="font-weight-bold"
+                          >Correo Electrónico
+                          <span class="text-danger">*</span></label
+                        >
+                        <div class="input-group">
+                          <div class="input-group-prepend">
+                            <span class="input-group-text"
+                              ><i class="fas fa-envelope"></i
+                            ></span>
+                          </div>
+                          <input
+                            type="email"
+                            th:field="*{email}"
+                            class="form-control"
+                            th:classappend="${#fields.hasErrors('email')} ? 'is-invalid'"
+                            placeholder="ejemplo@correo.com"
+                            required
+                          />
+                          <div class="invalid-feedback">
+                            Ingrese un correo electrónico válido.
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+
+                  <div class="row">
+                    <div class="col-md-6">
+                      <div class="form-group">
+                        <label class="font-weight-bold">Teléfono</label>
+                        <div class="input-group">
+                          <div class="input-group-prepend">
+                            <span class="input-group-text"
+                              ><i class="fas fa-phone"></i
+                            ></span>
+                          </div>
+                          <input
+                            type="text"
+                            th:field="*{phoneNumber}"
+                            id="phoneNumber"
+                            class="form-control"
+                            placeholder="(0414) 123-4567"
+                            maxlength="15"
+                            pattern="^\(\d{4}\) \d{3}-\d{4}$"
+                            oninput="formatPhoneInput(event)"
+                            required
+                          />
+                          <div class="invalid-feedback">
+                            El teléfono es obligatorio y debe seguir el formato
+                            (0000) 000-0000.
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+                    <div class="col-md-6">
+                      <div class="form-group">
+                        <label class="font-weight-bold"
+                          >Fecha de Nacimiento
+                          <span class="text-danger">*</span></label
+                        >
+                        <div class="input-group">
+                          <div class="input-group-prepend">
+                            <span class="input-group-text"
+                              ><i class="fas fa-birthday-cake"></i
+                            ></span>
+                          </div>
+                          <input
+                            type="date"
+                            th:field="*{birthDate}"
+                            class="form-control"
+                            th:attr="max=${#temporals.format(#temporals.createNow(), 'yyyy-MM-dd')}"
+                            required
+                          />
+                          <div class="invalid-feedback">
+                            La fecha de nacimiento es obligatoria y debe ser una
+                            fecha pasada.
+                          </div>
+                        </div>
                       </div>
                     </div>
                   </div>
 
                   <div class="form-group">
-                    <label>Dirección</label>
-                    <textarea
-                      th:field="*{address}"
-                      class="form-control"
-                      rows="3"
-                    ></textarea>
+                    <label class="font-weight-bold"
+                      >Dirección <span class="text-danger">*</span></label
+                    >
+                    <div class="input-group">
+                      <div class="input-group-prepend">
+                        <span class="input-group-text"
+                          ><i class="fas fa-map-marker-alt"></i
+                        ></span>
+                      </div>
+                      <textarea
+                        th:field="*{address}"
+                        class="form-control"
+                        rows="3"
+                        placeholder="Dirección de habitación"
+                        maxlength="255"
+                        required
+                      ></textarea>
+                      <div class="invalid-feedback">
+                        La dirección es obligatoria y no puede exceder los 255
+                        caracteres.
+                      </div>
+                    </div>
                   </div>
 
                   <div class="row">
                     <div class="col-md-6">
                       <div class="form-group">
-                        <label>Número de Registro</label>
-                        <input
-                          type="text"
-                          th:field="*{registrationNumber}"
-                          class="form-control"
-                          th:classappend="${#fields.hasErrors('registrationNumber')} ? 'is-invalid'"
-                          placeholder="Se generará automáticamente"
-                          readonly
-                        />
+                        <label class="font-weight-bold"
+                          >Número de Registro</label
+                        >
+                        <div class="input-group">
+                          <div class="input-group-prepend">
+                            <span class="input-group-text"
+                              ><i class="fas fa-id-badge"></i
+                            ></span>
+                          </div>
+                          <input
+                            type="text"
+                            th:field="*{registrationNumber}"
+                            class="form-control bg-light"
+                            th:classappend="${#fields.hasErrors('registrationNumber')} ? 'is-invalid'"
+                            placeholder="Automático"
+                            readonly
+                          />
+                        </div>
                         <small class="form-text text-muted">
-                          El número de registro se genera automáticamente al guardar
+                          El número de registro se genera automáticamente al
+                          guardar
                         </small>
-                        <div
-                          class="invalid-feedback"
-                          th:if="${#fields.hasErrors('registrationNumber')}"
-                          th:errors="*{registrationNumber}"
-                        ></div>
                       </div>
                     </div>
                     <div class="col-md-6">
                       <div class="form-group">
-                        <label>Fecha de Inscripción</label>
-                        <input
-                          type="date"
-                          th:field="*{enrollmentDate}"
-                          class="form-control"
-                          th:classappend="${#fields.hasErrors('enrollmentDate')} ? 'is-invalid'"
-                          required
-                        />
-                        <div
-                          class="invalid-feedback"
-                          th:if="${#fields.hasErrors('enrollmentDate')}"
-                          th:errors="*{enrollmentDate}"
-                        ></div>
+                        <label class="font-weight-bold"
+                          >Fecha de Inscripción
+                          <span class="text-danger">*</span></label
+                        >
+                        <div class="input-group">
+                          <div class="input-group-prepend">
+                            <span class="input-group-text"
+                              ><i class="fas fa-calendar-check"></i
+                            ></span>
+                          </div>
+                          <input
+                            type="date"
+                            th:field="*{enrollmentDate}"
+                            class="form-control"
+                            th:classappend="${#fields.hasErrors('enrollmentDate')} ? 'is-invalid'"
+                            required
+                          />
+                          <div class="invalid-feedback">
+                            La fecha de inscripción es obligatoria.
+                          </div>
+                        </div>
                       </div>
                     </div>
                   </div>
 
-                  <button type="submit" class="btn btn-primary">
-                    <i class="fas fa-save"></i> Guardar Estudiante
-                  </button>
-                  <a th:href="@{/students}" class="btn btn-secondary">
-                    <i class="fas fa-times"></i> Cancelar
-                  </a>
+                  <hr />
+
+                  <div class="form-group text-right">
+                    <button
+                      type="submit"
+                      class="btn btn-primary px-4 shadow-sm"
+                    >
+                      <i class="fas fa-save mr-1"></i> Guardar Estudiante
+                    </button>
+                    <a
+                      th:href="@{/students}"
+                      class="btn btn-secondary px-4 ml-2"
+                    >
+                      <i class="fas fa-times mr-1"></i> Cancelar
+                    </a>
+                  </div>
                 </form>
               </div>
             </div>
@@ -247,5 +361,58 @@
     <script th:src="@{/vendor/bootstrap/js/bootstrap.bundle.min.js}"></script>
     <script th:src="@{/vendor/jquery-easing/jquery.easing.min.js}"></script>
     <script th:src="@{/js/sb-admin-2.min.js}"></script>
+
+    <!-- Client-side Validation Script -->
+    <script>
+      /**
+       * Formatea el valor de un campo de entrada para que coincida con el formato de teléfono venezolano (p. ej., (0414) 123-4567).
+       * @param {Event} event - El evento de entrada del campo.
+       */
+      function formatPhoneInput(event) {
+        const input = event.target;
+        let value = input.value.replace(/\D/g, ""); // Eliminar caracteres no numéricos
+
+        if (value.length > 11) {
+          value = value.slice(0, 11);
+        }
+
+        if (value.length > 7) {
+          value = `(${value.slice(0, 4)}) ${value.slice(4, 7)}-${value.slice(7, 11)}`;
+        } else if (value.length > 4) {
+          value = `(${value.slice(0, 4)}) ${value.slice(4, 7)}`;
+        } else if (value.length > 0) {
+          value = `(${value.slice(0, 4)}`;
+        }
+
+        input.value = value;
+      }
+
+      (function () {
+        "use strict";
+        window.addEventListener(
+          "load",
+          function () {
+            var forms = document.getElementsByClassName("needs-validation");
+            var validation = Array.prototype.filter.call(
+              forms,
+              function (form) {
+                form.addEventListener(
+                  "submit",
+                  function (event) {
+                    if (form.checkValidity() === false) {
+                      event.preventDefault();
+                      event.stopPropagation();
+                    }
+                    form.classList.add("was-validated");
+                  },
+                  false,
+                );
+              },
+            );
+          },
+          false,
+        );
+      })();
+    </script>
   </body>
 </html>

@@ -73,11 +73,26 @@ public class MaintenanceController {
         }
 
         try {
-            // Set current user as requester
-            Authentication auth = SecurityContextHolder.getContext().getAuthentication();
-            if (auth != null && auth.isAuthenticated()) {
-                String username = auth.getName();
-                userService.findByUsername(username).ifPresent(request::setRequestedBy);
+            if (request.getId() == null) {
+                // New request: Set current user as requester
+                Authentication auth = SecurityContextHolder.getContext().getAuthentication();
+                if (auth != null && auth.isAuthenticated()) {
+                    String username = auth.getName();
+                    userService.findByUsername(username).ifPresent(request::setRequestedBy);
+                }
+            } else {
+                // Editing existing: Ensure requester is preserved if not present in binding
+                Long requestId = request.getId();
+                if (requestId != null) {
+                    maintenanceService.getRequestById(requestId).ifPresent(existing -> {
+                        if (request.getRequestedBy() == null) {
+                            request.setRequestedBy(existing.getRequestedBy());
+                        }
+                        if (request.getRequestDate() == null) {
+                            request.setRequestDate(existing.getRequestDate());
+                        }
+                    });
+                }
             }
 
             maintenanceService.saveRequest(request);

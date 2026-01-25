@@ -1,4 +1,4 @@
-<!DOCTYPE html>
+<!doctype html>
 <html xmlns:th="http://www.thymeleaf.org">
   <head>
     <meta charset="utf-8" />
@@ -29,7 +29,10 @@
             <div
               class="d-sm-flex align-items-center justify-content-between mb-4"
             >
-              <h1 class="h3 mb-4 text-gray-800">Registrar Préstamo</h1>
+              <h1 class="h3 mb-4 text-gray-800">
+                <i class="fas fa-clipboard-list mr-2 text-primary"></i>Registrar
+                Préstamo
+              </h1>
               <a th:href="@{/library/loans}" class="btn btn-secondary">
                 <i class="fas fa-arrow-left"></i> Volver
               </a>
@@ -37,51 +40,96 @@
 
             <div class="card shadow mb-4">
               <div class="card-body">
-                <form th:action="@{/library/loans}" method="post">
+                <form
+                  th:action="@{/library/loans}"
+                  method="post"
+                  class="needs-validation"
+                  novalidate
+                >
                   <div class="form-group">
-                    <label for="bookId">Libro Disponible</label>
-                    <select class="form-control" name="bookId" required>
-                      <option value="" disabled selected>
-                        Seleccione un libro...
-                      </option>
-                      <option
-                        th:each="book : ${books}"
-                        th:value="${book.id}"
-                        th:text="${book.title + ' (ISBN: ' + book.isbn + ')'}"
-                      ></option>
-                    </select>
+                    <label for="bookId" class="font-weight-bold"
+                      >Libro Disponible
+                      <span class="text-danger">*</span></label
+                    >
+                    <div class="input-group">
+                      <div class="input-group-prepend">
+                        <span class="input-group-text"
+                          ><i class="fas fa-book"></i
+                        ></span>
+                      </div>
+                      <select class="form-control" name="bookId" required>
+                        <option value="" disabled selected>
+                          Seleccione un libro...
+                        </option>
+                        <option
+                          th:each="book : ${books}"
+                          th:value="${book.id}"
+                          th:text="${book.title + ' (ISBN: ' + book.isbn + ')'}"
+                        ></option>
+                      </select>
+                    </div>
                   </div>
 
                   <div class="form-group">
-                    <label for="userId">Usuario</label>
-                    <select class="form-control" name="userId" required>
-                      <option value="" disabled selected>
-                        Seleccione un usuario...
-                      </option>
-                      <option
-                        th:each="user : ${users}"
-                        th:value="${user.id}"
-                        th:text="${user.username + ' (' + user.role + ')'}"
-                      ></option>
-                    </select>
+                    <label for="userId" class="font-weight-bold"
+                      >Usuario <span class="text-danger">*</span></label
+                    >
+                    <div class="input-group">
+                      <div class="input-group-prepend">
+                        <span class="input-group-text"
+                          ><i class="fas fa-user"></i
+                        ></span>
+                      </div>
+                      <select class="form-control" name="userId" required>
+                        <option value="" disabled selected>
+                          Seleccione un usuario...
+                        </option>
+                        <option
+                          th:each="user : ${users}"
+                          th:value="${user.id}"
+                          th:text="${user.username + ' (' + user.role + ')'}"
+                        ></option>
+                      </select>
+                    </div>
                   </div>
 
                   <div class="form-group">
-                    <label for="dueDate">Fecha de Vencimiento</label>
-                    <input
-                      type="date"
-                      class="form-control"
-                      name="dueDate"
-                      required
-                    />
+                    <label for="dueDate" class="font-weight-bold"
+                      >Fecha de Vencimiento
+                      <span class="text-danger">*</span></label
+                    >
+                    <div class="input-group">
+                      <div class="input-group-prepend">
+                        <span class="input-group-text"
+                          ><i class="fas fa-calendar-day"></i
+                        ></span>
+                      </div>
+                      <input
+                        type="date"
+                        class="form-control"
+                        name="dueDate"
+                        required
+                      />
+                    </div>
                   </div>
 
-                  <button type="submit" class="btn btn-primary">
-                    Registrar Préstamo
-                  </button>
-                  <a th:href="@{/library/loans}" class="btn btn-secondary"
-                    >Cancelar</a
-                  >
+                  <hr />
+
+                  <div class="form-group text-right">
+                    <button
+                      type="submit"
+                      class="btn btn-primary px-4 shadow-sm"
+                    >
+                      <i class="fas fa-check-circle mr-1"></i> Registrar
+                      Préstamo
+                    </button>
+                    <a
+                      th:href="@{/library/loans}"
+                      class="btn btn-secondary px-4 ml-2"
+                    >
+                      <i class="fas fa-times mr-1"></i> Cancelar
+                    </a>
+                  </div>
                 </form>
               </div>
             </div>

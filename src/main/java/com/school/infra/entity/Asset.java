@@ -2,29 +2,32 @@ package com.school.infra.entity;
 
 import java.time.LocalDate;
 
-import jakarta.persistence.Column;
-import jakarta.persistence.Entity;
-import jakarta.persistence.FetchType;
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.GenerationType;
-import jakarta.persistence.Id;
-import jakarta.persistence.JoinColumn;
-import jakarta.persistence.ManyToOne;
-import jakarta.persistence.Table;
+import jakarta.persistence.*;
+import jakarta.validation.constraints.*;
+import com.school.core.listener.AuditEntityListener;
 
 @Entity
 @Table(name = "assets")
+@EntityListeners(AuditEntityListener.class)
 public class Asset {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
+    @NotBlank(message = "El nombre es obligatorio")
+    @Size(max = 255)
     @Column(nullable = false)
     private String name;
 
+    @Size(max = 100)
     private String serialNumber;
+
+    @NotBlank(message = "El tipo de activo es obligatorio")
+    @Size(max = 50)
     private String type; // Furniture, Electronics, etc.
+
+    @PastOrPresent(message = "La fecha de compra no puede ser futura")
     private LocalDate purchaseDate;
 
     @ManyToOne(fetch = FetchType.LAZY)

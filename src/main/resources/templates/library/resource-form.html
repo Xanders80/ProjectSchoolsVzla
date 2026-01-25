@@ -1,4 +1,4 @@
-<!DOCTYPE html>
+<!doctype html>
 <html xmlns:th="http://www.thymeleaf.org">
   <head>
     <meta charset="utf-8" />
@@ -29,11 +29,12 @@
             <div
               class="d-sm-flex align-items-center justify-content-between mb-4"
             >
-              <h1
-                class="h3 mb-0 text-gray-800"
-                th:text="${resource.id != null ? 'Editar Recurso Digital' : 'Nuevo Recurso Digital'}"
-              >
-                FFormulario de Recurso
+              <h1 class="h3 mb-0 text-gray-800">
+                <i class="fas fa-laptop mr-2 text-primary"></i
+                ><span
+                  th:text="${resource.id != null ? 'Editar Recurso Digital' : 'Nuevo Recurso Digital'}"
+                  >FFormulario de Recurso</span
+                >
               </h1>
               <a th:href="@{/library/resources}" class="btn btn-secondary">
                 <i class="fas fa-arrow-left"></i> Volver
@@ -46,83 +47,138 @@
                   th:action="@{/library/resources/save}"
                   th:object="${resource}"
                   method="post"
+                  class="needs-validation"
+                  novalidate
                 >
                   <input type="hidden" th:field="*{id}" />
 
                   <div class="form-group">
-                    <label for="title">Título *</label>
-                    <input
-                      type="text"
-                      class="form-control"
-                      id="title"
-                      th:field="*{title}"
-                      required
-                    />
-                  </div>
-
-                  <div class="form-group">
-                    <label for="author">Autor</label>
-                    <input
-                      type="text"
-                      class="form-control"
-                      id="author"
-                      th:field="*{author}"
-                    />
-                  </div>
-
-                  <div class="form-group">
-                    <label for="category">Categoría *</label>
-                    <select
-                      class="form-control"
-                      id="category"
-                      th:field="*{category}"
-                      required
+                    <label for="title" class="font-weight-bold"
+                      >Título <span class="text-danger">*</span></label
                     >
-                      <option value="">Seleccione una categoría</option>
-                      <option value="ARTICULO">Artículo</option>
-                      <option value="DATASET">Dataset</option>
-                      <option value="PAPER">Paper Académico</option>
-                      <option value="VIDEO">Video Educativo</option>
-                      <option value="PRESENTACION">Presentación</option>
-                      <option value="OTRO">Otro</option>
-                    </select>
+                    <div class="input-group">
+                      <div class="input-group-prepend">
+                        <span class="input-group-text"
+                          ><i class="fas fa-heading"></i
+                        ></span>
+                      </div>
+                      <input
+                        type="text"
+                        class="form-control"
+                        id="title"
+                        th:field="*{title}"
+                        placeholder="Ej: Introducción a la Física"
+                        required
+                      />
+                    </div>
                   </div>
 
                   <div class="form-group">
-                    <label for="resourceType">Tipo de Recurso</label>
-                    <input
-                      type="text"
-                      class="form-control"
-                      id="resourceType"
-                      th:field="*{resourceType}"
-                      placeholder="Ej: PDF, Video, Enlace"
-                    />
+                    <label for="author" class="font-weight-bold"
+                      >Autor / Creador</label
+                    >
+                    <div class="input-group">
+                      <div class="input-group-prepend">
+                        <span class="input-group-text"
+                          ><i class="fas fa-user-edit"></i
+                        ></span>
+                      </div>
+                      <input
+                        type="text"
+                        class="form-control"
+                        id="author"
+                        th:field="*{author}"
+                        placeholder="Ej: Dr. Smith"
+                      />
+                    </div>
                   </div>
 
                   <div class="form-group">
-                    <label for="url">URL del Recurso *</label>
-                    <input
-                      type="url"
-                      class="form-control"
-                      id="url"
-                      th:field="*{url}"
-                      required
-                      placeholder="https://..."
-                    />
+                    <label for="category" class="font-weight-bold"
+                      >Categoría <span class="text-danger">*</span></label
+                    >
+                    <div class="input-group">
+                      <div class="input-group-prepend">
+                        <span class="input-group-text"
+                          ><i class="fas fa-tags text-primary"></i
+                        ></span>
+                      </div>
+                      <select
+                        class="form-control"
+                        id="category"
+                        th:field="*{category}"
+                        required
+                      >
+                        <option value="">Seleccione una categoría</option>
+                        <option value="ARTICULO">Artículo</option>
+                        <option value="DATASET">Dataset</option>
+                        <option value="PAPER">Paper Académico</option>
+                        <option value="VIDEO">Video Educativo</option>
+                        <option value="PRESENTACION">Presentación</option>
+                        <option value="OTRO">Otro</option>
+                      </select>
+                    </div>
+                  </div>
+
+                  <div class="form-group">
+                    <label for="resourceType" class="font-weight-bold"
+                      >Formato / Tipo de Archivo</label
+                    >
+                    <div class="input-group">
+                      <div class="input-group-prepend">
+                        <span class="input-group-text"
+                          ><i class="fas fa-file-code"></i
+                        ></span>
+                      </div>
+                      <input
+                        type="text"
+                        class="form-control"
+                        id="resourceType"
+                        th:field="*{resourceType}"
+                        placeholder="Ej: PDF, Video, Enlace"
+                      />
+                    </div>
+                  </div>
+
+                  <div class="form-group">
+                    <label for="url" class="font-weight-bold"
+                      >URL del Recurso <span class="text-danger">*</span></label
+                    >
+                    <div class="input-group">
+                      <div class="input-group-prepend">
+                        <span class="input-group-text"
+                          ><i class="fas fa-link text-info"></i
+                        ></span>
+                      </div>
+                      <input
+                        type="url"
+                        class="form-control"
+                        id="url"
+                        th:field="*{url}"
+                        required
+                        placeholder="https://su-institucion.edu/recurso"
+                      />
+                    </div>
                     <small class="form-text text-muted"
-                      >Ingrese la URL completa del recurso digital</small
+                      >Asegúrese de que el enlace sea accesible para el personal
+                      y estudiantes.</small
                     >
                   </div>
 
-                  <div class="mt-4">
-                    <button type="submit" class="btn btn-primary">
-                      <i class="fas fa-save"></i> Guardar
+                  <hr />
+
+                  <div class="form-group text-right">
+                    <button
+                      type="submit"
+                      class="btn btn-primary px-4 shadow-sm"
+                    >
+                      <i class="fas fa-save mr-1"></i> Guardar Recurso
                     </button>
                     <a
                       th:href="@{/library/resources}"
-                      class="btn btn-secondary"
+                      class="btn btn-secondary px-4 ml-2"
                     >
-                      <i class="fas fa-times"></i> Cancelar
+                      <i class="fas fa-times mr-1"></i> Cancelar
                     </a>
                   </div>
                 </form>

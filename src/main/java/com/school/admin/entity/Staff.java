@@ -33,12 +33,11 @@ import jakarta.validation.constraints.PastOrPresent;
 import jakarta.validation.constraints.Size;
 
 @Entity
-@Table(name = "staff",
-       indexes = {
-           @Index(name = "idx_staff_job_title", columnList = "jobTitle"),
-           @Index(name = "idx_staff_department", columnList = "department"),
-           @Index(name = "idx_staff_hire_date", columnList = "hireDate")
-       })
+@Table(name = "staff", indexes = {
+        @Index(name = "idx_staff_job_title", columnList = "jobTitle"),
+        @Index(name = "idx_staff_department", columnList = "department"),
+        @Index(name = "idx_staff_hire_date", columnList = "hireDate")
+})
 @EntityListeners(com.school.core.listener.AuditEntityListener.class)
 public class Staff extends Person {
 
@@ -55,18 +54,22 @@ public class Staff extends Person {
     @Column(name = "job_title", nullable = false, length = 20)
     private Role jobTitle;
 
-    @DecimalMin(value = "0.0", inclusive = false, message = "El salario debe ser mayor a 0", groups = {ValidationGroups.Create.class, ValidationGroups.Update.class})
+    @DecimalMin(value = "0.0", inclusive = false, message = "El salario debe ser mayor a 0", groups = {
+            ValidationGroups.Create.class, ValidationGroups.Update.class })
     @Column(name = "salary", precision = 10, scale = 2)
     private BigDecimal salary;
 
     @NotNull(message = "La fecha de contratación es obligatoria", groups = ValidationGroups.Create.class)
-    @PastOrPresent(message = "La fecha de contratación no puede ser futura", groups = {ValidationGroups.Create.class, ValidationGroups.Update.class})
+    @PastOrPresent(message = "La fecha de contratación no puede ser futura", groups = { ValidationGroups.Create.class,
+            ValidationGroups.Update.class })
     @DateTimeFormat(pattern = "yyyy-MM-dd")
     @Column(name = "hire_date", nullable = false)
     private LocalDate hireDate;
 
-    @NotBlank(message = "El departamento es obligatorio", groups = {ValidationGroups.Create.class, ValidationGroups.Update.class})
-    @Size(min = 2, max = 100, message = "El departamento debe tener entre 2 y 100 caracteres", groups = {ValidationGroups.Create.class, ValidationGroups.Update.class})
+    @NotBlank(message = "El departamento es obligatorio", groups = { ValidationGroups.Create.class,
+            ValidationGroups.Update.class })
+    @Size(min = 2, max = 100, message = "El departamento debe tener entre 2 y 100 caracteres", groups = {
+            ValidationGroups.Create.class, ValidationGroups.Update.class })
     @Column(name = "department", nullable = false, length = 100)
     private String department;
 
@@ -76,8 +79,11 @@ public class Staff extends Person {
     @Column(name = "department_changed_at")
     private LocalDateTime departmentChangedAt;
 
-    @Size(max = 200, message = "La especialización no puede exceder los 200 caracteres", groups = {ValidationGroups.Create.class, ValidationGroups.Update.class})
-    @Column(name = "specialization", length = 200)
+    @NotBlank(message = "La especialización es obligatoria", groups = { ValidationGroups.Create.class,
+            ValidationGroups.Update.class })
+    @Size(min = 2, max = 200, message = "La especialización debe tener entre 2 y 200 caracteres", groups = {
+            ValidationGroups.Create.class, ValidationGroups.Update.class })
+    @Column(name = "specialization", nullable = false, length = 200)
     private String specialization;
 
     @Column(name = "deleted", nullable = false)
@@ -161,17 +167,36 @@ public class Staff extends Person {
         this.specialization = specialization != null ? specialization.trim() : null;
     }
 
-    public boolean isDeleted() { return deleted; }
-    public void setDeleted(boolean deleted) { this.deleted = deleted; }
-    public LocalDateTime getDeletedAt() { return deletedAt; }
-    public void setDeletedAt(LocalDateTime deletedAt) { this.deletedAt = deletedAt; }
-    public String getDeletedBy() { return deletedBy; }
-    public void setDeletedBy(String deletedBy) { this.deletedBy = deletedBy; }
+    public boolean isDeleted() {
+        return deleted;
+    }
+
+    public void setDeleted(boolean deleted) {
+        this.deleted = deleted;
+    }
+
+    public LocalDateTime getDeletedAt() {
+        return deletedAt;
+    }
+
+    public void setDeletedAt(LocalDateTime deletedAt) {
+        this.deletedAt = deletedAt;
+    }
+
+    public String getDeletedBy() {
+        return deletedBy;
+    }
+
+    public void setDeletedBy(String deletedBy) {
+        this.deletedBy = deletedBy;
+    }
 
     @Override
     public boolean equals(Object o) {
-        if (this == o) return true;
-        if (!(o instanceof Staff staff)) return false;
+        if (this == o)
+            return true;
+        if (!(o instanceof Staff staff))
+            return false;
         return Objects.equals(id, staff.id);
     }
 

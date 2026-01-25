@@ -1,4 +1,4 @@
-<!DOCTYPE html>
+<!doctype html>
 <html xmlns:th="http://www.thymeleaf.org">
   <head>
     <meta charset="utf-8" />
@@ -33,11 +33,12 @@
             <div
               class="d-sm-flex align-items-center justify-content-between mb-4"
             >
-              <h1
-                class="h3 mb-0 text-gray-800"
-                th:text="${building.id != null ? 'Editar Edificio' : 'Nuevo Edificio'}"
-              >
-                Edificio
+              <h1 class="h3 mb-0 text-gray-800">
+                <i class="fas fa-building mr-2 text-primary"></i
+                ><span
+                  th:text="${building.id != null ? 'Editar Edificio' : 'Nuevo Edificio'}"
+                  >Edificio</span
+                >
               </h1>
               <a th:href="@{/infra/buildings}" class="btn btn-secondary">
                 <i class="fas fa-arrow-left"></i> Volver
@@ -55,34 +56,67 @@
                   th:action="@{/infra/buildings}"
                   th:object="${building}"
                   method="post"
+                  class="needs-validation"
+                  novalidate
                 >
                   <input type="hidden" th:field="*{id}" />
 
                   <div class="form-group">
-                    <label>Nombre del Edificio</label>
-                    <input
-                      type="text"
-                      th:field="*{name}"
-                      class="form-control"
-                      required
-                    />
+                    <label class="font-weight-bold"
+                      >Nombre del Edificio
+                      <span class="text-danger">*</span></label
+                    >
+                    <div class="input-group">
+                      <div class="input-group-prepend">
+                        <span class="input-group-text"
+                          ><i class="fas fa-building"></i
+                        ></span>
+                      </div>
+                      <input
+                        type="text"
+                        th:field="*{name}"
+                        class="form-control"
+                        placeholder="Ej: Pabellón Principal"
+                        required
+                      />
+                    </div>
                   </div>
 
                   <div class="form-group">
-                    <label>Dirección</label>
-                    <textarea
-                      th:field="*{address}"
-                      class="form-control"
-                      rows="3"
-                    ></textarea>
+                    <label class="font-weight-bold"
+                      >Dirección / Ubicación</label
+                    >
+                    <div class="input-group">
+                      <div class="input-group-prepend">
+                        <span class="input-group-text"
+                          ><i class="fas fa-map-marker-alt"></i
+                        ></span>
+                      </div>
+                      <textarea
+                        th:field="*{address}"
+                        class="form-control"
+                        rows="3"
+                        placeholder="Descripción detallada de la ubicación del edificio"
+                      ></textarea>
+                    </div>
                   </div>
 
-                  <button type="submit" class="btn btn-primary">
-                    <i class="fas fa-save"></i> Guardar Edificio
-                  </button>
-                  <a th:href="@{/infra/buildings}" class="btn btn-secondary">
-                    <i class="fas fa-times"></i> Cancelar
-                  </a>
+                  <hr />
+
+                  <div class="form-group text-right">
+                    <button
+                      type="submit"
+                      class="btn btn-primary px-4 shadow-sm"
+                    >
+                      <i class="fas fa-save mr-1"></i> Guardar Edificio
+                    </button>
+                    <a
+                      th:href="@{/infra/buildings}"
+                      class="btn btn-secondary px-4 ml-2"
+                    >
+                      <i class="fas fa-times mr-1"></i> Cancelar
+                    </a>
+                  </div>
                 </form>
               </div>
             </div>

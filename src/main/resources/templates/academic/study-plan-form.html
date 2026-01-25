@@ -1,4 +1,4 @@
-<!DOCTYPE html>
+<!doctype html>
 <html xmlns:th="http://www.thymeleaf.org">
   <head>
     <meta charset="utf-8" />
@@ -37,11 +37,12 @@
             <div
               class="d-sm-flex align-items-center justify-content-between mb-4"
             >
-              <h1
-                class="h3 mb-0 text-gray-800"
-                th:text="${studyPlan.id != null ? 'Editar Plan de Estudio' : 'Nuevo Plan de Estudio'}"
-              >
-                Plan
+              <h1 class="h3 mb-0 text-gray-800">
+                <i class="fas fa-file-contract mr-2 text-primary"></i
+                ><span
+                  th:text="${studyPlan.id != null ? 'Editar Plan de Estudio' : 'Nuevo Plan de Estudio'}"
+                  >Plan</span
+                >
               </h1>
               <a th:href="@{/academic/study-plans}" class="btn btn-secondary">
                 <i class="fas fa-arrow-left"></i> Volver
@@ -59,93 +60,145 @@
                   th:action="@{/academic/study-plans}"
                   th:object="${studyPlan}"
                   method="post"
+                  class="needs-validation"
+                  novalidate
                 >
                   <input type="hidden" th:field="*{id}" />
 
                   <div class="row">
                     <div class="col-md-6">
                       <div class="form-group">
-                        <label for="name">Nombre del Plan *</label>
-                        <input
-                          type="text"
-                          id="name"
-                          th:field="*{name}"
-                          class="form-control"
-                          th:classappend="${#fields.hasErrors('name')} ? 'is-invalid' : ''"
-                          required
-                        />
-                        <div
-                          class="invalid-feedback"
-                          th:if="${#fields.hasErrors('name')}"
-                          th:errors="*{name}"
+                        <label for="name" class="font-weight-bold"
+                          >Nombre del Plan
+                          <span class="text-danger">*</span></label
                         >
-                          Error
+                        <div class="input-group">
+                          <div class="input-group-prepend">
+                            <span class="input-group-text"
+                              ><i class="fas fa-file-signature"></i
+                            ></span>
+                          </div>
+                          <input
+                            type="text"
+                            id="name"
+                            th:field="*{name}"
+                            class="form-control"
+                            th:classappend="${#fields.hasErrors('name')} ? 'is-invalid' : ''"
+                            placeholder="Ej: Plan Nacional 2026"
+                            required
+                          />
+                          <div
+                            class="invalid-feedback"
+                            th:if="${#fields.hasErrors('name')}"
+                            th:errors="*{name}"
+                          >
+                            Error
+                          </div>
                         </div>
                       </div>
                     </div>
                     <div class="col-md-6">
                       <div class="form-group">
-                        <label for="academicLevel">Nivel Académico *</label>
-                        <select
-                          id="academicLevel"
-                          th:field="*{academicLevel}"
-                          class="form-control"
-                          th:classappend="${#fields.hasErrors('academicLevel')} ? 'is-invalid' : ''"
-                          required
+                        <label for="academicLevel" class="font-weight-bold"
+                          >Nivel Académico
+                          <span class="text-danger">*</span></label
                         >
-                          <option value="">Seleccionar Nivel...</option>
-                          <option
-                            th:each="level : ${academicLevels}"
-                            th:value="${level}"
-                            th:text="${level.name() + ' (' + level.getDescription() + ')'}"
-                          ></option>
-                        </select>
-                        <div
-                          class="invalid-feedback"
-                          th:if="${#fields.hasErrors('academicLevel')}"
-                          th:errors="*{academicLevel}"
-                        >
-                          Error
+                        <div class="input-group">
+                          <div class="input-group-prepend">
+                            <span class="input-group-text"
+                              ><i class="fas fa-graduation-cap"></i
+                            ></span>
+                          </div>
+                          <select
+                            id="academicLevel"
+                            th:field="*{academicLevel}"
+                            class="form-control"
+                            th:classappend="${#fields.hasErrors('academicLevel')} ? 'is-invalid' : ''"
+                            required
+                          >
+                            <option value="">Seleccionar Nivel...</option>
+                            <option
+                              th:each="level : ${academicLevels}"
+                              th:value="${level}"
+                              th:text="${level.name() + ' (' + level.getDescription() + ')'}"
+                            ></option>
+                          </select>
+                          <div
+                            class="invalid-feedback"
+                            th:if="${#fields.hasErrors('academicLevel')}"
+                            th:errors="*{academicLevel}"
+                          >
+                            Error
+                          </div>
                         </div>
                       </div>
                     </div>
                   </div>
 
                   <div class="form-group">
-                    <label for="description">Descripción</label>
-                    <textarea
-                      id="description"
-                      th:field="*{description}"
-                      class="form-control"
-                      rows="3"
-                      placeholder="Descripción opcional del plan de estudio"
-                    ></textarea>
+                    <label for="description" class="font-weight-bold"
+                      >Descripción</label
+                    >
+                    <div class="input-group">
+                      <div class="input-group-prepend">
+                        <span class="input-group-text"
+                          ><i class="fas fa-align-left"></i
+                        ></span>
+                      </div>
+                      <textarea
+                        id="description"
+                        th:field="*{description}"
+                        class="form-control"
+                        rows="3"
+                        placeholder="Descripción opcional del plan de estudio"
+                      ></textarea>
+                    </div>
                   </div>
 
                   <!-- Configuración de Escala (Solo para nuevos planes) -->
                   <div class="form-group" th:if="${studyPlan.id == null}">
-                    <label for="scaleType">Configurar Escala de Calificación (Opcional)</label>
-                    <select id="scaleType" name="scaleType" class="form-control">
-                      <option value="">Sin configurar ahora</option>
-                      <option th:each="scaleType : ${scaleTypes}" 
-                              th:value="${scaleType}" 
-                              th:text="${scaleType.description}">
-                      </option>
-                    </select>
+                    <label for="scaleType" class="font-weight-bold"
+                      >Configurar Escala de Calificación (Opcional)</label
+                    >
+                    <div class="input-group">
+                      <div class="input-group-prepend">
+                        <span class="input-group-text"
+                          ><i class="fas fa-sort-numeric-up"></i
+                        ></span>
+                      </div>
+                      <select
+                        id="scaleType"
+                        name="scaleType"
+                        class="form-control"
+                      >
+                        <option value="">Sin configurar ahora</option>
+                        <option
+                          th:each="scaleType : ${scaleTypes}"
+                          th:value="${scaleType}"
+                          th:text="${scaleType.description}"
+                        ></option>
+                      </select>
+                    </div>
                     <small class="form-text text-muted">
-                      Puede configurar la escala después de crear el plan
+                      <i class="fas fa-info-circle mr-1"></i> Puede configurar
+                      la escala después de crear el plan
                     </small>
                   </div>
 
-                  <div class="form-group mt-4">
-                    <button type="submit" class="btn btn-primary mr-2">
-                      <i class="fas fa-save"></i> Guardar Plan
+                  <hr />
+
+                  <div class="form-group text-right">
+                    <button
+                      type="submit"
+                      class="btn btn-primary px-4 shadow-sm"
+                    >
+                      <i class="fas fa-save mr-1"></i> Guardar Plan
                     </button>
                     <a
                       th:href="@{/academic/study-plans}"
-                      class="btn btn-secondary"
+                      class="btn btn-secondary px-4 ml-2"
                     >
-                      <i class="fas fa-times"></i> Cancelar
+                      <i class="fas fa-times mr-1"></i> Cancelar
                     </a>
                   </div>
                 </form>
@@ -199,7 +252,11 @@
                                 <button
                                   type="submit"
                                   class="btn btn-sm btn-danger"
-                                  onclick="return confirm('¿Seguro de eliminar esta escala?');"
+                                  onclick="
+                                    return confirm(
+                                      '¿Seguro de eliminar esta escala?',
+                                    );
+                                  "
                                 >
                                   <i class="fas fa-trash"></i>
                                 </button>
@@ -225,52 +282,92 @@
                           th:action="@{/academic/study-plans/{id}/scales(id=${studyPlan.id})}"
                           th:object="${newScale}"
                           method="post"
+                          class="needs-validation"
+                          novalidate
                         >
                           <div class="form-group">
-                            <label>Etiqueta (Letra)</label>
-                            <input
-                              type="text"
-                              th:field="*{label}"
-                              class="form-control"
-                              placeholder="Ej. AD"
-                              required
-                            />
+                            <label class="font-weight-bold"
+                              >Etiqueta (Letra)
+                              <span class="text-danger">*</span></label
+                            >
+                            <div class="input-group">
+                              <div class="input-group-prepend">
+                                <span class="input-group-text"
+                                  ><i class="fas fa-font"></i
+                                ></span>
+                              </div>
+                              <input
+                                type="text"
+                                th:field="*{label}"
+                                class="form-control"
+                                placeholder="Ej. AD"
+                                required
+                              />
+                            </div>
                           </div>
                           <div class="form-row">
                             <div class="form-group col-md-6">
-                              <label>Min</label>
-                              <input
-                                type="number"
-                                step="0.01"
-                                th:field="*{minScore}"
-                                class="form-control"
-                                required
-                              />
+                              <label class="font-weight-bold"
+                                >Min <span class="text-danger">*</span></label
+                              >
+                              <div class="input-group">
+                                <div class="input-group-prepend">
+                                  <span class="input-group-text"
+                                    ><i class="fas fa-minus"></i
+                                  ></span>
+                                </div>
+                                <input
+                                  type="number"
+                                  step="0.01"
+                                  th:field="*{minScore}"
+                                  class="form-control"
+                                  placeholder="0.00"
+                                  required
+                                />
+                              </div>
                             </div>
                             <div class="form-group col-md-6">
-                              <label>Max</label>
-                              <input
-                                type="number"
-                                step="0.01"
-                                th:field="*{maxScore}"
-                                class="form-control"
-                                required
-                              />
+                              <label class="font-weight-bold"
+                                >Max <span class="text-danger">*</span></label
+                              >
+                              <div class="input-group">
+                                <div class="input-group-prepend">
+                                  <span class="input-group-text"
+                                    ><i class="fas fa-plus"></i
+                                  ></span>
+                                </div>
+                                <input
+                                  type="number"
+                                  step="0.01"
+                                  th:field="*{maxScore}"
+                                  class="form-control"
+                                  placeholder="20.00"
+                                  required
+                                />
+                              </div>
                             </div>
                           </div>
                           <div class="form-group">
-                            <label>Descripción</label>
-                            <input
-                              type="text"
-                              th:field="*{description}"
-                              class="form-control"
-                            />
+                            <label class="font-weight-bold">Descripción</label>
+                            <div class="input-group">
+                              <div class="input-group-prepend">
+                                <span class="input-group-text"
+                                  ><i class="fas fa-quote-left"></i
+                                ></span>
+                              </div>
+                              <input
+                                type="text"
+                                th:field="*{description}"
+                                class="form-control"
+                                placeholder="Ej: Sobresaliente"
+                              />
+                            </div>
                           </div>
                           <button
                             type="submit"
-                            class="btn btn-success btn-block"
+                            class="btn btn-success btn-block shadow-sm"
                           >
-                            <i class="fas fa-plus"></i> Agregar
+                            <i class="fas fa-plus mr-1"></i> Agregar Escala
                           </button>
                         </form>
                       </div>

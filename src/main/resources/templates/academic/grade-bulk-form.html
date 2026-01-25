@@ -1,4 +1,4 @@
-<!DOCTYPE html>
+<!doctype html>
 <html xmlns:th="http://www.thymeleaf.org">
   <head>
     <meta charset="utf-8" />
@@ -36,7 +36,10 @@
         <div id="content">
           <div th:replace="~{fragments/sb-admin-topbar :: topbar}"></div>
           <div class="container-fluid">
-            <h1 class="h3 mb-4 text-gray-800">Carga Masiva de Notas</h1>
+            <h1 class="h3 mb-4 text-gray-800">
+              <i class="fas fa-upload mr-2 text-primary"></i>Carga Masiva de
+              Notas
+            </h1>
 
             <div class="card shadow mb-4">
               <div class="card-header py-3">
@@ -48,59 +51,103 @@
                 <form
                   th:action="@{/grades/bulk}"
                   method="get"
-                  class="form-row align-items-end"
+                  class="form-row align-items-end needs-validation"
+                  novalidate
                 >
                   <div class="form-group col-md-3">
-                    <label>Curso</label>
-                    <select name="courseId" class="form-control" required>
-                      <option value="">Seleccione...</option>
-                      <option
-                        th:each="c : ${courses}"
-                        th:value="${c.id}"
-                        th:text="${c.name}"
-                        th:selected="${c.id == bulkDto.courseId}"
-                      ></option>
-                    </select>
+                    <label class="font-weight-bold"
+                      >Curso <span class="text-danger">*</span></label
+                    >
+                    <div class="input-group">
+                      <div class="input-group-prepend">
+                        <span class="input-group-text"
+                          ><i class="fas fa-book"></i
+                        ></span>
+                      </div>
+                      <select name="courseId" class="form-control" required>
+                        <option value="">Seleccione...</option>
+                        <option
+                          th:each="c : ${courses}"
+                          th:value="${c.id}"
+                          th:text="${c.name}"
+                          th:selected="${c.id == bulkDto.courseId}"
+                        ></option>
+                      </select>
+                    </div>
                   </div>
                   <div class="form-group col-md-2">
-                    <label>Sección</label>
-                    <select name="sectionId" class="form-control" required>
-                      <option value="">Seleccione...</option>
-                      <option
-                        th:each="s : ${sections}"
-                        th:value="${s.id}"
-                        th:text="${s.name}"
-                        th:selected="${s.id == bulkDto.sectionId}"
-                      ></option>
-                    </select>
+                    <label class="font-weight-bold"
+                      >Sección <span class="text-danger">*</span></label
+                    >
+                    <div class="input-group">
+                      <div class="input-group-prepend">
+                        <span class="input-group-text"
+                          ><i class="fas fa-users-cog"></i
+                        ></span>
+                      </div>
+                      <select name="sectionId" class="form-control" required>
+                        <option value="">Seleccione...</option>
+                        <option
+                          th:each="s : ${sections}"
+                          th:value="${s.id}"
+                          th:text="${s.name}"
+                          th:selected="${s.id == bulkDto.sectionId}"
+                        ></option>
+                      </select>
+                    </div>
                   </div>
                   <div class="form-group col-md-3">
-                    <label>Periodo</label>
-                    <select name="periodId" class="form-control" required>
-                      <option value="">Seleccione...</option>
-                      <option
-                        th:each="p : ${periods}"
-                        th:value="${p.id}"
-                        th:text="${p.name}"
-                        th:selected="${p.id == bulkDto.periodId}"
-                      ></option>
-                    </select>
+                    <label class="font-weight-bold"
+                      >Periodo <span class="text-danger">*</span></label
+                    >
+                    <div class="input-group">
+                      <div class="input-group-prepend">
+                        <span class="input-group-text"
+                          ><i class="fas fa-calendar-alt"></i
+                        ></span>
+                      </div>
+                      <select name="periodId" class="form-control" required>
+                        <option value="">Seleccione...</option>
+                        <option
+                          th:each="p : ${periods}"
+                          th:value="${p.id}"
+                          th:text="${p.name}"
+                          th:selected="${p.id == bulkDto.periodId}"
+                        ></option>
+                      </select>
+                    </div>
                   </div>
                   <div class="form-group col-md-2">
-                    <label>Tipo Evaluación</label>
-                    <select name="evaluationType" class="form-control" required>
-                      <option value="">Seleccione...</option>
-                      <option
-                        th:each="t : ${evaluationTypes}"
-                        th:value="${t}"
-                        th:text="${t.displayName}"
-                        th:selected="${t == bulkDto.evaluationType}"
-                      ></option>
-                    </select>
+                    <label class="font-weight-bold"
+                      >Tipo Evaluación <span class="text-danger">*</span></label
+                    >
+                    <div class="input-group">
+                      <div class="input-group-prepend">
+                        <span class="input-group-text"
+                          ><i class="fas fa-tasks"></i
+                        ></span>
+                      </div>
+                      <select
+                        name="evaluationType"
+                        class="form-control"
+                        required
+                      >
+                        <option value="">Seleccione...</option>
+                        <option
+                          th:each="t : ${evaluationTypes}"
+                          th:value="${t}"
+                          th:text="${t.displayName}"
+                          th:selected="${t == bulkDto.evaluationType}"
+                        ></option>
+                      </select>
+                    </div>
                   </div>
                   <div class="form-group col-md-2">
-                    <button type="submit" class="btn btn-info btn-block">
-                      <i class="fas fa-search"></i> Cargar alumnos
+                    <button
+                      type="submit"
+                      class="btn btn-info btn-block shadow-sm"
+                    >
+                      <i class="fas fa-search mr-1"></i> Cargar alumnos
                     </button>
                   </div>
                 </form>
@@ -234,9 +281,13 @@
                     </table>
                   </div>
 
-                  <div class="mt-4">
-                    <button type="submit" class="btn btn-primary">
-                      <i class="fas fa-save"></i> Guardar Calificaciones
+                  <div class="mt-4 text-right">
+                    <button
+                      type="submit"
+                      class="btn btn-primary px-5 shadow-sm"
+                    >
+                      <i class="fas fa-save mr-1"></i> Guardar Todas las
+                      Calificaciones
                     </button>
                   </div>
                 </form>

@@ -6,7 +6,6 @@ import java.util.Objects;
 
 import org.springframework.format.annotation.DateTimeFormat;
 
-import com.school.academic.validation.ValidationGroups;
 import com.school.core.entity.Person;
 import com.school.core.entity.User;
 
@@ -43,10 +42,8 @@ public class Student extends Person {
     @JoinColumn(name = "user_id", foreignKey = @ForeignKey(name = "fk_student_user"))
     private User user;
 
-    @Size(min = 3, max = 20, message = "El número de registro debe tener entre 3 y 20 caracteres", groups = {
-            ValidationGroups.Update.class })
-    @Pattern(regexp = "^[A-Z0-9-]+$", message = "El número de registro solo puede contener letras mayúsculas, números y guiones", groups = {
-            ValidationGroups.Update.class })
+    @Size(max = 20, message = "El número de registro no puede exceder los 20 caracteres")
+    @Pattern(regexp = "^$|^[A-Z0-9-]+$", message = "El número de registro solo puede contener letras mayúsculas, números y guiones")
     @Column(name = "registration_number", nullable = false, unique = true, length = 20)
     private String registrationNumber;
 
@@ -56,9 +53,8 @@ public class Student extends Person {
     @Column(name = "registration_changed_at")
     private LocalDateTime registrationChangedAt;
 
-    @NotNull(message = "La fecha de inscripción es obligatoria", groups = ValidationGroups.Create.class)
-    @PastOrPresent(message = "La fecha de inscripción no puede ser futura", groups = { ValidationGroups.Create.class,
-            ValidationGroups.Update.class })
+    @NotNull(message = "La fecha de inscripción es obligatoria")
+    @PastOrPresent(message = "La fecha de inscripción no puede ser futura")
     @DateTimeFormat(pattern = "yyyy-MM-dd")
     @Column(name = "enrollment_date", nullable = false)
     private LocalDate enrollmentDate;

@@ -51,6 +51,23 @@ public class GlobalExceptionHandler {
         return "redirect:" + request.getHeader("Referer");
     }
 
+    @ExceptionHandler(jakarta.validation.ConstraintViolationException.class)
+    public String handleConstraintViolation(jakarta.validation.ConstraintViolationException ex,
+            RedirectAttributes redirectAttributes,
+            HttpServletRequest request) {
+        String errorId = UUID.randomUUID().toString();
+        logger.warn("Constraint violation - Error ID: {} - URL: {} - Message: {}",
+                errorId, request.getRequestURL(), ex.getMessage());
+
+        String errorMessage = ex.getConstraintViolations().stream()
+                .map(jakarta.validation.ConstraintViolation::getMessage)
+                .collect(java.util.stream.Collectors.joining(", "));
+
+        redirectAttributes.addFlashAttribute("error", "Error de validación: " + errorMessage);
+        redirectAttributes.addFlashAttribute("errorId", errorId);
+        return "redirect:" + (request.getHeader("Referer") != null ? request.getHeader("Referer") : "/");
+    }
+
     @ExceptionHandler(NoResourceFoundException.class)
     public ModelAndView handleNoResourceFound(NoResourceFoundException ex, HttpServletRequest request) {
         // Don't log favicon.ico and other static resource 404s as errors

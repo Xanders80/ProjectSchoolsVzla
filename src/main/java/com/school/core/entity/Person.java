@@ -6,6 +6,9 @@ import jakarta.persistence.Column;
 import jakarta.persistence.MappedSuperclass;
 import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.NotNull;
+import jakarta.validation.constraints.Past;
+import jakarta.validation.constraints.Pattern;
 import jakarta.validation.constraints.Size;
 
 @MappedSuperclass
@@ -30,12 +33,17 @@ public abstract class Person {
     @Email(message = "El formato del correo electrónico no es válido")
     private String email;
 
-    @Size(max = 15, message = "El teléfono no puede tener más de 15 caracteres")
+    @NotBlank(message = "El teléfono es obligatorio")
+    @Size(max = 20, message = "El teléfono no puede tener más de 20 caracteres")
+    @Pattern(regexp = "^\\(\\d{4}\\) \\d{3}-\\d{4}$", message = "El formato del teléfono debe ser (XXXX) XXX-XXXX")
     private String phoneNumber;
 
+    @NotBlank(message = "La dirección es obligatoria")
     @Size(max = 255, message = "La dirección no puede tener más de 255 caracteres")
     private String address;
 
+    @NotNull(message = "La fecha de nacimiento es obligatoria")
+    @Past(message = "La fecha de nacimiento debe ser una fecha pasada")
     @org.springframework.format.annotation.DateTimeFormat(pattern = "yyyy-MM-dd")
     private LocalDate birthDate;
 

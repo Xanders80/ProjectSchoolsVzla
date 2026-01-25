@@ -1,4 +1,4 @@
-<!DOCTYPE html>
+<!doctype html>
 <html xmlns:th="http://www.thymeleaf.org">
   <head>
     <meta charset="utf-8" />
@@ -30,7 +30,8 @@
               class="d-sm-flex align-items-center justify-content-between mb-4"
             >
               <h1 class="h3 mb-0 text-gray-800">
-                Estadísticas de Uso de Laboratorios
+                <i class="fas fa-chart-pie mr-2 text-primary"></i>Estadísticas
+                de Uso de Laboratorios
               </h1>
               <a
                 th:href="@{/infra/labs/reservations}"
@@ -314,7 +315,7 @@
           })
           .catch((error) => {
             alert(
-              "Error al cargar las estadísticas. Verifica tu conexión e inténtalo de nuevo."
+              "Error al cargar las estadísticas. Verifica tu conexión e inténtalo de nuevo.",
             );
           })
           .finally(() => {

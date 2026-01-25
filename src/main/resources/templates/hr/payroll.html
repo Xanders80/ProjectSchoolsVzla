@@ -1,4 +1,4 @@
-<!DOCTYPE html>
+<!doctype html>
 <html xmlns:th="http://www.thymeleaf.org">
   <head>
     <meta charset="utf-8" />
@@ -25,131 +25,176 @@
     <div id="wrapper" role="region" aria-label="Contenedor principal">
       <div th:replace="~{fragments/sb-admin-sidebar :: sidebar}"></div>
 
-      <div id="content-wrapper" class="d-flex flex-column" role="region" aria-label="Contenido principal">
+      <div
+        id="content-wrapper"
+        class="d-flex flex-column"
+        role="region"
+        aria-label="Contenido principal"
+      >
         <div id="content" tabindex="-1">
           <div th:replace="~{fragments/sb-admin-topbar :: topbar}"></div>
 
           <div class="container-fluid" role="main">
-      <div class="d-sm-flex align-items-center justify-content-between mb-4" role="heading" aria-level="1">
-        <h1 class="h3 mb-0 text-gray-800">Nómina / Pagos</h1>
-
-        <form class="form-inline" method="get" th:action="@{/hr/payroll}" aria-label="Filtrar por período">
-          <label class="mr-2" for="period">Período (AAAA-MM):</label>
-          <input
-            type="month"
-            name="period"
-            id="period"
-            class="form-control form-control-sm mr-2"
-            th:value="${period}"
-          />
-          <button type="submit" class="btn btn-sm btn-primary">Ver</button>
-        </form>
-      </div>
-
-      <div th:if="${successMessage}" class="alert alert-success">
-        <span th:text="${successMessage}"></span>
-      </div>
-
-      <div class="card shadow mb-4">
-        <div
-          class="card-header py-3 d-flex justify-content-between align-items-center"
-        >
-          <h6 class="m-0 font-weight-bold text-primary">
-            Detalle de Pagos: <span th:text="${period}"></span>
-          </h6>
-          <form th:action="@{/hr/payroll/generate}" method="post">
-            <input type="hidden" name="period" th:value="${period}" />
-            <button
-              type="submit"
-              class="btn btn-success btn-sm"
-              onclick="return confirm('¿Generar nómina para este período? Esto creará registros para contratos activos.')"
+            <div
+              class="d-sm-flex align-items-center justify-content-between mb-4"
+              role="heading"
+              aria-level="1"
             >
-              <i class="fas fa-file-invoice-dollar"></i> Generar Nómina
-            </button>
-          </form>
-        </div>
-        <div class="card-body">
-          <div class="table-responsive">
-            <table
-              class="table table-bordered table-sm"
-              id="dataTable"
-              width="100%"
-              cellspacing="0"
-            >
-              <thead>
-                <tr>
-                  <th>Personal</th>
-                  <th>Salario Base</th>
-                  <th>Bonos</th>
-                  <th>Dedycc.</th>
-                  <th>Neto a Pagar</th>
-                  <th>Estado</th>
-                  <th>Fecha Pago</th>
-                  <th>Acciones</th>
-                </tr>
-              </thead>
-              <tbody>
-                <tr th:each="pay : ${payrollList}">
-                  <td
-                    th:text="${pay.staff.firstName + ' ' + pay.staff.lastName}"
+              <h1 class="h3 mb-0 text-gray-800">
+                <i class="fas fa-money-check-alt mr-2 text-primary"></i>Nómina /
+                Pagos
+              </h1>
+
+              <form
+                class="form-inline needs-validation"
+                method="get"
+                th:action="@{/hr/payroll}"
+                aria-label="Filtrar por período"
+                novalidate
+              >
+                <label class="mr-2 font-weight-bold" for="period"
+                  >Período:</label
+                >
+                <div class="input-group input-group-sm mr-2 shadow-sm">
+                  <div class="input-group-prepend">
+                    <span class="input-group-text"
+                      ><i class="fas fa-calendar-alt"></i
+                    ></span>
+                  </div>
+                  <input
+                    type="month"
+                    name="period"
+                    id="period"
+                    class="form-control"
+                    th:value="${period}"
+                    required
+                  />
+                </div>
+                <button
+                  type="submit"
+                  class="btn btn-sm btn-primary px-3 shadow-sm"
+                >
+                  <i class="fas fa-search mr-1"></i> Ver
+                </button>
+              </form>
+            </div>
+
+            <div th:if="${successMessage}" class="alert alert-success">
+              <span th:text="${successMessage}"></span>
+            </div>
+
+            <div class="card shadow mb-4">
+              <div
+                class="card-header py-3 d-flex justify-content-between align-items-center"
+              >
+                <h6 class="m-0 font-weight-bold text-primary">
+                  Detalle de Pagos: <span th:text="${period}"></span>
+                </h6>
+                <form th:action="@{/hr/payroll/generate}" method="post">
+                  <input type="hidden" name="period" th:value="${period}" />
+                  <button
+                    type="submit"
+                    class="btn btn-success btn-sm px-3 shadow-sm"
+                    onclick="
+                      return confirm(
+                        '¿Generar nómina para este período? Esto creará registros para contratos activos.',
+                      );
+                    "
                   >
-                    Nombre
-                  </td>
-                  <td th:text="${pay.baseSalary}">1000</td>
-                  <td th:text="${pay.bonuses}">0</td>
-                  <td th:text="${pay.deductions}">0</td>
-                  <td th:text="${pay.netSalary}" class="font-weight-bold">
-                    1000
-                  </td>
-                  <td>
-                    <span
-                      th:if="${pay.status == T(com.school.hr.entity.Payroll.PaymentStatus).PAID}"
-                      class="badge badge-success"
-                      >PAGADO</span
-                    >
-                    <span
-                      th:if="${pay.status == T(com.school.hr.entity.Payroll.PaymentStatus).PENDING}"
-                      class="badge badge-warning"
-                      >PENDIENTE</span
-                    >
-                  </td>
-                  <td th:text="${pay.paymentDate ?: '-'}">-</td>
-                  <td>
-                    <form
-                      th:if="${pay.status == T(com.school.hr.entity.Payroll.PaymentStatus).PENDING}"
-                      th:action="@{/hr/payroll/pay/{id}(id=${pay.id})}"
-                      method="post"
-                    >
-                      <input
-                        type="hidden"
-                        name="period"
-                        th:value="${pay.period}"
-                      />
-                      <button
-                        type="submit"
-                        class="btn btn-sm btn-outline-success"
-                        onclick="return confirm('¿Marcar como pagado?')"
-                      >
-                        Pagar
-                      </button>
-                    </form>
-                  </td>
-                </tr>
-                <tr th:if="${#lists.isEmpty(payrollList)}">
-                  <td colspan="8" class="text-center text-muted">
-                    No se ha generado nómina para este período.
-                  </td>
-                </tr>
-              </tbody>
-            </table>
+                    <i class="fas fa-file-invoice-dollar mr-1"></i> Generar
+                    Nómina
+                  </button>
+                </form>
+              </div>
+              <div class="card-body">
+                <div class="table-responsive">
+                  <table
+                    class="table table-bordered table-sm"
+                    id="dataTable"
+                    width="100%"
+                    cellspacing="0"
+                  >
+                    <thead>
+                      <tr>
+                        <th>Personal</th>
+                        <th>Salario Base</th>
+                        <th>Bonos</th>
+                        <th>Dedycc.</th>
+                        <th>Neto a Pagar</th>
+                        <th>Estado</th>
+                        <th>Fecha Pago</th>
+                        <th>Acciones</th>
+                      </tr>
+                    </thead>
+                    <tbody>
+                      <tr th:each="pay : ${payrollList}">
+                        <td
+                          th:text="${pay.staff.firstName + ' ' + pay.staff.lastName}"
+                        >
+                          Nombre
+                        </td>
+                        <td th:text="${pay.baseSalary}">1000</td>
+                        <td th:text="${pay.bonuses}">0</td>
+                        <td th:text="${pay.deductions}">0</td>
+                        <td th:text="${pay.netSalary}" class="font-weight-bold">
+                          1000
+                        </td>
+                        <td>
+                          <span
+                            th:if="${pay.status == T(com.school.hr.entity.Payroll.PaymentStatus).PAID}"
+                            class="badge badge-success"
+                            >PAGADO</span
+                          >
+                          <span
+                            th:if="${pay.status == T(com.school.hr.entity.Payroll.PaymentStatus).PENDING}"
+                            class="badge badge-warning"
+                            >PENDIENTE</span
+                          >
+                        </td>
+                        <td th:text="${pay.paymentDate ?: '-'}">-</td>
+                        <td>
+                          <form
+                            th:if="${pay.status == T(com.school.hr.entity.Payroll.PaymentStatus).PENDING}"
+                            th:action="@{/hr/payroll/pay/{id}(id=${pay.id})}"
+                            method="post"
+                          >
+                            <input
+                              type="hidden"
+                              name="period"
+                              th:value="${pay.period}"
+                            />
+                            <button
+                              type="submit"
+                              class="btn btn-sm btn-outline-success px-3 shadow-sm"
+                              onclick="return confirm('¿Marcar como pagado?');"
+                            >
+                              <i class="fas fa-check mr-1"></i> Pagar
+                            </button>
+                          </form>
+                        </td>
+                      </tr>
+                      <tr th:if="${#lists.isEmpty(payrollList)}">
+                        <td colspan="8" class="text-center text-muted">
+                          No se ha generado nómina para este período.
+                        </td>
+                      </tr>
+                    </tbody>
+                  </table>
+                </div>
+              </div>
+            </div>
+            <!-- Cierre del card -->
           </div>
+          <!-- Cierre del container-fluid -->
         </div>
-          </div>
-        </div>
+        <!-- Cierre de #content -->
 
+        <!-- FOOTER: Movido fuera de #content, directamente dentro de #content-wrapper -->
         <div th:replace="~{fragments/sb-admin-footer :: footer}"></div>
       </div>
+      <!-- Cierre de #content-wrapper -->
     </div>
+    <!-- Cierre de #wrapper -->
 
     <a class="scroll-to-top rounded" href="#page-top"
       ><i class="fas fa-angle-up"></i
@@ -161,7 +206,9 @@
     <script th:src="@{/vendor/jquery-easing/jquery.easing.min.js}"></script>
     <script th:src="@{/js/sb-admin-2.min.js}"></script>
     <script th:src="@{/vendor/datatables/jquery.dataTables.min.js}"></script>
-    <script th:src="@{/vendor/datatables/dataTables.bootstrap4.min.js}"></script>
+    <script
+      th:src="@{/vendor/datatables/dataTables.bootstrap4.min.js}"
+    ></script>
     <script th:src="@{/js/demo/datatables-demo.js}"></script>
   </body>
 </html>

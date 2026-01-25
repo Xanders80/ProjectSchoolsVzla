@@ -1,4 +1,4 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="es" xmlns:th="http://www.thymeleaf.org">
   <head>
     <meta charset="utf-8" />
@@ -20,17 +20,27 @@
     <link th:href="@{/css/sb-admin-2.min.css}" rel="stylesheet" />
   </head>
   <body id="page-top">
-    <main id="wrapper">
-      <nav aria-label="Menú principal" th:replace="~{fragments/sb-admin-sidebar :: sidebar}"></nav>
+    <div id="wrapper">
+      <nav
+        aria-label="Menú principal"
+        th:replace="~{fragments/sb-admin-sidebar :: sidebar}"
+      ></nav>
       <div id="content-wrapper" class="d-flex flex-column">
         <div id="content">
-          <header th:replace="~{fragments/sb-admin-topbar :: topbar}" aria-label="Barra superior"></header>
-          <main class="container-fluid" aria-labelledby="broadcast-title">
+          <header
+            th:replace="~{fragments/sb-admin-topbar :: topbar}"
+            aria-label="Barra superior"
+          ></header>
+          <div class="container-fluid" aria-labelledby="broadcast-title">
             <h1 id="broadcast-title" class="h3 mb-4 text-gray-800">
-              Enviar Anuncio General (Broadcast)
+              <i class="fas fa-bullhorn mr-2 text-primary"></i>Enviar Anuncio
+              General (Broadcast)
             </h1>
 
-            <section class="card shadow mb-4" aria-label="Formulario de anuncio">
+            <section
+              class="card shadow mb-4"
+              aria-label="Formulario de anuncio"
+            >
               <div class="card-body">
                 <div
                   th:if="${successMessage}"
@@ -47,48 +57,103 @@
                   aria-live="assertive"
                 ></div>
 
-                <form th:action="@{/notifications/broadcast}" method="post" aria-describedby="broadcast-title">
+                <form
+                  th:action="@{/notifications/broadcast}"
+                  method="post"
+                  class="needs-validation"
+                  novalidate
+                  aria-describedby="broadcast-title"
+                >
                   <div class="form-group">
-                    <label for="type">Tipo de Anuncio</label>
-                    <select class="form-control" name="type" id="type" aria-label="Tipo de anuncio">
-                      <option
-                        th:each="t : ${T(com.school.communication.enums.NotificationType).values()}"
-                        th:value="${t}"
-                        th:text="${t}"
-                      ></option>
-                    </select>
+                    <label for="type" class="font-weight-bold"
+                      >Tipo de Anuncio <span class="text-danger">*</span></label
+                    >
+                    <div class="input-group">
+                      <div class="input-group-prepend">
+                        <span class="input-group-text"
+                          ><i class="fas fa-bullhorn text-warning"></i
+                        ></span>
+                      </div>
+                      <select
+                        class="form-control"
+                        name="type"
+                        id="type"
+                        required
+                        aria-label="Tipo de anuncio"
+                      >
+                        <option value="" disabled selected>
+                          Seleccione tipo...
+                        </option>
+                        <option
+                          th:each="t : ${T(com.school.communication.enums.NotificationType).values()}"
+                          th:value="${t}"
+                          th:text="${t}"
+                        ></option>
+                      </select>
+                    </div>
                   </div>
 
                   <div class="form-group">
-                    <label for="message">Mensaje</label>
-                    <textarea
-                      class="form-control"
-                      id="message"
-                      name="message"
-                      rows="4"
-                      aria-label="Mensaje del anuncio"
-                      required
-                    ></textarea>
-                  </div>
-                  <!-- ...existing code... -->
-                      class="form-control"
-                      name="message"
-                      rows="4"
-                      required
-                    ></textarea>
+                    <label for="message" class="font-weight-bold"
+                      >Mensaje General <span class="text-danger">*</span></label
+                    >
+                    <div class="input-group">
+                      <div class="input-group-prepend">
+                        <span class="input-group-text"
+                          ><i class="fas fa-comment-dots"></i
+                        ></span>
+                      </div>
+                      <textarea
+                        class="form-control"
+                        id="message"
+                        name="message"
+                        rows="4"
+                        placeholder="Escriba el comunicado para toda la comunidad escolar..."
+                        aria-label="Mensaje del anuncio"
+                        required
+                      ></textarea>
+                    </div>
                   </div>
 
-                  <button type="submit" class="btn btn-danger">
-                    Enviar a TODOS
-                  </button>
+                  <div
+                    class="alert alert-warning border-left-warning shadow-sm mb-4"
+                  >
+                    <i class="fas fa-exclamation-triangle mr-2"></i>
+                    <strong>Atención:</strong> Este mensaje será enviado a
+                    <strong>TODOS</strong> los usuarios del sistema de forma
+                    inmediata.
+                  </div>
+
+                  <hr />
+
+                  <div class="form-group text-right">
+                    <button
+                      type="submit"
+                      class="btn btn-danger px-5 shadow-sm"
+                      onclick="
+                        return confirm(
+                          '¿Está seguro de enviar este aviso a TODOS los usuarios?',
+                        );
+                      "
+                    >
+                      <i class="fas fa-broadcast-tower mr-1"></i> Enviar a TODOS
+                    </button>
+                  </div>
                 </form>
               </div>
-            </div>
+            </section>
+            <!-- Cierre de la sección movido aquí -->
           </div>
+          <!-- Cierre del container-fluid -->
         </div>
+        <!-- Cierre de #content -->
+
+        <!-- FOOTER: Movido fuera de #content, directamente dentro de #content-wrapper -->
         <div th:replace="~{fragments/sb-admin-footer :: footer}"></div>
       </div>
+      <!-- Cierre de #content-wrapper -->
     </div>
+
     <script th:src="@{/vendor/jquery/jquery.min.js}"></script>
     <script th:src="@{/vendor/bootstrap/js/bootstrap.bundle.min.js}"></script>
     <script th:src="@{/vendor/jquery-easing/jquery.easing.min.js}"></script>

@@ -1,4 +1,4 @@
-<!DOCTYPE html>
+<!doctype html>
 <html xmlns:th="http://www.thymeleaf.org">
   <head>
     <meta charset="utf-8" />
@@ -27,7 +27,8 @@
           <div th:replace="~{fragments/sb-admin-topbar :: topbar}"></div>
           <div class="container-fluid">
             <h1 class="h3 mb-4 text-gray-800">
-              <span th:text="${period.id} ? 'Editar' : 'Nuevo'">Nuevo</span>
+              <i class="fas fa-calendar-alt mr-2 text-primary"></i
+              ><span th:text="${period.id} ? 'Editar' : 'Nuevo'">Nuevo</span>
               Periodo Académico
             </h1>
 
@@ -42,80 +43,110 @@
                   th:action="@{/academic-periods}"
                   th:object="${period}"
                   method="post"
+                  class="needs-validation"
+                  novalidate
                 >
                   <input type="hidden" th:field="*{id}" />
 
                   <div class="form-group">
-                    <label for="code">Código del Periodo</label>
-                    <input
-                      type="text"
-                      class="form-control"
-                      th:field="*{code}"
-                      required
-                      maxlength="10"
-                      placeholder="Ej: 2024-Q1"
-                    />
+                    <label for="code" class="font-weight-bold"
+                      >Código del Periodo
+                      <span class="text-danger">*</span></label
+                    >
+                    <div class="input-group">
+                      <div class="input-group-prepend">
+                        <span class="input-group-text"
+                          ><i class="fas fa-barcode"></i
+                        ></span>
+                      </div>
+                      <input
+                        type="text"
+                        class="form-control"
+                        th:field="*{code}"
+                        required
+                        maxlength="10"
+                        placeholder="Ej: 2024-Q1"
+                      />
+                    </div>
                     <div
-                      class="text-danger"
+                      class="text-danger small mt-1"
                       th:if="${#fields.hasErrors('code')}"
                       th:errors="*{code}"
-                    >
-                      Err
-                    </div>
+                    ></div>
                   </div>
 
                   <div class="form-group">
-                    <label for="name">Nombre del Periodo</label>
-                    <input
-                      type="text"
-                      class="form-control"
-                      th:field="*{name}"
-                      required
-                      placeholder="Ej: Trimestre 1 (Oct-Dic)"
-                    />
+                    <label for="name" class="font-weight-bold"
+                      >Nombre del Periodo
+                      <span class="text-danger">*</span></label
+                    >
+                    <div class="input-group">
+                      <div class="input-group-prepend">
+                        <span class="input-group-text"
+                          ><i class="fas fa-calendar-alt"></i
+                        ></span>
+                      </div>
+                      <input
+                        type="text"
+                        class="form-control"
+                        th:field="*{name}"
+                        required
+                        placeholder="Ej: Trimestre 1 (Oct-Dic)"
+                      />
+                    </div>
                     <div
-                      class="text-danger"
+                      class="text-danger small mt-1"
                       th:if="${#fields.hasErrors('name')}"
                       th:errors="*{name}"
-                    >
-                      Err
-                    </div>
+                    ></div>
                   </div>
 
                   <div class="form-row">
                     <div class="form-group col-md-6">
-                      <label for="startDate">Fecha Inicio</label>
-                      <input
-                        type="date"
-                        class="form-control"
-                        th:field="*{startDate}"
-                        required
-                        text="YYYY-MM-DD"
-                      />
+                      <label for="startDate" class="font-weight-bold"
+                        >Fecha Inicio <span class="text-danger">*</span></label
+                      >
+                      <div class="input-group">
+                        <div class="input-group-prepend">
+                          <span class="input-group-text"
+                            ><i class="fas fa-calendar-day"></i
+                          ></span>
+                        </div>
+                        <input
+                          type="date"
+                          class="form-control"
+                          th:field="*{startDate}"
+                          required
+                        />
+                      </div>
                       <div
-                        class="text-danger"
+                        class="text-danger small mt-1"
                         th:if="${#fields.hasErrors('startDate')}"
                         th:errors="*{startDate}"
-                      >
-                        Err
-                      </div>
+                      ></div>
                     </div>
                     <div class="form-group col-md-6">
-                      <label for="endDate">Fecha Fin</label>
-                      <input
-                        type="date"
-                        class="form-control"
-                        th:field="*{endDate}"
-                        required
-                        text="YYYY-MM-DD"
-                      />
+                      <label for="endDate" class="font-weight-bold"
+                        >Fecha Fin <span class="text-danger">*</span></label
+                      >
+                      <div class="input-group">
+                        <div class="input-group-prepend">
+                          <span class="input-group-text"
+                            ><i class="fas fa-calendar-check"></i
+                          ></span>
+                        </div>
+                        <input
+                          type="date"
+                          class="form-control"
+                          th:field="*{endDate}"
+                          required
+                        />
+                      </div>
                       <div
-                        class="text-danger"
+                        class="text-danger small mt-1"
                         th:if="${#fields.hasErrors('endDate')}"
                         th:errors="*{endDate}"
-                      >
-                        Err
-                      </div>
+                      ></div>
                     </div>
                   </div>
 
@@ -127,18 +158,30 @@
                         id="active"
                         th:field="*{active}"
                       />
-                      <label class="custom-control-label" for="active"
-                        >Periodo Activo</label
+                      <label
+                        class="custom-control-label font-weight-bold"
+                        for="active"
+                        >Periodo Académico Activo</label
                       >
                     </div>
                   </div>
 
-                  <button type="submit" class="btn btn-primary">
-                    <i class="fas fa-save"></i> Guardar
-                  </button>
-                  <a th:href="@{/academic-periods}" class="btn btn-secondary">
-                    <i class="fas fa-times"></i> Cancelar
-                  </a>
+                  <hr />
+
+                  <div class="form-group text-right">
+                    <button
+                      type="submit"
+                      class="btn btn-primary px-4 shadow-sm"
+                    >
+                      <i class="fas fa-save mr-1"></i> Guardar Periodo
+                    </button>
+                    <a
+                      th:href="@{/academic-periods}"
+                      class="btn btn-secondary px-4 ml-2"
+                    >
+                      <i class="fas fa-times mr-1"></i> Cancelar
+                    </a>
+                  </div>
                 </form>
               </div>
             </div>

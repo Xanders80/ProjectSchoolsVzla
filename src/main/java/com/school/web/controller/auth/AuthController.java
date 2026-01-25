@@ -5,6 +5,7 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
+import java.time.LocalDate;
 
 @Controller
 public class AuthController {
@@ -39,6 +40,7 @@ public class AuthController {
             @RequestParam(required = false) String phoneNumber,
             @RequestParam(required = false) String address,
             @RequestParam(required = false) String relationship,
+            @RequestParam LocalDate birthDate,
             RedirectAttributes redirectAttributes) {
 
         // Sanitizar entradas
@@ -54,7 +56,7 @@ public class AuthController {
 
         try {
             userService.registerNewUserWithType(firstName, lastName, email, username, password,
-                    userType, dni, phoneNumber, address, relationship);
+                    userType, dni, phoneNumber, address, relationship, birthDate);
             redirectAttributes.addFlashAttribute("success", "Cuenta creada exitosamente. Por favor inicie sesión.");
             return "redirect:/login";
         } catch (RuntimeException e) {

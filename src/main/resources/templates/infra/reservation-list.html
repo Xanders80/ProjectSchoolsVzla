@@ -1,4 +1,4 @@
-<!DOCTYPE html>
+<!doctype html>
 <html xmlns:th="http://www.thymeleaf.org">
   <head>
     <meta charset="utf-8" />
@@ -30,7 +30,8 @@
               class="d-sm-flex align-items-center justify-content-between mb-4"
             >
               <h1 class="h3 mb-0 text-gray-800">
-                Todas las Reservas de Laboratorio
+                <i class="fas fa-calendar-check mr-2 text-primary"></i>Todas las
+                Reservas de Laboratorio
               </h1>
               <a
                 th:href="@{/infra/labs/reservations}"
@@ -128,7 +129,11 @@
                             <button
                               type="submit"
                               class="btn btn-sm btn-danger"
-                              onclick="return confirm('¿Está seguro de cancelar esta reserva?');"
+                              onclick="
+                                return confirm(
+                                  '¿Está seguro de cancelar esta reserva?',
+                                );
+                              "
                             >
                               <i class="fas fa-times"></i> Cancelar
                             </button>

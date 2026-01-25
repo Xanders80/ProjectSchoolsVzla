@@ -1,4 +1,4 @@
-<!DOCTYPE html>
+<!doctype html>
 <html
   xmlns:th="http://www.thymeleaf.org"
   xmlns:sec="http://www.thymeleaf.org/extras/spring-security"
@@ -46,14 +46,21 @@
             <div
               class="d-sm-flex align-items-center justify-content-between mb-4"
             >
-              <h1 class="h3 mb-0 text-gray-800">Panel Principal</h1>
+              <h1 class="h3 mb-0 text-gray-800">
+                <i class="fas fa-tachometer-alt mr-2 text-primary"></i>Panel
+                Principal
+              </h1>
             </div>
 
             <!-- Content Row -->
             <div class="row" role="region" aria-label="Indicadores principales">
               <!-- Total de Estudiantes Card -->
               <div class="col-xl-3 col-md-6 mb-4">
-                <div class="card border-left-primary shadow h-100 py-2" role="region" aria-label="Total de Estudiantes">
+                <div
+                  class="card border-left-primary shadow h-100 py-2"
+                  role="region"
+                  aria-label="Total de Estudiantes"
+                >
                   <div class="card-body">
                     <div class="row no-gutters align-items-center">
                       <div class="col mr-2">
@@ -70,7 +77,11 @@
                         </div>
                       </div>
                       <div class="col-auto">
-                        <i class="fas fa-user-graduate fa-2x text-gray-300" aria-label="Icono estudiantes" tabindex="0"></i>
+                        <i
+                          class="fas fa-user-graduate fa-2x text-gray-300"
+                          aria-label="Icono estudiantes"
+                          tabindex="0"
+                        ></i>
                       </div>
                     </div>
                   </div>
@@ -79,7 +90,11 @@
 
               <!-- Teachers Card -->
               <div class="col-xl-3 col-md-6 mb-4">
-                <div class="card border-left-success shadow h-100 py-2" role="region" aria-label="Profesores">
+                <div
+                  class="card border-left-success shadow h-100 py-2"
+                  role="region"
+                  aria-label="Profesores"
+                >
                   <div class="card-body">
                     <div class="row no-gutters align-items-center">
                       <div class="col mr-2">
@@ -96,7 +111,11 @@
                         </div>
                       </div>
                       <div class="col-auto">
-                        <i class="fas fa-chalkboard-teacher fa-2x text-gray-300" aria-label="Icono profesores" tabindex="0"></i>
+                        <i
+                          class="fas fa-chalkboard-teacher fa-2x text-gray-300"
+                          aria-label="Icono profesores"
+                          tabindex="0"
+                        ></i>
                       </div>
                     </div>
                   </div>
@@ -105,7 +124,11 @@
 
               <!-- Clases Activas Card -->
               <div class="col-xl-3 col-md-6 mb-4">
-                <div class="card border-left-info shadow h-100 py-2" role="region" aria-label="Clases Activas">
+                <div
+                  class="card border-left-info shadow h-100 py-2"
+                  role="region"
+                  aria-label="Clases Activas"
+                >
                   <div class="card-body">
                     <div class="row no-gutters align-items-center">
                       <div class="col mr-2">
@@ -122,7 +145,11 @@
                         </div>
                       </div>
                       <div class="col-auto">
-                        <i class="fas fa-book-open fa-2x text-gray-300" aria-label="Icono clases activas" tabindex="0"></i>
+                        <i
+                          class="fas fa-book-open fa-2x text-gray-300"
+                          aria-label="Icono clases activas"
+                          tabindex="0"
+                        ></i>
                       </div>
                     </div>
                   </div>
@@ -131,7 +158,11 @@
 
               <!-- Miembros del Personal Card -->
               <div class="col-xl-3 col-md-6 mb-4">
-                <div class="card border-left-warning shadow h-100 py-2" role="region" aria-label="Miembros del Personal">
+                <div
+                  class="card border-left-warning shadow h-100 py-2"
+                  role="region"
+                  aria-label="Miembros del Personal"
+                >
                   <div class="card-body">
                     <div class="row no-gutters align-items-center">
                       <div class="col mr-2">
@@ -148,7 +179,11 @@
                         </div>
                       </div>
                       <div class="col-auto">
-                        <i class="fas fa-users fa-2x text-gray-300" aria-label="Icono personal" tabindex="0"></i>
+                        <i
+                          class="fas fa-users fa-2x text-gray-300"
+                          aria-label="Icono personal"
+                          tabindex="0"
+                        ></i>
                       </div>
                     </div>
                   </div>
@@ -157,10 +192,18 @@
             </div>
 
             <!-- Content Row -->
-            <div class="row" role="region" aria-label="Acciones rápidas y sistema">
+            <div
+              class="row"
+              role="region"
+              aria-label="Acciones rápidas y sistema"
+            >
               <!-- Acciones Rápidas -->
               <div class="col-lg-6 mb-4">
-                <div class="card shadow mb-4" role="region" aria-label="Acciones rápidas">
+                <div
+                  class="card shadow mb-4"
+                  role="region"
+                  aria-label="Acciones rápidas"
+                >
                   <div class="card-header py-3">
                     <h6 class="m-0 font-weight-bold text-primary">
                       Acciones Rápidas
@@ -203,7 +246,11 @@
 
               <!-- System Info -->
               <div class="col-lg-6 mb-4">
-                <div class="card shadow mb-4" role="region" aria-label="Información del Sistema">
+                <div
+                  class="card shadow mb-4"
+                  role="region"
+                  aria-label="Información del Sistema"
+                >
                   <div class="card-header py-3">
                     <h6 class="m-0 font-weight-bold text-primary">
                       Información del Sistema
@@ -213,12 +260,18 @@
                     <div class="mb-2">
                       <strong>Semestre Actual:</strong>
                       <span th:text="${currentSemester}">-</span>
-                                          <span th:text="${currentSemester}" aria-label="Semestre actual">-</span>
+                      <span
+                        th:text="${currentSemester}"
+                        aria-label="Semestre actual"
+                        >-</span
+                      >
                     </div>
                     <div class="mb-2">
                       <strong>Año Académico:</strong>
                       <span th:text="${academicYear}">-</span>
-                                          <span th:text="${academicYear}" aria-label="Año académico">-</span>
+                      <span th:text="${academicYear}" aria-label="Año académico"
+                        >-</span
+                      >
                     </div>
                     <div class="mb-2">
                       <strong>Estado del Sistema:</strong>
@@ -232,7 +285,9 @@
                     <div class="mb-0">
                       <strong>Último Respaldo:</strong>
                       <span th:text="${lastBackup}">-</span>
-                                          <span th:text="${lastBackup}" aria-label="Último respaldo">-</span>
+                      <span th:text="${lastBackup}" aria-label="Último respaldo"
+                        >-</span
+                      >
                     </div>
                   </div>
                 </div>
@@ -251,7 +306,11 @@
     <!-- End of Page Wrapper -->
 
     <!-- Scroll to Top Button-->
-    <a class="scroll-to-top rounded" href="#page-top" aria-label="Volver arriba">
+    <a
+      class="scroll-to-top rounded"
+      href="#page-top"
+      aria-label="Volver arriba"
+    >
       <i class="fas fa-angle-up" aria-hidden="true"></i>
     </a>
 

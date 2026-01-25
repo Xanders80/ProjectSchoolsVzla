@@ -77,7 +77,7 @@ public class UserServiceImpl implements UserService {
     @Override
     public User registerNewUserWithType(String firstName, String lastName, String email, String username,
             String password,
-            String userType, String dni, String phoneNumber, String address, String relationship) {
+            String userType, String dni, String phoneNumber, String address, String relationship, LocalDate birthDate) {
 
         if (userRepository.findByUsername(username).isPresent()) {
             throw new IllegalArgumentException("El nombre de usuario ya existe: " + username);
@@ -99,13 +99,14 @@ public class UserServiceImpl implements UserService {
         User savedUser = userRepository.save(user);
 
         // Crear entidad específica según el tipo
-        createSpecificEntity(savedUser, role, dni, phoneNumber, address, relationship, firstName, lastName, email);
+        createSpecificEntity(savedUser, role, dni, phoneNumber, address, relationship, firstName, lastName, email,
+                birthDate);
 
         return savedUser;
     }
 
     private void createSpecificEntity(User user, Role role, String dni, String phoneNumber, String address,
-            String relationship, String firstName, String lastName, String email) {
+            String relationship, String firstName, String lastName, String email, LocalDate birthDate) {
 
         switch (role) {
             case PARENT:
@@ -117,6 +118,7 @@ public class UserServiceImpl implements UserService {
                 parent.setDni(dni);
                 parent.setPhoneNumber(phoneNumber);
                 parent.setAddress(address);
+                parent.setBirthDate(birthDate);
                 parent.setRelationship(relationship != null ? relationship : "Padre");
                 parentService.saveParent(parent);
                 break;
@@ -131,6 +133,7 @@ public class UserServiceImpl implements UserService {
                 staff.setDni(dni);
                 staff.setPhoneNumber(phoneNumber);
                 staff.setAddress(address);
+                staff.setBirthDate(birthDate);
                 staff.setJobTitle(role);
                 staff.setHireDate(LocalDate.now());
                 staff.setDepartment("General");
@@ -146,6 +149,7 @@ public class UserServiceImpl implements UserService {
                 student.setDni(dni);
                 student.setPhoneNumber(phoneNumber);
                 student.setAddress(address);
+                student.setBirthDate(birthDate);
                 student.setRegistrationNumber("REG" + System.currentTimeMillis());
                 student.setEnrollmentDate(LocalDate.now());
                 academicService.saveStudent(student);
