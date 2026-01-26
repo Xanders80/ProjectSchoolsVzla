@@ -49,12 +49,9 @@ public class User {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @NotBlank(message = "El nombre de usuario es obligatorio", groups = { ValidationGroups.Create.class,
-            ValidationGroups.Update.class })
-    @Size(min = 3, max = 50, message = "El nombre de usuario debe tener entre 3 y 50 caracteres", groups = {
-            ValidationGroups.Create.class, ValidationGroups.Update.class })
-    @Pattern(regexp = "^[a-zA-Z0-9._-]+$", message = "El nombre de usuario solo puede contener letras, números, puntos, guiones y guiones bajos", groups = {
-            ValidationGroups.Create.class, ValidationGroups.Update.class })
+    @NotBlank(message = "El nombre de usuario es obligatorio")
+    @Size(min = 3, max = 50, message = "El nombre de usuario debe tener entre 3 y 50 caracteres")
+    @Pattern(regexp = "^[a-zA-Z0-9._-]+$", message = "El nombre de usuario solo puede contener letras, números, puntos, guiones y guiones bajos")
     @Column(name = "username", unique = true, nullable = false, length = 50)
     private String username;
 
@@ -75,7 +72,7 @@ public class User {
     @Column(name = "password_changed_at")
     private LocalDateTime passwordChangedAt;
 
-    @NotNull(message = "El rol es obligatorio", groups = ValidationGroups.Create.class)
+    @NotNull(message = "El rol es obligatorio")
     @Enumerated(EnumType.STRING)
     @Column(name = "role", nullable = false, length = 20)
     private Role role;

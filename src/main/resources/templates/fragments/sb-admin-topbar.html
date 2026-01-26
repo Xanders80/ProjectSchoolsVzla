@@ -35,7 +35,7 @@
         <li class="nav-item dropdown no-arrow mx-1" role="none">
           <a
             class="nav-link dropdown-toggle"
-            href="#"
+            href="javascript:void(0);"
             id="alertsDropdown"
             role="button"
             data-toggle="dropdown"
@@ -58,11 +58,38 @@
             aria-labelledby="alertsDropdown"
           >
             <h6 class="dropdown-header">Centro de Notificaciones</h6>
+
+            <a
+              class="dropdown-item d-flex align-items-center"
+              href="javascript:void(0);"
+              th:each="n : ${recentNotifications}"
+              th:href="@{/notifications}"
+            >
+              <div class="mr-3">
+                <div class="icon-circle bg-primary">
+                  <i class="fas fa-file-alt text-white"></i>
+                </div>
+              </div>
+              <div>
+                <div
+                  class="small text-gray-500"
+                  th:text="${#temporals.format(n.createdAt, 'dd-MM-yyyy HH:mm')}"
+                >
+                  Date
+                </div>
+                <span class="font-weight-bold" th:text="${n.message}"
+                  >Message</span
+                >
+              </div>
+            </a>
+
             <a
               class="dropdown-item text-center small text-gray-500"
-              th:href="@{/notifications}"
-              >Mostrar todas las notificaciones</a
+              th:if="${#lists.isEmpty(recentNotifications)}"
+              href="javascript:void(0);"
             >
+              No hay notificaciones recientes
+            </a>
           </div>
         </li>
 
@@ -72,7 +99,7 @@
         <li class="nav-item dropdown no-arrow" role="none">
           <a
             class="nav-link dropdown-toggle"
-            href="#"
+            href="javascript:void(0);"
             id="userDropdown"
             role="button"
             data-toggle="dropdown"

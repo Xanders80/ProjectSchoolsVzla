@@ -218,9 +218,19 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    public User updateUserProfile(User user, String firstName, String lastName, String email, String dni,
+    public User updateUserProfile(User user, String firstName, String lastName, String email, String username,
+            String dni,
             String phoneNumber, String address, String relationship, String department, String specialization,
             java.time.LocalDate birthDate) {
+
+        // Validar y actualizar nombre de usuario si cambió
+        if (username != null && !username.trim().isEmpty() && !user.getUsername().equals(username)) {
+            if (userRepository.findByUsername(username).isPresent()) {
+                throw new IllegalArgumentException("El nombre de usuario '" + username + "' ya está en uso.");
+            }
+            user.setUsername(username);
+        }
+
         switch (user.getRole()) {
             case PARENT:
                 parentService.getParentByUserId(user.getId())

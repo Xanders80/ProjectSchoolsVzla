@@ -7,6 +7,8 @@
       name="viewport"
       content="width=device-width, initial-scale=1, shrink-to-fit=no"
     />
+    <meta name="_csrf" th:content="${_csrf.token}" />
+    <meta name="_csrf_header" th:content="${_csrf.headerName}" />
     <title>Mis Notificaciones - Sistema de Gestión Escolar</title>
 
     <link
@@ -65,10 +67,6 @@
                             th:text="${#temporals.format(note.createdAt, 'dd/MM/yyyy HH:mm')}"
                             aria-label="Fecha de notificación"
                           ></small>
-                        </div>
-                        <!-- ...existing code... -->
-                            >Hace 3 días</small
-                          >
                         </div>
                         <p class="mb-1" th:text="${note.message}">
                           Mensaje de la notificación.

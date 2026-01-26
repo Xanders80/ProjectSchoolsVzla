@@ -90,7 +90,7 @@ public class AdmissionExamService {
 
         // Determine approval based on score
         boolean approved = score >= 70.0; // Minimum passing score
-        String status = approved ? "APPROVED" : "REJECTED";
+        String status = approved ? "APROBADO" : "RECHAZADO";
         String recommendation = generateRecommendation(score);
 
         exam.setStatus(status);

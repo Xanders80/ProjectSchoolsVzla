@@ -85,6 +85,9 @@
                         <option value="PARENT">Representante</option>
                         <option value="PERSONAL">Personal</option>
                       </select>
+                      <div class="invalid-feedback ml-3">
+                        Seleccione un tipo de usuario.
+                      </div>
                     </div>
                   </div>
 
@@ -251,7 +254,12 @@
                           placeholder="Usuario"
                           required
                           style="border-radius: 0 10rem 10rem 0"
+                          minlength="3"
+                          maxlength="50"
                         />
+                        <div class="invalid-feedback ml-3">
+                          Ingrese un nombre de usuario válido (3-50 caracteres).
+                        </div>
                       </div>
                     </div>
                     <div class="col-sm-6">
@@ -370,7 +378,12 @@
                           placeholder="Contraseña"
                           required
                           style="border-radius: 0 10rem 10rem 0"
+                          minlength="8"
+                          maxlength="128"
                         />
+                        <div class="invalid-feedback ml-3">
+                          La contraseña es obligatoria (mín. 8 caracteres).
+                        </div>
                       </div>
                     </div>
                     <div class="col-sm-6">
@@ -393,7 +406,12 @@
                           placeholder="Repetir Contraseña"
                           required
                           style="border-radius: 0 10rem 10rem 0"
+                          minlength="8"
+                          maxlength="128"
                         />
+                        <div class="invalid-feedback ml-3">
+                          Confirme la contraseña.
+                        </div>
                       </div>
                     </div>
                   </div>

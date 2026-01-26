@@ -22,7 +22,7 @@ public interface UserService {
 
         boolean checkIfValidOldPassword(User user, String oldPassword);
 
-        User updateUserProfile(User user, String firstName, String lastName, String email, String dni,
+        User updateUserProfile(User user, String firstName, String lastName, String email, String username, String dni,
                         String phoneNumber,
                         String address, String relationship, String department, String specialization,
                         java.time.LocalDate birthDate);

@@ -127,15 +127,7 @@
                   <hr />
 
                   <div class="form-group text-right">
-                    <button
-                      type="submit"
-                      class="btn btn-danger px-5 shadow-sm"
-                      onclick="
-                        return confirm(
-                          '¿Está seguro de enviar este aviso a TODOS los usuarios?',
-                        );
-                      "
-                    >
+                    <button type="submit" class="btn btn-danger px-5 shadow-sm">
                       <i class="fas fa-broadcast-tower mr-1"></i> Enviar a TODOS
                     </button>
                   </div>
@@ -158,5 +150,109 @@
     <script th:src="@{/vendor/bootstrap/js/bootstrap.bundle.min.js}"></script>
     <script th:src="@{/vendor/jquery-easing/jquery.easing.min.js}"></script>
     <script th:src="@{/js/sb-admin-2.min.js}"></script>
+
+    <!-- Confirmation Modal -->
+    <div
+      class="modal fade"
+      id="confirmationModal"
+      tabindex="-1"
+      role="dialog"
+      aria-labelledby="modalLabel"
+      aria-hidden="true"
+    >
+      <div class="modal-dialog" role="document">
+        <div class="modal-content border-left-danger">
+          <div class="modal-header">
+            <h5
+              class="modal-title font-weight-bold text-gray-800"
+              id="modalLabel"
+            >
+              Confirmar Envío Masivo
+            </h5>
+            <button
+              class="close"
+              type="button"
+              data-dismiss="modal"
+              aria-label="Close"
+            >
+              <span aria-hidden="true">×</span>
+            </button>
+          </div>
+          <div class="modal-body text-gray-800">
+            <div class="text-center mb-3">
+              <i class="fas fa-exclamation-circle text-danger fa-3x mb-2"></i>
+              <h5 class="font-weight-bold">¡Atención!</h5>
+            </div>
+            <p>
+              Está a punto de enviar una notificación a
+              <strong class="text-danger">TODOS</strong> los usuarios
+              registrados en el sistema.
+            </p>
+            <p>
+              Esta acción notificará inmediatamente a la comunidad escolar.
+              ¿Está seguro de que desea continuar?
+            </p>
+          </div>
+          <div class="modal-footer">
+            <button
+              class="btn btn-secondary"
+              type="button"
+              data-dismiss="modal"
+            >
+              Cancelar
+            </button>
+            <button
+              class="btn btn-danger"
+              id="confirmBroadcastBtn"
+              type="button"
+            >
+              <i class="fas fa-paper-plane mr-1"></i> Confirmar y Enviar
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <script>
+      (function () {
+        "use strict";
+        window.addEventListener(
+          "load",
+          function () {
+            var form = document.querySelector("form.needs-validation"); // Select the specific form
+
+            if (form) {
+              form.addEventListener(
+                "submit",
+                function (event) {
+                  // Prevent default submission initially
+                  event.preventDefault();
+                  event.stopPropagation();
+
+                  if (form.checkValidity() === false) {
+                    // If invalid, show validation styles and stop
+                    form.classList.add("was-validated");
+                  } else {
+                    // If valid, show the confirmation modal
+                    form.classList.add("was-validated");
+                    $("#confirmationModal").modal("show");
+                  }
+                },
+                false,
+              );
+
+              // Handle the Modal "Confirm" button click
+              document
+                .getElementById("confirmBroadcastBtn")
+                .addEventListener("click", function () {
+                  // Programmatically submit the form (bypassing the listener)
+                  form.submit();
+                });
+            }
+          },
+          false,
+        );
+      })();
+    </script>
   </body>
 </html>

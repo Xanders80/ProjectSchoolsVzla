@@ -45,7 +45,7 @@ public class HealthService {
         return medicalRecordRepository.findByStudentId(studentId)
                 .orElseGet(() -> {
                     Student student = studentRepository.findById(studentId)
-                            .orElseThrow(() -> new IllegalArgumentException("Invalid student ID"));
+                            .orElseThrow(() -> new IllegalArgumentException("No se encontro registro de estudiante"));
                     MedicalRecord record = new MedicalRecord();
                     record.setStudent(student);
                     return medicalRecordRepository.save(record);
@@ -73,14 +73,14 @@ public class HealthService {
 
     public Vaccine addVaccine(@NonNull Long studentId, Vaccine vaccine) {
         Student student = studentRepository.findById(studentId)
-                .orElseThrow(() -> new IllegalArgumentException("Invalid student ID"));
+                .orElseThrow(() -> new IllegalArgumentException("No se encontro registro de estudiante"));
         vaccine.setStudent(student);
         return vaccineRepository.save(vaccine);
     }
 
     public void deleteVaccine(@NonNull Long vaccineId) {
         Vaccine vaccine = vaccineRepository.findById(vaccineId)
-                .orElseThrow(() -> new IllegalArgumentException("Vaccine not found"));
+                .orElseThrow(() -> new IllegalArgumentException("No se encontro registro de vacuna"));
         vaccine.setDeleted(true);
         vaccine.setDeletedAt(LocalDateTime.now());
         vaccine.setDeletedBy(getCurrentUser());

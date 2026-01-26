@@ -33,9 +33,9 @@ public class CommunicationService {
 
     public Message sendMessage(Long senderId, Long receiverId, String subject, String content) {
         User sender = userService.findById(senderId)
-                .orElseThrow(() -> new IllegalArgumentException("Invalid sender ID"));
+                .orElseThrow(() -> new IllegalArgumentException("ID de remitente no válido"));
         User receiver = userService.findById(receiverId)
-                .orElseThrow(() -> new IllegalArgumentException("Invalid receiver ID"));
+                .orElseThrow(() -> new IllegalArgumentException("ID de destinatario no válido"));
 
         Message message = new Message();
         message.setSender(sender);
@@ -56,7 +56,7 @@ public class CommunicationService {
 
     public Message readMessage(@NonNull Long messageId, Long userId) {
         Message message = messageRepository.findById(messageId)
-                .orElseThrow(() -> new IllegalArgumentException("Message not found"));
+                .orElseThrow(() -> new IllegalArgumentException("No se encontro registro de mensaje"));
 
         // Security check: Only receiver can read and mark as read
         if (!message.getReceiver().getId().equals(userId)) {
@@ -64,7 +64,7 @@ public class CommunicationService {
             // sender should be able to view their sent msg)
             if (message.getSender().getId().equals(userId))
                 return message;
-            throw new SecurityException("Access denied");
+            throw new SecurityException("Acceso denegado");
         }
 
         if (!message.isRead()) {

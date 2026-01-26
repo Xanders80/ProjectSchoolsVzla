@@ -35,7 +35,7 @@ public class FinanceService {
             @org.springframework.lang.NonNull com.school.finance.entity.Payment payment) {
         @SuppressWarnings("null")
         StudentFee fee = studentFeeRepository.findById(payment.getStudentFee().getId())
-                .orElseThrow(() -> new IllegalArgumentException("Invalid Fee ID"));
+                .orElseThrow(() -> new IllegalArgumentException("No se encontro registro de cuota"));
 
         payment.setStudentFee(fee);
         com.school.finance.entity.Payment savedPayment = paymentRepository.save(payment);
@@ -82,7 +82,7 @@ public class FinanceService {
 
     public void deleteFee(@org.springframework.lang.NonNull Long id) {
         StudentFee fee = studentFeeRepository.findById(id)
-                .orElseThrow(() -> new IllegalArgumentException("Fee not found"));
+                .orElseThrow(() -> new IllegalArgumentException("No se encontro registro de cuota"));
         fee.setDeleted(true);
         fee.setDeletedAt(java.time.LocalDateTime.now());
         fee.setDeletedBy(getCurrentUser());

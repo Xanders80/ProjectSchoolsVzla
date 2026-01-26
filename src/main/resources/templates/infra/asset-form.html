@@ -1,8 +1,5 @@
-<!DOCTYPE html>
-<html lang="es"
-  xmlns:th="http://www.thymeleaf.org"
-  xmlns:sec="http://www.thymeleaf.org/extras/spring-security"
->
+<!doctype html>
+<html xmlns:th="http://www.thymeleaf.org">
   <head>
     <meta charset="utf-8" />
     <meta http-equiv="X-UA-Compatible" content="IE=edge" />
@@ -26,20 +23,25 @@
 
   <body id="page-top">
     <div id="wrapper">
-      <nav aria-label="Menú principal" th:replace="~{fragments/sb-admin-sidebar :: sidebar}"></nav>
+      <div th:replace="~{fragments/sb-admin-sidebar :: sidebar}"></div>
+
       <div id="content-wrapper" class="d-flex flex-column">
         <div id="content">
-          <header th:replace="~{fragments/sb-admin-topbar :: topbar}" aria-label="Barra superior"></header>
+          <div th:replace="~{fragments/sb-admin-topbar :: topbar}"></div>
 
-          <div class="container-fluid" aria-labelledby="asset-form-title">
+          <div class="container-fluid">
             <div
               class="d-sm-flex align-items-center justify-content-between mb-4"
             >
-              <h1 id="asset-form-title" class="h3 mb-0 text-gray-800">
-                <i class="fas fa-boxes mr-2 text-primary"></i><span th:text="${asset.id != null ? 'Editar Activo' : 'Nuevo Activo'}">Nuevo Activo</span>
+              <h1 class="h3 mb-0 text-gray-800">
+                <i class="fas fa-boxes mr-2 text-primary"></i
+                ><span
+                  th:text="${asset.id != null ? 'Editar Activo' : 'Nuevo Activo'}"
+                  >Nuevo Activo</span
+                >
               </h1>
-              <a th:href="@{/infra/assets}" class="btn btn-secondary" aria-label="Volver a la lista de activos">
-                <i class="fas fa-arrow-left" aria-hidden="true"></i> Volver
+              <a th:href="@{/infra/assets}" class="btn btn-secondary">
+                <i class="fas fa-arrow-left"></i> Volver
               </a>
             </div>
 
@@ -47,7 +49,6 @@
               th:if="${errorMessage}"
               class="alert alert-danger alert-dismissible fade show"
               role="alert"
-              aria-live="assertive"
             >
               <span th:text="${errorMessage}"></span>
               <button
@@ -85,7 +86,9 @@
                         >
                         <div class="input-group">
                           <div class="input-group-prepend">
-                            <span class="input-group-text"><i class="fas fa-tag"></i></span>
+                            <span class="input-group-text"
+                              ><i class="fas fa-tag"></i
+                            ></span>
                           </div>
                           <input
                             type="text"
@@ -96,7 +99,11 @@
                             placeholder="Ej: Proyector Epson EB-X41"
                             required
                           />
-                          <div class="invalid-feedback" th:if="${#fields.hasErrors('name')}" th:errors="*{name}">
+                          <div
+                            class="invalid-feedback"
+                            th:if="${#fields.hasErrors('name')}"
+                            th:errors="*{name}"
+                          >
                             El nombre es obligatorio.
                           </div>
                         </div>
@@ -111,7 +118,9 @@
                         >
                         <div class="input-group">
                           <div class="input-group-prepend">
-                            <span class="input-group-text"><i class="fas fa-list"></i></span>
+                            <span class="input-group-text"
+                              ><i class="fas fa-list"></i
+                            ></span>
                           </div>
                           <select
                             class="form-control"
@@ -128,7 +137,11 @@
                             <option value="Sports">Deportes</option>
                             <option value="Other">Otro</option>
                           </select>
-                          <div class="invalid-feedback" th:if="${#fields.hasErrors('type')}" th:errors="*{type}">
+                          <div
+                            class="invalid-feedback"
+                            th:if="${#fields.hasErrors('type')}"
+                            th:errors="*{type}"
+                          >
                             El tipo de activo es obligatorio.
                           </div>
                         </div>
@@ -139,10 +152,14 @@
                   <div class="row">
                     <div class="col-md-6">
                       <div class="form-group">
-                        <label for="serialNumber" class="font-weight-bold">Número de Serie</label>
+                        <label for="serialNumber" class="font-weight-bold"
+                          >Número de Serie</label
+                        >
                         <div class="input-group">
                           <div class="input-group-prepend">
-                            <span class="input-group-text"><i class="fas fa-barcode"></i></span>
+                            <span class="input-group-text"
+                              ><i class="fas fa-barcode"></i
+                            ></span>
                           </div>
                           <input
                             type="text"
@@ -152,7 +169,11 @@
                             th:classappend="${#fields.hasErrors('serialNumber')} ? 'is-invalid'"
                             placeholder="Ej: SN123456789"
                           />
-                          <div class="invalid-feedback" th:if="${#fields.hasErrors('serialNumber')}" th:errors="*{serialNumber}"></div>
+                          <div
+                            class="invalid-feedback"
+                            th:if="${#fields.hasErrors('serialNumber')}"
+                            th:errors="*{serialNumber}"
+                          ></div>
                         </div>
                         <small class="form-text text-muted"
                           >Identificador único del fabricante (Opcional)</small
@@ -162,10 +183,14 @@
 
                     <div class="col-md-6">
                       <div class="form-group">
-                        <label for="purchaseDate" class="font-weight-bold">Fecha de Compra</label>
+                        <label for="purchaseDate" class="font-weight-bold"
+                          >Fecha de Compra</label
+                        >
                         <div class="input-group">
                           <div class="input-group-prepend">
-                            <span class="input-group-text"><i class="fas fa-calendar-alt"></i></span>
+                            <span class="input-group-text"
+                              ><i class="fas fa-calendar-alt"></i
+                            ></span>
                           </div>
                           <input
                             type="date"
@@ -174,7 +199,11 @@
                             th:field="*{purchaseDate}"
                             th:classappend="${#fields.hasErrors('purchaseDate')} ? 'is-invalid'"
                           />
-                          <div class="invalid-feedback" th:if="${#fields.hasErrors('purchaseDate')}" th:errors="*{purchaseDate}"></div>
+                          <div
+                            class="invalid-feedback"
+                            th:if="${#fields.hasErrors('purchaseDate')}"
+                            th:errors="*{purchaseDate}"
+                          ></div>
                         </div>
                       </div>
                     </div>
@@ -183,10 +212,14 @@
                   <div class="row">
                     <div class="col-md-6">
                       <div class="form-group">
-                        <label for="room" class="font-weight-bold">Ubicación (Sala)</label>
+                        <label for="room" class="font-weight-bold"
+                          >Ubicación (Sala)</label
+                        >
                         <div class="input-group">
                           <div class="input-group-prepend">
-                            <span class="input-group-text"><i class="fas fa-door-open"></i></span>
+                            <span class="input-group-text"
+                              ><i class="fas fa-door-open"></i
+                            ></span>
                           </div>
                           <select
                             class="form-control"
@@ -204,7 +237,8 @@
                           </select>
                         </div>
                         <small class="form-text text-muted"
-                          >Seleccione la sala donde se encuentra el activo</small
+                          >Seleccione la sala donde se encuentra el
+                          activo</small
                         >
                       </div>
                     </div>
@@ -213,10 +247,16 @@
                   <hr />
 
                   <div class="form-group text-right">
-                    <button type="submit" class="btn btn-primary px-4 shadow-sm">
+                    <button
+                      type="submit"
+                      class="btn btn-primary px-4 shadow-sm"
+                    >
                       <i class="fas fa-save mr-1"></i> Guardar Activo
                     </button>
-                    <a th:href="@{/infra/assets}" class="btn btn-secondary px-4 ml-2">
+                    <a
+                      th:href="@{/infra/assets}"
+                      class="btn btn-secondary px-4 ml-2"
+                    >
                       <i class="fas fa-times mr-1"></i> Cancelar
                     </a>
                   </div>
@@ -225,11 +265,10 @@
             </div>
           </div>
         </div>
-            </div>
-          </div>
-          <div th:replace="~{fragments/sb-admin-footer :: footer}"></div>
-        </div>
+
+        <div th:replace="~{fragments/sb-admin-footer :: footer}"></div>
       </div>
+    </div>
 
     <a class="scroll-to-top rounded" href="#page-top"
       ><i class="fas fa-angle-up"></i
@@ -240,5 +279,34 @@
     <script th:src="@{/vendor/bootstrap/js/bootstrap.bundle.min.js}"></script>
     <script th:src="@{/vendor/jquery-easing/jquery.easing.min.js}"></script>
     <script th:src="@{/js/sb-admin-2.min.js}"></script>
+
+    <script>
+      (function () {
+        "use strict";
+        window.addEventListener(
+          "load",
+          function () {
+            var forms = document.getElementsByClassName("needs-validation");
+            var validation = Array.prototype.filter.call(
+              forms,
+              function (form) {
+                form.addEventListener(
+                  "submit",
+                  function (event) {
+                    if (form.checkValidity() === false) {
+                      event.preventDefault();
+                      event.stopPropagation();
+                    }
+                    form.classList.add("was-validated");
+                  },
+                  false,
+                );
+              },
+            );
+          },
+          false,
+        );
+      })();
+    </script>
   </body>
 </html>

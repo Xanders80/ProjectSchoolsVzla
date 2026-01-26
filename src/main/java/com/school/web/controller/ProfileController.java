@@ -39,35 +39,44 @@ public class ProfileController {
 
         model.addAttribute("user", user);
 
-        // Cargar entidad específica según rol
+        // Cargar entidad específica según rol de forma eficiente
+        java.time.LocalDate birthDate = null;
         switch (user.getRole()) {
             case PARENT:
-                parentService.getAllParents(org.springframework.data.domain.PageRequest.of(0, 1))
-                        .getContent().stream()
-                        .filter(p -> p.getUser() != null && p.getUser().getId().equals(user.getId()))
-                        .findFirst()
-                        .ifPresent(parent -> model.addAttribute("parentInfo", parent));
+                var parent = parentService.getParentByUserId(user.getId()).orElse(null);
+                if (parent != null) {
+                    model.addAttribute("parentInfo", parent);
+                    birthDate = parent.getBirthDate();
+                }
                 break;
             case ADMIN:
             case DIRECTOR:
             case TEACHER:
             case STAFF:
-                staffService.getAllStaff(org.springframework.data.domain.PageRequest.of(0, 1000))
-                        .getContent().stream()
-                        .filter(s -> s.getUser() != null && s.getUser().getId().equals(user.getId()))
-                        .findFirst()
-                        .ifPresent(staff -> model.addAttribute("staffInfo", staff));
+                var staff = staffService.getStaffByUserId(user.getId()).orElse(null);
+                if (staff != null) {
+                    model.addAttribute("staffInfo", staff);
+                    birthDate = staff.getBirthDate();
+                }
                 break;
             case STUDENT:
-                academicService.getAllStudents(org.springframework.data.domain.PageRequest.of(0, 1000))
-                        .getContent().stream()
-                        .filter(s -> s.getUser() != null && s.getUser().getId().equals(user.getId()))
-                        .findFirst()
-                        .ifPresent(student -> model.addAttribute("studentInfo", student));
+                var student = academicService.getStudentByUserId(user.getId()).orElse(null);
+                if (student != null) {
+                    model.addAttribute("studentInfo", student);
+                    birthDate = student.getBirthDate();
+                }
                 break;
             default:
                 break;
         }
+
+        // Datos adicionales para "Detalles de la Cuenta"
+        if (birthDate != null) {
+            model.addAttribute("age", java.time.Period.between(birthDate, java.time.LocalDate.now()).getYears());
+        }
+        model.addAttribute("registrationDate", user.getCreatedAt());
+        model.addAttribute("accountStatus", user.isEnabled() ? "Activa" : "Inactiva");
+        model.addAttribute("statusColor", user.isEnabled() ? "success" : "danger");
 
         return "profile";
     }
@@ -78,6 +87,7 @@ public class ProfileController {
             @RequestParam String firstName,
             @RequestParam String lastName,
             @RequestParam String email,
+            @RequestParam String username,
             @RequestParam(required = false) String dni,
             @RequestParam(required = false) String phoneNumber,
             @RequestParam(required = false) String address,
@@ -92,7 +102,8 @@ public class ProfileController {
                     .orElseThrow(() -> new RuntimeException("Usuario no encontrado"));
 
             // Actualizar perfil de forma centralizada a través del servicio
-            userService.updateUserProfile(user, firstName, lastName, email, dni, phoneNumber, address, relationship,
+            userService.updateUserProfile(user, firstName, lastName, email, username, dni, phoneNumber, address,
+                    relationship,
                     department, specialization, birthDate);
 
             redirectAttributes.addFlashAttribute("success", "Perfil actualizado exitosamente");

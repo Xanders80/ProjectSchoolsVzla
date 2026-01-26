@@ -110,7 +110,13 @@
                             aria-required="true"
                             style="border-radius: 0 10rem 10rem 0"
                             autocomplete="username"
+                            minlength="3"
+                            maxlength="50"
                           />
+                          <div class="invalid-feedback">
+                            Ingrese un nombre de usuario válido (mín. 3
+                            caracteres).
+                          </div>
                         </div>
                       </div>
                       <div class="form-group">
@@ -137,7 +143,12 @@
                             aria-required="true"
                             style="border-radius: 0 10rem 10rem 0"
                             autocomplete="current-password"
+                            minlength="8"
+                            maxlength="128"
                           />
+                          <div class="invalid-feedback">
+                            Ingrese una contraseña válida (mín. 8 caracteres).
+                          </div>
                         </div>
                       </div>
                       <button
@@ -182,5 +193,33 @@
 
     <!-- Custom scripts for all pages-->
     <script th:src="@{/js/sb-admin-2.min.js}"></script>
+    <script>
+      (function () {
+        "use strict";
+        window.addEventListener(
+          "load",
+          function () {
+            var forms = document.getElementsByClassName("needs-validation");
+            var validation = Array.prototype.filter.call(
+              forms,
+              function (form) {
+                form.addEventListener(
+                  "submit",
+                  function (event) {
+                    if (form.checkValidity() === false) {
+                      event.preventDefault();
+                      event.stopPropagation();
+                    }
+                    form.classList.add("was-validated");
+                  },
+                  false,
+                );
+              },
+            );
+          },
+          false,
+        );
+      })();
+    </script>
   </body>
 </html>

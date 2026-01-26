@@ -61,7 +61,7 @@ public class HRService {
     public StaffAttendance markCheckIn(@NonNull Long staffId, LocalTime time) {
         LocalDate today = LocalDate.now();
         Staff staff = staffRepository.findById(staffId)
-                .orElseThrow(() -> new IllegalArgumentException("Staff not found"));
+                .orElseThrow(() -> new IllegalArgumentException("Personal no encontrado"));
 
         StaffAttendance attendance = attendanceRepository.findByStaffIdAndDate(staffId, today)
                 .orElse(new StaffAttendance());
@@ -83,7 +83,7 @@ public class HRService {
     public StaffAttendance markCheckOut(Long staffId, LocalTime time) {
         LocalDate today = LocalDate.now();
         StaffAttendance attendance = attendanceRepository.findByStaffIdAndDate(staffId, today)
-                .orElseThrow(() -> new IllegalArgumentException("No check-in record found for today"));
+                .orElseThrow(() -> new IllegalArgumentException("No se encontro registro de check-in para hoy"));
 
         attendance.setCheckOutTime(time);
         return attendanceRepository.save(attendance);
@@ -111,7 +111,9 @@ public class HRService {
 
                 // Calculate Net (simplified: base + bonus - deductions)
                 // For now just Base
-                payroll.setNetSalary(contract.getSalary()
+                java.math.BigDecimal salary = contract.getSalary() != null ? contract.getSalary()
+                        : java.math.BigDecimal.ZERO;
+                payroll.setNetSalary(salary
                         .add(payroll.getBonuses())
                         .subtract(payroll.getDeductions()));
 
@@ -122,7 +124,7 @@ public class HRService {
 
     public void payPayroll(@NonNull Long payrollId) {
         Payroll payroll = payrollRepository.findById(payrollId)
-                .orElseThrow(() -> new IllegalArgumentException("Payroll record not found"));
+                .orElseThrow(() -> new IllegalArgumentException("No se encontro registro de nomina"));
         payroll.setStatus(Payroll.PaymentStatus.PAID);
         payroll.setPaymentDate(LocalDate.now());
         payrollRepository.save(payroll);

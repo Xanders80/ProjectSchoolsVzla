@@ -66,13 +66,54 @@ public class SectionController extends BaseDeleteController {
     @PostMapping
     public String saveSection(@jakarta.validation.Valid @ModelAttribute @NonNull Section section,
             org.springframework.validation.BindingResult result, Model model) {
-        if (result.hasErrors() || section.getCourse() == null) {
-            if (section.getCourse() == null) {
-                result.rejectValue("course", "NotNull", "El curso es obligatorio");
-            }
+
+        // 1. Basic Validation
+        if (result.hasErrors()) {
             populateDropdowns(model);
             return SECTION_FORM_VIEW;
         }
+
+        // 2. Strict Relationship Validation & Hydration
+
+        // Validate Course
+        if (section.getCourse() == null || section.getCourse().getId() == null) {
+            result.rejectValue("course", "NotNull", "El curso es obligatorio");
+        } else {
+            courseRepository.findById(section.getCourse().getId())
+                    .ifPresentOrElse(section::setCourse,
+                            () -> result.rejectValue("course", "NotFound", "El curso seleccionado no existe"));
+        }
+
+        // Validate Period
+        if (section.getPeriod() == null || section.getPeriod().getId() == null) {
+            result.rejectValue("period", "NotNull", "El periodo académico es obligatorio");
+        } else {
+            academicPeriodRepository.findById(section.getPeriod().getId())
+                    .ifPresentOrElse(section::setPeriod,
+                            () -> result.rejectValue("period", "NotFound", "El periodo seleccionado no existe"));
+        }
+
+        if (result.hasErrors()) {
+            populateDropdowns(model);
+            return SECTION_FORM_VIEW;
+        }
+
+        // 3. Optional Relationships Hydration
+        if (section.getTeacher() != null && section.getTeacher().getId() != null) {
+            staffService.getStaffById(section.getTeacher().getId())
+                    .ifPresent(section::setTeacher);
+        } else {
+            section.setTeacher(null);
+        }
+
+        if (section.getRoom() != null && section.getRoom().getId() != null) {
+            infraService.getRoomById(section.getRoom().getId())
+                    .ifPresent(section::setRoom);
+        } else {
+            section.setRoom(null);
+        }
+
+        // 4. Save
         sectionService.saveSection(section);
         return "redirect:/sections";
     }
@@ -85,9 +126,9 @@ public class SectionController extends BaseDeleteController {
     }
 
     @RequestMapping(value = "/delete/{id}", method = { RequestMethod.POST, RequestMethod.DELETE })
-    public String deleteSection(@PathVariable @ValidId String id, 
-                              RedirectAttributes redirectAttributes,
-                              HttpServletRequest request) {
+    public String deleteSection(@PathVariable @ValidId String id,
+            RedirectAttributes redirectAttributes,
+            HttpServletRequest request) {
         try {
             Long sectionId = Long.parseLong(id);
             sectionService.deleteSection(sectionId);

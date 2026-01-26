@@ -66,6 +66,12 @@ public class ScheduleController {
         }
 
         try {
+            // Hydrate Section
+            if (scheduleEntry.getSection() != null && scheduleEntry.getSection().getId() != null) {
+                sectionRepository.findById(scheduleEntry.getSection().getId())
+                        .ifPresent(scheduleEntry::setSection);
+            }
+
             scheduleService.saveSchedule(scheduleEntry);
         } catch (IllegalStateException e) {
             model.addAttribute("error", e.getMessage());

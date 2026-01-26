@@ -94,12 +94,21 @@
                             th:classappend="${#fields.hasErrors('username')} ? 'is-invalid'"
                             placeholder="Ej: admin"
                             required
+                            minlength="3"
+                            maxlength="50"
                           />
                           <div
                             class="invalid-feedback"
                             th:if="${#fields.hasErrors('username')}"
                             th:errors="*{username}"
                           ></div>
+                          <div
+                            class="invalid-feedback"
+                            th:unless="${#fields.hasErrors('username')}"
+                          >
+                            El nombre de usuario es obligatorio (3-50
+                            caracteres).
+                          </div>
                         </div>
                       </div>
                     </div>
@@ -127,7 +136,19 @@
                             name="password"
                             placeholder="Contraseña"
                             th:required="${user.id == null}"
+                            minlength="8"
+                            maxlength="128"
                           />
+                        </div>
+                        <div class="invalid-feedback">
+                          <span th:if="${user.id == null}"
+                            >La contraseña es obligatoria (mínimo 8
+                            caracteres).</span
+                          >
+                          <span th:unless="${user.id == null}"
+                            >Dejar vacío para no cambiar la contraseña
+                            actual.</span
+                          >
                         </div>
                         <small
                           class="form-text text-muted"
@@ -167,6 +188,12 @@
                             th:if="${#fields.hasErrors('role')}"
                             th:errors="*{role}"
                           ></div>
+                          <div
+                            class="invalid-feedback"
+                            th:unless="${#fields.hasErrors('role')}"
+                          >
+                            Por favor seleccione un rol.
+                          </div>
                         </div>
                       </div>
                     </div>
@@ -221,5 +248,34 @@
     <script th:src="@{/vendor/bootstrap/js/bootstrap.bundle.min.js}"></script>
     <script th:src="@{/vendor/jquery-easing/jquery.easing.min.js}"></script>
     <script th:src="@{/js/sb-admin-2.min.js}"></script>
+
+    <script>
+      (function () {
+        "use strict";
+        window.addEventListener(
+          "load",
+          function () {
+            var forms = document.getElementsByClassName("needs-validation");
+            var validation = Array.prototype.filter.call(
+              forms,
+              function (form) {
+                form.addEventListener(
+                  "submit",
+                  function (event) {
+                    if (form.checkValidity() === false) {
+                      event.preventDefault();
+                      event.stopPropagation();
+                    }
+                    form.classList.add("was-validated");
+                  },
+                  false,
+                );
+              },
+            );
+          },
+          false,
+        );
+      })();
+    </script>
   </body>
 </html>

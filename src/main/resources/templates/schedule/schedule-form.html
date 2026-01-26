@@ -62,6 +62,24 @@
               </button>
             </div>
 
+            <!-- Mensaje de éxito opcional -->
+            <div
+              th:if="${success}"
+              class="alert alert-success alert-dismissible fade show"
+              role="alert"
+            >
+              <i class="fas fa-check-circle"></i>
+              <span th:text="${success}"></span>
+              <button
+                type="button"
+                class="close"
+                data-dismiss="alert"
+                aria-label="Cerrar"
+              >
+                <span aria-hidden="true">&times;</span>
+              </button>
+            </div>
+
             <div class="card shadow mb-4">
               <div class="card-header py-3">
                 <h6 class="m-0 font-weight-bold text-primary">
@@ -74,6 +92,7 @@
                   th:object="${scheduleEntry}"
                   method="post"
                   class="needs-validation"
+                  id="scheduleForm"
                   novalidate
                 >
                   <input type="hidden" th:field="*{id}" />
@@ -94,7 +113,7 @@
                           <select
                             th:field="*{dayOfWeek}"
                             class="form-control"
-                            th:classappend="${#fields.hasErrors('dayOfWeek')} ? 'is-invalid'"
+                            th:classappend="${#fields.hasErrors('dayOfWeek')} ? 'is-invalid' : ''"
                             required
                           >
                             <option value="">Seleccionar Día</option>
@@ -111,6 +130,14 @@
                           th:if="${#fields.hasErrors('dayOfWeek')}"
                           th:errors="*{dayOfWeek}"
                         ></div>
+                        <!-- Validación específica para unicidad (si el backend la reporta así) -->
+                        <div
+                          class="invalid-feedback"
+                          th:if="${#fields.hasErrors('dayOfWeek')} and ${#fields.errors('dayOfWeek')[0].code == 'UniqueSchedule'}"
+                        >
+                          Ya existe un horario para esta sección en el día
+                          seleccionado.
+                        </div>
                       </div>
                     </div>
                     <div class="col-md-4">
@@ -129,10 +156,12 @@
                             type="time"
                             th:field="*{startTime}"
                             class="form-control"
-                            th:classappend="${#fields.hasErrors('startTime')} ? 'is-invalid'"
+                            th:classappend="${#fields.hasErrors('startTime')} ? 'is-invalid' : ''"
+                            id="startTime"
                             required
                           />
                         </div>
+                        <!-- Feedback para errores del servidor en startTime -->
                         <div
                           class="invalid-feedback"
                           th:if="${#fields.hasErrors('startTime')}"
@@ -155,15 +184,25 @@
                             type="time"
                             th:field="*{endTime}"
                             class="form-control"
-                            th:classappend="${#fields.hasErrors('endTime')} ? 'is-invalid'"
+                            th:classappend="${#fields.hasErrors('endTime')} ? 'is-invalid' : ''"
+                            id="endTime"
                             required
                           />
                         </div>
+                        <!-- Feedback para errores del servidor en endTime -->
                         <div
                           class="invalid-feedback"
                           th:if="${#fields.hasErrors('endTime')}"
                           th:errors="*{endTime}"
                         ></div>
+                        <!-- Feedback exclusivo para la validación de rango del lado del cliente -->
+                        <div
+                          class="invalid-feedback"
+                          id="timeRangeErrorFeedback"
+                          style="display: none"
+                        >
+                          La hora de inicio debe ser anterior a la hora de fin.
+                        </div>
                       </div>
                     </div>
                   </div>
@@ -180,6 +219,7 @@
                       <select
                         th:field="*{section.id}"
                         class="form-control"
+                        th:classappend="${#fields.hasErrors('section.id')} ? 'is-invalid' : ''"
                         required
                       >
                         <option value="">Seleccionar Sección...</option>
@@ -192,6 +232,11 @@
                         </option>
                       </select>
                     </div>
+                    <div
+                      class="invalid-feedback"
+                      th:if="${#fields.hasErrors('section.id')}"
+                      th:errors="*{section.id}"
+                    ></div>
                   </div>
 
                   <hr />
@@ -231,19 +276,115 @@
     <script th:src="@{/js/sb-admin-2.min.js}"></script>
 
     <script>
-      $(document).ready(function () {
-        $("form").on("submit", function (e) {
-          var startTime = $("input[name='startTime']").val();
-          var endTime = $("input[name='endTime']").val();
+      let clientSideValidationActive = false; // Bandera para saber si la validación del cliente está activa
 
-          if (startTime && endTime) {
-            if (startTime >= endTime) {
-              e.preventDefault();
-              alert("La hora de inicio debe ser anterior a la hora de fin.");
+      function validateTimeRange() {
+        const startTimeInput = document.getElementById("startTime");
+        const endTimeInput = document.getElementById("endTime");
+        const rangeFeedback = document.getElementById("timeRangeErrorFeedback");
+
+        const startTimeValue = startTimeInput.value;
+        const endTimeValue = endTimeInput.value;
+
+        // Ocultar siempre el feedback de rango por defecto
+        rangeFeedback.style.display = "none";
+
+        if (startTimeValue && endTimeValue) {
+          if (startTimeValue >= endTimeValue) {
+            // Activar validación del lado del cliente
+            clientSideValidationActive = true;
+
+            // Marcar los campos como inválidos
+            startTimeInput.classList.add("is-invalid");
+            endTimeInput.classList.add("is-invalid");
+
+            // Mostrar el feedback específico de rango
+            rangeFeedback.style.display = "block";
+            return false; // Indica error
+          } else {
+            // Si son válidas, limpiar la validación del cliente si estaba activa
+            if (clientSideValidationActive) {
+              startTimeInput.classList.remove("is-invalid");
+              endTimeInput.classList.remove("is-invalid");
             }
+            clientSideValidationActive = false; // Resetear bandera
+            return true; // Indica éxito
+          }
+        }
+
+        // Si uno o ambos están vacíos, limpiar la validación del cliente
+        if (clientSideValidationActive) {
+          startTimeInput.classList.remove("is-invalid");
+          endTimeInput.classList.remove("is-invalid");
+        }
+        clientSideValidationActive = false; // Resetear bandera
+        return true;
+      }
+
+      document
+        .getElementById("scheduleForm")
+        .addEventListener("submit", function (event) {
+          const isTimeRangeValid = validateTimeRange();
+
+          // Si la validación del cliente falla, prevenir el envío
+          if (!isTimeRangeValid) {
+            event.preventDefault();
+            // Asegurar que el feedback esté visible al momento de prevenir el submit
+            document.getElementById("timeRangeErrorFeedback").style.display =
+              "block";
           }
         });
-      });
+
+      // Validar en tiempo real al cambiar los valores
+      document
+        .getElementById("startTime")
+        .addEventListener("change", validateTimeRange);
+      document
+        .getElementById("endTime")
+        .addEventListener("change", validateTimeRange);
+
+      (function () {
+        "use strict";
+        window.addEventListener(
+          "load",
+          function () {
+            var forms = document.getElementsByClassName("needs-validation");
+            var validation = Array.prototype.filter.call(
+              forms,
+              function (form) {
+                form.addEventListener(
+                  "submit",
+                  function (event) {
+                    // Ejecutar la validación personalizada antes de la de Bootstrap
+                    const timeRangeValid = validateTimeRange();
+
+                    // Si la validación de Bootstrap nativa falla (campos requeridos, etc.)
+                    // o la nuestra falla, detener la propagación.
+                    if (form.checkValidity() === false || !timeRangeValid) {
+                      event.preventDefault();
+                      event.stopPropagation();
+                    }
+                    // Aplicar la clase was-validated solo si la validación de Bootstrap falló
+                    // No la aplicamos si solo falló la validación personalizada para evitar conflictos.
+                    // Pero si la activamos, aseguramos que los mensajes del servidor también se muestren.
+                    // La estrategia aquí es que si falla la validación de bootstrap, se activa fully.
+                    // Si falla la personalizada, la manejamos nosotros sin was-validated.
+                    if (form.checkValidity() === false) {
+                      form.classList.add("was-validated");
+                    } else if (timeRangeValid) {
+                      // Si todo pasó, remover la clase para limpiar posibles estados anteriores de Bootstrap
+                      form.classList.remove("was-validated");
+                    }
+                    // Si la validación personalizada falla, no se aplica was-validated para evitar conflicto con mensajes del servidor.
+                  },
+                  false,
+                );
+              },
+            );
+          },
+          false,
+        );
+      })();
     </script>
   </body>
 </html>

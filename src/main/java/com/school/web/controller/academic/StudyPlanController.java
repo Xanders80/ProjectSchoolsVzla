@@ -26,7 +26,7 @@ public class StudyPlanController {
 
     private static final String FORM_VIEW = "academic/study-plan-form";
     private static final String LIST_VIEW = "academic/study-plan-list";
-    private static final String DETAIL_VIEW = "redirect:/academic/study-plans";
+    private static final String DETAIL_VIEW = "academic/study-plan-detail";
     private static final String REDIRECT_STUDY_PLAN = "redirect:/academic/study-plans";
     private static final String ACADEMIC_LV = "academicLevels";
     private static final String MSG_SUCCESS = "successMessage";

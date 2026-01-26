@@ -41,7 +41,7 @@ public class AttendanceService {
             Map<Long, AttendanceStatus> studentStatuses,
             Map<Long, String> studentRemarks) {
         Section section = sectionRepository.findById(sectionId)
-                .orElseThrow(() -> new IllegalArgumentException("Invalid section ID"));
+                .orElseThrow(() -> new IllegalArgumentException("Sección no encontrada"));
 
         List<Attendance> existingRecords = attendanceRepository.findBySectionIdAndDate(sectionId, date);
         Map<Long, Attendance> existingMap = new HashMap<>();
@@ -59,7 +59,7 @@ public class AttendanceService {
                 attendance = new Attendance();
                 @SuppressWarnings("null")
                 Student student = studentRepository.findById(studentId)
-                        .orElseThrow(() -> new IllegalArgumentException("Invalid student ID: " + studentId));
+                        .orElseThrow(() -> new IllegalArgumentException("Estudiante no encontrado: " + studentId));
                 attendance.setStudent(student);
                 attendance.setSection(section);
                 attendance.setDate(date);

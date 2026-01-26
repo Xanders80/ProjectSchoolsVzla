@@ -32,4 +32,18 @@ public class GlobalDataControllerAdvice {
         }
         return 0L;
     }
+
+    @ModelAttribute("recentNotifications")
+    public java.util.List<?> recentNotifications() {
+        Authentication auth = SecurityContextHolder.getContext().getAuthentication();
+        if (auth != null && auth.isAuthenticated() && !"anonymousUser".equals(auth.getPrincipal())) {
+            String username = auth.getName();
+            return userService.findByUsername(username)
+                    .map(User::getId)
+                    .map(id -> communicationService.getUserNotifications(id,
+                            org.springframework.data.domain.PageRequest.of(0, 5)).getContent())
+                    .orElse(java.util.Collections.emptyList());
+        }
+        return java.util.Collections.emptyList();
+    }
 }

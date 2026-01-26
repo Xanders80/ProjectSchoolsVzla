@@ -141,12 +141,12 @@
                         </td>
                         <td>
                           <span
-                            th:if="${pay.status == T(com.school.hr.entity.Payroll.PaymentStatus).PAID}"
+                            th:if="${pay.status != null and pay.status.name() == 'PAID'}"
                             class="badge badge-success"
                             >PAGADO</span
                           >
                           <span
-                            th:if="${pay.status == T(com.school.hr.entity.Payroll.PaymentStatus).PENDING}"
+                            th:if="${pay.status != null and pay.status.name() == 'PENDING'}"
                             class="badge badge-warning"
                             >PENDIENTE</span
                           >
@@ -154,7 +154,7 @@
                         <td th:text="${pay.paymentDate ?: '-'}">-</td>
                         <td>
                           <form
-                            th:if="${pay.status == T(com.school.hr.entity.Payroll.PaymentStatus).PENDING}"
+                            th:if="${pay.status != null and pay.status.name() == 'PENDING'}"
                             th:action="@{/hr/payroll/pay/{id}(id=${pay.id})}"
                             method="post"
                           >

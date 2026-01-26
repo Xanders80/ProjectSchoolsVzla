@@ -35,9 +35,9 @@ public class ScheduleService {
         // conflict check
         // Simplified for MVP: Check strictly against DB
 
-        Long sectionId = Objects.requireNonNull(entry.getSection().getId(), "Section ID cannot be null");
+        Long sectionId = Objects.requireNonNull(entry.getSection().getId(), "Sección inválida");
         Section section = sectionRepository.findById(sectionId)
-                .orElseThrow(() -> new IllegalArgumentException("Invalid Section ID"));
+                .orElseThrow(() -> new IllegalArgumentException("Sección inválida"));
 
         // 1. Room Conflict
         if (section.getRoom() != null) {
@@ -49,7 +49,7 @@ public class ScheduleService {
             if (!roomConflicts.isEmpty()) {
                 // Ignore self if editing
                 if (entry.getId() == null || roomConflicts.stream().anyMatch(c -> !c.getId().equals(entry.getId()))) {
-                    throw new IllegalStateException("Room is already booked for this time slot.");
+                    throw new IllegalStateException("La habitación ya está reservada para este horario.");
                 }
             }
         }
@@ -64,7 +64,7 @@ public class ScheduleService {
             if (!teacherConflicts.isEmpty()) {
                 if (entry.getId() == null
                         || teacherConflicts.stream().anyMatch(c -> !c.getId().equals(entry.getId()))) {
-                    throw new IllegalStateException("Teacher is already booked for this time slot.");
+                    throw new IllegalStateException("El profesor ya está reservado para este horario.");
                 }
             }
         }
@@ -74,7 +74,7 @@ public class ScheduleService {
 
     public void deleteSchedule(@NonNull Long id) {
         ScheduleEntry entry = scheduleRepository.findById(id)
-                .orElseThrow(() -> new IllegalArgumentException("Schedule entry not found"));
+                .orElseThrow(() -> new IllegalArgumentException("Entrada de horario no encontrada"));
         entry.setDeleted(true);
         entry.setDeletedAt(java.time.LocalDateTime.now());
         entry.setDeletedBy(getCurrentUser());

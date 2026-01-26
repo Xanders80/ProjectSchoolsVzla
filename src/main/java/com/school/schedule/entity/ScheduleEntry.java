@@ -88,6 +88,10 @@ public class ScheduleEntry {
         return section;
     }
 
+    public void setSection(Section section) {
+        this.section = section;
+    }
+
     @Column(name = "deleted", nullable = false)
     private boolean deleted = false;
 

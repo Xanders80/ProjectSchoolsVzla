@@ -54,6 +54,17 @@ public class ParentController {
             return PARENT_FORM_VIEW;
         }
         try {
+            // Hydrate children (Students) to ensure they are managed entities
+            if (parent.getChildren() != null && !parent.getChildren().isEmpty()) {
+                java.util.Set<com.school.academic.entity.Student> managedChildren = new java.util.HashSet<>();
+                for (com.school.academic.entity.Student transientStudent : parent.getChildren()) {
+                    if (transientStudent.getId() != null) {
+                        academicService.getStudentById(transientStudent.getId()).ifPresent(managedChildren::add);
+                    }
+                }
+                parent.setChildren(managedChildren);
+            }
+
             parentService.saveParent(parent);
             redirectAttributes.addFlashAttribute("successMessage", "Representante guardado exitosamente.");
         } catch (IllegalArgumentException e) {

@@ -98,8 +98,9 @@
                     >
                       <div class="form-group">
                         <label class="font-weight-bold"
-                          >Contraseña Actual</label
-                        >
+                          >Contraseña Actual
+                          <span class="text-danger">*</span>
+                        </label>
                         <div class="input-group">
                           <div class="input-group-prepend">
                             <span class="input-group-text"
@@ -112,11 +113,19 @@
                             name="currentPassword"
                             required
                             placeholder="Ingrese contraseña actual"
+                            minlength="8"
+                            maxlength="128"
                           />
+                          <div class="invalid-feedback">
+                            La contraseña actual es obligatoria.
+                          </div>
                         </div>
                       </div>
                       <div class="form-group">
-                        <label class="font-weight-bold">Nueva Contraseña</label>
+                        <label class="font-weight-bold"
+                          >Nueva Contraseña
+                          <span class="text-danger">*</span>
+                        </label>
                         <div class="input-group">
                           <div class="input-group-prepend">
                             <span class="input-group-text"
@@ -129,13 +138,20 @@
                             name="newPassword"
                             required
                             placeholder="Mínimo 8 caracteres"
+                            minlength="8"
+                            maxlength="128"
                           />
+                          <div class="invalid-feedback">
+                            La nueva contraseña es obligatoria y debe tener al
+                            menos 8 caracteres.
+                          </div>
                         </div>
                       </div>
                       <div class="form-group">
                         <label class="font-weight-bold"
-                          >Confirmar Nueva Contraseña</label
-                        >
+                          >Confirmar Nueva Contraseña
+                          <span class="text-danger">*</span>
+                        </label>
                         <div class="input-group">
                           <div class="input-group-prepend">
                             <span class="input-group-text"
@@ -148,7 +164,12 @@
                             name="confirmPassword"
                             required
                             placeholder="Repita la nueva contraseña"
+                            minlength="8"
+                            maxlength="128"
                           />
+                          <div class="invalid-feedback">
+                            Debe confirmar la nueva contraseña.
+                          </div>
                         </div>
                       </div>
                       <button
@@ -164,14 +185,174 @@
               </div>
 
               <div class="col-lg-6">
+                <!-- Account Settings Card -->
                 <div class="card shadow mb-4">
                   <div class="card-header py-3">
                     <h6 class="m-0 font-weight-bold text-primary">
-                      Otras Configuraciones
+                      Configuración de Cuenta
                     </h6>
                   </div>
                   <div class="card-body">
-                    <p>Próximamente más opciones de configuración...</p>
+                    <form
+                      th:action="@{/settings/account}"
+                      method="post"
+                      class="needs-validation"
+                      novalidate
+                    >
+                      <div class="form-group">
+                        <label class="font-weight-bold"
+                          >Idioma de la Interfaz
+                          <span class="text-danger">*</span>
+                        </label>
+                        <div class="input-group">
+                          <div class="input-group-prepend">
+                            <span class="input-group-text"
+                              ><i class="fas fa-globe-americas text-primary"></i
+                            ></span>
+                          </div>
+                          <select class="form-control" name="language" required>
+                            <option
+                              value="es"
+                              th:selected="${userLanguage == 'es'}"
+                            >
+                              Español
+                            </option>
+                            <option
+                              value="en"
+                              th:selected="${userLanguage == 'en'}"
+                            >
+                              English
+                            </option>
+                            <option
+                              value="pt"
+                              th:selected="${userLanguage == 'pt'}"
+                            >
+                              Português
+                            </option>
+                          </select>
+                          <div class="invalid-feedback">
+                            Seleccione un idioma.
+                          </div>
+                        </div>
+                      </div>
+
+                      <div class="form-group">
+                        <label class="font-weight-bold"
+                          >Formato de Fecha
+                          <span class="text-danger">*</span>
+                        </label>
+                        <div class="input-group">
+                          <div class="input-group-prepend">
+                            <span class="input-group-text"
+                              ><i class="fas fa-calendar text-primary"></i
+                            ></span>
+                          </div>
+                          <select
+                            class="form-control"
+                            name="dateFormat"
+                            required
+                          >
+                            <option
+                              value="dd/MM/yyyy"
+                              th:selected="${userDateFormat == 'dd/MM/yyyy'}"
+                            >
+                              Día/Mes/Año (01/12/2026)
+                            </option>
+                            <option
+                              value="MM/dd/yyyy"
+                              th:selected="${userDateFormat == 'MM/dd/yyyy'}"
+                            >
+                              Mes/Día/Año (12/01/2026)
+                            </option>
+                            <option
+                              value="yyyy-MM-dd"
+                              th:selected="${userDateFormat == 'yyyy-MM-dd'}"
+                            >
+                              Año-Mes-Día (2026-12-01)
+                            </option>
+                          </select>
+                          <div class="invalid-feedback">
+                            Seleccione un formato de fecha.
+                          </div>
+                        </div>
+                      </div>
+
+                      <div class="form-group">
+                        <label class="font-weight-bold"
+                          >Tema Visual
+                          <span class="text-danger">*</span>
+                        </label>
+                        <div class="input-group">
+                          <div class="input-group-prepend">
+                            <span class="input-group-text"
+                              ><i class="fas fa-palette text-primary"></i
+                            ></span>
+                          </div>
+                          <select class="form-control" name="theme" required>
+                            <option
+                              value="light"
+                              th:selected="${userTheme == 'light'}"
+                            >
+                              Claro
+                            </option>
+                            <option
+                              value="dark"
+                              th:selected="${userTheme == 'dark'}"
+                            >
+                              Oscuro
+                            </option>
+                            <option
+                              value="auto"
+                              th:selected="${userTheme == 'auto'}"
+                            >
+                              Sistema
+                            </option>
+                          </select>
+                          <div class="invalid-feedback">
+                            Seleccione un tema visual.
+                          </div>
+                        </div>
+                      </div>
+
+                      <div class="form-group form-check">
+                        <input
+                          type="checkbox"
+                          class="form-check-input"
+                          id="notificationsEnabled"
+                          name="notificationsEnabled"
+                          th:checked="${userNotificationsEnabled}"
+                        />
+                        <label
+                          class="form-check-label font-weight-bold"
+                          for="notificationsEnabled"
+                        >
+                          Habilitar Notificaciones
+                        </label>
+                      </div>
+
+                      <div class="form-group form-check">
+                        <input
+                          type="checkbox"
+                          class="form-check-input"
+                          id="twoFactorAuth"
+                          name="twoFactorAuth"
+                          th:checked="${userTwoFactorAuthEnabled}"
+                        />
+                        <label
+                          class="form-check-label font-weight-bold"
+                          for="twoFactorAuth"
+                        >
+                          Autenticación de Dos Factores
+                        </label>
+                      </div>
+
+                      <button
+                        type="submit"
+                        class="btn btn-primary btn-block shadow-sm font-weight-bold"
+                      >
+                        <i class="fas fa-save mr-1"></i> Guardar Configuración
+                      </button>
+                    </form>
                   </div>
                 </div>
               </div>
@@ -205,5 +386,33 @@
 
     <!-- Custom scripts for all pages-->
     <script th:src="@{/js/sb-admin-2.min.js}"></script>
+    <script>
+      (function () {
+        "use strict";
+        window.addEventListener(
+          "load",
+          function () {
+            var forms = document.getElementsByClassName("needs-validation");
+            var validation = Array.prototype.filter.call(
+              forms,
+              function (form) {
+                form.addEventListener(
+                  "submit",
+                  function (event) {
+                    if (form.checkValidity() === false) {
+                      event.preventDefault();
+                      event.stopPropagation();
+                    }
+                    form.classList.add("was-validated");
+                  },
+                  false,
+                );
+              },
+            );
+          },
+          false,
+        );
+      })();
+    </script>
   </body>
 </html>

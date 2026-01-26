@@ -32,7 +32,7 @@ public class EmailService {
 
     public void sendSimpleEmail(String to, String subject, String text) {
         if (!emailEnabled) {
-            log.info("Email disabled. Would send to: {} - Subject: {}", to, subject);
+            log.info("Correo electrónico deshabilitado. Se enviará a: {} - Asunto: {}", to, subject);
             return;
         }
 
@@ -43,15 +43,15 @@ public class EmailService {
             message.setSubject(subject);
             message.setText(text);
             mailSender.send(message);
-            log.info("Email sent successfully to: {}", to);
+            log.info("Correo electrónico enviado exitosamente a: {}", to);
         } catch (Exception e) {
-            log.error("Failed to send email to: {}", to, e);
+            log.error("No se pudo enviar el correo electrónico a: {}", to, e);
         }
     }
 
     public void sendHtmlEmail(String to, String subject, String htmlContent) {
         if (!emailEnabled) {
-            log.info("Email disabled. Would send HTML to: {} - Subject: {}", to, subject);
+            log.info("Correo electrónico deshabilitado. Se enviará HTML a: {} - Asunto: {}", to, subject);
             return;
         }
 
@@ -72,7 +72,7 @@ public class EmailService {
     public void sendReservationCreatedEmail(LabReservation reservation) {
         String to = reservation.getTeacher().getEmail();
         if (to == null || to.isBlank()) {
-            log.warn("Teacher {} has no email configured", reservation.getTeacher().getId());
+            log.warn("El profesor {} no tiene correo electrónico configurado", reservation.getTeacher().getId());
             return;
         }
 

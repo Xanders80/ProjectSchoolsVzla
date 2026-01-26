@@ -62,7 +62,7 @@ public class PromotionService {
             // existiera
             // Por ahora registramos en auditoría y log
             auditService.logGenericAction("ACADEMIC_PROMOTION",
-                    "Student " + student.getId() + " evaluation: " + result.getStatus(),
+                    "El estudiante " + student.getId() + " evaluación: " + result.getStatus(),
                     "system");
         }
     }

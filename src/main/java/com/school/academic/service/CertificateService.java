@@ -29,7 +29,7 @@ public class CertificateService {
 
     public Map<String, Object> generateCourseCertificateData(@NonNull Long studentId, Long courseId) {
         Student student = studentRepository.findById(studentId)
-                .orElseThrow(() -> new IllegalArgumentException("Student not found"));
+                .orElseThrow(() -> new IllegalArgumentException("Estudiante no encontrado"));
 
         // This is a simplified logic. In a real world we would filter by Period too.
         // For now, let's fetch course grades.

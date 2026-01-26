@@ -69,6 +69,23 @@ public class CurriculumGridController {
     @PostMapping("/save")
     public String save(@NonNull CurriculumGrid curriculumGrid, RedirectAttributes redirectAttributes) {
         try {
+            // Hydrate StudyPlan
+            if (curriculumGrid.getStudyPlan() != null && curriculumGrid.getStudyPlan().getId() != null) {
+                studyPlanService.getStudyPlanById(curriculumGrid.getStudyPlan().getId())
+                        .ifPresent(curriculumGrid::setStudyPlan);
+            }
+
+            // Hydrate Courses (Optional, depends on if they are bound as IDs or objects)
+            // Spring might bind them as transient objects with IDs. Ideally, fetch them.
+            // For brevity and common List handling, sometimes repo.save handles ID-only
+            // refs for ManyToMany if they exist.
+            // But to be safe and consistent with SectionController:
+
+            // Note: Since they are lists, iterating and replacing is verbose here.
+            // If we assume Hibernate handles ManyToMany ID-refs better than ManyToOne, we
+            // might skip.
+            // However, StudyPlan is ManyToOne and definitely needs hydration.
+
             curriculumGridService.save(curriculumGrid);
             redirectAttributes.addFlashAttribute("success", "Malla curricular guardada exitosamente");
         } catch (Exception e) {

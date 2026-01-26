@@ -95,6 +95,13 @@ public class InfraController {
             model.addAttribute("buildings", infraService.getAllBuildings());
             return ROOM_FORM_VIEW;
         }
+
+        // Hydrate Building to prevent TransientPropertyValueException
+        if (room.getBuilding() != null && room.getBuilding().getId() != null) {
+            infraService.getBuildingById(room.getBuilding().getId())
+                    .ifPresent(room::setBuilding);
+        }
+
         infraService.saveRoom(room);
         return "redirect:/infra/rooms";
     }

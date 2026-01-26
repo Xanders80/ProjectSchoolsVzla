@@ -1,8 +1,5 @@
-<!DOCTYPE html>
-<html lang="es"
-  xmlns:th="http://www.thymeleaf.org"
-  xmlns:sec="http://www.thymeleaf.org/extras/spring-security"
->
+<!doctype html>
+<html xmlns:th="http://www.thymeleaf.org">
   <head>
     <meta charset="utf-8" />
     <meta http-equiv="X-UA-Compatible" content="IE=edge" />
@@ -26,20 +23,25 @@
 
   <body id="page-top">
     <div id="wrapper">
-      <nav aria-label="Menú principal" th:replace="~{fragments/sb-admin-sidebar :: sidebar}"></nav>
+      <div th:replace="~{fragments/sb-admin-sidebar :: sidebar}"></div>
+
       <div id="content-wrapper" class="d-flex flex-column">
         <div id="content">
-          <header th:replace="~{fragments/sb-admin-topbar :: topbar}" aria-label="Barra superior"></header>
+          <div th:replace="~{fragments/sb-admin-topbar :: topbar}"></div>
 
-          <div class="container-fluid" aria-labelledby="maintenance-form-title">
+          <div class="container-fluid">
             <div
               class="d-sm-flex align-items-center justify-content-between mb-4"
             >
-              <h1 id="maintenance-form-title" class="h3 mb-0 text-gray-800">
-                <i class="fas fa-tools mr-2 text-primary"></i><span th:text="${request.id != null ? 'Editar Solicitud' : 'Nueva Solicitud de Mantenimiento'}">Nueva Solicitud</span>
+              <h1 class="h3 mb-0 text-gray-800">
+                <i class="fas fa-tools mr-2 text-primary"></i
+                ><span
+                  th:text="${request.id != null ? 'Editar Solicitud' : 'Nueva Solicitud de Mantenimiento'}"
+                  >Nueva Solicitud de Mantenimiento</span
+                >
               </h1>
-              <a th:href="@{/infra/maintenance}" class="btn btn-secondary" aria-label="Volver a la lista de solicitudes">
-                <i class="fas fa-arrow-left" aria-hidden="true"></i> Volver
+              <a th:href="@{/infra/maintenance}" class="btn btn-secondary">
+                <i class="fas fa-arrow-left"></i> Volver
               </a>
             </div>
 
@@ -47,7 +49,6 @@
               th:if="${errorMessage}"
               class="alert alert-danger alert-dismissible fade show"
               role="alert"
-              aria-live="assertive"
             >
               <span th:text="${errorMessage}"></span>
               <button
@@ -79,21 +80,39 @@
                   <input type="hidden" th:field="*{requestDate}" />
                   <input type="hidden" th:field="*{completionDate}" />
 
-                  <!-- Context Information Card (Optional but premium) -->
+                  <!-- Context Information Card -->
                   <div class="card bg-light mb-4" th:if="${request.id != null}">
                     <div class="card-body py-3">
                       <div class="row text-muted small">
                         <div class="col-md-4">
-                          <strong><i class="fas fa-user mr-1"></i> Solicitado Por:</strong>
-                          <span th:text="${request.requestedBy != null ? request.requestedBy.username : 'Sistema'}"></span>
+                          <strong
+                            ><i class="fas fa-user mr-1"></i> Solicitado
+                            Por:</strong
+                          >
+                          <span
+                            th:text="${request.requestedBy != null ? request.requestedBy.username : 'Sistema'}"
+                          ></span>
                         </div>
                         <div class="col-md-4">
-                          <strong><i class="fas fa-clock mr-1"></i> Fecha Solicitud:</strong>
-                          <span th:text="${#temporals.format(request.requestDate, 'dd/MM/yyyy HH:mm')}"></span>
+                          <strong
+                            ><i class="fas fa-clock mr-1"></i> Fecha
+                            Solicitud:</strong
+                          >
+                          <span
+                            th:text="${#temporals.format(request.requestDate, 'dd/MM/yyyy HH:mm')}"
+                          ></span>
                         </div>
-                        <div class="col-md-4" th:if="${request.completionDate != null}">
-                          <strong><i class="fas fa-check-circle mr-1"></i> Completado el:</strong>
-                          <span th:text="${#temporals.format(request.completionDate, 'dd/MM/yyyy HH:mm')}"></span>
+                        <div
+                          class="col-md-4"
+                          th:if="${request.completionDate != null}"
+                        >
+                          <strong
+                            ><i class="fas fa-check-circle mr-1"></i> Completado
+                            el:</strong
+                          >
+                          <span
+                            th:text="${#temporals.format(request.completionDate, 'dd/MM/yyyy HH:mm')}"
+                          ></span>
                         </div>
                       </div>
                     </div>
@@ -108,7 +127,9 @@
                         >
                         <div class="input-group">
                           <div class="input-group-prepend">
-                            <span class="input-group-text"><i class="fas fa-door-open"></i></span>
+                            <span class="input-group-text"
+                              ><i class="fas fa-door-open"></i
+                            ></span>
                           </div>
                           <select
                             class="form-control"
@@ -126,22 +147,31 @@
                               Sala 101
                             </option>
                           </select>
-                          <div class="invalid-feedback" th:if="${#fields.hasErrors('room')}" th:errors="*{room}">
+                          <div
+                            class="invalid-feedback"
+                            th:if="${#fields.hasErrors('room')}"
+                            th:errors="*{room}"
+                          >
                             La ubicación es obligatoria.
                           </div>
                         </div>
                         <small class="form-text text-muted"
-                          >Seleccione el lugar donde se requiere el mantenimiento</small
+                          >Seleccione el lugar donde se requiere el
+                          mantenimiento</small
                         >
                       </div>
                     </div>
 
                     <div class="col-md-6">
                       <div class="form-group">
-                        <label for="status" class="font-weight-bold">Estado</label>
+                        <label for="status" class="font-weight-bold"
+                          >Estado</label
+                        >
                         <div class="input-group">
                           <div class="input-group-prepend">
-                            <span class="input-group-text"><i class="fas fa-tasks"></i></span>
+                            <span class="input-group-text"
+                              ><i class="fas fa-tasks"></i
+                            ></span>
                           </div>
                           <select
                             class="form-control"
@@ -174,22 +204,33 @@
                           required
                           placeholder="Describa detalladamente el problema (ej: gotera en el techo, luz parpadeante...)"
                         ></textarea>
-                        <div class="invalid-feedback" th:if="${#fields.hasErrors('description')}" th:errors="*{description}">
+                        <div
+                          class="invalid-feedback"
+                          th:if="${#fields.hasErrors('description')}"
+                          th:errors="*{description}"
+                        >
                           La descripción es obligatoria.
                         </div>
                       </div>
                     </div>
                   </div>
 
-                  <div class="alert alert-info border-left-info shadow-sm" role="alert">
+                  <div
+                    class="alert alert-info border-left-info shadow-sm"
+                    role="alert"
+                  >
                     <i class="fas fa-info-circle mr-2"></i>
-                    Esta solicitud será registrada bajo su cuenta de usuario y notificada al personal de mantenimiento.
+                    Esta solicitud será registrada bajo su cuenta de usuario y
+                    notificada al personal de mantenimiento.
                   </div>
 
                   <hr />
 
                   <div class="form-group text-right">
-                    <button type="submit" class="btn btn-primary px-4 shadow-sm">
+                    <button
+                      type="submit"
+                      class="btn btn-primary px-4 shadow-sm"
+                    >
                       <i class="fas fa-paper-plane mr-1"></i> Enviar Solicitud
                     </button>
                     <a
@@ -204,11 +245,10 @@
             </div>
           </div>
         </div>
-            </div>
-          </div>
-          <div th:replace="~{fragments/sb-admin-footer :: footer}"></div>
-        </div>
+
+        <div th:replace="~{fragments/sb-admin-footer :: footer}"></div>
       </div>
+    </div>
 
     <a class="scroll-to-top rounded" href="#page-top"
       ><i class="fas fa-angle-up"></i
@@ -219,5 +259,34 @@
     <script th:src="@{/vendor/bootstrap/js/bootstrap.bundle.min.js}"></script>
     <script th:src="@{/vendor/jquery-easing/jquery.easing.min.js}"></script>
     <script th:src="@{/js/sb-admin-2.min.js}"></script>
+
+    <script>
+      (function () {
+        "use strict";
+        window.addEventListener(
+          "load",
+          function () {
+            var forms = document.getElementsByClassName("needs-validation");
+            var validation = Array.prototype.filter.call(
+              forms,
+              function (form) {
+                form.addEventListener(
+                  "submit",
+                  function (event) {
+                    if (form.checkValidity() === false) {
+                      event.preventDefault();
+                      event.stopPropagation();
+                    }
+                    form.classList.add("was-validated");
+                  },
+                  false,
+                );
+              },
+            );
+          },
+          false,
+        );
+      })();
+    </script>
   </body>
 </html>

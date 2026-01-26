@@ -46,9 +46,16 @@ public class NotificationController {
 
     @PostMapping("/broadcast")
     public String sendBroadcast(
-            @RequestParam NotificationType type,
-            @RequestParam String message,
+            @RequestParam(required = false) NotificationType type,
+            @RequestParam(required = false) String message,
             RedirectAttributes redirectAttributes) {
+
+        if (type == null || message == null || message.trim().isEmpty()) {
+            redirectAttributes.addFlashAttribute("errorMessage",
+                    "Todos los campos obligatorios deben ser completados.");
+            return "redirect:/notifications/broadcast";
+        }
+
         try {
             communicationService.broadcastNotification(type, message);
             redirectAttributes.addFlashAttribute("successMessage", "Anuncio enviado a todos los usuarios.");

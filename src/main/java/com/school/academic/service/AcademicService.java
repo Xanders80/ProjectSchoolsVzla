@@ -127,11 +127,11 @@ public class AcademicService {
     public void deleteStudent(@NonNull Long id) {
         // Verificar enrollments existentes
         if (enrollmentRepository.existsByStudentId(id)) {
-            throw new IllegalStateException("Cannot delete student with existing enrollments");
+            throw new IllegalStateException("No se puede eliminar el estudiante con inscripciones existentes");
         }
 
         Student student = studentRepository.findById(id)
-                .orElseThrow(() -> new IllegalArgumentException("Student not found"));
+                .orElseThrow(() -> new IllegalArgumentException("Estudiante no encontrado"));
 
         // Soft delete
         student.setDeleted(true);
@@ -164,9 +164,9 @@ public class AcademicService {
 
     public void enrollStudent(@NonNull Long studentId, @NonNull Long sectionId) {
         Section section = sectionService.getSectionById(sectionId)
-                .orElseThrow(() -> new IllegalArgumentException("Section not found"));
+                .orElseThrow(() -> new IllegalArgumentException("Sección no encontrada"));
         Student student = studentRepository.findById(studentId)
-                .orElseThrow(() -> new IllegalArgumentException("Student not found"));
+                .orElseThrow(() -> new IllegalArgumentException("Estudiante no encontrado"));
 
         // Validar que el estudiante no esté ya en ninguna sección del MISMO periodo
         // académico
@@ -182,26 +182,28 @@ public class AcademicService {
         enrollment.setEnrollmentDate(java.time.LocalDateTime.now());
 
         enrollmentRepository.save(enrollment);
-        auditService.logGenericAction("ENROLL_STUDENT", "Student " + studentId + " enrolled in section " + sectionId,
+        auditService.logGenericAction("ENROLL_STUDENT",
+                "El estudiante " + studentId + " se inscribió en la sección " + sectionId,
                 getCurrentUser());
     }
 
     public void unenrollStudent(@NonNull Long enrollmentId) {
         Enrollment enrollment = enrollmentRepository.findById(enrollmentId)
-                .orElseThrow(() -> new IllegalArgumentException("Enrollment not found"));
+                .orElseThrow(() -> new IllegalArgumentException("Inscripcion no encontrada"));
 
         // Verificación de nulabilidad para enrollment.getStudent()
         if (enrollment.getStudent() == null) {
-            throw new IllegalStateException("Enrollment has no associated student: " + enrollmentId);
+            throw new IllegalStateException("Inscripcion no tiene estudiante asociado: " + enrollmentId);
         }
 
         if (enrollment.getStudent().getId() == null) {
-            throw new IllegalStateException("Associated student has no valid ID: " + enrollmentId);
+            throw new IllegalStateException("Estudiante asociado a la inscripcion no tiene ID válido: " + enrollmentId);
         }
 
         enrollmentRepository.delete(enrollment);
         auditService.logGenericAction("UNENROLL_STUDENT",
-                "Enrollment " + enrollmentId + " removed (Student: " + enrollment.getStudent().getId() + ")",
+                "Se desinscribió el estudiante " + enrollment.getStudent().getId() + " de la sección "
+                        + enrollment.getSection().getId(),
                 getCurrentUser());
     }
 
@@ -246,7 +248,7 @@ public class AcademicService {
                 .orElseThrow(() -> new IllegalArgumentException("Sección no encontrada"));
 
         for (Long studentId : studentIds) {
-            java.util.Objects.requireNonNull(studentId, "Student id in list cannot be null");
+            java.util.Objects.requireNonNull(studentId, "El ID del estudiante en la lista no puede ser nulo");
 
             Student student = studentRepository.findById(studentId)
                     .orElseThrow(() -> new IllegalArgumentException("Estudiante no encontrado: " + studentId));
@@ -266,13 +268,14 @@ public class AcademicService {
         }
 
         auditService.logGenericAction("BATCH_REENROLL",
-                "Batch enrollment completed for section " + nextSectionId + " students: " + studentIds.size(),
+                "Reinscripción masiva completada para la sección " + nextSectionId + " estudiantes: "
+                        + studentIds.size(),
                 getCurrentUser());
     }
 
     public java.util.List<Student> getStudentsNotInSection(@NonNull Long sectionId) {
         Section section = sectionService.getSectionById(sectionId)
-                .orElseThrow(() -> new IllegalArgumentException("Section not found"));
+                .orElseThrow(() -> new IllegalArgumentException("Sección no encontrada"));
 
         return enrollmentRepository.findStudentsNotEnrolledInPeriod(section.getPeriod().getId());
     }
