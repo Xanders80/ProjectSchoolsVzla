@@ -71,7 +71,7 @@
                         <div class="input-group">
                           <div class="input-group-prepend">
                             <span class="input-group-text"
-                              ><i class="fas fa-hashtag"></i
+                              ><i class="fas fa-hashtag text-primary"></i
                             ></span>
                           </div>
                           <input
@@ -92,7 +92,7 @@
                         <div class="input-group">
                           <div class="input-group-prepend">
                             <span class="input-group-text"
-                              ><i class="fas fa-door-open"></i
+                              ><i class="fas fa-door-open text-primary"></i
                             ></span>
                           </div>
                           <select
@@ -121,7 +121,7 @@
                         <div class="input-group">
                           <div class="input-group-prepend">
                             <span class="input-group-text"
-                              ><i class="fas fa-users"></i
+                              ><i class="fas fa-users text-primary"></i
                             ></span>
                           </div>
                           <input
@@ -143,7 +143,7 @@
                     <div class="input-group">
                       <div class="input-group-prepend">
                         <span class="input-group-text"
-                          ><i class="fas fa-city"></i
+                          ><i class="fas fa-city text-primary"></i
                         ></span>
                       </div>
                       <select
@@ -157,7 +157,8 @@
                           th:value="${building.id}"
                           th:text="${building.name}"
                         >
-                          Building Name
+                          <i class="fas fa-city text-primary"></i>
+                          <span th:text="${building.name}"></span>
                         </option>
                       </select>
                     </div>

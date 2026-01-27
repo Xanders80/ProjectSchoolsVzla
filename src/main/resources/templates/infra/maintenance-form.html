@@ -86,8 +86,8 @@
                       <div class="row text-muted small">
                         <div class="col-md-4">
                           <strong
-                            ><i class="fas fa-user mr-1"></i> Solicitado
-                            Por:</strong
+                            ><i class="fas fa-user mr-1 text-primary"></i>
+                            Solicitado Por:</strong
                           >
                           <span
                             th:text="${request.requestedBy != null ? request.requestedBy.username : 'Sistema'}"
@@ -95,8 +95,8 @@
                         </div>
                         <div class="col-md-4">
                           <strong
-                            ><i class="fas fa-clock mr-1"></i> Fecha
-                            Solicitud:</strong
+                            ><i class="fas fa-clock mr-1 text-primary"></i>
+                            Fecha Solicitud:</strong
                           >
                           <span
                             th:text="${#temporals.format(request.requestDate, 'dd/MM/yyyy HH:mm')}"
@@ -107,8 +107,10 @@
                           th:if="${request.completionDate != null}"
                         >
                           <strong
-                            ><i class="fas fa-check-circle mr-1"></i> Completado
-                            el:</strong
+                            ><i
+                              class="fas fa-check-circle mr-1 text-primary"
+                            ></i>
+                            Completado el:</strong
                           >
                           <span
                             th:text="${#temporals.format(request.completionDate, 'dd/MM/yyyy HH:mm')}"
@@ -128,7 +130,7 @@
                         <div class="input-group">
                           <div class="input-group-prepend">
                             <span class="input-group-text"
-                              ><i class="fas fa-door-open"></i
+                              ><i class="fas fa-door-open text-primary"></i
                             ></span>
                           </div>
                           <select
@@ -170,7 +172,7 @@
                         <div class="input-group">
                           <div class="input-group-prepend">
                             <span class="input-group-text"
-                              ><i class="fas fa-tasks"></i
+                              ><i class="fas fa-tasks text-primary"></i
                             ></span>
                           </div>
                           <select
