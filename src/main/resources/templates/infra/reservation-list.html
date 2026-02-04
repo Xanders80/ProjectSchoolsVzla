@@ -30,23 +30,25 @@
               class="d-sm-flex align-items-center justify-content-between mb-4"
             >
               <h1 class="h3 mb-0 text-gray-800">
-                <i class="fas fa-calendar-check mr-2 text-primary"></i>Todas las
-                Reservas de Laboratorio
+                <i class="fas fa-list mr-2 text-primary"></i>Historial de
+                Reservas
               </h1>
               <a
                 th:href="@{/infra/labs/reservations}"
-                class="btn btn-secondary"
+                class="btn btn-secondary shadow-sm"
               >
-                <i class="fas fa-arrow-left"></i> Volver
+                <i class="fas fa-arrow-left fa-sm text-white-50 mr-1"></i>
+                Volver
               </a>
             </div>
 
             <div
               th:if="${successMessage}"
-              class="alert alert-success alert-dismissible fade show"
+              class="alert alert-success alert-dismissible fade show shadow-sm"
               role="alert"
             >
-              <span th:text="${successMessage}"></span>
+              <i class="fas fa-check-circle mr-2"></i
+              ><span th:text="${successMessage}"></span>
               <button
                 type="button"
                 class="close"
@@ -59,10 +61,11 @@
 
             <div
               th:if="${errorMessage}"
-              class="alert alert-danger alert-dismissible fade show"
+              class="alert alert-danger alert-dismissible fade show shadow-sm"
               role="alert"
             >
-              <span th:text="${errorMessage}"></span>
+              <i class="fas fa-exclamation-triangle mr-2"></i
+              ><span th:text="${errorMessage}"></span>
               <button
                 type="button"
                 class="close"
@@ -74,75 +77,92 @@
             </div>
 
             <div class="card shadow mb-4">
-              <div
-                class="card-header py-3 d-flex justify-content-between align-items-center"
-              >
+              <div class="card-header py-3 bg-gray-100">
                 <h6 class="m-0 font-weight-bold text-primary">
-                  Listado de Reservas
+                  Listado de Reservas de Laboratorio
                 </h6>
               </div>
               <div class="card-body">
                 <div class="table-responsive">
                   <table
-                    class="table table-bordered"
+                    class="table table-bordered table-hover"
+                    id="dataTable"
                     width="100%"
                     cellspacing="0"
                   >
-                    <thead>
+                    <thead class="bg-gray-100">
                       <tr>
                         <th>Laboratorio</th>
                         <th>Docente</th>
-                        <th>Inicio</th>
-                        <th>Fin</th>
-                        <th>Propósito</th>
+                        <th>Fecha</th>
+                        <th>Horario</th>
                         <th>Estado</th>
-                        <th>Acciones</th>
+                        <th class="text-center">Acciones</th>
                       </tr>
                     </thead>
                     <tbody>
                       <tr th:each="reservation : ${reservations}">
-                        <td th:text="${reservation.room.roomNumber}"></td>
+                        <td
+                          class="font-weight-bold text-primary"
+                          th:text="${reservation.room.roomNumber}"
+                        ></td>
                         <td
                           th:text="${reservation.teacher.firstName + ' ' + reservation.teacher.lastName}"
                         ></td>
                         <td
-                          th:text="${#temporals.format(reservation.startTime, 'dd/MM/yyyy HH:mm')}"
+                          th:text="${#temporals.format(reservation.startTime, 'dd/MM/yyyy')}"
                         ></td>
-                        <td
-                          th:text="${#temporals.format(reservation.endTime, 'dd/MM/yyyy HH:mm')}"
-                        ></td>
-                        <td th:text="${reservation.purpose}"></td>
                         <td>
                           <span
-                            class="badge"
+                            class="badge badge-light"
+                            th:text="${#temporals.format(reservation.startTime, 'HH:mm') + ' - ' + #temporals.format(reservation.endTime, 'HH:mm')}"
+                          ></span>
+                        </td>
+                        <td>
+                          <span
+                            class="badge p-2"
                             th:classappend="${reservation.status.name() == 'APPROVED' ? 'badge-success' : (reservation.status.name() == 'PENDING' ? 'badge-warning' : (reservation.status.name() == 'REJECTED' ? 'badge-danger' : 'badge-secondary'))}"
                             th:text="${reservation.status.displayName}"
                           >
                           </span>
                         </td>
-                        <td>
+                        <td class="text-center">
                           <form
                             th:action="@{/infra/labs/cancel/{id}(id=${reservation.id})}"
                             method="post"
-                            style="display: inline"
+                            th:if="${reservation.status.name() == 'PENDING'}"
                           >
                             <button
                               type="submit"
-                              class="btn btn-sm btn-danger"
+                              class="btn btn-sm btn-outline-danger shadow-sm"
                               onclick="
                                 return confirm(
                                   '¿Está seguro de cancelar esta reserva?',
                                 );
                               "
+                              title="Cancelar Reserva"
                             >
-                              <i class="fas fa-times"></i> Cancelar
+                              <i class="fas fa-trash"></i> Cancelar
                             </button>
                           </form>
+                          <span
+                            th:unless="${reservation.status.name() == 'PENDING'}"
+                            class="text-muted small"
+                            >No editable</span
+                          >
                         </td>
                       </tr>
                       <tr th:if="${reservations.empty}">
-                        <td colspan="7" class="text-center text-muted">
-                          No hay reservas registradas.
+                        <td
+                          colspan="6"
+                          class="text-center text-muted py-5 text-gray-500"
+                        >
+                          <i
+                            class="fas fa-calendar-times fa-3x mb-3 text-gray-200"
+                          ></i>
+                          <p class="mb-0">
+                            No hay reservas registradas en el historial.
+                          </p>
                         </td>
                       </tr>
                     </tbody>
@@ -155,8 +175,12 @@
         <div th:replace="~{fragments/sb-admin-footer :: footer}"></div>
       </div>
     </div>
+
+    <div th:replace="~{fragments/sb-admin-topbar :: logoutModal}"></div>
+
     <script th:src="@{/vendor/jquery/jquery.min.js}"></script>
     <script th:src="@{/vendor/bootstrap/js/bootstrap.bundle.min.js}"></script>
+    <script th:src="@{/vendor/jquery-easing/jquery.easing.min.js}"></script>
     <script th:src="@{/js/sb-admin-2.min.js}"></script>
   </body>
 </html>

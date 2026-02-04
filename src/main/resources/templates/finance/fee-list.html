@@ -70,12 +70,12 @@
               <div class="card-body">
                 <div class="table-responsive">
                   <table
-                    class="table table-bordered"
+                    class="table table-bordered table-hover"
                     id="dataTable"
                     width="100%"
                     cellspacing="0"
                   >
-                    <thead>
+                    <thead class="thead-light">
                       <tr>
                         <th>ID</th>
                         <th>Estudiante</th>
@@ -83,7 +83,7 @@
                         <th>Vencimiento</th>
                         <th>Monto</th>
                         <th>Estado</th>
-                        <th>Acciones</th>
+                        <th class="text-center">Acciones</th>
                       </tr>
                     </thead>
                     <tbody>
@@ -107,33 +107,42 @@
                             >PENDIENTE</span
                           >
                         </td>
-                        <td>
-                          <a
-                            th:href="@{/finance/fees/edit/{id}(id=${fee.id})}"
-                            class="btn btn-sm btn-warning"
-                          >
-                            <i class="fas fa-edit"></i> Editar
-                          </a>
-                          <a
-                            th:href="@{/finance/payments/new(feeId=${fee.id})}"
-                            class="btn btn-success btn-sm"
-                            th:if="${fee.status.name() != 'PAID'}"
-                          >
-                            <i class="fas fa-money-bill-wave"></i> Pagar
-                          </a>
-                          <button
-                            type="button"
-                            class="btn btn-sm btn-danger"
-                            data-toggle="modal"
-                            data-target="#deleteModal"
-                            th:onclick="'confirmDelete(\'' + @{/finance/fees/delete/{id}(id=${fee.id})} + '\')'"
-                          >
-                            <i class="fas fa-trash"></i> Eliminar
-                          </button>
+                        <td class="text-center">
+                          <div class="btn-group">
+                            <a
+                              th:href="@{/finance/fees/edit/{id}(id=${fee.id})}"
+                              class="btn btn-sm btn-warning"
+                              title="Editar"
+                            >
+                              <i class="fas fa-edit"></i>
+                            </a>
+                            <a
+                              th:href="@{/finance/payments/new(feeId=${fee.id})}"
+                              class="btn btn-success btn-sm"
+                              th:if="${fee.status.name() != 'PAID'}"
+                              title="Pagar"
+                            >
+                              <i class="fas fa-money-bill-wave"></i>
+                            </a>
+                            <button
+                              type="button"
+                              class="btn btn-sm btn-danger"
+                              data-toggle="modal"
+                              data-target="#deleteModal"
+                              th:onclick="'confirmDelete(\'' + @{/finance/fees/delete/{id}(id=${fee.id})} + '\')'"
+                              title="Eliminar"
+                            >
+                              <i class="fas fa-trash"></i>
+                            </button>
+                          </div>
                         </td>
                       </tr>
                       <tr th:if="${fees.empty}">
-                        <td colspan="7" class="text-center text-muted">
+                        <td colspan="7" class="text-center text-muted py-4">
+                          <i
+                            class="fas fa-money-check fa-3x mb-3 text-gray-300"
+                          ></i>
+                          <br />
                           No se encontraron cobros.
                         </td>
                       </tr>

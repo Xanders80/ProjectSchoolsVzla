@@ -1,0 +1,70 @@
+<!doctype html>
+<html xmlns:th="http://www.thymeleaf.org">
+  <body>
+    <!-- Common assets for Select2 enhancement -->
+    <th:block th:fragment="select2-assets">
+      <!-- Select2 CSS -->
+      <link
+        href="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/css/select2.min.css"
+        rel="stylesheet"
+      />
+      <link
+        href="https://cdn.jsdelivr.net/npm/@ttskch/select2-bootstrap4-theme@1.5.2/dist/select2-bootstrap4.min.css"
+        rel="stylesheet"
+      />
+      <style>
+        .select2-container--bootstrap4 .select2-selection--single {
+          height: calc(1.5em + 0.75rem + 2px) !important;
+        }
+        .select2-container--bootstrap4
+          .select2-selection--multiple
+          .select2-selection__choice {
+          background-color: #4e73df;
+          border: 1px solid #4e73df;
+          color: #fff;
+        }
+        .select2-container--bootstrap4
+          .select2-selection--multiple
+          .select2-selection__choice__remove {
+          color: #fff;
+        }
+      </style>
+    </th:block>
+
+    <th:block th:fragment="select2-scripts">
+      <!-- Select2 JS -->
+      <script
+        src="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/js/select2.min.js"
+      ></script>
+      <script>
+        $(document).ready(function () {
+          // Initialize all selects with the custom class or just all selects
+          $("select.form-control").each(function () {
+            // Skip selects that shouldn't be enhanced (e.g. dataTables length menu)
+            if (
+              $(this).hasClass("custom-select-sm") ||
+              $(this).closest(".dataTables_length").length > 0
+            ) {
+              return;
+            }
+
+            $(this).select2({
+              theme: "bootstrap4",
+              placeholder:
+                $(this).attr("placeholder") || "Seleccione una opción",
+              allowClear: !$(this).prop("required"),
+              language: {
+                noResults: function () {
+                  return "No se encontraron resultados";
+                },
+                searching: function () {
+                  return "Buscando...";
+                },
+              },
+            });
+          });
+        });
+      </script>
+    </th:block>
+  </body>
+</html>

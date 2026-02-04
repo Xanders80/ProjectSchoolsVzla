@@ -42,7 +42,7 @@
 - **Examen de Admisión**: Para nuevos ingresos
 - **Certificados y Actas**: Generación automática de documentos
 
-### 6. **Recursos Educatativos**
+### 6. **Recursos Educativos**
 
 - **Biblioteca Digital**: Catálogo de libros, materiales digitales
 - **Laboratorios**: Gestión de equipos y reservas

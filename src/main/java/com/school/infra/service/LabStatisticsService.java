@@ -52,11 +52,12 @@ public class LabStatisticsService {
             long pending = reservations.stream().filter(r -> r.getStatus() == ReservationStatus.PENDING).count();
 
             long totalHours = reservations.stream()
-                    .filter(r -> r.getStatus() == ReservationStatus.APPROVED)
+                    .filter(r -> r.getStatus() == ReservationStatus.APPROVED && r.getEndTime() != null
+                            && r.getStartTime() != null)
                     .mapToLong(r -> Duration.between(r.getStartTime(), r.getEndTime()).toHours())
                     .sum();
 
-            long daysInPeriod = Duration.between(startDateTime, endDateTime).toDays();
+            long daysInPeriod = Math.max(1, Duration.between(startDateTime, endDateTime).toDays());
             long availableHours = calculateAvailableHours(daysInPeriod);
             double occupancyRate = availableHours > 0 ? (totalHours * 100.0 / availableHours) : 0.0;
 
@@ -86,7 +87,13 @@ public class LabStatisticsService {
         Map<String, TeacherUsageDTO> teacherMap = new HashMap<>();
 
         for (LabReservation reservation : reservations) {
+            if (reservation.getTeacher() == null)
+                continue;
+
             String teacherKey = reservation.getTeacher().getDni();
+            if (teacherKey == null)
+                teacherKey = "UNKNOWN";
+
             String teacherName = reservation.getTeacher().getFirstName() + " " +
                     reservation.getTeacher().getLastName();
 
@@ -95,7 +102,8 @@ public class LabStatisticsService {
 
             dto.setReservationCount(dto.getReservationCount() + 1);
 
-            if (reservation.getStatus() == ReservationStatus.APPROVED) {
+            if (reservation.getStatus() == ReservationStatus.APPROVED && reservation.getStartTime() != null
+                    && reservation.getEndTime() != null) {
                 dto.setApprovedCount(dto.getApprovedCount() + 1);
                 long hours = Duration.between(reservation.getStartTime(), reservation.getEndTime()).toHours();
                 dto.setTotalHours(dto.getTotalHours() + hours);

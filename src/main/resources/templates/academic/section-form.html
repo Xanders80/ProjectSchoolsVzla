@@ -19,6 +19,9 @@
       rel="stylesheet"
     />
     <link th:href="@{/css/sb-admin-2.min.css}" rel="stylesheet" />
+    <th:block
+      th:replace="~{fragments/select2-scripts :: select2-assets}"
+    ></th:block>
   </head>
 
   <body id="page-top">
@@ -235,6 +238,9 @@
     <script th:src="@{/vendor/bootstrap/js/bootstrap.bundle.min.js}"></script>
     <script th:src="@{/vendor/jquery-easing/jquery.easing.min.js}"></script>
     <script th:src="@{/js/sb-admin-2.min.js}"></script>
+    <th:block
+      th:replace="~{fragments/select2-scripts :: select2-scripts}"
+    ></th:block>
 
     <script>
       // Example starter JavaScript for disabling form submissions if there are invalid fields

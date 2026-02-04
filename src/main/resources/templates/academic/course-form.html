@@ -19,6 +19,7 @@
       rel="stylesheet"
     />
     <link th:href="@{/css/sb-admin-2.min.css}" rel="stylesheet" />
+    <th:block th:replace="~{fragments/select2-scripts :: select2-assets}"></th:block>
   </head>
 
   <body id="page-top">
@@ -226,6 +227,45 @@
                     </div>
                   </div>
 
+                  <div class="row">
+                    <div class="col-md-6">
+                      <div class="form-group">
+                        <label for="books" class="font-weight-bold">Libros de la Biblioteca (Recomendados)</label>
+                        <div class="input-group">
+                          <div class="input-group-prepend">
+                            <span class="input-group-text"><i class="fas fa-bookmark text-primary"></i></span>
+                          </div>
+                          <select th:field="*{books}" id="books" class="form-control" multiple="multiple">
+                            <option th:each="book : ${allBooks}"
+                                    th:value="${book.id}"
+                                    th:text="${book.title + ' (' + book.author + ')'}">
+                              Libro
+                            </option>
+                          </select>
+                        </div>
+                        <small class="form-text text-muted">Mantenga presionado Ctrl para seleccionar varios libros.</small>
+                      </div>
+                    </div>
+                    <div class="col-md-6">
+                      <div class="form-group">
+                        <label for="digitalResources" class="font-weight-bold">Recursos Digitales (Repositorio)</label>
+                        <div class="input-group">
+                          <div class="input-group-prepend">
+                            <span class="input-group-text"><i class="fas fa-laptop text-primary"></i></span>
+                          </div>
+                          <select th:field="*{digitalResources}" id="digitalResources" class="form-control" multiple="multiple">
+                            <option th:each="res : ${allDigitalResources}"
+                                    th:value="${res.id}"
+                                    th:text="${res.title}">
+                              Recurso
+                            </option>
+                          </select>
+                        </div>
+                        <small class="form-text text-muted">Recursos adicionales del repositorio digital.</small>
+                      </div>
+                    </div>
+                  </div>
+
                   <div class="form-group">
                     <label for="description" class="font-weight-bold">Descripción General (Notas Adicionales)</label>
                     <div class="input-group">
@@ -423,6 +463,7 @@
     <script th:src="@{/vendor/bootstrap/js/bootstrap.bundle.min.js}"></script>
     <script th:src="@{/vendor/jquery-easing/jquery.easing.min.js}"></script>
     <script th:src="@{/js/sb-admin-2.min.js}"></script>
+    <th:block th:replace="~{fragments/select2-scripts :: select2-scripts}"></th:block>
 
     <script>
       (function () {

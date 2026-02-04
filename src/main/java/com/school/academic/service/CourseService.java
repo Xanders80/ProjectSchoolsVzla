@@ -1,6 +1,5 @@
 package com.school.academic.service;
 
-import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Optional;
 
@@ -24,15 +23,18 @@ public class CourseService {
     private final SectionRepository sectionRepository;
     private final GradeRepository gradeRepository;
     private final AuditService auditService;
+    private final com.school.communication.service.CourseForumService forumService;
 
     public CourseService(CourseRepository courseRepository,
             SectionRepository sectionRepository,
             GradeRepository gradeRepository,
-            AuditService auditService) {
+            AuditService auditService,
+            com.school.communication.service.CourseForumService forumService) {
         this.courseRepository = courseRepository;
         this.sectionRepository = sectionRepository;
         this.gradeRepository = gradeRepository;
         this.auditService = auditService;
+        this.forumService = forumService;
     }
 
     @Transactional(readOnly = true)
@@ -51,7 +53,12 @@ public class CourseService {
     }
 
     public Course saveCourse(@NonNull Course course) {
-        return courseRepository.save(course);
+        boolean isNew = course.getId() == null;
+        Course saved = courseRepository.save(course);
+        if (isNew) {
+            forumService.getOrCreateForum(saved);
+        }
+        return saved;
     }
 
     public void deleteCourse(@NonNull Long id) {
@@ -61,7 +68,7 @@ public class CourseService {
         validateCourseDependencies(id);
 
         course.setDeleted(true);
-        course.setDeletedAt(LocalDateTime.now());
+        course.setDeletedAt(java.time.LocalDateTime.now());
         course.setDeletedBy(getCurrentUser());
 
         courseRepository.save(course);

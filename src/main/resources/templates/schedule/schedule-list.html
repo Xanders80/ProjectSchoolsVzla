@@ -72,18 +72,18 @@
               <div class="card-body">
                 <div class="table-responsive">
                   <table
-                    class="table table-bordered"
+                    class="table table-bordered table-hover"
                     id="dataTable"
                     width="100%"
                     cellspacing="0"
                   >
-                    <thead>
+                    <thead class="thead-light">
                       <tr>
                         <th>ID</th>
                         <th>Día</th>
                         <th>Hora</th>
                         <th>Curso</th>
-                        <th>Acciones</th>
+                        <th class="text-center">Acciones</th>
                       </tr>
                     </thead>
                     <tbody>
@@ -98,26 +98,34 @@
                         <td th:text="${entry.section?.course?.name}">
                           Math 101
                         </td>
-                        <td>
-                          <a
-                            th:href="@{/schedules/edit/{id}(id=${entry.id})}"
-                            class="btn btn-sm btn-warning"
-                          >
-                            <i class="fas fa-edit"></i> Editar
-                          </a>
-                          <button
-                            type="button"
-                            class="btn btn-sm btn-danger"
-                            data-toggle="modal"
-                            data-target="#deleteModal"
-                            th:onclick="'confirmDelete(\'' + @{/schedules/delete/{id}(id=${entry.id})} + '\')'"
-                          >
-                            <i class="fas fa-trash"></i> Eliminar
-                          </button>
+                        <td class="text-center">
+                          <div class="btn-group">
+                            <a
+                              th:href="@{/schedules/edit/{id}(id=${entry.id})}"
+                              class="btn btn-sm btn-warning"
+                              title="Editar"
+                            >
+                              <i class="fas fa-edit"></i>
+                            </a>
+                            <button
+                              type="button"
+                              class="btn btn-sm btn-danger"
+                              data-toggle="modal"
+                              data-target="#deleteModal"
+                              th:onclick="'confirmDelete(\'' + @{/schedules/delete/{id}(id=${entry.id})} + '\')'"
+                              title="Eliminar"
+                            >
+                              <i class="fas fa-trash"></i>
+                            </button>
+                          </div>
                         </td>
                       </tr>
                       <tr th:if="${#lists.isEmpty(scheduleEntries)}">
-                        <td colspan="5" class="text-center text-muted">
+                        <td colspan="5" class="text-center text-muted py-4">
+                          <i
+                            class="fas fa-calendar-alt fa-3x mb-3 text-gray-300"
+                          ></i>
+                          <br />
                           No se encontraron horarios.
                         </td>
                       </tr>

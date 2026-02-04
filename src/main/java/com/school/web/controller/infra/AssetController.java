@@ -35,13 +35,48 @@ public class AssetController {
         this.infraService = infraService;
     }
 
+    @GetMapping("/dashboard")
+    public String dashboard(Model model) {
+        model.addAttribute("totalAssets", assetService.countAssets());
+        model.addAttribute("activeAssets", assetService.countAssetsByStatus(com.school.infra.enums.AssetStatus.ACTIVE));
+        model.addAttribute("inMaintenanceAssets",
+                assetService.countAssetsByStatus(com.school.infra.enums.AssetStatus.IN_MAINTENANCE));
+        model.addAttribute("totalValue", assetService.getTotalActiveAssetsValue());
+
+        model.addAttribute("expiredWarranties", assetService.getAssetsWithExpiredWarranty());
+
+        model.addAttribute("categoryLabels", assetService.getAssetsByCategory().keySet().stream()
+                .map(com.school.infra.enums.AssetCategory::getDisplayName).toArray());
+        model.addAttribute("categoryData", assetService.getAssetsByCategory().values().toArray());
+
+        model.addAttribute("statusLabels", assetService.getAssetsByStatus().keySet().stream()
+                .map(com.school.infra.enums.AssetStatus::getDisplayName).toArray());
+        model.addAttribute("statusData", assetService.getAssetsByStatus().values().toArray());
+
+        return "infra/asset-dashboard";
+    }
+
     @GetMapping
     public String listAssets(Model model,
+            @RequestParam(required = false) com.school.infra.enums.AssetCategory category,
+            @RequestParam(required = false) com.school.infra.enums.AssetStatus status,
             @RequestParam(defaultValue = "0") int page,
             @RequestParam(defaultValue = "10") int size) {
-        Pageable pageable = PageRequest.of(page, size, Sort.by(Sort.Direction.ASC, "name"));
-        Page<Asset> assets = assetService.getAllAssets(pageable);
-        model.addAttribute("assets", assets);
+
+        if (category != null || status != null) {
+            // Filtrado sin paginación por ahora (debido a limitaciones del servicio actual)
+            java.util.List<Asset> filteredList = assetService.filterAssets(category, status);
+            // Convertir a Page para compatibilidad con la vista
+            int start = Math.min((int) PageRequest.of(page, size).getOffset(), filteredList.size());
+            int end = Math.min((start + size), filteredList.size());
+            Page<Asset> assetsPage = new org.springframework.data.domain.PageImpl<>(
+                    filteredList.subList(start, end), PageRequest.of(page, size), filteredList.size());
+            model.addAttribute("assets", assetsPage);
+        } else {
+            Pageable pageable = PageRequest.of(page, size, Sort.by(Sort.Direction.ASC, "name"));
+            Page<Asset> assets = assetService.getAllAssets(pageable);
+            model.addAttribute("assets", assets);
+        }
         return "infra/asset-list";
     }
 
@@ -62,7 +97,13 @@ public class AssetController {
             return "infra/asset-form";
         }
         try {
-            assetService.saveAsset(asset);
+            if (asset.getId() == null) {
+                // Nuevo activo
+                assetService.createAsset(asset);
+            } else {
+                // Actualizar activo existente
+                assetService.updateAsset(asset.getId(), asset);
+            }
             redirectAttributes.addFlashAttribute("successMessage", "Activo guardado exitosamente");
         } catch (Exception e) {
             model.addAttribute("errorMessage", "Error al guardar el activo: " + e.getMessage());

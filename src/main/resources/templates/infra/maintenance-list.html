@@ -1,4 +1,4 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="es" xmlns:th="http://www.thymeleaf.org">
   <head>
     <meta charset="utf-8" />
@@ -25,41 +25,35 @@
     />
   </head>
 
-  <body id="page-top" role="main">
-    <div id="wrapper" role="region" aria-label="Contenedor principal">
+  <body id="page-top">
+    <div id="wrapper">
       <div th:replace="~{fragments/sb-admin-sidebar :: sidebar}"></div>
 
-      <div
-        id="content-wrapper"
-        class="d-flex flex-column"
-        role="region"
-        aria-label="Contenido principal"
-      >
-        <div id="content" tabindex="-1">
+      <div id="content-wrapper" class="d-flex flex-column">
+        <div id="content">
           <div th:replace="~{fragments/sb-admin-topbar :: topbar}"></div>
 
-          <div class="container-fluid" role="main">
+          <div class="container-fluid">
+            <!-- Header -->
             <div
               class="d-sm-flex align-items-center justify-content-between mb-4"
-              role="heading"
-              aria-level="1"
             >
               <h1 class="h3 mb-0 text-gray-800">
-                <i class="fas fa-tools mr-2 text-primary"></i>Gestión de Mantenimiento
+                <i class="fas fa-tools mr-2 text-primary"></i>Gestión de
+                Mantenimiento
               </h1>
               <a
                 th:href="@{/infra/maintenance/new}"
-                class="btn btn-primary"
-                aria-label="Nueva Solicitud"
+                class="btn btn-primary shadow-sm"
               >
-                <i class="fas fa-plus" aria-hidden="true"></i> Nueva Solicitud
+                <i class="fas fa-plus fa-sm text-white-50"></i> Nueva Solicitud
               </a>
             </div>
 
-            <!-- Stats Cards -->
-            <div class="row mb-4" aria-label="Resumen de estado de solicitudes">
+            <!-- Stats KPI -->
+            <div class="row mb-4">
               <div class="col-xl-3 col-md-6 mb-4">
-                <section class="card border-left-warning shadow h-100 py-2" aria-label="Solicitudes pendientes">
+                <div class="card border-left-warning shadow h-100 py-2">
                   <div class="card-body">
                     <div class="row no-gutters align-items-center">
                       <div class="col mr-2">
@@ -70,8 +64,7 @@
                         </div>
                         <div
                           class="h5 mb-0 font-weight-bold text-gray-800"
-                          aria-label="Cantidad de solicitudes pendientes"
-                          th:text="${pendingCount}"
+                          th:text="${pendingCount ?: 0}"
                         >
                           0
                         </div>
@@ -80,22 +73,19 @@
                         <i class="fas fa-clock fa-2x text-gray-300"></i>
                       </div>
                     </div>
-                </section>
+                  </div>
+                </div>
               </div>
             </div>
 
+            <!-- Messages -->
             <div
               th:if="${successMessage}"
               class="alert alert-success alert-dismissible fade show"
               role="alert"
             >
               <span th:text="${successMessage}"></span>
-              <button
-                type="button"
-                class="close"
-                data-dismiss="alert"
-                aria-label="Close"
-              >
+              <button type="button" class="close" data-dismiss="alert">
                 <span aria-hidden="true">&times;</span>
               </button>
             </div>
@@ -105,142 +95,188 @@
               role="alert"
             >
               <span th:text="${errorMessage}"></span>
-              <button
-                type="button"
-                class="close"
-                data-dismiss="alert"
-                aria-label="Close"
-              >
+              <button type="button" class="close" data-dismiss="alert">
                 <span aria-hidden="true">&times;</span>
               </button>
             </div>
 
+            <!-- Table -->
             <div class="card shadow mb-4">
-              <div class="card-header py-3">
+              <div
+                class="card-header py-3 d-flex flex-row align-items-center justify-content-between"
+              >
                 <h6 class="m-0 font-weight-bold text-primary">
                   Solicitudes Registradas
                 </h6>
+                <div class="dropdown no-arrow">
+                  <a
+                    class="dropdown-toggle"
+                    href="#"
+                    role="button"
+                    id="dropdownMenuLink"
+                    data-toggle="dropdown"
+                    aria-haspopup="true"
+                    aria-expanded="false"
+                  >
+                    <i class="fas fa-ellipsis-v fa-sm fa-fw text-gray-400"></i>
+                  </a>
+                  <div
+                    class="dropdown-menu dropdown-menu-right shadow animated--fade-in"
+                    aria-labelledby="dropdownMenuLink"
+                  >
+                    <div class="dropdown-header">Filtrar por:</div>
+                    <a class="dropdown-item" href="#">Prioridad Alta</a>
+                    <a class="dropdown-item" href="#">Pendientes</a>
+                  </div>
+                </div>
               </div>
               <div class="card-body">
                 <div class="table-responsive">
                   <table
-                    class="table table-bordered"
+                    class="table table-bordered table-hover"
                     id="dataTable"
+                    width="100%"
+                    cellspacing="0"
                   >
-                    <thead>
+                    <thead class="thead-light">
                       <tr>
                         <th>ID</th>
-                        <th>Ubicación</th>
+                        <th>Prioridad</th>
+                        <th>Tipo</th>
+                        <th>Activo / Ubicación</th>
                         <th>Descripción</th>
-                        <th>Solicitante</th>
-                        <th>Fecha Solicitud</th>
-                        <th>Fecha Completado</th>
+                        <th>Vencimiento (SLA)</th>
                         <th>Estado</th>
-                        <th>Acciones</th>
+                        <th class="text-center">Acciones</th>
                       </tr>
                     </thead>
                     <tbody>
                       <tr th:each="request : ${requests.content}">
                         <td th:text="${request.id}">1</td>
-                        <td
-                          th:text="${request.room != null ? request.room.name : 'No especificada'}"
-                        >
-                          Sala 101
-                        </td>
-                        <td
-                          th:text="${#strings.abbreviate(request.description, 50)}"
-                        >
-                          Problema con el proyector...
-                        </td>
-                        <td
-                          th:text="${request.requestedBy != null ? request.requestedBy.username : 'N/A'}"
-                        >
-                          admin
-                        </td>
-                        <td
-                          th:text="${#temporals.format(request.requestDate, 'dd/MM/yyyy HH:mm')}"
-                        >
-                          01/01/2024 10:00
-                        </td>
-                        <td
-                          th:text="${request.completionDate != null ? #temporals.format(request.completionDate, 'dd/MM/yyyy HH:mm') : '-'}"
-                        >
-                          -
-                        </td>
                         <td>
                           <span
                             class="badge"
-                            th:classappend="${request.status == 'PENDING' ? 'badge-warning' :
-                                                                      (request.status == 'IN_PROGRESS' ? 'badge-info' : 'badge-success')}"
-                            th:text="${request.status == 'PENDING' ? 'Pendiente' :
-                                                               (request.status == 'IN_PROGRESS' ? 'En Progreso' : 'Completado')}"
-                            >Pendiente</span
+                            th:classappend="${request.priority.name() == 'CRITICAL' ? 'badge-danger' : (request.priority.name() == 'HIGH' ? 'badge-warning' : 'badge-light border')}"
+                            th:text="${request.priority.displayName}"
+                            >Media</span
                           >
                         </td>
                         <td>
-                          <!-- Update Status Buttons -->
-                          <form
-                            th:if="${request.status == 'PENDING'}"
-                            th:action="@{/infra/maintenance/update-status/{id}(id=${request.id})}"
-                            method="post"
-                            style="display: inline"
+                          <small
+                            class="text-uppercase text-muted font-weight-bold"
+                            th:text="${request.type != null ? request.type.displayName : '-'}"
+                            >Correctivo</small
                           >
-                            <input
-                              type="hidden"
-                              name="status"
-                              value="IN_PROGRESS"
-                            />
-                            <button
-                              type="submit"
-                              class="btn btn-sm btn-info"
-                              title="Iniciar"
+                        </td>
+                        <td>
+                          <div th:if="${request.asset != null}">
+                            <i class="fas fa-box text-primary mr-1"></i>
+                            <span
+                              th:text="${request.asset.name}"
+                              class="font-weight-bold"
+                              >Proyector</span
                             >
-                              <i class="fas fa-play"></i>
-                            </button>
-                          </form>
-
-                          <form
-                            th:if="${request.status == 'IN_PROGRESS'}"
-                            th:action="@{/infra/maintenance/update-status/{id}(id=${request.id})}"
-                            method="post"
-                            style="display: inline"
+                          </div>
+                          <div th:if="${request.room != null}">
+                            <i class="fas fa-map-marker-alt text-info mr-1"></i>
+                            <span th:text="${request.room.name}">Sala 101</span>
+                          </div>
+                        </td>
+                        <td>
+                          <span
+                            th:text="${#strings.abbreviate(request.description, 40)}"
+                            title="${request.description}"
+                            >Problema...</span
                           >
-                            <input
-                              type="hidden"
-                              name="status"
-                              value="COMPLETED"
-                            />
-                            <button
-                              type="submit"
-                              class="btn btn-sm btn-success"
-                              title="Completar"
+                        </td>
+                        <td>
+                          <span
+                            th:if="${request.dueDate != null}"
+                            th:text="${#temporals.format(request.dueDate, 'dd/MM/yyyy')}"
+                            th:classappend="${request.isOverdue() && request.status.name() != 'COMPLETED' ? 'text-danger font-weight-bold' : ''}"
+                          >
+                            01/01/2024
+                          </span>
+                          <span th:if="${request.dueDate == null}">-</span>
+                        </td>
+                        <td>
+                          <span
+                            class="badge badge-pill"
+                            th:classappend="${request.status.badgeClass}"
+                            th:text="${request.status.displayName}"
+                            >Pendiente</span
+                          >
+                        </td>
+                        <td class="text-center">
+                          <div class="btn-group">
+                            <!-- Start Button -->
+                            <form
+                              th:if="${request.status.name() == 'PENDING'}"
+                              th:action="@{/infra/maintenance/update-status/{id}(id=${request.id})}"
+                              method="post"
                             >
-                              <i class="fas fa-check"></i>
-                            </button>
-                          </form>
+                              <input
+                                type="hidden"
+                                name="status"
+                                value="IN_PROGRESS"
+                              />
+                              <button
+                                type="submit"
+                                class="btn btn-sm btn-info"
+                                title="Iniciar"
+                              >
+                                <i class="fas fa-play"></i>
+                              </button>
+                            </form>
 
-                          <a
-                            th:href="@{/infra/maintenance/edit/{id}(id=${request.id})}"
-                            class="btn btn-sm btn-warning"
-                            title="Editar"
-                          >
-                            <i class="fas fa-edit"></i>
-                          </a>
-                          <button
-                            type="button"
-                            class="btn btn-sm btn-danger"
-                            data-toggle="modal"
-                            data-target="#deleteModal"
-                            th:onclick="'confirmDelete(\\'' + @{/infra/maintenance/delete/{id}(id=${request.id})} + '\\')'"
-                            title="Eliminar"
-                          >
-                            <i class="fas fa-trash"></i>
-                          </button>
+                            <!-- Complete Button -->
+                            <form
+                              th:if="${request.status.name() == 'IN_PROGRESS'}"
+                              th:action="@{/infra/maintenance/update-status/{id}(id=${request.id})}"
+                              method="post"
+                            >
+                              <input
+                                type="hidden"
+                                name="status"
+                                value="COMPLETED"
+                              />
+                              <button
+                                type="submit"
+                                class="btn btn-sm btn-success"
+                                title="Completar"
+                              >
+                                <i class="fas fa-check"></i>
+                              </button>
+                            </form>
+
+                            <a
+                              th:href="@{/infra/maintenance/edit/{id}(id=${request.id})}"
+                              class="btn btn-sm btn-warning"
+                              title="Editar"
+                            >
+                              <i class="fas fa-edit"></i>
+                            </a>
+
+                            <button
+                              type="button"
+                              class="btn btn-sm btn-danger"
+                              data-toggle="modal"
+                              data-target="#deleteModal"
+                              th:onclick="'confirmDelete(\'' + @{/infra/maintenance/delete/{id}(id=${request.id})} + '\')'"
+                              title="Eliminar"
+                            >
+                              <i class="fas fa-trash"></i>
+                            </button>
+                          </div>
                         </td>
                       </tr>
                       <tr th:if="${#lists.isEmpty(requests.content)}">
-                        <td colspan="7" class="text-center text-muted">
-                          No hay solicitudes registradas.
+                        <td colspan="8" class="text-center text-muted py-4">
+                          <i
+                            class="fas fa-clipboard-check fa-3x mb-3 text-gray-300"
+                          ></i
+                          ><br />
+                          No hay solicitudes de mantenimiento registradas.
                         </td>
                       </tr>
                     </tbody>
@@ -248,50 +284,41 @@
                 </div>
 
                 <!-- Pagination -->
-                <div
+                <nav
                   th:if="${requests.totalPages > 1}"
-                  class="d-flex justify-content-center"
+                  aria-label="Page navigation"
+                  class="mt-3"
                 >
-                  <nav aria-label="Page navigation">
-                    <ul class="pagination">
-                      <li
-                        class="page-item"
-                        th:classappend="${requests.number == 0} ? 'disabled'"
+                  <ul class="pagination justify-content-center">
+                    <li
+                      class="page-item"
+                      th:classappend="${requests.first} ? 'disabled'"
+                    >
+                      <a
+                        class="page-link"
+                        th:href="@{/infra/maintenance(page=${requests.number - 1})}"
+                        tabindex="-1"
+                        >Anterior</a
                       >
-                        <a
-                          class="page-link"
-                          th:href="@{/infra/maintenance(page=${requests.number - 1}, size=10)}"
-                          aria-label="Previous"
-                        >
-                          <span aria-hidden="true">&laquo;</span>
-                        </a>
-                      </li>
-                      <li
-                        class="page-item"
-                        th:each="i : ${#numbers.sequence(0, requests.totalPages - 1)}"
-                        th:classappend="${i == requests.number} ? 'active'"
+                    </li>
+                    <li class="page-item disabled">
+                      <span
+                        class="page-link"
+                        th:text="'Página ' + ${requests.number + 1} + ' de ' + ${requests.totalPages}"
+                      ></span>
+                    </li>
+                    <li
+                      class="page-item"
+                      th:classappend="${requests.last} ? 'disabled'"
+                    >
+                      <a
+                        class="page-link"
+                        th:href="@{/infra/maintenance(page=${requests.number + 1})}"
+                        >Siguiente</a
                       >
-                        <a
-                          class="page-link"
-                          th:href="@{/infra/maintenance(page=${i}, size=10)}"
-                          th:text="${i + 1}"
-                        ></a>
-                      </li>
-                      <li
-                        class="page-item"
-                        th:classappend="${requests.number == requests.totalPages - 1} ? 'disabled'"
-                      >
-                        <a
-                          class="page-link"
-                          th:href="@{/infra/maintenance(page=${requests.number + 1}, size=10)}"
-                          aria-label="Next"
-                        >
-                          <span aria-hidden="true">&raquo;</span>
-                        </a>
-                      </li>
-                    </ul>
-                  </nav>
-                </div>
+                    </li>
+                  </ul>
+                </nav>
               </div>
             </div>
           </div>
@@ -300,20 +327,22 @@
       </div>
     </div>
 
-    <a class="scroll-to-top rounded" href="#page-top">
-      <i class="fas fa-angle-up"></i>
-    </a>
+    <a class="scroll-to-top rounded" href="#page-top"
+      ><i class="fas fa-angle-up"></i
+    ></a>
+    <div th:replace="~{fragments/sb-admin-topbar :: logoutModal}"></div>
+    <div th:replace="~{fragments/delete-modal :: deleteModal}"></div>
 
     <script th:src="@{/vendor/jquery/jquery.min.js}"></script>
     <script th:src="@{/vendor/bootstrap/js/bootstrap.bundle.min.js}"></script>
     <script th:src="@{/vendor/jquery-easing/jquery.easing.min.js}"></script>
     <script th:src="@{/js/sb-admin-2.min.js}"></script>
-    <script th:src="@{/vendor/datatables/jquery.dataTables.min.js}"></script>
-    <script
-      th:src="@{/vendor/datatables/dataTables.bootstrap4.min.js}"
-    ></script>
-    <script th:src="@{/js/demo/datatables-demo.js}"></script>
-    <div th:replace="~{fragments/sb-admin-topbar :: logoutModal}"></div>
-    <div th:replace="~{fragments/delete-modal :: deleteModal}"></div>
+
+    <!-- Confirm Delete Script -->
+    <script>
+      function confirmDelete(url) {
+        $("#deleteModalForm").attr("action", url);
+      }
+    </script>
   </body>
 </html>

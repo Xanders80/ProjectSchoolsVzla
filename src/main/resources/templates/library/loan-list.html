@@ -54,12 +54,12 @@
               <div class="card-body">
                 <div class="table-responsive">
                   <table
-                    class="table table-bordered"
+                    class="table table-bordered table-hover"
                     id="dataTable"
                     width="100%"
                     cellspacing="0"
                   >
-                    <thead>
+                    <thead class="thead-light">
                       <tr>
                         <th>Libro</th>
                         <th>Usuario</th>
@@ -67,7 +67,7 @@
                         <th>Vencimiento</th>
                         <th>Devolución</th>
                         <th>Estado</th>
-                        <th>Acciones</th>
+                        <th class="text-center">Acciones</th>
                       </tr>
                     </thead>
                     <tbody>
@@ -86,23 +86,29 @@
                             >Status</span
                           >
                         </td>
-                        <td>
+                        <td class="text-center">
                           <form
                             th:if="${loan.status.name() == 'ACTIVE' OR loan.status.name() == 'OVERDUE'}"
                             th:action="@{/library/loans/return/{id}(id=${loan.id})}"
                             method="post"
+                            class="d-inline"
                           >
                             <button
                               type="submit"
                               class="btn btn-success btn-sm"
+                              title="Devolver"
                             >
-                              <i class="fas fa-undo"></i> Devolver
+                              <i class="fas fa-undo"></i>
                             </button>
                           </form>
                         </td>
                       </tr>
                       <tr th:if="${#lists.isEmpty(loans)}">
-                        <td colspan="7" class="text-center text-muted">
+                        <td colspan="7" class="text-center text-muted py-4">
+                          <i
+                            class="fas fa-clipboard-list fa-3x mb-3 text-gray-300"
+                          ></i>
+                          <br />
                           No se encontraron préstamos registrados.
                         </td>
                       </tr>

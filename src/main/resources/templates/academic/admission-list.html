@@ -85,12 +85,12 @@
               <div class="card-body">
                 <div class="table-responsive">
                   <table
-                    class="table table-bordered"
+                    class="table table-bordered table-hover"
                     id="dataTable"
                     width="100%"
                     cellspacing="0"
                   >
-                    <thead>
+                    <thead class="thead-light">
                       <tr>
                         <th>ID</th>
                         <th>Postulante</th>
@@ -98,7 +98,7 @@
                         <th>Fecha Examen</th>
                         <th>Puntaje</th>
                         <th>Estado</th>
-                        <th>Acciones</th>
+                        <th class="text-center">Acciones</th>
                       </tr>
                     </thead>
                     <tbody>
@@ -122,79 +122,80 @@
                             >PENDING</span
                           >
                         </td>
-                        <td>
-                          <!-- Edit button - always visible -->
-                          <a
-                            th:href="@{/academic/admissions/edit/{id}(id=${exam.id})}"
-                            class="btn btn-sm btn-info"
-                            title="Editar"
-                          >
-                            <i class="fas fa-edit"></i>
-                          </a>
-
-                          <!-- Approve button - only for PENDING -->
-                          <form
-                            th:if="${exam.status == 'PENDING'}"
-                            th:action="@{/academic/admissions/approve/{id}(id=${exam.id})}"
-                            method="post"
-                            style="display: inline"
-                          >
-                            <button
-                              type="submit"
-                              class="btn btn-sm btn-success"
-                              title="Aprobar"
+                        <td class="text-center">
+                          <div class="btn-group">
+                            <a
+                              th:href="@{/academic/admissions/edit/{id}(id=${exam.id})}"
+                              class="btn btn-sm btn-info"
+                              title="Editar"
                             >
-                              <i class="fas fa-check"></i>
-                            </button>
-                          </form>
+                              <i class="fas fa-edit"></i>
+                            </a>
 
-                          <!-- Reject button - only for PENDING -->
-                          <form
-                            th:if="${exam.status == 'PENDING'}"
-                            th:action="@{/academic/admissions/reject/{id}(id=${exam.id})}"
-                            method="post"
-                            style="display: inline"
-                          >
-                            <button
-                              type="submit"
-                              class="btn btn-sm btn-warning"
-                              title="Rechazar"
+                            <form
+                              th:if="${exam.status == 'PENDING'}"
+                              th:action="@{/academic/admissions/approve/{id}(id=${exam.id})}"
+                              method="post"
+                              style="display: inline"
                             >
-                              <i class="fas fa-times"></i>
-                            </button>
-                          </form>
+                              <button
+                                type="submit"
+                                class="btn btn-sm btn-success"
+                                title="Aprobar"
+                              >
+                                <i class="fas fa-check"></i>
+                              </button>
+                            </form>
 
-                          <!-- Enroll button - only for APPROVED -->
-                          <form
-                            th:if="${exam.status == 'APPROVED'}"
-                            th:action="@{/academic/admissions/enroll/{id}(id=${exam.id})}"
-                            method="post"
-                            style="display: inline"
-                          >
-                            <button
-                              type="submit"
-                              class="btn btn-sm btn-primary"
-                              title="Inscribir"
+                            <form
+                              th:if="${exam.status == 'PENDING'}"
+                              th:action="@{/academic/admissions/reject/{id}(id=${exam.id})}"
+                              method="post"
+                              style="display: inline"
                             >
-                              <i class="fas fa-user-plus"></i> Inscribir
-                            </button>
-                          </form>
+                              <button
+                                type="submit"
+                                class="btn btn-sm btn-warning"
+                                title="Rechazar"
+                              >
+                                <i class="fas fa-times"></i>
+                              </button>
+                            </form>
 
-                          <!-- Delete button -->
-                          <button
-                            type="button"
-                            class="btn btn-sm btn-danger"
-                            data-toggle="modal"
-                            data-target="#deleteModal"
-                            th:onclick="'confirmDelete(\\'' + @{/academic/admissions/delete/{id}(id=${exam.id})} + '\\')'"
-                            title="Eliminar"
-                          >
-                            <i class="fas fa-trash"></i>
-                          </button>
+                            <form
+                              th:if="${exam.status == 'APPROVED'}"
+                              th:action="@{/academic/admissions/enroll/{id}(id=${exam.id})}"
+                              method="post"
+                              style="display: inline"
+                            >
+                              <button
+                                type="submit"
+                                class="btn btn-sm btn-primary"
+                                title="Inscribir"
+                              >
+                                <i class="fas fa-user-plus"></i>
+                              </button>
+                            </form>
+
+                            <button
+                              type="button"
+                              class="btn btn-sm btn-danger"
+                              data-toggle="modal"
+                              data-target="#deleteModal"
+                              th:onclick="'confirmDelete(\\'' + @{/academic/admissions/delete/{id}(id=${exam.id})} + '\\')'"
+                              title="Eliminar"
+                            >
+                              <i class="fas fa-trash"></i>
+                            </button>
+                          </div>
                         </td>
                       </tr>
                       <tr th:if="${#lists.isEmpty(exams.content)}">
-                        <td colspan="7" class="text-center text-muted">
+                        <td colspan="7" class="text-center text-muted py-4">
+                          <i
+                            class="fas fa-file-signature fa-3x mb-3 text-gray-300"
+                          ></i>
+                          <br />
                           No hay postulantes registrados.
                         </td>
                       </tr>

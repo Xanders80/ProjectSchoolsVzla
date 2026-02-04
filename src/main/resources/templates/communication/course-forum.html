@@ -1,0 +1,197 @@
+<!doctype html>
+<html
+  xmlns:th="http://www.thymeleaf.org"
+  xmlns:sec="http://www.thymeleaf.org/extras/spring-security"
+>
+  <head>
+    <meta charset="utf-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta
+      name="viewport"
+      content="width=device-width, initial-scale=1, shrink-to-fit=no"
+    />
+    <title th:text="${forum.name}">Foro de Curso</title>
+
+    <link
+      th:href="@{/vendor/fontawesome-free/css/all.min.css}"
+      rel="stylesheet"
+      type="text/css"
+    />
+    <link
+      href="https://fonts.googleapis.com/css?family=Nunito:200,200i,300,300i,400,400i,600,600i,700,700i,800,800i,900,900i"
+      rel="stylesheet"
+    />
+    <link th:href="@{/css/sb-admin-2.min.css}" rel="stylesheet" />
+    <style>
+      .message-card {
+        border-left: 4px solid #4e73df;
+        margin-bottom: 1.5rem;
+        transition: transform 0.2s;
+      }
+      .message-card:hover {
+        transform: scale(1.01);
+      }
+      .message-author {
+        font-weight: 700;
+        color: #4e73df;
+      }
+      .message-date {
+        font-size: 0.8rem;
+        color: #858796;
+      }
+      .forum-header {
+        background: linear-gradient(135deg, #4e73df 0%, #224abe 100%);
+        color: white;
+        padding: 2rem;
+        border-radius: 0.5rem;
+        margin-bottom: 2rem;
+      }
+    </style>
+  </head>
+  <body id="page-top">
+    <div id="wrapper">
+      <div th:replace="~{fragments/sb-admin-sidebar :: sidebar}"></div>
+      <div id="content-wrapper" class="d-flex flex-column">
+        <div id="content">
+          <div th:replace="~{fragments/sb-admin-topbar :: topbar}"></div>
+
+          <div class="container-fluid">
+            <div class="forum-header shadow">
+              <h1 class="h3 mb-2" th:text="${forum.name}">Foro Académico</h1>
+              <p class="mb-0" th:text="${forum.description}">
+                Descripción del foro
+              </p>
+              <hr class="border-light" />
+              <div class="d-flex justify-content-between align-items-center">
+                <span
+                  ><i class="fas fa-book mr-2"></i>
+                  <span th:text="${course.name}">Curso</span></span
+                >
+                <a
+                  th:href="@{/courses/edit/{id}(id=${course.id})}"
+                  class="btn btn-sm btn-light"
+                >
+                  <i class="fas fa-arrow-left mr-1"></i> Volver al Curso
+                </a>
+              </div>
+            </div>
+
+            <div class="row">
+              <div class="col-lg-8">
+                <!-- Messages List -->
+                <div
+                  th:each="message : ${messages}"
+                  class="card shadow message-card"
+                >
+                  <div class="card-body">
+                    <div
+                      class="d-flex justify-content-between align-items-center mb-2"
+                    >
+                      <span class="message-author">
+                        <i class="fas fa-user-circle mr-1"></i>
+                        <span th:text="${message.author.username}"
+                          >Usuario</span
+                        >
+                      </span>
+                      <span
+                        class="message-date"
+                        th:text="${#temporals.format(message.createdAt, 'dd/MM/yyyy HH:mm')}"
+                      >
+                        Fecha
+                      </span>
+                    </div>
+                    <div
+                      class="message-content text-gray-800"
+                      th:text="${message.content}"
+                    >
+                      Contenido del mensaje...
+                    </div>
+                  </div>
+                </div>
+
+                <div
+                  th:if="${#lists.isEmpty(messages)}"
+                  class="text-center py-5"
+                >
+                  <i class="fas fa-comments fa-3x text-gray-300 mb-3"></i>
+                  <p class="text-gray-500">
+                    No hay mensajes aún. ¡Sé el primero en participar!
+                  </p>
+                </div>
+
+                <!-- Post Message Form -->
+                <div class="card shadow mb-4">
+                  <div class="card-header py-3">
+                    <h6 class="m-0 font-weight-bold text-primary">
+                      Participar en la discusión
+                    </h6>
+                  </div>
+                  <div class="card-body">
+                    <form
+                      th:action="@{/academic/forum/{id}/message(id=${forum.id})}"
+                      method="post"
+                    >
+                      <div class="form-group">
+                        <textarea
+                          name="content"
+                          class="form-control"
+                          rows="4"
+                          placeholder="Escribe tu mensaje aquí..."
+                          required
+                        ></textarea>
+                      </div>
+                      <div class="text-right">
+                        <button type="submit" class="btn btn-primary px-4">
+                          <i class="fas fa-paper-plane mr-1"></i> Publicar
+                          Mensaje
+                        </button>
+                      </div>
+                    </form>
+                  </div>
+                </div>
+              </div>
+
+              <div class="col-lg-4">
+                <div class="card shadow mb-4">
+                  <div class="card-header py-3">
+                    <h6 class="m-0 font-weight-bold text-primary">
+                      Información del Foro
+                    </h6>
+                  </div>
+                  <div class="card-body">
+                    <p>
+                      Este es un espacio seguro para el intercambio de ideas
+                      académicas relacionado con el curso seleccionado.
+                    </p>
+                    <ul class="list-unstyled small text-gray-600">
+                      <li class="mb-2">
+                        <i class="fas fa-check text-success mr-2"></i> Mantén el
+                        respeto
+                      </li>
+                      <li class="mb-2">
+                        <i class="fas fa-check text-success mr-2"></i> Comparte
+                        material relevante
+                      </li>
+                      <li class="mb-2">
+                        <i class="fas fa-check text-success mr-2"></i> Resuelve
+                        dudas colectivas
+                      </li>
+                    </ul>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div th:replace="~{fragments/sb-admin-footer :: footer}"></div>
+      </div>
+    </div>
+
+    <div th:replace="~{fragments/sb-admin-topbar :: logoutModal}"></div>
+
+    <script th:src="@{/vendor/jquery/jquery.min.js}"></script>
+    <script th:src="@{/vendor/bootstrap/js/bootstrap.bundle.min.js}"></script>
+    <script th:src="@{/vendor/jquery-easing/jquery.easing.min.js}"></script>
+    <script th:src="@{/js/sb-admin-2.min.js}"></script>
+  </body>
+</html>

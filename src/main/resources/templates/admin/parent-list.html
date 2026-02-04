@@ -70,12 +70,12 @@
               <div class="card-body">
                 <div class="table-responsive">
                   <table
-                    class="table table-bordered"
+                    class="table table-bordered table-hover"
                     id="dataTable"
                     width="100%"
                     cellspacing="0"
                   >
-                    <thead>
+                    <thead class="thead-light">
                       <tr>
                         <th>ID</th>
                         <th>Nombre Completo</th>
@@ -85,7 +85,7 @@
                         <th>Teléfono</th>
                         <th>Fecha Nac.</th>
                         <th>Hijos</th>
-                        <th>Acciones</th>
+                        <th class="text-center">Acciones</th>
                       </tr>
                     </thead>
                     <tbody>
@@ -102,26 +102,34 @@
                           01/01/1980
                         </td>
                         <td th:text="${#sets.size(parent.children)}">2</td>
-                        <td>
-                          <a
-                            th:href="@{/parents/edit/{id}(id=${parent.id})}"
-                            class="btn btn-sm btn-warning"
-                          >
-                            <i class="fas fa-edit"></i> Editar
-                          </a>
-                          <button
-                            type="button"
-                            class="btn btn-sm btn-danger"
-                            data-toggle="modal"
-                            data-target="#deleteModal"
-                            th:onclick="'confirmDelete(\'' + @{/parents/delete/{id}(id=${parent.id})} + '\')'"
-                          >
-                            <i class="fas fa-trash"></i> Eliminar
-                          </button>
+                        <td class="text-center">
+                          <div class="btn-group">
+                            <a
+                              th:href="@{/parents/edit/{id}(id=${parent.id})}"
+                              class="btn btn-sm btn-warning"
+                              title="Editar"
+                            >
+                              <i class="fas fa-edit"></i>
+                            </a>
+                            <button
+                              type="button"
+                              class="btn btn-sm btn-danger"
+                              data-toggle="modal"
+                              data-target="#deleteModal"
+                              th:onclick="'confirmDelete(\'' + @{/parents/delete/{id}(id=${parent.id})} + '\')'"
+                              title="Eliminar"
+                            >
+                              <i class="fas fa-trash"></i>
+                            </button>
+                          </div>
                         </td>
                       </tr>
                       <tr th:if="${parents.empty}">
-                        <td colspan="9" class="text-center text-muted">
+                        <td colspan="9" class="text-center text-muted py-4">
+                          <i
+                            class="fas fa-user-friends fa-3x mb-3 text-gray-300"
+                          ></i>
+                          <br />
                           No se encontraron representantes.
                         </td>
                       </tr>

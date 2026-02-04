@@ -57,12 +57,12 @@
               <div class="card-body">
                 <div class="table-responsive">
                   <table
-                    class="table table-bordered"
+                    class="table table-bordered table-hover"
                     id="dataTable"
                     width="100%"
                     cellspacing="0"
                   >
-                    <thead>
+                    <thead class="thead-light">
                       <tr>
                         <th>ID</th>
                         <th>Código</th>
@@ -71,7 +71,7 @@
                         <th>Hrs/Sem</th>
                         <th>Nivel de Grado</th>
                         <th>Descripción</th>
-                        <th>Acciones</th>
+                        <th class="text-center">Acciones</th>
                       </tr>
                     </thead>
                     <tbody>
@@ -87,26 +87,32 @@
                         <td th:text="${course.description}">
                           Basic programming concepts
                         </td>
-                        <td>
-                          <a
-                            th:href="@{/courses/edit/{id}(id=${course.id})}"
-                            class="btn btn-sm btn-warning"
-                          >
-                            <i class="fas fa-edit"></i> Editar
-                          </a>
-                          <button
-                            type="button"
-                            class="btn btn-sm btn-danger"
-                            data-toggle="modal"
-                            data-target="#deleteModal"
-                            th:onclick="'confirmDelete(\'' + @{/courses/delete/{id}(id=${course.id})} + '\')'"
-                          >
-                            <i class="fas fa-trash"></i> Eliminar
-                          </button>
+                        <td class="text-center">
+                          <div class="btn-group">
+                            <a
+                              th:href="@{/courses/edit/{id}(id=${course.id})}"
+                              class="btn btn-sm btn-warning"
+                              title="Editar"
+                            >
+                              <i class="fas fa-edit"></i>
+                            </a>
+                            <button
+                              type="button"
+                              class="btn btn-sm btn-danger"
+                              data-toggle="modal"
+                              data-target="#deleteModal"
+                              th:onclick="'confirmDelete(\'' + @{/courses/delete/{id}(id=${course.id})} + '\')'"
+                              title="Eliminar"
+                            >
+                              <i class="fas fa-trash"></i>
+                            </button>
+                          </div>
                         </td>
                       </tr>
                       <tr th:if="${courses.empty}">
-                        <td colspan="7" class="text-center text-muted">
+                        <td colspan="8" class="text-center text-muted py-4">
+                          <i class="fas fa-book fa-3x mb-3 text-gray-300"></i>
+                          <br />
                           No se encontraron cursos.
                         </td>
                       </tr>

@@ -1,5 +1,5 @@
 <!doctype html>
-<html lang="es" xmlns:th="http://www.thymeleaf.org">
+<html xmlns:th="http://www.thymeleaf.org">
   <head>
     <meta charset="utf-8" />
     <meta http-equiv="X-UA-Compatible" content="IE=edge" />
@@ -7,7 +7,7 @@
       name="viewport"
       content="width=device-width, initial-scale=1, shrink-to-fit=no"
     />
-    <title>Inventario de Activos - Sistema de Gestión Escolar</title>
+    <title>Lista de Activos - Gestión Escolar</title>
 
     <link
       th:href="@{/vendor/fontawesome-free/css/all.min.css}"
@@ -25,207 +25,410 @@
     />
   </head>
 
-  <body id="page-top" role="main">
-    <div id="wrapper" role="region" aria-label="Contenedor principal">
+  <body id="page-top">
+    <div id="wrapper">
       <div th:replace="~{fragments/sb-admin-sidebar :: sidebar}"></div>
 
-      <div
-        id="content-wrapper"
-        class="d-flex flex-column"
-        role="region"
-        aria-label="Contenido principal"
-      >
-        <div id="content" tabindex="-1">
+      <div id="content-wrapper" class="d-flex flex-column">
+        <div id="content">
           <div th:replace="~{fragments/sb-admin-topbar :: topbar}"></div>
 
-          <div class="container-fluid" role="main">
+          <div class="container-fluid">
+            <!-- Page Heading -->
             <div
               class="d-sm-flex align-items-center justify-content-between mb-4"
-              role="heading"
-              aria-level="1"
             >
               <h1 class="h3 mb-0 text-gray-800">
-                <i class="fas fa-boxes mr-2 text-primary"></i>Inventario de
-                Activos
+                <i class="fas fa-boxes text-primary mr-2"></i>Gestión de Activos
               </h1>
               <a
                 th:href="@{/infra/assets/new}"
-                class="btn btn-primary"
-                aria-label="Nuevo Activo"
+                class="btn btn-primary shadow-sm"
               >
-                <i class="fas fa-plus" aria-hidden="true"></i> Nuevo Activo
+                <i class="fas fa-plus fa-sm text-white-50"></i> Nuevo Activo
               </a>
             </div>
 
-            <div
-              th:if="${successMessage}"
-              class="alert alert-success alert-dismissible fade show"
-              role="alert"
-              aria-live="polite"
-            >
-              <span th:text="${successMessage}"></span>
-              <button
-                type="button"
-                class="close"
-                data-dismiss="alert"
-                aria-label="Cerrar alerta"
-              >
-                <span aria-hidden="true">&times;</span>
-              </button>
-            </div>
-            <div
-              th:if="${errorMessage}"
-              class="alert alert-danger alert-dismissible fade show"
-              role="alert"
-            >
-              <span th:text="${errorMessage}"></span>
-              <button
-                type="button"
-                class="close"
-                data-dismiss="alert"
-                aria-label="Close"
-              >
-                <span aria-hidden="true">&times;</span>
-              </button>
+            <!-- Filtros -->
+            <div class="card shadow mb-4 border-left-primary">
+              <div class="card-body">
+                <form
+                  method="get"
+                  th:action="@{/infra/assets}"
+                  class="form-inline"
+                >
+                  <div class="input-group mb-2 mr-sm-3">
+                    <div class="input-group-prepend">
+                      <div class="input-group-text">
+                        <i class="fas fa-filter text-primary"></i>
+                      </div>
+                    </div>
+                    <select
+                      name="category"
+                      class="form-control"
+                      onchange="this.form.submit()"
+                    >
+                      <option value="">Todas las Categorías</option>
+                      <option
+                        th:each="cat : ${T(com.school.infra.enums.AssetCategory).values()}"
+                        th:value="${cat}"
+                        th:text="${cat.displayName}"
+                        th:selected="${param.category != null && param.category[0] == cat.name()}"
+                      ></option>
+                    </select>
+                  </div>
+
+                  <div class="input-group mb-2 mr-sm-3">
+                    <div class="input-group-prepend">
+                      <div class="input-group-text">
+                        <i class="fas fa-toggle-on text-primary"></i>
+                      </div>
+                    </div>
+                    <select
+                      name="status"
+                      class="form-control"
+                      onchange="this.form.submit()"
+                    >
+                      <option value="">Todos los Estados</option>
+                      <option
+                        th:each="st : ${T(com.school.infra.enums.AssetStatus).values()}"
+                        th:value="${st}"
+                        th:text="${st.displayName}"
+                        th:selected="${param.status != null && param.status[0] == st.name()}"
+                      ></option>
+                    </select>
+                  </div>
+
+                  <div class="input-group mb-2 mr-sm-3">
+                    <div class="input-group-prepend">
+                      <div class="input-group-text">
+                        <i class="fas fa-search text-gray-400"></i>
+                      </div>
+                    </div>
+                    <input
+                      type="text"
+                      name="search"
+                      class="form-control"
+                      placeholder="Buscar nombre/serial..."
+                      th:value="${param.search}"
+                    />
+                  </div>
+
+                  <button type="submit" class="btn btn-secondary mb-2">
+                    Filtrar
+                  </button>
+                  <a
+                    th:href="@{/infra/assets}"
+                    class="btn btn-light mb-2 ml-2"
+                    title="Limpiar filtros"
+                  >
+                    <i class="fas fa-sync-alt"></i>
+                  </a>
+                </form>
+              </div>
             </div>
 
+            <!-- DataTales Example -->
             <div class="card shadow mb-4">
-              <div class="card-header py-3">
+              <div
+                class="card-header py-3 d-flex flex-row align-items-center justify-content-between"
+              >
                 <h6 class="m-0 font-weight-bold text-primary">
-                  Activos Registrados
+                  Listado de Activos
                 </h6>
+                <div class="dropdown no-arrow">
+                  <a
+                    class="dropdown-toggle"
+                    href="#"
+                    role="button"
+                    id="dropdownMenuLink"
+                    data-toggle="dropdown"
+                    aria-haspopup="true"
+                    aria-expanded="false"
+                  >
+                    <i class="fas fa-ellipsis-v fa-sm fa-fw text-gray-400"></i>
+                  </a>
+                  <div
+                    class="dropdown-menu dropdown-menu-right shadow animated--fade-in"
+                    aria-labelledby="dropdownMenuLink"
+                  >
+                    <div class="dropdown-header">Exportar:</div>
+                    <a class="dropdown-item" href="#"
+                      ><i class="fas fa-file-excel mr-2 text-success"></i
+                      >Excel</a
+                    >
+                    <a class="dropdown-item" href="#"
+                      ><i class="fas fa-file-pdf mr-2 text-danger"></i>PDF</a
+                    >
+                  </div>
+                </div>
               </div>
               <div class="card-body">
                 <div class="table-responsive">
-                  <table class="table table-bordered" id="dataTable">
-                    <thead>
+                  <table
+                    class="table table-bordered table-hover"
+                    id="dataTable"
+                    width="100%"
+                    cellspacing="0"
+                  >
+                    <thead class="thead-light">
                       <tr>
-                        <th>ID</th>
-                        <th>Nombre</th>
-                        <th>Tipo</th>
-                        <th>Número de Serie</th>
-                        <th>Fecha de Compra</th>
+                        <th>Activo</th>
+                        <th>Categoría</th>
+                        <th>Estado</th>
                         <th>Ubicación</th>
-                        <th>Acciones</th>
+                        <th>Condición</th>
+                        <th>Valor</th>
+                        <th class="text-center">Acciones</th>
                       </tr>
                     </thead>
                     <tbody>
-                      <tr th:each="asset : ${assets.content}">
-                        <td th:text="${asset.id}">1</td>
-                        <td th:text="${asset.name}">Proyector Epson</td>
+                      <tr th:each="asset : ${assets}">
                         <td>
-                          <span class="badge badge-info" th:text="${asset.type}"
-                            >Electronics</span
-                          >
-                        </td>
-                        <td th:text="${asset.serialNumber ?: '-'}">SN123456</td>
-                        <td
-                          th:text="${asset.purchaseDate != null ? #temporals.format(asset.purchaseDate, 'dd/MM/yyyy') : '-'}"
-                        >
-                          01/01/2024
-                        </td>
-                        <td
-                          th:text="${asset.room != null ? asset.room.name : 'Sin asignar'}"
-                        >
-                          Sala 101
+                          <div class="d-flex flex-column">
+                            <span
+                              class="font-weight-bold text-primary"
+                              th:text="${asset.name}"
+                              >Proyector</span
+                            >
+                            <small class="text-muted">
+                              <i class="fas fa-barcode"></i>
+                              <span th:text="${asset.serialNumber ?: 'S/N'}"
+                                >SN123</span
+                              >
+                            </small>
+                          </div>
                         </td>
                         <td>
-                          <a
-                            th:href="@{/infra/assets/edit/{id}(id=${asset.id})}"
-                            class="btn btn-sm btn-info"
-                            title="Editar"
+                          <span
+                            class="badge badge-light border"
+                            th:text="${asset.category.displayName}"
+                            >Electrónica</span
                           >
-                            <i class="fas fa-edit"></i>
-                          </a>
-                          <button
-                            type="button"
-                            class="btn btn-sm btn-danger"
-                            data-toggle="modal"
-                            data-target="#deleteModal"
-                            th:onclick="'confirmDelete(\\'' + @{/infra/assets/delete/{id}(id=${asset.id})} + '\\')'"
-                            title="Eliminar"
-                          >
-                            <i class="fas fa-trash"></i>
-                          </button>
                         </td>
-                      </tr>
-                      <tr th:if="${#lists.isEmpty(assets.content)}">
-                        <td colspan="7" class="text-center text-muted">
-                          No hay activos registrados.
+                        <td>
+                          <span
+                            class="badge badge-pill"
+                            th:classappend="${asset.status.badgeClass}"
+                            th:text="${asset.status.displayName}"
+                            >Activo</span
+                          >
+                        </td>
+                        <td>
+                          <span th:if="${asset.room != null}">
+                            <i
+                              class="fas fa-map-marker-alt text-danger mr-1"
+                            ></i>
+                            <span th:text="${asset.room.name}">Sala 101</span>
+                          </span>
+                          <span
+                            th:unless="${asset.room != null}"
+                            class="text-muted font-italic"
+                            >No asignado</span
+                          >
+                        </td>
+                        <td>
+                          <div
+                            class="progress progress-sm mt-1"
+                            style="height: 5px; width: 60px"
+                            title="Condición"
+                          >
+                            <div
+                              class="progress-bar"
+                              role="progressbar"
+                              th:style="'width: ' + ${asset.condition.conditionFactor * 100} + '%'"
+                              th:classappend="${asset.condition.name() == 'GOOD' || asset.condition.name() == 'EXCELLENT' ? 'bg-success' : (asset.condition.name() == 'FAIR' ? 'bg-warning' : 'bg-danger')}"
+                              aria-valuenow="100"
+                              aria-valuemin="0"
+                              aria-valuemax="100"
+                            ></div>
+                          </div>
+                          <small th:text="${asset.condition.displayName}"
+                            >Bueno</small
+                          >
+                        </td>
+                        <td class="text-right">
+                          <span
+                            th:text="${asset.purchaseValue != null ? '$' + #numbers.formatDecimal(asset.purchaseValue, 0, 'COMMA', 2, 'POINT') : '-'}"
+                            >$1,200.00</span
+                          >
+                        </td>
+                        <td class="text-center">
+                          <div class="btn-group" role="group">
+                            <a
+                              th:href="@{/infra/assets/edit/{id}(id=${asset.id})}"
+                              class="btn btn-warning btn-sm"
+                              title="Editar"
+                            >
+                              <i class="fas fa-edit"></i>
+                            </a>
+                            <a
+                              href="#"
+                              class="btn btn-info btn-sm"
+                              title="Historial"
+                            >
+                              <i class="fas fa-history"></i>
+                            </a>
+                            <a
+                              href="#"
+                              class="btn btn-danger btn-sm"
+                              title="Reportar Falla"
+                              data-toggle="modal"
+                              th:data-target="'#maintenanceModal-' + ${asset.id}"
+                            >
+                              <i class="fas fa-tools"></i>
+                            </a>
+                          </div>
+
+                          <!-- Modal Mantenimiento Rápido -->
+                          <div
+                            class="modal fade text-left"
+                            th:id="'maintenanceModal-' + ${asset.id}"
+                            tabindex="-1"
+                            role="dialog"
+                            aria-hidden="true"
+                          >
+                            <div class="modal-dialog" role="document">
+                              <div class="modal-content">
+                                <div class="modal-header bg-danger text-white">
+                                  <h5 class="modal-title">
+                                    <i class="fas fa-tools mr-2"></i>Solicitar
+                                    Mantenimiento
+                                  </h5>
+                                  <button
+                                    type="button"
+                                    class="close text-white"
+                                    data-dismiss="modal"
+                                    aria-label="Close"
+                                  >
+                                    <span aria-hidden="true">&times;</span>
+                                  </button>
+                                </div>
+                                <form
+                                  th:action="@{/infra/maintenance/quick-create}"
+                                  method="post"
+                                >
+                                  <div class="modal-body">
+                                    <input
+                                      type="hidden"
+                                      name="assetId"
+                                      th:value="${asset.id}"
+                                    />
+                                    <p>
+                                      Reportando falla para:
+                                      <strong th:text="${asset.name}"></strong>
+                                    </p>
+
+                                    <div class="form-group">
+                                      <label>Prioridad</label>
+                                      <select
+                                        name="priority"
+                                        class="form-control"
+                                        required
+                                      >
+                                        <option value="HIGH">Alta</option>
+                                        <option value="MEDIUM" selected>
+                                          Media
+                                        </option>
+                                        <option value="LOW">Baja</option>
+                                      </select>
+                                    </div>
+                                    <div class="form-group">
+                                      <label>Descripción del Problema</label>
+                                      <textarea
+                                        name="description"
+                                        class="form-control"
+                                        rows="3"
+                                        required
+                                        placeholder="Describa el problema..."
+                                      ></textarea>
+                                    </div>
+                                  </div>
+                                  <div class="modal-footer">
+                                    <button
+                                      type="button"
+                                      class="btn btn-secondary"
+                                      data-dismiss="modal"
+                                    >
+                                      Cancelar
+                                    </button>
+                                    <button
+                                      type="submit"
+                                      class="btn btn-danger"
+                                    >
+                                      Reportar
+                                    </button>
+                                  </div>
+                                </form>
+                              </div>
+                            </div>
+                          </div>
                         </td>
                       </tr>
                     </tbody>
                   </table>
+
+                  <div
+                    th:if="${assets.empty}"
+                    class="text-center text-muted py-4"
+                  >
+                    <i class="fas fa-boxes fa-3x mb-3 text-gray-300"></i><br />
+                    No se encontraron activos registrados.
+                  </div>
                 </div>
 
-                <!-- Pagination -->
-                <!-- Pagination -->
-                <div
+                <!-- Pagination (Placeholder) -->
+                <nav
                   th:if="${assets.totalPages > 1}"
-                  class="d-flex justify-content-center"
+                  aria-label="Page navigation"
                 >
-                  <nav aria-label="Page navigation">
-                    <ul class="pagination">
-                      <li
-                        class="page-item"
-                        th:classappend="${assets.number == 0} ? 'disabled'"
+                  <ul class="pagination justify-content-center">
+                    <li
+                      class="page-item"
+                      th:classappend="${assets.first} ? 'disabled'"
+                    >
+                      <a
+                        class="page-link"
+                        th:href="@{/infra/assets(page=${assets.number - 1})}"
+                        tabindex="-1"
+                        >Anterior</a
                       >
-                        <a
-                          class="page-link"
-                          th:href="@{/infra/assets(page=${assets.number - 1}, size=10)}"
-                          aria-label="Previous"
-                        >
-                          <span aria-hidden="true">&laquo;</span>
-                        </a>
-                      </li>
-                      <li
-                        class="page-item"
-                        th:each="i : ${#numbers.sequence(0, assets.totalPages - 1)}"
-                        th:classappend="${i == assets.number} ? 'active'"
+                    </li>
+                    <li class="page-item disabled">
+                      <span
+                        class="page-link"
+                        th:text="'Página ' + ${assets.number + 1} + ' de ' + ${assets.totalPages}"
+                      ></span>
+                    </li>
+                    <li
+                      class="page-item"
+                      th:classappend="${assets.last} ? 'disabled'"
+                    >
+                      <a
+                        class="page-link"
+                        th:href="@{/infra/assets(page=${assets.number + 1})}"
+                        >Siguiente</a
                       >
-                        <a
-                          class="page-link"
-                          th:href="@{/infra/assets(page=${i}, size=10)}"
-                          th:text="${i + 1}"
-                        ></a>
-                      </li>
-                      <li
-                        class="page-item"
-                        th:classappend="${assets.number == assets.totalPages - 1} ? 'disabled'"
-                      >
-                        <a
-                          class="page-link"
-                          th:href="@{/infra/assets(page=${assets.number + 1}, size=10)}"
-                          aria-label="Next"
-                        >
-                          <span aria-hidden="true">&raquo;</span>
-                        </a>
-                      </li>
-                    </ul>
-                  </nav>
-                </div>
+                    </li>
+                  </ul>
+                </nav>
               </div>
             </div>
           </div>
         </div>
+
         <div th:replace="~{fragments/sb-admin-footer :: footer}"></div>
       </div>
     </div>
 
-    <a class="scroll-to-top rounded" href="#page-top">
-      <i class="fas fa-angle-up"></i>
-    </a>
+    <a class="scroll-to-top rounded" href="#page-top"
+      ><i class="fas fa-angle-up"></i
+    ></a>
+    <div th:replace="~{fragments/sb-admin-topbar :: logoutModal}"></div>
 
     <script th:src="@{/vendor/jquery/jquery.min.js}"></script>
     <script th:src="@{/vendor/bootstrap/js/bootstrap.bundle.min.js}"></script>
     <script th:src="@{/vendor/jquery-easing/jquery.easing.min.js}"></script>
     <script th:src="@{/js/sb-admin-2.min.js}"></script>
-    <script th:src="@{/vendor/datatables/jquery.dataTables.min.js}"></script>
-    <script
-      th:src="@{/vendor/datatables/dataTables.bootstrap4.min.js}"
-    ></script>
-    <script th:src="@{/js/demo/datatables-demo.js}"></script>
-    <div th:replace="~{fragments/sb-admin-topbar :: logoutModal}"></div>
-    <div th:replace="~{fragments/delete-modal :: deleteModal}"></div>
   </body>
 </html>

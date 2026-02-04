@@ -18,20 +18,14 @@ package com.school.academic.entity;
 
 import java.time.LocalDateTime;
 import java.util.Objects;
+import java.util.HashSet;
+import java.util.Set;
 
 import com.school.academic.validation.ValidationGroups;
+import com.school.library.entity.Book;
+import com.school.library.entity.DigitalResource;
 
-import jakarta.persistence.Column;
-import jakarta.persistence.Entity;
-import jakarta.persistence.EntityListeners;
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.GenerationType;
-import jakarta.persistence.Id;
-import jakarta.persistence.Index;
-import jakarta.persistence.JoinColumn;
-import jakarta.persistence.ManyToOne;
-import jakarta.persistence.FetchType;
-import jakarta.persistence.Table;
+import jakarta.persistence.*;
 import jakarta.validation.constraints.Max;
 import jakarta.validation.constraints.Min;
 import jakarta.validation.constraints.NotBlank;
@@ -50,6 +44,14 @@ public class Course {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
+
+    @ManyToMany(fetch = FetchType.LAZY)
+    @JoinTable(name = "course_books", joinColumns = @JoinColumn(name = "course_id"), inverseJoinColumns = @JoinColumn(name = "book_id"))
+    private Set<Book> books = new HashSet<>();
+
+    @ManyToMany(fetch = FetchType.LAZY)
+    @JoinTable(name = "course_digital_resources", joinColumns = @JoinColumn(name = "course_id"), inverseJoinColumns = @JoinColumn(name = "resource_id"))
+    private Set<DigitalResource> digitalResources = new HashSet<>();
 
     @NotBlank(message = "El código del curso es obligatorio", groups = { ValidationGroups.Create.class,
             ValidationGroups.Update.class })
@@ -241,6 +243,22 @@ public class Course {
 
     public void setStudyPlan(StudyPlan studyPlan) {
         this.studyPlan = studyPlan;
+    }
+
+    public Set<Book> getBooks() {
+        return books;
+    }
+
+    public void setBooks(Set<Book> books) {
+        this.books = books;
+    }
+
+    public Set<DigitalResource> getDigitalResources() {
+        return digitalResources;
+    }
+
+    public void setDigitalResources(Set<DigitalResource> digitalResources) {
+        this.digitalResources = digitalResources;
     }
 
     @Override

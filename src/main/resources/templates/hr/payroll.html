@@ -109,12 +109,12 @@
               <div class="card-body">
                 <div class="table-responsive">
                   <table
-                    class="table table-bordered table-sm"
+                    class="table table-bordered table-hover table-sm"
                     id="dataTable"
                     width="100%"
                     cellspacing="0"
                   >
-                    <thead>
+                    <thead class="thead-light">
                       <tr>
                         <th>Personal</th>
                         <th>Salario Base</th>
@@ -123,7 +123,7 @@
                         <th>Neto a Pagar</th>
                         <th>Estado</th>
                         <th>Fecha Pago</th>
-                        <th>Acciones</th>
+                        <th class="text-center">Acciones</th>
                       </tr>
                     </thead>
                     <tbody>
@@ -152,7 +152,7 @@
                           >
                         </td>
                         <td th:text="${pay.paymentDate ?: '-'}">-</td>
-                        <td>
+                        <td class="text-center">
                           <form
                             th:if="${pay.status != null and pay.status.name() == 'PENDING'}"
                             th:action="@{/hr/payroll/pay/{id}(id=${pay.id})}"
@@ -167,14 +167,19 @@
                               type="submit"
                               class="btn btn-sm btn-outline-success px-3 shadow-sm"
                               onclick="return confirm('¿Marcar como pagado?');"
+                              title="Pagar"
                             >
-                              <i class="fas fa-check mr-1"></i> Pagar
+                              <i class="fas fa-check mr-1"></i>
                             </button>
                           </form>
                         </td>
                       </tr>
                       <tr th:if="${#lists.isEmpty(payrollList)}">
-                        <td colspan="8" class="text-center text-muted">
+                        <td colspan="8" class="text-center text-muted py-4">
+                          <i
+                            class="fas fa-money-bill-wave fa-3x mb-3 text-gray-300"
+                          ></i>
+                          <br />
                           No se ha generado nómina para este período.
                         </td>
                       </tr>

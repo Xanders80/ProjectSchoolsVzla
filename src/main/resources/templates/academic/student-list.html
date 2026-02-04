@@ -67,19 +67,19 @@
               <div class="card-body">
                 <div class="table-responsive">
                   <table
-                    class="table table-bordered"
+                    class="table table-bordered table-hover"
                     id="dataTable"
                     width="100%"
                     cellspacing="0"
                   >
-                    <thead>
+                    <thead class="thead-light">
                       <tr>
                         <th>ID</th>
                         <th>Nombre Completo</th>
                         <th>DNI</th>
                         <th>Matrícula</th>
                         <th>Correo Electrónico</th>
-                        <th>Acciones</th>
+                        <th class="text-center">Acciones</th>
                       </tr>
                     </thead>
                     <tbody>
@@ -89,33 +89,42 @@
                         <td th:text="${student.dni}">12345678</td>
                         <td th:text="${student.registrationNumber}">REG001</td>
                         <td th:text="${student.email}">john@example.com</td>
-                        <td>
-                          <a
-                            th:href="@{/students/edit/{id}(id=${student.id})}"
-                            class="btn btn-sm btn-warning"
-                          >
-                            <i class="fas fa-edit"></i> Editar
-                          </a>
-                          <a
-                            th:href="@{/health/student/{id}(id=${student.id})}"
-                            class="btn btn-sm btn-info"
-                            sec:authorize="hasAnyRole('ADMIN', 'DIRECTOR')"
-                          >
-                            <i class="fas fa-heartbeat"></i> Salud
-                          </a>
-                          <button
-                            type="button"
-                            class="btn btn-sm btn-danger"
-                            data-toggle="modal"
-                            data-target="#deleteModal"
-                            th:onclick="'confirmDelete(\'' + @{/students/delete/{id}(id=${student.id})} + '\')'"
-                          >
-                            <i class="fas fa-trash"></i> Eliminar
-                          </button>
+                        <td class="text-center">
+                          <div class="btn-group">
+                            <a
+                              th:href="@{/students/edit/{id}(id=${student.id})}"
+                              class="btn btn-sm btn-warning"
+                              title="Editar"
+                            >
+                              <i class="fas fa-edit"></i>
+                            </a>
+                            <a
+                              th:href="@{/health/student/{id}(id=${student.id})}"
+                              class="btn btn-sm btn-info"
+                              sec:authorize="hasAnyRole('ADMIN', 'DIRECTOR')"
+                              title="Salud"
+                            >
+                              <i class="fas fa-heartbeat"></i>
+                            </a>
+                            <button
+                              type="button"
+                              class="btn btn-sm btn-danger"
+                              data-toggle="modal"
+                              data-target="#deleteModal"
+                              th:onclick="'confirmDelete(\'' + @{/students/delete/{id}(id=${student.id})} + '\')'"
+                              title="Eliminar"
+                            >
+                              <i class="fas fa-trash"></i>
+                            </button>
+                          </div>
                         </td>
                       </tr>
                       <tr th:if="${students.empty}">
-                        <td colspan="6" class="text-center text-muted">
+                        <td colspan="6" class="text-center text-muted py-4">
+                          <i
+                            class="fas fa-user-graduate fa-3x mb-3 text-gray-300"
+                          ></i>
+                          <br />
                           No se encontraron estudiantes.
                         </td>
                       </tr>

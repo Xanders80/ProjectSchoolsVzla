@@ -40,11 +40,14 @@ public class CourseController {
     private static final String COURSE_FORM_VIEW = "academic/course-form";
     private final CourseService courseService;
     private final com.school.academic.service.CourseResourceService courseResourceService;
+    private final com.school.library.service.LibraryService libraryService;
 
     public CourseController(CourseService courseService,
-            com.school.academic.service.CourseResourceService courseResourceService) {
+            com.school.academic.service.CourseResourceService courseResourceService,
+            com.school.library.service.LibraryService libraryService) {
         this.courseService = courseService;
         this.courseResourceService = courseResourceService;
+        this.libraryService = libraryService;
     }
 
     @GetMapping
@@ -60,6 +63,8 @@ public class CourseController {
     @GetMapping("/new")
     public String newCourseForm(Model model) {
         model.addAttribute("course", new Course());
+        model.addAttribute("allBooks", libraryService.getAllBooks());
+        model.addAttribute("allDigitalResources", libraryService.getAllDigitalResources());
         return COURSE_FORM_VIEW;
     }
 
@@ -69,6 +74,8 @@ public class CourseController {
                     ValidationGroups.Update.class }) @ModelAttribute @NonNull Course course,
             org.springframework.validation.BindingResult result, Model model) {
         if (result.hasErrors()) {
+            model.addAttribute("allBooks", libraryService.getAllBooks());
+            model.addAttribute("allDigitalResources", libraryService.getAllDigitalResources());
             return COURSE_FORM_VIEW;
         }
 
@@ -76,6 +83,8 @@ public class CourseController {
             courseService.saveCourse(course);
         } catch (org.springframework.dao.DataIntegrityViolationException e) {
             result.rejectValue("code", "error.course", "Ese código de curso ya está en uso");
+            model.addAttribute("allBooks", libraryService.getAllBooks());
+            model.addAttribute("allDigitalResources", libraryService.getAllDigitalResources());
             return COURSE_FORM_VIEW;
         }
         return "redirect:/courses";
@@ -89,6 +98,10 @@ public class CourseController {
         // Resources
         model.addAttribute("resources", courseResourceService.getResourcesByCourseId(id));
         model.addAttribute("newResource", new com.school.academic.entity.CourseResource());
+
+        // Library Resources
+        model.addAttribute("allBooks", libraryService.getAllBooks());
+        model.addAttribute("allDigitalResources", libraryService.getAllDigitalResources());
 
         return COURSE_FORM_VIEW;
     }

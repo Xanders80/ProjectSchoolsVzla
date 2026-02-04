@@ -96,19 +96,19 @@
               <div class="card-body">
                 <div class="table-responsive">
                   <table
-                    class="table table-bordered"
+                    class="table table-bordered table-hover"
                     id="dataTable"
                     width="100%"
                     cellspacing="0"
                   >
-                    <thead>
+                    <thead class="thead-light">
                       <tr>
                         <th>ID</th>
                         <th>Nombre Completo</th>
                         <th>DNI</th>
                         <th>Departamento</th>
                         <th>Email</th>
-                        <th>Acciones</th>
+                        <th class="text-center">Acciones</th>
                       </tr>
                     </thead>
                     <tbody>
@@ -118,22 +118,33 @@
                         <td th:text="${teacher.dni}">12345678</td>
                         <td th:text="${teacher.department}">Ciencias</td>
                         <td th:text="${teacher.email}">juan@school.com</td>
-                        <td>
-                          <a
-                            th:href="@{/academic/teachers/{id}/profile(id=${teacher.id})}"
-                            class="btn btn-sm btn-info"
-                            title="Perfil Académico"
-                          >
-                            <i class="fas fa-user-graduate"></i> Perfil
-                          </a>
-                          <a
-                            th:href="@{/staff/edit/{id}(id=${teacher.id})}"
-                            class="btn btn-sm btn-warning"
-                            title="Editar Datos Personales"
-                            sec:authorize="hasRole('ADMIN')"
-                          >
-                            <i class="fas fa-edit"></i>
-                          </a>
+                        <td class="text-center">
+                          <div class="btn-group">
+                            <a
+                              th:href="@{/academic/teachers/{id}/profile(id=${teacher.id})}"
+                              class="btn btn-sm btn-info"
+                              title="Perfil Académico"
+                            >
+                              <i class="fas fa-user-graduate"></i>
+                            </a>
+                            <a
+                              th:href="@{/staff/edit/{id}(id=${teacher.id})}"
+                              class="btn btn-sm btn-warning"
+                              title="Editar Datos Personales"
+                              sec:authorize="hasRole('ADMIN')"
+                            >
+                              <i class="fas fa-edit"></i>
+                            </a>
+                          </div>
+                        </td>
+                      </tr>
+                      <tr th:if="${teachers.empty}">
+                        <td colspan="6" class="text-center text-muted py-4">
+                          <i
+                            class="fas fa-chalkboard-teacher fa-3x mb-3 text-gray-300"
+                          ></i>
+                          <br />
+                          No se encontraron profesores.
                         </td>
                       </tr>
                     </tbody>

@@ -893,7 +893,7 @@
                       >
                         <i class="fas fa-key mr-1"></i> Clave actualizada:
                         <span
-                          th:text="${#times.format(user.passwordChangedAt, 'dd/MM/yyyy')}"
+                          th:text="${#temporals.format(user.passwordChangedAt, 'dd/MM/yyyy')}"
                         ></span>
                       </span>
                     </div>

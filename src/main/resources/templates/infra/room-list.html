@@ -69,19 +69,19 @@
               <div class="card-body">
                 <div class="table-responsive">
                   <table
-                    class="table table-bordered"
+                    class="table table-bordered table-hover"
                     id="dataTable"
                     width="100%"
                     cellspacing="0"
                   >
-                    <thead>
+                    <thead class="thead-light">
                       <tr>
                         <th>ID</th>
                         <th>Number</th>
                         <th>Tipo</th>
                         <th>Capacidad</th>
                         <th>Edificio</th>
-                        <th>Acciones</th>
+                        <th class="text-center">Acciones</th>
                       </tr>
                     </thead>
                     <tbody>
@@ -91,26 +91,34 @@
                         <td th:text="${room.type}">Classroom</td>
                         <td th:text="${room.capacity}">30</td>
                         <td th:text="${room.building?.name}">Main Building</td>
-                        <td>
-                          <a
-                            th:href="@{/infra/rooms/edit/{id}(id=${room.id})}"
-                            class="btn btn-sm btn-warning"
-                          >
-                            <i class="fas fa-edit"></i> Editar
-                          </a>
-                          <button
-                            type="button"
-                            class="btn btn-sm btn-danger"
-                            data-toggle="modal"
-                            data-target="#deleteModal"
-                            th:onclick="'confirmDelete(\'' + @{/infra/rooms/delete/{id}(id=${room.id})} + '\')'"
-                          >
-                            <i class="fas fa-trash"></i> Eliminar
-                          </button>
+                        <td class="text-center">
+                          <div class="btn-group">
+                            <a
+                              th:href="@{/infra/rooms/edit/{id}(id=${room.id})}"
+                              class="btn btn-sm btn-warning"
+                              title="Editar"
+                            >
+                              <i class="fas fa-edit"></i>
+                            </a>
+                            <button
+                              type="button"
+                              class="btn btn-sm btn-danger"
+                              data-toggle="modal"
+                              data-target="#deleteModal"
+                              th:onclick="'confirmDelete(\'' + @{/infra/rooms/delete/{id}(id=${room.id})} + '\')'"
+                              title="Eliminar"
+                            >
+                              <i class="fas fa-trash"></i>
+                            </button>
+                          </div>
                         </td>
                       </tr>
                       <tr th:if="${rooms.empty}">
-                        <td colspan="6" class="text-center text-muted">
+                        <td colspan="6" class="text-center text-muted py-4">
+                          <i
+                            class="fas fa-door-open fa-3x mb-3 text-gray-300"
+                          ></i>
+                          <br />
                           No se encontraron aulas.
                         </td>
                       </tr>

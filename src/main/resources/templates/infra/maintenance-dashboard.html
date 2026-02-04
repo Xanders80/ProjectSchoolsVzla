@@ -1,0 +1,300 @@
+<!doctype html>
+<html xmlns:th="http://www.thymeleaf.org">
+  <head>
+    <meta charset="utf-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta
+      name="viewport"
+      content="width=device-width, initial-scale=1, shrink-to-fit=no"
+    />
+    <title>Dashboard de Mantenimiento - Gestión Escolar</title>
+
+    <link
+      th:href="@{/vendor/fontawesome-free/css/all.min.css}"
+      rel="stylesheet"
+      type="text/css"
+    />
+    <link
+      href="https://fonts.googleapis.com/css?family=Nunito:200,200i,300,300i,400,400i,600,600i,700,700i,800,800i,900,900i"
+      rel="stylesheet"
+    />
+    <link th:href="@{/css/sb-admin-2.min.css}" rel="stylesheet" />
+  </head>
+
+  <body id="page-top">
+    <div id="wrapper">
+      <div th:replace="~{fragments/sb-admin-sidebar :: sidebar}"></div>
+
+      <div id="content-wrapper" class="d-flex flex-column">
+        <div id="content">
+          <div th:replace="~{fragments/sb-admin-topbar :: topbar}"></div>
+
+          <div class="container-fluid">
+            <!-- Header -->
+            <div
+              class="d-sm-flex align-items-center justify-content-between mb-4"
+            >
+              <h1 class="h3 mb-0 text-gray-800">
+                <i class="fas fa-hammer text-primary mr-2"></i>Dashboard de
+                Mantenimiento
+              </h1>
+              <a
+                th:href="@{/infra/maintenance/new}"
+                class="d-none d-sm-inline-block btn btn-sm btn-primary shadow-sm"
+              >
+                <i class="fas fa-plus fa-sm text-white-50"></i> Nueva Solicitud
+              </a>
+            </div>
+
+            <!-- KPIs -->
+            <div class="row">
+              <!-- Pendientes -->
+              <div class="col-xl-3 col-md-6 mb-4">
+                <div class="card border-left-warning shadow h-100 py-2">
+                  <div class="card-body">
+                    <div class="row no-gutters align-items-center">
+                      <div class="col mr-2">
+                        <div
+                          class="text-xs font-weight-bold text-warning text-uppercase mb-1"
+                        >
+                          Pendientes
+                        </div>
+                        <div
+                          class="h5 mb-0 font-weight-bold text-gray-800"
+                          th:text="${totalPending}"
+                        >
+                          0
+                        </div>
+                      </div>
+                      <div class="col-auto">
+                        <i class="fas fa-clock fa-2x text-gray-300"></i>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+
+              <!-- En Progreso -->
+              <div class="col-xl-3 col-md-6 mb-4">
+                <div class="card border-left-info shadow h-100 py-2">
+                  <div class="card-body">
+                    <div class="row no-gutters align-items-center">
+                      <div class="col mr-2">
+                        <div
+                          class="text-xs font-weight-bold text-info text-uppercase mb-1"
+                        >
+                          En Progreso
+                        </div>
+                        <div
+                          class="h5 mb-0 font-weight-bold text-gray-800"
+                          th:text="${totalInProgress}"
+                        >
+                          0
+                        </div>
+                      </div>
+                      <div class="col-auto">
+                        <i class="fas fa-tools fa-2x text-gray-300"></i>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+
+              <!-- Costo Total -->
+              <div class="col-xl-3 col-md-6 mb-4">
+                <div class="card border-left-success shadow h-100 py-2">
+                  <div class="card-body">
+                    <div class="row no-gutters align-items-center">
+                      <div class="col mr-2">
+                        <div
+                          class="text-xs font-weight-bold text-success text-uppercase mb-1"
+                        >
+                          Costo Total (Histórico)
+                        </div>
+                        <div
+                          class="h5 mb-0 font-weight-bold text-gray-800"
+                          th:text="${totalCosts != null ? '$' + #numbers.formatDecimal(totalCosts, 0, 'COMMA', 2, 'POINT') : '$0.00'}"
+                        >
+                          $0.00
+                        </div>
+                      </div>
+                      <div class="col-auto">
+                        <i class="fas fa-dollar-sign fa-2x text-gray-300"></i>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <!-- Gráficos -->
+            <div class="row">
+              <!-- Pie Chart: Estado -->
+              <div class="col-lg-4">
+                <div class="card shadow mb-4">
+                  <div class="card-header py-3">
+                    <h6 class="m-0 font-weight-bold text-primary">
+                      Estado de Solicitudes
+                    </h6>
+                  </div>
+                  <div class="card-body">
+                    <div class="chart-pie pt-4 pb-2">
+                      <canvas id="statusPieChart"></canvas>
+                    </div>
+                  </div>
+                </div>
+              </div>
+
+              <!-- Bar Chart: Tipo -->
+              <div class="col-lg-4">
+                <div class="card shadow mb-4">
+                  <div class="card-header py-3">
+                    <h6 class="m-0 font-weight-bold text-primary">
+                      Tipos de Mantenimiento
+                    </h6>
+                  </div>
+                  <div class="card-body">
+                    <div class="chart-bar">
+                      <canvas id="typeBarChart"></canvas>
+                    </div>
+                  </div>
+                </div>
+              </div>
+
+              <!-- Bar Chart: Costos por Tipo -->
+              <div class="col-lg-4">
+                <div class="card shadow mb-4">
+                  <div class="card-header py-3">
+                    <h6 class="m-0 font-weight-bold text-success">
+                      Costos por Tipo
+                    </h6>
+                  </div>
+                  <div class="card-body">
+                    <div class="chart-bar">
+                      <canvas id="costBarChart"></canvas>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <div class="row">
+              <div class="col-lg-12">
+                <div class="card shadow mb-4">
+                  <div class="card-header py-3">
+                    <h6 class="m-0 font-weight-bold text-primary">
+                      Distrubución por Prioridad
+                    </h6>
+                  </div>
+                  <div class="card-body">
+                    <div class="progress" style="height: 30px">
+                      <!-- Barras de progreso dinámicas -->
+                      <!-- Nota: Para simplificar usamos ChartJS abajo en lugar de esto, pero dejo el contenedor vacio o con texto -->
+                      <canvas
+                        id="priorityBarChart"
+                        style="height: 100%; width: 100%"
+                      ></canvas>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div th:replace="~{fragments/sb-admin-footer :: footer}"></div>
+      </div>
+    </div>
+
+    <a class="scroll-to-top rounded" href="#page-top"
+      ><i class="fas fa-angle-up"></i
+    ></a>
+    <div th:replace="~{fragments/sb-admin-topbar :: logoutModal}"></div>
+
+    <script th:src="@{/vendor/jquery/jquery.min.js}"></script>
+    <script th:src="@{/vendor/bootstrap/js/bootstrap.bundle.min.js}"></script>
+    <script th:src="@{/vendor/jquery-easing/jquery.easing.min.js}"></script>
+    <script th:src="@{/js/sb-admin-2.min.js}"></script>
+    <script th:src="@{/vendor/chart.js/Chart.min.js}"></script>
+
+    <script th:inline="javascript">
+      ((Chart.defaults.global.defaultFontFamily = "Nunito"),
+        '-apple-system,system-ui,BlinkMacSystemFont,"Segoe UI",Roboto,"Helvetica Neue",Arial,sans-serif');
+      Chart.defaults.global.defaultFontColor = "#858796";
+
+      // --- Status Pie Chart ---
+      var statusLabels = /*[[${statusLabels}]]*/ [];
+      var statusData = /*[[${statusData}]]*/ [];
+      var ctxStatus = document.getElementById("statusPieChart");
+      new Chart(ctxStatus, {
+        type: "doughnut",
+        data: {
+          labels: statusLabels,
+          datasets: [
+            {
+              data: statusData,
+              backgroundColor: ["#f6c23e", "#36b9cc", "#1cc88a", "#e74a3b"], // Warning, Info, Success, Danger
+            },
+          ],
+        },
+        options: { maintainAspectRatio: false, legend: { position: "bottom" } },
+      });
+
+      // --- Type Bar Chart ---
+      var typeLabels = /*[[${typeLabels}]]*/ [];
+      var typeData = /*[[${typeData}]]*/ [];
+      var ctxType = document.getElementById("typeBarChart");
+      new Chart(ctxType, {
+        type: "bar",
+        data: {
+          labels: typeLabels,
+          datasets: [
+            {
+              label: "Solicitudes",
+              backgroundColor: "#4e73df",
+              data: typeData,
+            },
+          ],
+        },
+        options: { maintainAspectRatio: false, legend: { display: false } },
+      });
+
+      // --- Cost Bar Chart ---
+      var costLabels = /*[[${costLabels}]]*/ [];
+      var costData = /*[[${costData}]]*/ [];
+      var ctxCost = document.getElementById("costBarChart");
+      new Chart(ctxCost, {
+        type: "bar",
+        data: {
+          labels: costLabels,
+          datasets: [
+            {
+              label: "Costos ($)",
+              backgroundColor: "#1cc88a",
+              data: costData,
+            },
+          ],
+        },
+        options: { maintainAspectRatio: false, legend: { display: false } },
+      });
+
+      // --- Priority Horizontal Bar Chart ---
+      var priorityLabels = /*[[${priorityLabels}]]*/ [];
+      var priorityData = /*[[${priorityData}]]*/ [];
+      var ctxPriority = document.getElementById("priorityBarChart");
+      new Chart(ctxPriority, {
+        type: "horizontalBar",
+        data: {
+          labels: priorityLabels,
+          datasets: [
+            {
+              label: "Prioridad",
+              backgroundColor: ["#e74a3b", "#f6c23e", "#36b9cc", "#858796"], // Critical, High, Medium, Low
+              data: priorityData,
+            },
+          ],
+        },
+        options: { maintainAspectRatio: false, legend: { display: false } },
+      });
+    </script>
+  </body>
+</html>

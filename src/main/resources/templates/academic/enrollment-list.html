@@ -1,4 +1,4 @@
-<!DOCTYPE html>
+<!doctype html>
 <html xmlns:th="http://www.thymeleaf.org">
   <head>
     <meta charset="utf-8" />
@@ -94,18 +94,18 @@
               <div class="card-body">
                 <div class="table-responsive">
                   <table
-                    class="table table-bordered"
+                    class="table table-bordered table-hover"
                     id="dataTable"
                     width="100%"
                     cellspacing="0"
                   >
-                    <thead>
+                    <thead class="thead-light">
                       <tr>
                         <th>ID Alumno</th>
                         <th>Nombre Completo</th>
                         <th>Matrícula</th>
                         <th>Fecha Inscripción</th>
-                        <th width="150">Acciones</th>
+                        <th class="text-center">Acciones</th>
                       </tr>
                     </thead>
                     <tbody>
@@ -155,8 +155,11 @@
                       </tr>
                       <tr th:if="${#lists.isEmpty(enrollments)}">
                         <td colspan="5" class="text-center py-4 text-muted">
-                          <i class="fas fa-info-circle mr-1"></i> No hay alumnos
-                          inscritos en esta sección.
+                          <i
+                            class="fas fa-user-graduate fa-3x mb-3 text-gray-300"
+                          ></i
+                          ><br />
+                          No hay alumnos inscritos en esta sección.
                         </td>
                       </tr>
                     </tbody>

@@ -31,20 +31,32 @@
             >
               <h1 class="h3 mb-0 text-gray-800">
                 <i class="fas fa-chart-pie mr-2 text-primary"></i>Estadísticas
-                de Uso de Laboratorios
+                de Uso
               </h1>
-              <a
-                th:href="@{/infra/labs/reservations}"
-                class="btn btn-secondary"
-              >
-                <i class="fas fa-arrow-left"></i> Volver
-              </a>
+              <div class="btn-group shadow-sm">
+                <a
+                  th:href="@{/infra/labs/reservations}"
+                  class="btn btn-secondary btn-sm"
+                >
+                  <i class="fas fa-arrow-left fa-sm text-white-50 mr-1"></i>
+                  Volver
+                </a>
+                <button
+                  class="btn btn-primary btn-sm ml-1"
+                  onclick="loadStatistics()"
+                >
+                  <i class="fas fa-sync-alt fa-sm text-white-50 mr-1"></i>
+                  Actualizar
+                </button>
+              </div>
             </div>
 
             <!-- Summary Cards -->
             <div class="row">
               <div class="col-xl-3 col-md-6 mb-4">
-                <div class="card border-left-primary shadow h-100 py-2">
+                <div
+                  class="card border-left-primary shadow h-100 py-2 transition-card"
+                >
                   <div class="card-body">
                     <div class="row no-gutters align-items-center">
                       <div class="col mr-2">
@@ -70,7 +82,9 @@
               </div>
 
               <div class="col-xl-3 col-md-6 mb-4">
-                <div class="card border-left-success shadow h-100 py-2">
+                <div
+                  class="card border-left-success shadow h-100 py-2 transition-card"
+                >
                   <div class="card-body">
                     <div class="row no-gutters align-items-center">
                       <div class="col mr-2">
@@ -96,7 +110,9 @@
               </div>
 
               <div class="col-xl-3 col-md-6 mb-4">
-                <div class="card border-left-info shadow h-100 py-2">
+                <div
+                  class="card border-left-info shadow h-100 py-2 transition-card"
+                >
                   <div class="card-body">
                     <div class="row no-gutters align-items-center">
                       <div class="col mr-2">
@@ -122,14 +138,16 @@
               </div>
 
               <div class="col-xl-3 col-md-6 mb-4">
-                <div class="card border-left-warning shadow h-100 py-2">
+                <div
+                  class="card border-left-warning shadow h-100 py-2 transition-card"
+                >
                   <div class="card-body">
                     <div class="row no-gutters align-items-center">
                       <div class="col mr-2">
                         <div
                           class="text-xs font-weight-bold text-warning text-uppercase mb-1"
                         >
-                          Promedio Horas/Reserva
+                          Promedio Horas
                         </div>
                         <div
                           class="h5 mb-0 font-weight-bold text-gray-800"
@@ -150,15 +168,17 @@
 
             <!-- Filters -->
             <div class="card shadow mb-4">
-              <div class="card-header py-3">
+              <div class="card-header py-3 bg-gray-100">
                 <h6 class="m-0 font-weight-bold text-primary">
-                  Filtros de Fecha
+                  <i class="fas fa-filter mr-1"></i> Filtros de Reporte
                 </h6>
               </div>
               <div class="card-body">
-                <form id="filterForm" class="form-inline">
-                  <div class="form-group mr-3">
-                    <label for="fromDate" class="mr-2">Desde:</label>
+                <form id="filterForm" class="row align-items-end">
+                  <div class="col-md-4 mb-3">
+                    <label class="font-weight-bold small text-gray-600"
+                      >Fecha Inicio</label
+                    >
                     <input
                       type="date"
                       class="form-control"
@@ -166,8 +186,10 @@
                       th:value="${from}"
                     />
                   </div>
-                  <div class="form-group mr-3">
-                    <label for="toDate" class="mr-2">Hasta:</label>
+                  <div class="col-md-4 mb-3">
+                    <label class="font-weight-bold small text-gray-600"
+                      >Fecha Fin</label
+                    >
                     <input
                       type="date"
                       class="form-control"
@@ -175,22 +197,30 @@
                       th:value="${to}"
                     />
                   </div>
-                  <button
-                    type="button"
-                    class="btn btn-primary"
-                    id="filterButton"
-                    onclick="loadStatistics()"
-                  >
-                    <i class="fas fa-search"></i> Filtrar
-                  </button>
-                  <div id="loadingIndicator" class="ml-3 d-none">
-                    <div
-                      class="spinner-border spinner-border-sm text-primary"
-                      role="status"
+                  <div class="col-md-4 mb-3">
+                    <button
+                      type="button"
+                      class="btn btn-primary shadow-sm btn-block"
+                      id="filterButton"
+                      onclick="loadStatistics()"
                     >
-                      <span class="sr-only">Cargando...</span>
+                      <i class="fas fa-search mr-1"></i> Generar Análisis
+                    </button>
+                  </div>
+                  <div id="loadingIndicator" class="col-12 d-none">
+                    <div class="progress progress-sm mb-2">
+                      <div
+                        class="progress-bar progress-bar-striped progress-bar-animated"
+                        role="progressbar"
+                        style="width: 100%"
+                      ></div>
                     </div>
-                    <span class="ml-2">Cargando datos...</span>
+                    <p
+                      class="text-center small text-primary mb-0 font-weight-bold"
+                    >
+                      <i class="fas fa-circle-notch fa-spin mr-1"></i>
+                      Analizando datos en tiempo real...
+                    </p>
                   </div>
                 </form>
               </div>
@@ -198,76 +228,120 @@
 
             <!-- Charts Row -->
             <div class="row">
-              <!-- Lab Usage Chart -->
-              <div class="col-xl-6 col-lg-6">
+              <div class="col-xl-8 col-lg-7">
                 <div class="card shadow mb-4">
-                  <div class="card-header py-3">
+                  <div
+                    class="card-header py-3 d-flex flex-row align-items-center justify-content-between"
+                  >
                     <h6 class="m-0 font-weight-bold text-primary">
                       Reservas por Laboratorio
                     </h6>
                   </div>
                   <div class="card-body">
-                    <canvas id="labUsageChart"></canvas>
+                    <div class="chart-area" style="height: 320px">
+                      <canvas id="labUsageChart"></canvas>
+                    </div>
                   </div>
                 </div>
               </div>
 
-              <!-- Status Distribution Chart -->
-              <div class="col-xl-6 col-lg-6">
+              <div class="col-xl-4 col-lg-5">
                 <div class="card shadow mb-4">
-                  <div class="card-header py-3">
+                  <div
+                    class="card-header py-3 d-flex flex-row align-items-center justify-content-between"
+                  >
                     <h6 class="m-0 font-weight-bold text-primary">
                       Distribución por Estado
                     </h6>
                   </div>
                   <div class="card-body">
-                    <canvas id="statusChart"></canvas>
+                    <div class="chart-pie pt-4 pb-2" style="height: 250px">
+                      <canvas id="statusChart"></canvas>
+                    </div>
+                    <div class="mt-4 text-center small text-gray-500">
+                      <span class="mr-2"
+                        ><i class="fas fa-circle text-warning"></i>
+                        Pendiente</span
+                      >
+                      <span class="mr-2"
+                        ><i class="fas fa-circle text-success"></i>
+                        Aprobado</span
+                      >
+                      <span class="mr-2"
+                        ><i class="fas fa-circle text-danger"></i>
+                        Rechazado</span
+                      >
+                    </div>
                   </div>
                 </div>
               </div>
             </div>
 
-            <!-- Top Teachers & Peak Hours -->
             <div class="row">
               <div class="col-xl-6 col-lg-6">
                 <div class="card shadow mb-4">
                   <div class="card-header py-3">
                     <h6 class="m-0 font-weight-bold text-primary">
-                      Top 10 Docentes
+                      Top 10 Docentes con Mayor Uso
                     </h6>
                   </div>
                   <div class="card-body">
-                    <canvas id="topTeachersChart"></canvas>
+                    <div class="chart-bar" style="height: 300px">
+                      <canvas id="topTeachersChart"></canvas>
+                    </div>
                   </div>
                 </div>
               </div>
 
               <div class="col-xl-6 col-lg-6">
                 <div class="card shadow mb-4">
-                  <div class="card-header py-3">
+                  <div class="card-header py-3 border-bottom-secondary">
                     <h6 class="m-0 font-weight-bold text-primary">
-                      Horarios Pico
+                      Densidad de Uso por Horario
                     </h6>
                   </div>
                   <div class="card-body">
-                    <canvas id="peakHoursChart"></canvas>
+                    <div class="chart-area" style="height: 300px">
+                      <canvas id="peakHoursChart"></canvas>
+                    </div>
                   </div>
                 </div>
               </div>
             </div>
 
-            <!-- Export Buttons -->
-            <div class="card shadow mb-4">
-              <div class="card-body text-center">
-                <p class="text-muted mb-3">
-                  Exportar reportes con los filtros aplicados
-                </p>
-                <button class="btn btn-danger mr-2" onclick="exportToPdf()">
-                  <i class="fas fa-file-pdf"></i> Exportar a PDF
-                </button>
-                <button class="btn btn-success" onclick="exportToExcel()">
-                  <i class="fas fa-file-excel"></i> Exportar a Excel
-                </button>
+            <!-- Export Actions -->
+            <div class="card shadow mb-5">
+              <div class="card-body">
+                <div class="row align-items-center">
+                  <div class="col-lg-6">
+                    <h5 class="font-weight-bold text-gray-800 mb-1">
+                      Exportar Información
+                    </h5>
+                    <p class="text-muted small mb-lg-0">
+                      Descargue los reportes analíticos en formato oficial.
+                    </p>
+                  </div>
+                  <div class="col-lg-6 text-lg-right">
+                    <button
+                      class="btn btn-outline-danger btn-icon-split mr-2"
+                      onclick="exportToPdf()"
+                    >
+                      <span class="icon text-white-50"
+                        ><i class="fas fa-file-pdf"></i
+                      ></span>
+                      <span class="text">PDF Analítico</span>
+                    </button>
+                    <button
+                      class="btn btn-outline-success btn-icon-split"
+                      onclick="exportToExcel()"
+                    >
+                      <span class="icon text-white-50"
+                        ><i class="fas fa-file-excel"></i
+                      ></span>
+                      <span class="text">Data Excel</span>
+                    </button>
+                  </div>
+                </div>
               </div>
             </div>
           </div>
@@ -276,8 +350,11 @@
       </div>
     </div>
 
+    <div th:replace="~{fragments/sb-admin-topbar :: logoutModal}"></div>
+
     <script th:src="@{/vendor/jquery/jquery.min.js}"></script>
     <script th:src="@{/vendor/bootstrap/js/bootstrap.bundle.min.js}"></script>
+    <script th:src="@{/vendor/jquery-easing/jquery.easing.min.js}"></script>
     <script th:src="@{/js/sb-admin-2.min.js}"></script>
     <script src="https://cdn.jsdelivr.net/npm/chart.js@2.9.4/dist/Chart.min.js"></script>
 
@@ -309,13 +386,17 @@
         loading.classList.remove("d-none");
 
         fetch(`/infra/labs/statistics/data?from=${from}&to=${to}`)
-          .then((response) => response.json())
+          .then((response) => {
+            if (!response.ok) throw new Error("Network response was not ok");
+            return response.json();
+          })
           .then((data) => {
             renderCharts(data);
           })
           .catch((error) => {
+            console.error("Error fetching statistics:", error);
             alert(
-              "Error al cargar las estadísticas. Verifica tu conexión e inténtalo de nuevo.",
+              "Error al cargar las estadísticas. Por favor, intente de nuevo más tarde.",
             );
           })
           .finally(() => {
@@ -348,7 +429,15 @@
           options: {
             responsive: true,
             maintainAspectRatio: false,
-            scales: { y: { beginAtZero: true } },
+            scales: {
+              yAxes: [
+                {
+                  ticks: {
+                    beginAtZero: true,
+                  },
+                },
+              ],
+            },
           },
         });
 
@@ -418,7 +507,15 @@
           options: {
             responsive: true,
             maintainAspectRatio: false,
-            scales: { y: { beginAtZero: true } },
+            scales: {
+              yAxes: [
+                {
+                  ticks: {
+                    beginAtZero: true,
+                  },
+                },
+              ],
+            },
           },
         });
       }
