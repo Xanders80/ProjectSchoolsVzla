@@ -21,6 +21,13 @@ import com.school.core.service.ParentService;
 public class ParentController {
 
     private static final String PARENT_FORM_VIEW = "admin/parent-form";
+    private static final String REDIRECT_PARENTS = "redirect:/parents";
+    private static final String ERROR_PARENT_NOT_FOUND = "Representante no encontrado.";
+    private static final String SUCCESS_PARENT_SAVED = "Representante guardado exitosamente.";
+    private static final String SUCCESS_PARENT_DELETED = "Representante eliminado exitosamente.";
+    private static final String ERROR_SAVING_PARENT = "Error al guardar el representante: ";
+    private static final String ERROR_DELETING_PARENT = "Error al eliminar el representante: ";
+    
     private final ParentService parentService;
     private final AcademicService academicService;
 
@@ -59,23 +66,23 @@ public class ParentController {
                 java.util.Set<com.school.academic.entity.Student> managedChildren = new java.util.HashSet<>();
                 for (com.school.academic.entity.Student transientStudent : parent.getChildren()) {
                     if (transientStudent.getId() != null) {
-                        academicService.getStudentById(transientStudent.getId()).ifPresent(managedChildren::add);
+                        academicService.getStudentById(java.util.Objects.requireNonNull(transientStudent.getId(),
+                                "El ID del estudiante no puede ser null")).ifPresent(managedChildren::add);
                     }
                 }
                 parent.setChildren(managedChildren);
             }
 
             parentService.saveParent(parent);
-            redirectAttributes.addFlashAttribute("successMessage", "Representante guardado exitosamente.");
+            redirectAttributes.addFlashAttribute("successMessage", SUCCESS_PARENT_SAVED);
         } catch (IllegalArgumentException e) {
             model.addAttribute("errorMessage", e.getMessage());
             model.addAttribute("students", academicService.getAllStudents());
             return PARENT_FORM_VIEW;
         } catch (Exception e) {
-            redirectAttributes.addFlashAttribute("errorMessage",
-                    "Error al guardar el representante: " + e.getMessage());
+            redirectAttributes.addFlashAttribute("errorMessage", ERROR_SAVING_PARENT + e.getMessage());
         }
-        return "redirect:/parents";
+        return REDIRECT_PARENTS;
     }
 
     @GetMapping("/edit/{id}")
@@ -86,8 +93,8 @@ public class ParentController {
             model.addAttribute("students", academicService.getAllStudents());
             return PARENT_FORM_VIEW;
         } else {
-            redirectAttributes.addFlashAttribute("errorMessage", "Representante no encontrado.");
-            return "redirect:/parents";
+            redirectAttributes.addFlashAttribute("errorMessage", ERROR_PARENT_NOT_FOUND);
+            return REDIRECT_PARENTS;
         }
     }
 
@@ -95,11 +102,10 @@ public class ParentController {
     public String deleteParent(@PathVariable @NonNull Long id, RedirectAttributes redirectAttributes) {
         try {
             parentService.deleteParent(id);
-            redirectAttributes.addFlashAttribute("successMessage", "Representante eliminado exitosamente.");
+            redirectAttributes.addFlashAttribute("successMessage", SUCCESS_PARENT_DELETED);
         } catch (Exception e) {
-            redirectAttributes.addFlashAttribute("errorMessage",
-                    "Error al eliminar el representante: " + e.getMessage());
+            redirectAttributes.addFlashAttribute("errorMessage", ERROR_DELETING_PARENT + e.getMessage());
         }
-        return "redirect:/parents";
+        return REDIRECT_PARENTS;
     }
 }

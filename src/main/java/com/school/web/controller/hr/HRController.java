@@ -26,6 +26,16 @@ import com.school.hr.service.HRService;
 @PreAuthorize("hasAnyRole('ADMIN', 'DIRECTOR')")
 public class HRController {
 
+    private static final String REDIRECT_CONTRACTS = "redirect:/hr/contracts";
+    private static final String REDIRECT_ATTENDANCE = "redirect:/hr/attendance";
+    private static final String SUCCESS_CONTRACT_SAVED = "Contrato guardado correctamente.";
+    private static final String SUCCESS_CHECKIN = "Entrada registrada.";
+    private static final String SUCCESS_CHECKOUT = "Salida registrada.";
+    private static final String SUCCESS_PAYROLL_GENERATED = "Nómina generada para el período ";
+    private static final String SUCCESS_PAYMENT_REGISTERED = "Pago registrado.";
+    private static final String ERROR_START_DATE_REQUIRED = "Fecha de inicio es requerida";
+    private static final String ERROR_STAFF_ID_NULL = "ID de personal no puede ser null";
+    
     private final HRService hrService;
     private final StaffService staffService;
 
@@ -47,34 +57,21 @@ public class HRController {
     @PostMapping("/contracts/save")
     public String saveContract(@ModelAttribute Contract contract, RedirectAttributes redirectAttributes) {
 
-        // Verificar campos LocalDate antes de guardar
         if (contract.getStartDate() == null) {
-            redirectAttributes.addFlashAttribute("errorMessage", "Fecha de inicio es requerida");
-            return "redirect:/hr/contracts";
-        }
-        if (contract.getEndDate() == null) {
-            // EndDate is optional in form logic usually, but here controller enforced it?
-            // If the original code enforced it, I should keep it or check if form marks it
-            // required.
-            // Form label says "Fecha Fin (Opc.)". So it should be optional!
-            // I will REMOVE the check for EndDate if it's supposed to be optional.
-            // However, the original code threw exception. Maybe business logic requires it?
-            // Let's assume for now we want to allow null if it's optional.
-            // BUT, strictly respecting the user's previous logic: "Fecha de finalización es
-            // requerida"
-            // Wait, template says "Fecha Fin (Opc.)". Controller says Required.
-            // I will make it optional in controller to match template.
+            redirectAttributes.addFlashAttribute("errorMessage", ERROR_START_DATE_REQUIRED);
+            return REDIRECT_CONTRACTS;
         }
 
-        // Hydrate Staff
         if (contract.getStaff() != null && contract.getStaff().getId() != null) {
-            staffService.getStaffById(contract.getStaff().getId())
+            staffService
+                    .getStaffById(java.util.Objects.requireNonNull(contract.getStaff().getId(),
+                            ERROR_STAFF_ID_NULL))
                     .ifPresent(contract::setStaff);
         }
 
         hrService.saveContract(contract);
-        redirectAttributes.addFlashAttribute("successMessage", "Contrato guardado correctamente.");
-        return "redirect:/hr/contracts";
+        redirectAttributes.addFlashAttribute("successMessage", SUCCESS_CONTRACT_SAVED);
+        return REDIRECT_CONTRACTS;
     }
 
     // --- ATTENDANCE ---
@@ -94,8 +91,8 @@ public class HRController {
             @RequestParam @DateTimeFormat(pattern = "HH:mm") LocalTime time,
             RedirectAttributes redirectAttributes) {
         hrService.markCheckIn(staffId, time);
-        redirectAttributes.addFlashAttribute("successMessage", "Entrada registrada.");
-        return "redirect:/hr/attendance";
+        redirectAttributes.addFlashAttribute("successMessage", SUCCESS_CHECKIN);
+        return REDIRECT_ATTENDANCE;
     }
 
     @PostMapping("/attendance/checkout")
@@ -104,11 +101,11 @@ public class HRController {
             RedirectAttributes redirectAttributes) {
         try {
             hrService.markCheckOut(staffId, time);
-            redirectAttributes.addFlashAttribute("successMessage", "Salida registrada.");
+            redirectAttributes.addFlashAttribute("successMessage", SUCCESS_CHECKOUT);
         } catch (IllegalArgumentException e) {
             redirectAttributes.addFlashAttribute("errorMessage", e.getMessage());
         }
-        return "redirect:/hr/attendance";
+        return REDIRECT_ATTENDANCE;
     }
 
     // --- PAYROLL ---
@@ -124,7 +121,7 @@ public class HRController {
     @PostMapping("/payroll/generate")
     public String generatePayroll(@RequestParam String period, RedirectAttributes redirectAttributes) {
         hrService.generatePayrollForPeriod(period);
-        redirectAttributes.addFlashAttribute("successMessage", "Nómina generada para el período " + period);
+        redirectAttributes.addFlashAttribute("successMessage", SUCCESS_PAYROLL_GENERATED + period);
         return "redirect:/hr/payroll?period=" + period;
     }
 
@@ -132,7 +129,7 @@ public class HRController {
     public String markAsPaid(@PathVariable @NonNull Long id, @RequestParam String period,
             RedirectAttributes redirectAttributes) {
         hrService.payPayroll(id);
-        redirectAttributes.addFlashAttribute("successMessage", "Pago registrado.");
+        redirectAttributes.addFlashAttribute("successMessage", SUCCESS_PAYMENT_REGISTERED);
         return "redirect:/hr/payroll?period=" + period;
     }
 }

@@ -71,7 +71,9 @@ public class CurriculumGridController {
         try {
             // Hydrate StudyPlan
             if (curriculumGrid.getStudyPlan() != null && curriculumGrid.getStudyPlan().getId() != null) {
-                studyPlanService.getStudyPlanById(curriculumGrid.getStudyPlan().getId())
+                studyPlanService
+                        .getStudyPlanById(java.util.Objects.requireNonNull(curriculumGrid.getStudyPlan().getId(),
+                                "ID de plan de estudio no puede ser null"))
                         .ifPresent(curriculumGrid::setStudyPlan);
             }
 

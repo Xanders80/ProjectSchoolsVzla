@@ -1,0 +1,28 @@
+<!doctype html>
+<html xmlns:th="http://www.thymeleaf.org">
+  <head>
+    <title>Malla Curricular</title>
+  </head>
+  <body>
+    <h1>Lista de Mallas Curriculares</h1>
+    <a th:href="@{/academic/malla-curricular/nuevo}">Nueva Malla</a>
+    <table>
+      <thead>
+        <tr>
+          <th>Nombre</th>
+          <th>Acciones</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr th:each="grid : ${grids}">
+          <td th:text="${grid.name}"></td>
+          <td>
+            <a th:href="@{'/academic/malla-curricular/eliminar/' + ${grid.id}}"
+              >Eliminar</a
+            >
+          </td>
+        </tr>
+      </tbody>
+    </table>
+  </body>
+</html>

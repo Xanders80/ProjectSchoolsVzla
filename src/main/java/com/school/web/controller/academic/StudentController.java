@@ -78,7 +78,8 @@ public class StudentController {
             return STUDENT_FORM_VIEW;
         }
         try {
-            Student savedStudent = academicService.saveStudent(student);
+            Student savedStudent = academicService
+                    .saveStudent(java.util.Objects.requireNonNull(student, "El estudiante no puede ser null"));
             redirectAttributes.addFlashAttribute(MSG_SUCCESS,
                     "Estudiante guardado exitosamente. Número de registro: " + savedStudent.getRegistrationNumber());
             return REDIRECT_STUDENTS;

@@ -1,0 +1,51 @@
+<!doctype html>
+<html xmlns:th="http://www.thymeleaf.org" lang="es">
+  <head>
+    <meta charset="utf-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no" />
+    <title>Desarrollo Docente - Sistema de Gestión Escolar</title>
+    <link th:href="@{/vendor/fontawesome-free/css/all.min.css}" rel="stylesheet" type="text/css" />
+    <link href="https://fonts.googleapis.com/css?family=Nunito:200,200i,300,300i,400,400i,600,600i,700,700i,800,800i,900,900i" rel="stylesheet" />
+    <link th:href="@{/css/sb-admin-2.min.css}" rel="stylesheet" />
+  </head>
+  <body id="page-top">
+    <div id="wrapper">
+      <div th:replace="~{fragments/sb-admin-sidebar :: sidebar}"></div>
+      <div id="content-wrapper" class="d-flex flex-column">
+        <div id="content">
+          <div th:replace="~{fragments/sb-admin-topbar :: topbar}"></div>
+          <div class="container-fluid">
+            <h1 class="h3 mb-4 text-gray-800"><i class="fas fa-chalkboard-teacher mr-2"></i>Nueva Actividad de Desarrollo</h1>
+            <div class="card shadow mb-4">
+              <div class="card-body">
+                <form th:action="@{/academic/desarrollo-docente}" th:object="${teacherDevelopment}" method="post">
+                  <div class="form-group">
+                    <label for="title">Título/Curso:</label>
+                    <input type="text" class="form-control" th:field="*{title}" id="title" required />
+                  </div>
+                  <div class="form-group">
+                    <label for="institution">Institución:</label>
+                    <input type="text" class="form-control" th:field="*{institution}" id="institution" required />
+                  </div>
+                  <div class="form-group">
+                    <label for="attainmentDate">Fecha de Obtención:</label>
+                    <input type="date" class="form-control" th:field="*{attainmentDate}" id="attainmentDate" required />
+                  </div>
+                  <button type="submit" class="btn btn-primary"><i class="fas fa-save"></i> Guardar</button>
+                  <a th:href="@{/academic/desarrollo-docente}" class="btn btn-secondary"><i class="fas fa-arrow-left"></i> Volver</a>
+                </form>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div th:replace="~{fragments/sb-admin-footer :: footer}"></div>
+      </div>
+    </div>
+    <script th:src="@{/vendor/jquery/jquery.min.js}"></script>
+    <script th:src="@{/vendor/bootstrap/js/bootstrap.bundle.min.js}"></script>
+    <script th:src="@{/vendor/jquery-easing/jquery.easing.min.js}"></script>
+    <script th:src="@{/js/sb-admin-2.min.js}"></script>
+    <div th:replace="~{fragments/sb-admin-topbar :: logoutModal}"></div>
+  </body>
+</html>

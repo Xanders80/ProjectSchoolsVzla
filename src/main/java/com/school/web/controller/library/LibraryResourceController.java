@@ -75,7 +75,8 @@ public class LibraryResourceController {
             return FORM_VIEW;
         }
         try {
-            libraryService.saveDigitalResource(resource);
+            libraryService.saveDigitalResource(
+                    java.util.Objects.requireNonNull(resource, "El recurso digital no puede ser null"));
             redirectAttributes.addFlashAttribute(MSG_SUCCESS, SUCCESS_MSG);
         } catch (Exception e) {
             redirectAttributes.addFlashAttribute(MSG_ERROR, ERROR_MSG + e.getMessage());

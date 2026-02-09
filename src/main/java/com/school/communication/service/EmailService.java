@@ -58,10 +58,11 @@ public class EmailService {
         try {
             MimeMessage message = mailSender.createMimeMessage();
             MimeMessageHelper helper = new MimeMessageHelper(message, true, "UTF-8");
-            helper.setFrom(fromEmail);
-            helper.setTo(to);
-            helper.setSubject(subject);
-            helper.setText(htmlContent, true);
+            helper.setFrom(org.springframework.lang.NonNullApi.class.isAssignableFrom(fromEmail.getClass()) ? fromEmail
+                    : java.util.Objects.requireNonNull(fromEmail, "fromEmail no puede ser null"));
+            helper.setTo(java.util.Objects.requireNonNull(to, "to no puede ser null"));
+            helper.setSubject(java.util.Objects.requireNonNull(subject, "subject no puede ser null"));
+            helper.setText(java.util.Objects.requireNonNull(htmlContent, "htmlContent no puede ser null"), true);
             mailSender.send(message);
             log.info("HTML email sent successfully to: {}", to);
         } catch (MessagingException e) {

@@ -1,7 +1,7 @@
 package com.school.academic.service;
 
 import java.util.List;
-import java.util.stream.Collectors;
+// ...existing code...
 
 import org.springframework.lang.NonNull;
 import org.springframework.stereotype.Service;
@@ -15,6 +15,20 @@ import com.school.academic.repository.StudentRepository;
 @Service
 @Transactional
 public class PromotionService {
+    // Métodos CRUD para el controlador
+    public List<com.school.academic.entity.Promotion> findAll() {
+        // Implementación básica, reemplazar por lógica real
+        return List.of();
+    }
+
+    public com.school.academic.entity.Promotion save(com.school.academic.entity.Promotion promotion) {
+        // Implementación básica, reemplazar por lógica real
+        return promotion;
+    }
+
+    public void delete(Long id) {
+        // Implementación básica, reemplazar por lógica real
+    }
 
     private final GradeRepository gradeRepository;
     private final StudentRepository studentRepository;
@@ -34,8 +48,9 @@ public class PromotionService {
      */
     public PromotionResult evaluatePromotion(@NonNull Long studentId, @NonNull Long periodId) {
         List<Grade> grades = gradeRepository.findByStudentIdAndDeletedFalseOrderByDateDesc(studentId).stream()
-                .filter(g -> g.getPeriod() != null && g.getPeriod().getId().equals(periodId))
-                .collect(Collectors.toList());
+                .filter(g -> g.getPeriod() != null && g.getPeriod().getId() != null
+                        && g.getPeriod().getId().equals(periodId))
+                .toList();
 
         if (grades.isEmpty()) {
             return new PromotionResult(studentId, "NO_DATA", 0.0, 0);
@@ -44,8 +59,14 @@ public class PromotionService {
         double average = grades.stream().mapToDouble(Grade::getScore).average().orElse(0.0);
         long failedCourses = grades.stream().filter(g -> g.getScore() < 60.0).count();
 
-        String status = (average >= 70.0 && failedCourses <= 2) ? "PROMOTED"
-                : (failedCourses > 4) ? "RETAINED" : "PENDING_RECOVERY";
+        String status;
+        if (average >= 70.0 && failedCourses <= 2) {
+            status = "PROMOTED";
+        } else if (failedCourses > 4) {
+            status = "RETAINED";
+        } else {
+            status = "PENDING_RECOVERY";
+        }
 
         return new PromotionResult(studentId, status, average, (int) failedCourses);
     }
@@ -57,7 +78,8 @@ public class PromotionService {
         List<Student> activeStudents = studentRepository.findAllActive();
 
         for (Student student : activeStudents) {
-            PromotionResult result = evaluatePromotion(student.getId(), periodId);
+            PromotionResult result = evaluatePromotion(
+                    java.util.Objects.requireNonNull(student.getId(), "ID de estudiante no puede ser null"), periodId);
             // Aquí se podría actualizar una entidad 'AcademicHistory' o similar si
             // existiera
             // Por ahora registramos en auditoría y log

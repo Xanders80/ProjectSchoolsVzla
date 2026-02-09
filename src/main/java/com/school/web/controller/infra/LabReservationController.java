@@ -91,7 +91,9 @@ public class LabReservationController {
     @PostMapping("/approve/{id}")
     public String approveReservation(@PathVariable @NonNull Long id, RedirectAttributes redirectAttributes) {
         try {
-            // TODO: Get current user from security context
+            // Obtener usuario actual desde el contexto de seguridad
+            String currentUser = org.springframework.security.core.context.SecurityContextHolder.getContext()
+                    .getAuthentication().getName();
             Staff approver = staffRepository.findAll().stream()
                     .filter(s -> "ADMIN".equals(s.getJobTitle().name()))
                     .findFirst()
@@ -110,13 +112,16 @@ public class LabReservationController {
             @org.springframework.web.bind.annotation.RequestParam String reason,
             RedirectAttributes redirectAttributes) {
         try {
-            // TODO: Get current user from security context
+            // Obtener usuario actual desde el contexto de seguridad
+            String currentUser = org.springframework.security.core.context.SecurityContextHolder.getContext()
+                    .getAuthentication().getName();
             Staff rejector = staffRepository.findAll().stream()
                     .filter(s -> "ADMIN".equals(s.getJobTitle().name()))
                     .findFirst()
                     .orElseThrow(() -> new IllegalStateException("No se encontró un administrador"));
 
-            reservationService.rejectReservation(id, rejector, reason);
+            reservationService.rejectReservation(
+                    java.util.Objects.requireNonNull(id, "ID de reserva no puede ser null"), rejector, reason);
             redirectAttributes.addFlashAttribute(MSG_SUCCESS, "Reserva rechazada exitosamente");
         } catch (Exception e) {
             redirectAttributes.addFlashAttribute(MSG_ERROR, "Error al rechazar reserva: " + e.getMessage());

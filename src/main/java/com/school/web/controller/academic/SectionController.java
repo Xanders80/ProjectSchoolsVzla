@@ -79,7 +79,9 @@ public class SectionController extends BaseDeleteController {
         if (section.getCourse() == null || section.getCourse().getId() == null) {
             result.rejectValue("course", "NotNull", "El curso es obligatorio");
         } else {
-            courseRepository.findById(section.getCourse().getId())
+            courseRepository
+                    .findById(java.util.Objects.requireNonNull(section.getCourse().getId(),
+                            "ID de curso no puede ser null"))
                     .ifPresentOrElse(section::setCourse,
                             () -> result.rejectValue("course", "NotFound", "El curso seleccionado no existe"));
         }
@@ -88,7 +90,9 @@ public class SectionController extends BaseDeleteController {
         if (section.getPeriod() == null || section.getPeriod().getId() == null) {
             result.rejectValue("period", "NotNull", "El periodo académico es obligatorio");
         } else {
-            academicPeriodRepository.findById(section.getPeriod().getId())
+            academicPeriodRepository
+                    .findById(java.util.Objects.requireNonNull(section.getPeriod().getId(),
+                            "ID de periodo no puede ser null"))
                     .ifPresentOrElse(section::setPeriod,
                             () -> result.rejectValue("period", "NotFound", "El periodo seleccionado no existe"));
         }
@@ -100,14 +104,18 @@ public class SectionController extends BaseDeleteController {
 
         // 3. Optional Relationships Hydration
         if (section.getTeacher() != null && section.getTeacher().getId() != null) {
-            staffService.getStaffById(section.getTeacher().getId())
+            staffService
+                    .getStaffById(java.util.Objects.requireNonNull(section.getTeacher().getId(),
+                            "ID de docente no puede ser null"))
                     .ifPresent(section::setTeacher);
         } else {
             section.setTeacher(null);
         }
 
         if (section.getRoom() != null && section.getRoom().getId() != null) {
-            infraService.getRoomById(section.getRoom().getId())
+            infraService
+                    .getRoomById(
+                            java.util.Objects.requireNonNull(section.getRoom().getId(), "ID de aula no puede ser null"))
                     .ifPresent(section::setRoom);
         } else {
             section.setRoom(null);

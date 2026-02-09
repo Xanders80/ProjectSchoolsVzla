@@ -1,0 +1,20 @@
+<!doctype html>
+<html xmlns:th="http://www.thymeleaf.org">
+  <head>
+    <title>Nueva Malla Curricular</title>
+  </head>
+  <body>
+    <h1>Nueva Malla Curricular</h1>
+    <form
+      th:action="@{/academic/malla-curricular}"
+      th:object="${curriculumGrid}"
+      method="post"
+    >
+      <label>Nombre:</label>
+      <input type="text" th:field="*{name}" required />
+      <br />
+      <button type="submit">Guardar</button>
+    </form>
+    <a th:href="@{/academic/malla-curricular}">Volver a la lista</a>
+  </body>
+</html>

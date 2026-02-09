@@ -21,6 +21,12 @@ public class InfraController {
 
     private static final String BUILDING_FORM_VIEW = "infra/building-form";
     private static final String ROOM_FORM_VIEW = "infra/room-form";
+    private static final String REDIRECT_BUILDINGS = "redirect:/infra/buildings";
+    private static final String REDIRECT_ROOMS = "redirect:/infra/rooms";
+    private static final String ERROR_INVALID_BUILDING = "Invalid building Id:";
+    private static final String ERROR_INVALID_ROOM = "Invalid room Id:";
+    private static final String ERROR_BUILDING_ID_NULL = "ID de edificio no puede ser null";
+    
     private final InfraService infraService;
 
     public InfraController(InfraService infraService) {
@@ -52,20 +58,20 @@ public class InfraController {
             return BUILDING_FORM_VIEW;
         }
         infraService.saveBuilding(building);
-        return "redirect:/infra/buildings";
+        return REDIRECT_BUILDINGS;
     }
 
     @GetMapping("/buildings/edit/{id}")
     public String editBuildingForm(@PathVariable @NonNull Long id, Model model) {
         model.addAttribute("building", infraService.getBuildingById(id)
-                .orElseThrow(() -> new IllegalArgumentException("Invalid building Id:" + id)));
+                .orElseThrow(() -> new IllegalArgumentException(ERROR_INVALID_BUILDING + id)));
         return BUILDING_FORM_VIEW;
     }
 
     @RequestMapping(value = "/buildings/delete/{id}", method = { RequestMethod.POST, RequestMethod.DELETE })
     public String deleteBuilding(@PathVariable @NonNull Long id) {
         infraService.deleteBuilding(id);
-        return "redirect:/infra/buildings";
+        return REDIRECT_BUILDINGS;
     }
 
     // Room Routes
@@ -96,20 +102,21 @@ public class InfraController {
             return ROOM_FORM_VIEW;
         }
 
-        // Hydrate Building to prevent TransientPropertyValueException
         if (room.getBuilding() != null && room.getBuilding().getId() != null) {
-            infraService.getBuildingById(room.getBuilding().getId())
+            infraService
+                    .getBuildingById(java.util.Objects.requireNonNull(room.getBuilding().getId(),
+                            ERROR_BUILDING_ID_NULL))
                     .ifPresent(room::setBuilding);
         }
 
         infraService.saveRoom(room);
-        return "redirect:/infra/rooms";
+        return REDIRECT_ROOMS;
     }
 
     @GetMapping("/rooms/edit/{id}")
     public String editRoomForm(@PathVariable @NonNull Long id, Model model) {
         model.addAttribute("room",
-                infraService.getRoomById(id).orElseThrow(() -> new IllegalArgumentException("Invalid room Id:" + id)));
+                infraService.getRoomById(id).orElseThrow(() -> new IllegalArgumentException(ERROR_INVALID_ROOM + id)));
         model.addAttribute("buildings", infraService.getAllBuildings());
         return ROOM_FORM_VIEW;
     }
@@ -117,6 +124,6 @@ public class InfraController {
     @RequestMapping(value = "/rooms/delete/{id}", method = { RequestMethod.POST, RequestMethod.DELETE })
     public String deleteRoom(@PathVariable @NonNull Long id) {
         infraService.deleteRoom(id);
-        return "redirect:/infra/rooms";
+        return REDIRECT_ROOMS;
     }
 }

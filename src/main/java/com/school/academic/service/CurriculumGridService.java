@@ -13,6 +13,30 @@ import com.school.academic.repository.CurriculumGridRepository;
 @Service
 @Transactional
 public class CurriculumGridService {
+    // Métodos CRUD para el controlador
+    public List<CurriculumGrid> findAll() {
+        return curriculumGridRepository.findAll();
+    }
+
+    public CurriculumGrid save(@NonNull CurriculumGrid curriculumGrid) {
+        // Validación de campos obligatorios
+        if (curriculumGrid.getGradeLevel() == null) {
+            throw new IllegalArgumentException("El nivel de grado es obligatorio.");
+        }
+        if (curriculumGrid.getStudyPlan() == null) {
+            throw new IllegalArgumentException("El plan de estudios es obligatorio.");
+        }
+        // Validación de unicidad por plan y grado
+        boolean exists = curriculumGridRepository.findAll().stream()
+                .anyMatch(grid -> grid.getStudyPlan().equals(curriculumGrid.getStudyPlan()) &&
+                        grid.getGradeLevel().equals(curriculumGrid.getGradeLevel()) &&
+                        (curriculumGrid.getId() == null || !grid.getId().equals(curriculumGrid.getId())));
+        if (exists) {
+            throw new IllegalArgumentException("Ya existe una malla curricular para ese plan y grado.");
+        }
+        calculateTotalHours(curriculumGrid);
+        return curriculumGridRepository.save(curriculumGrid);
+    }
 
     private final CurriculumGridRepository curriculumGridRepository;
 
@@ -28,10 +52,7 @@ public class CurriculumGridService {
         return Optional.ofNullable(curriculumGridRepository.findByStudyPlanAndGradeLevel(studyPlanId, gradeLevel));
     }
 
-    public CurriculumGrid save(@NonNull CurriculumGrid curriculumGrid) {
-        calculateTotalHours(curriculumGrid);
-        return curriculumGridRepository.save(curriculumGrid);
-    }
+    // ...existing code...
 
     public void delete(@NonNull Long id) {
         curriculumGridRepository.deleteById(id);

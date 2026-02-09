@@ -39,7 +39,8 @@ public class CourseForumController {
         com.school.academic.entity.Course course = courseService.getCourseById(courseId)
                 .orElseThrow(() -> new IllegalArgumentException("Curso no encontrado"));
 
-        CourseForum forum = forumService.getOrCreateForum(course);
+        CourseForum forum = forumService
+                .getOrCreateForum(java.util.Objects.requireNonNull(course, "El curso no puede ser null"));
         model.addAttribute("forum", forum);
         model.addAttribute("course", course);
 
@@ -65,7 +66,8 @@ public class CourseForumController {
             User author = userRepository.findByUsername(username)
                     .orElseThrow(() -> new IllegalArgumentException("Usuario no encontrado"));
 
-            forumService.postMessage(forumId, author, content);
+            forumService.postMessage(forumId, java.util.Objects.requireNonNull(author, "El autor no puede ser null"),
+                    content);
             redirectAttributes.addFlashAttribute("successMessage", "Mensaje publicado");
         } catch (Exception e) {
             redirectAttributes.addFlashAttribute("errorMessage", "Error al publicar mensaje: " + e.getMessage());

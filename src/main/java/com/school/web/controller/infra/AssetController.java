@@ -26,6 +26,10 @@ import jakarta.validation.Valid;
 @Controller
 @RequestMapping("/infra/assets")
 public class AssetController {
+    private static final String ROOMS = "rooms";
+    private static final String ASSET_FORM = "infra/asset-form";
+    private static final String ERROR_MESSAGE = "errorMessage";
+    private static final String REDIRECT_ASSETS = "redirect:/infra/assets";
 
     private final AssetService assetService;
     private final InfraService infraService;
@@ -70,7 +74,9 @@ public class AssetController {
             int start = Math.min((int) PageRequest.of(page, size).getOffset(), filteredList.size());
             int end = Math.min((start + size), filteredList.size());
             Page<Asset> assetsPage = new org.springframework.data.domain.PageImpl<>(
-                    filteredList.subList(start, end), PageRequest.of(page, size), filteredList.size());
+                    java.util.Objects.requireNonNull(filteredList.subList(start, end),
+                            "Lista de activos no puede ser null"),
+                    PageRequest.of(page, size), filteredList.size());
             model.addAttribute("assets", assetsPage);
         } else {
             Pageable pageable = PageRequest.of(page, size, Sort.by(Sort.Direction.ASC, "name"));
@@ -83,8 +89,8 @@ public class AssetController {
     @GetMapping("/new")
     public String newAssetForm(Model model) {
         model.addAttribute("asset", new Asset());
-        model.addAttribute("rooms", infraService.getAllRooms());
-        return "infra/asset-form";
+        model.addAttribute(ROOMS, infraService.getAllRooms());
+        return ASSET_FORM;
     }
 
     @PostMapping
@@ -93,8 +99,8 @@ public class AssetController {
             Model model,
             RedirectAttributes redirectAttributes) {
         if (result.hasErrors()) {
-            model.addAttribute("rooms", infraService.getAllRooms());
-            return "infra/asset-form";
+            model.addAttribute(ROOMS, infraService.getAllRooms());
+            return ASSET_FORM;
         }
         try {
             if (asset.getId() == null) {
@@ -102,15 +108,16 @@ public class AssetController {
                 assetService.createAsset(asset);
             } else {
                 // Actualizar activo existente
-                assetService.updateAsset(asset.getId(), asset);
+                assetService.updateAsset(
+                        java.util.Objects.requireNonNull(asset.getId(), "ID de activo no puede ser null"), asset);
             }
             redirectAttributes.addFlashAttribute("successMessage", "Activo guardado exitosamente");
         } catch (Exception e) {
-            model.addAttribute("errorMessage", "Error al guardar el activo: " + e.getMessage());
-            model.addAttribute("rooms", infraService.getAllRooms());
-            return "infra/asset-form";
+            model.addAttribute(ERROR_MESSAGE, "Error al guardar el activo: " + e.getMessage());
+            model.addAttribute(ROOMS, infraService.getAllRooms());
+            return ASSET_FORM;
         }
-        return "redirect:/infra/assets";
+        return REDIRECT_ASSETS;
     }
 
     @GetMapping("/edit/{id}")
@@ -118,12 +125,12 @@ public class AssetController {
         return assetService.getAssetById(id)
                 .map(asset -> {
                     model.addAttribute("asset", asset);
-                    model.addAttribute("rooms", infraService.getAllRooms());
-                    return "infra/asset-form";
+                    model.addAttribute(ROOMS, infraService.getAllRooms());
+                    return ASSET_FORM;
                 })
                 .orElseGet(() -> {
-                    redirectAttributes.addFlashAttribute("errorMessage", "Activo no encontrado");
-                    return "redirect:/infra/assets";
+                    redirectAttributes.addFlashAttribute(ERROR_MESSAGE, "Activo no encontrado");
+                    return REDIRECT_ASSETS;
                 });
     }
 
@@ -133,8 +140,8 @@ public class AssetController {
             assetService.deleteAsset(id);
             redirectAttributes.addFlashAttribute("successMessage", "Activo eliminado exitosamente");
         } catch (Exception e) {
-            redirectAttributes.addFlashAttribute("errorMessage", "Error al eliminar el activo");
+            redirectAttributes.addFlashAttribute(ERROR_MESSAGE, "Error al eliminar el activo");
         }
-        return "redirect:/infra/assets";
+        return REDIRECT_ASSETS;
     }
 }

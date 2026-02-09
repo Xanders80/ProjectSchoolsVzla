@@ -35,6 +35,15 @@ import jakarta.persistence.EntityNotFoundException;
 @Transactional
 public class MaintenanceService {
 
+    private static final String ERROR_REQUEST_NOT_FOUND = "Solicitud no encontrada";
+    private static final String ERROR_ASSET_ID_NULL = "ID de activo no puede ser null";
+    private static final String ERROR_REQUEST_NULL = "La solicitud no puede ser nula";
+    private static final String ERROR_DESCRIPTION_REQUIRED = "La descripción es obligatoria";
+    private static final String ERROR_TYPE_REQUIRED = "El tipo de mantenimiento es obligatorio";
+    private static final String ERROR_ASSET_OR_ROOM_REQUIRED = "La solicitud debe tener asociado un activo o una ubicación";
+    private static final String ERROR_NEGATIVE_ESTIMATED_COST = "El costo estimado no puede ser negativo";
+    private static final String ERROR_NEGATIVE_ACTUAL_COST = "El costo real no puede ser negativo";
+    
     private final MaintenanceRequestRepository maintenanceRepository;
     private final AssetService assetService;
 
@@ -78,7 +87,9 @@ public class MaintenanceService {
         if (request.getAsset() != null) {
             Asset asset = request.getAsset();
             if (asset.getStatus() == AssetStatus.ACTIVE) {
-                assetService.updateStatus(asset.getId(), AssetStatus.IN_MAINTENANCE);
+                assetService.updateStatus(
+                        java.util.Objects.requireNonNull(asset.getId(), ERROR_ASSET_ID_NULL),
+                        AssetStatus.IN_MAINTENANCE);
             }
         }
 
@@ -90,7 +101,7 @@ public class MaintenanceService {
      */
     public MaintenanceRequest updateRequest(@NonNull Long id, @NonNull MaintenanceRequest updatedRequest) {
         MaintenanceRequest existing = getRequestById(id)
-                .orElseThrow(() -> new EntityNotFoundException("Solicitud no encontrada con ID: " + id));
+                .orElseThrow(() -> new EntityNotFoundException(ERROR_REQUEST_NOT_FOUND + " con ID: " + id));
 
         // No permitir actualización si está en estado final
         if (existing.getStatus().isFinalState()) {
@@ -112,7 +123,7 @@ public class MaintenanceService {
 
     public void deleteRequest(@NonNull Long id) {
         MaintenanceRequest request = getRequestById(id)
-                .orElseThrow(() -> new EntityNotFoundException("Solicitud no encontrada con ID: " + id));
+                .orElseThrow(() -> new EntityNotFoundException(ERROR_REQUEST_NOT_FOUND + " con ID: " + id));
 
         // Solo permitir eliminar si está pendiente
         if (request.getStatus() != MaintenanceStatus.PENDING) {
@@ -130,7 +141,7 @@ public class MaintenanceService {
      */
     public MaintenanceRequest updateStatus(@NonNull Long id, @NonNull MaintenanceStatus newStatus) {
         MaintenanceRequest request = getRequestById(id)
-                .orElseThrow(() -> new EntityNotFoundException("Solicitud no encontrada con ID: " + id));
+                .orElseThrow(() -> new EntityNotFoundException(ERROR_REQUEST_NOT_FOUND + " con ID: " + id));
 
         // La validación de transición se hace en el setter de la entidad
         try {
@@ -147,7 +158,7 @@ public class MaintenanceService {
      */
     public MaintenanceRequest assignTechnician(@NonNull Long requestId, @NonNull Long technicianId) {
         MaintenanceRequest request = getRequestById(requestId)
-                .orElseThrow(() -> new EntityNotFoundException("Solicitud no encontrada"));
+                .orElseThrow(() -> new EntityNotFoundException(ERROR_REQUEST_NOT_FOUND));
 
         // Validar que esté en estado que permita asignación
         if (request.getStatus() != MaintenanceStatus.PENDING) {
@@ -172,7 +183,7 @@ public class MaintenanceService {
             @NonNull String resolution,
             BigDecimal actualCost) {
         MaintenanceRequest request = getRequestById(requestId)
-                .orElseThrow(() -> new EntityNotFoundException("Solicitud no encontrada"));
+                .orElseThrow(() -> new EntityNotFoundException(ERROR_REQUEST_NOT_FOUND));
 
         // Validar que esté en progreso
         if (request.getStatus() != MaintenanceStatus.IN_PROGRESS) {
@@ -201,7 +212,9 @@ public class MaintenanceService {
                     .count();
 
             if (otherActiveMaintenance == 0 && asset.getStatus() == AssetStatus.IN_MAINTENANCE) {
-                assetService.updateStatus(asset.getId(), AssetStatus.ACTIVE);
+                assetService.updateStatus(
+                        java.util.Objects.requireNonNull(asset.getId(), ERROR_ASSET_ID_NULL),
+                        AssetStatus.ACTIVE);
             }
         }
 
@@ -213,7 +226,7 @@ public class MaintenanceService {
      */
     public MaintenanceRequest cancelRequest(@NonNull Long requestId, @NonNull String reason) {
         MaintenanceRequest request = getRequestById(requestId)
-                .orElseThrow(() -> new EntityNotFoundException("Solicitud no encontrada"));
+                .orElseThrow(() -> new EntityNotFoundException(ERROR_REQUEST_NOT_FOUND));
 
         // Validar que no esté ya completada
         if (request.getStatus() == MaintenanceStatus.COMPLETED) {
@@ -235,7 +248,9 @@ public class MaintenanceService {
                     .count();
 
             if (otherActiveMaintenance == 0 && asset.getStatus() == AssetStatus.IN_MAINTENANCE) {
-                assetService.updateStatus(asset.getId(), AssetStatus.ACTIVE);
+                assetService.updateStatus(
+                        java.util.Objects.requireNonNull(asset.getId(), ERROR_ASSET_ID_NULL),
+                        AssetStatus.ACTIVE);
             }
         }
 
@@ -386,32 +401,29 @@ public class MaintenanceService {
      */
     private void validateRequest(MaintenanceRequest request) {
         if (request == null) {
-            throw new BusinessValidationException("La solicitud no puede ser nula");
+            throw new BusinessValidationException(ERROR_REQUEST_NULL);
         }
 
         if (request.getDescription() == null || request.getDescription().isBlank()) {
-            throw new BusinessValidationException("La descripción es obligatoria");
+            throw new BusinessValidationException(ERROR_DESCRIPTION_REQUIRED);
         }
 
         if (request.getType() == null) {
-            throw new BusinessValidationException("El tipo de mantenimiento es obligatorio");
+            throw new BusinessValidationException(ERROR_TYPE_REQUIRED);
         }
 
-        // Validar que tenga al menos un activo o una ubicación
         if (request.getAsset() == null && request.getRoom() == null) {
-            throw new BusinessValidationException(
-                    "La solicitud debe tener asociado un activo o una ubicación");
+            throw new BusinessValidationException(ERROR_ASSET_OR_ROOM_REQUIRED);
         }
 
-        // Validar costos
         if (request.getEstimatedCost() != null &&
                 request.getEstimatedCost().compareTo(BigDecimal.ZERO) < 0) {
-            throw new BusinessValidationException("El costo estimado no puede ser negativo");
+            throw new BusinessValidationException(ERROR_NEGATIVE_ESTIMATED_COST);
         }
 
         if (request.getActualCost() != null &&
                 request.getActualCost().compareTo(BigDecimal.ZERO) < 0) {
-            throw new BusinessValidationException("El costo real no puede ser negativo");
+            throw new BusinessValidationException(ERROR_NEGATIVE_ACTUAL_COST);
         }
     }
 }

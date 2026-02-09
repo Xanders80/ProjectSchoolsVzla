@@ -421,23 +421,11 @@
                   </div>
 
                   <!-- Valor Actual Calculado -->
-                  <div
-                    class="row"
-                    th:if="${asset.purchaseValue != null && asset.purchaseDate != null}"
-                  >
+                  <div class="row" th:if="${asset.id != null}">
                     <div class="col-md-12">
                       <div class="alert alert-info">
                         <i class="fas fa-info-circle mr-2"></i>
-                        <strong>Valor Actual Estimado:</strong>
-                        <span
-                          th:text="${#numbers.formatCurrency(asset.calculateCurrentValue(#temporals.createNow()))}"
-                          >$0.00</span
-                        >
-                        (Depreciado desde
-                        <span
-                          th:text="${#temporals.format(asset.purchaseDate, 'dd/MM/yyyy')}"
-                        ></span
-                        >)
+                        <strong>Información:</strong> El valor actual se calcula automáticamente considerando la depreciación.
                       </div>
                     </div>
                   </div>
@@ -483,32 +471,11 @@
                       </div>
                     </div>
 
-                    <div
-                      class="col-md-6"
-                      th:if="${asset.purchaseDate != null && asset.warrantyMonths != null}"
-                    >
+                    <div class="col-md-6" th:if="${asset.id != null}">
                       <div class="form-group">
-                        <label class="font-weight-bold"
-                          >Estado de Garantía</label
-                        >
-                        <div th:switch="${asset.isUnderWarranty()}">
-                          <div th:case="true" class="alert alert-success mb-0">
-                            <i class="fas fa-check-circle"></i>
-                            <strong>Vigente</strong> hasta
-                            <span
-                              th:text="${#temporals.format(asset.getWarrantyExpiry(), 'dd/MM/yyyy')}"
-                            ></span>
-                          </div>
-                          <div
-                            th:case="false"
-                            class="alert alert-secondary mb-0"
-                          >
-                            <i class="fas fa-times-circle"></i>
-                            <strong>Expirada</strong> desde
-                            <span
-                              th:text="${#temporals.format(asset.getWarrantyExpiry(), 'dd/MM/yyyy')}"
-                            ></span>
-                          </div>
+                        <label class="font-weight-bold">Estado de Garantía</label>
+                        <div class="alert alert-info mb-0">
+                          <i class="fas fa-info-circle"></i> La garantía se calcula automáticamente desde la fecha de compra.
                         </div>
                       </div>
                     </div>
