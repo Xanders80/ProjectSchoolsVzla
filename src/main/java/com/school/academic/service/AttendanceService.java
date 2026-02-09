@@ -57,7 +57,6 @@ public class AttendanceService {
             Attendance attendance = existingMap.get(studentId);
             if (attendance == null) {
                 attendance = new Attendance();
-                @SuppressWarnings("null")
                 Student student = studentRepository.findById(studentId)
                         .orElseThrow(() -> new IllegalArgumentException("Estudiante no encontrado: " + studentId));
                 attendance.setStudent(student);

@@ -89,10 +89,12 @@ public class SectionService {
         }
     }
 
-    @SuppressWarnings("null")
     @NonNull
     private String getCurrentUser() {
         org.springframework.security.core.Authentication auth = SecurityContextHolder.getContext().getAuthentication();
-        return (auth != null) ? auth.getName() : "system";
+        if (auth != null && auth.getName() != null) {
+            return auth.getName();
+        }
+        return "system";
     }
 }
