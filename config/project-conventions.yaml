@@ -1,0 +1,115 @@
+# Project Conventions
+# Convenciones del proyecto School Management System
+
+version: "1.0.0"
+
+project_info:
+  name: "school-management"
+  description: "School Management System"
+  language: "Java 21"
+  framework: "Spring Boot 3.5.10"
+  build_tool: "Maven"
+  database: "MariaDB"
+  template_engine: "Thymeleaf"
+  ui_framework: "SB Admin 2 (Bootstrap 4)"
+
+package_structure:
+  base: "com.school"
+  modules:
+    - academic
+    - admin
+    - bi
+    - communication
+    - core
+    - finance
+    - health
+    - hr
+    - infra
+    - library
+    - report
+    - schedule
+  web_layer: "com.school.web.controller.{module}"
+  domain_layer: "com.school.{module}.{entity,repository,service,dto,enums}"
+  cross_cutting: "com.school.core.{config,security,exception,validation,util}"
+
+naming_conventions:
+  entities: "PascalCase singular (Student, Course, Enrollment)"
+  tables: "snake_case plural (students, courses, enrollments)"
+  repositories: "EntityNameRepository (StudentRepository)"
+  services: "EntityNameService / EntityNameServiceImpl"
+  controllers: "EntityNameController"
+  dtos: "EntityNameDTO"
+  enums: "PascalCase (Role, Status, Type)"
+  methods: "camelCase (findAll, findById, softDelete)"
+  variables: "camelCase (studentName, enrollmentDate)"
+  constants: "UPPER_SNAKE_CASE (MAX_ATTEMPTS, DEFAULT_PAGE_SIZE)"
+
+code_style:
+  indentation: "4 spaces"
+  max_line_length: 120
+  imports: "organized, no wildcards"
+  annotations: "one per line"
+  braces: "K&R style"
+  constructor_injection: "required (no field injection)"
+  lombok: "use @Getter, @Setter, @Builder, @RequiredArgsConstructor, @Slf4j"
+
+entity_conventions:
+  id_type: "Long"
+  id_generation: "GenerationType.IDENTITY"
+  soft_delete: "Boolean deleted + LocalDateTime deletedAt"
+  audit_fields: "createdAt, updatedAt, createdBy, updatedBy"
+  audit_listener: "@EntityListeners(AuditEntityListeners.class)"
+  relationships: "FetchType.LAZY by default"
+  validation: "Bean Validation annotations (@NotBlank, @NotNull, @Size, @Email)"
+
+repository_conventions:
+  base_interface: "JpaRepository<Entity, Long>"
+  soft_delete_queries: "findBy...AndDeletedFalse()"
+  pagination: "Use Pageable parameter"
+  custom_queries: "@Query with JPQL"
+  entity_graph: "@EntityGraph for N+1 prevention"
+
+service_conventions:
+  pattern: "Interface + Implementation"
+  transactional: "@Transactional on write methods"
+  readonly: "@Transactional(readOnly = true) on read methods"
+  error_handling: "BusinessValidationException for business rules"
+  logging: "SLF4J with @Slf4j"
+
+controller_conventions:
+  type: "@Controller for Thymeleaf, @RestController for APIs"
+  validation: "@Valid + BindingResult"
+  security: "@PreAuthorize for role-based access"
+  redirect: "Post-Redirect-Get pattern"
+  messages: "i18n keys #{message.key}"
+  flash_attributes: "RedirectAttributes for success/error messages"
+
+testing_conventions:
+  unit_tests: "@ExtendWith(MockitoExtension.class)"
+  repository_tests: "@DataJpaTest with H2"
+  controller_tests: "@WebMvcTest with MockMvc"
+  integration_tests: "@SpringBootTest"
+  naming: "should[ExpectedBehavior]When[Condition]"
+  coverage_target: "80% minimum"
+
+i18n_conventions:
+  files: "messages_en.properties, messages_es.properties"
+  keys: "module.entity.field (e.g., student.firstName)"
+  buttons: "button.action (e.g., button.save, button.delete)"
+  messages: "module.action.result (e.g., student.created)"
+
+security_conventions:
+  password_encoding: "BCrypt with strength >= 10"
+  csrf: "enabled for all forms"
+  session: "max 1 concurrent session"
+  roles: "ADMIN, STAFF, DIRECTOR, PARENT"
+  input_sanitization: "InputSanitizer.sanitize()"
+  rate_limiting: "enabled for all endpoints"
+  audit_logging: "all security-relevant actions logged"
+
+git_conventions:
+  branch_naming: "feature/description, bugfix/description, hotfix/description"
+  commit_format: "type(scope): description"
+  types: "feat, fix, docs, style, refactor, test, chore"
+  merge_strategy: "squash and merge"
+  pr_requirements: "at least 1 review, all tests passing"

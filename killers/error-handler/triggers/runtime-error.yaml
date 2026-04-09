@@ -1,0 +1,27 @@
+# Runtime Error Trigger
+trigger: "runtime_error"
+condition: "Application throws unhandled exception"
+severity: "critical"
+
+actions:
+  1_capture:
+    - capture_stack_trace: true
+    - capture_request_context: true
+    - capture_user_session: true
+
+  2_diagnose:
+    - classify: "NullPointerException | DataIntegrityViolation | AccessDenied | BusinessValidation"
+    - identify_module: true
+    - identify_impact: true
+    - suggest_fix: true
+
+  3_recover:
+    - if_critical: "rollback last change"
+    - if_high: "attempt fix"
+    - max_attempts: 3
+    - verify: "run affected tests"
+
+  4_escalate:
+    - if_critical: "notify tech-lead immediately"
+    - create_incident: true
+    - preserve_context: true

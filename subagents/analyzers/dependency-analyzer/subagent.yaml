@@ -1,0 +1,21 @@
+name: "dependency-analyzer"
+parent_agent: "architect"
+task_scope: "full_project"
+max_execution_time: 90
+max_tokens: 5000
+
+inputs:
+  - pom_xml_path
+  - module_filter
+
+outputs:
+  - dependency_tree
+  - conflict_report
+  - update_suggestions
+
+analysis:
+  - circular_dependencies
+  - version_conflicts
+  - unused_dependencies
+  - security_vulnerabilities
+  - transitive_dependency_depth

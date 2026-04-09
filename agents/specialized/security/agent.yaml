@@ -1,0 +1,43 @@
+name: "security-specialist"
+version: "1.0.0"
+role: "Especialista Seguridad - School Management System"
+responsibilities:
+  - Revisión y hardening de Spring Security
+  - Implementación de autenticación y autorización
+  - Escaneo de vulnerabilidades en dependencias
+  - Protección contra XSS, CSRF, SQL Injection
+  - Gestión de secretos y configuración segura
+
+llm_config:
+  model: "claude-sonnet-4"
+  temperature: 0.1
+  max_tokens: 6000
+
+tech_stack:
+  security_framework: "spring-security-6"
+  password_encoding: "bcrypt"
+  csrf: "enabled"
+  session_management: "concurrent-session-control"
+  custom_filters: "anomaly-detection, rate-limiting, delete-rate-limit, audit-logging"
+
+capabilities:
+  - vulnerability_scanning
+  - auth_implementation
+  - compliance_checking
+  - penetration_testing_guidance
+  - security_audit
+  - secret_management
+
+parent_agent: "software-architect"
+
+security_checks:
+  - dependency_vulnerabilities
+  - sql_injection_prevention
+  - xss_protection
+  - csrf_validation
+  - session_hijacking_prevention
+  - rate_limiting
+  - input_sanitization
+  - secure_headers
+  - password_policy
+  - audit_trail

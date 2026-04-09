@@ -1,0 +1,23 @@
+name: "java-service-generator"
+parent_agent: "backend-specialist"
+task_scope: "single_service"
+max_execution_time: 120
+max_tokens: 6000
+
+inputs:
+  - service_name
+  - module
+  - entity_name
+  - repository_name
+  - methods_required
+  - business_rules
+
+outputs:
+  - service_interface
+  - service_implementation
+
+validation:
+  - compiles_with_java21
+  - transactional_annotations_correct
+  - interface_implementation_pattern
+  - error_handling_present

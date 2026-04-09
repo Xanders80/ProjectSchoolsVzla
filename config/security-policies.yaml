@@ -1,0 +1,50 @@
+# Security Policies
+# Políticas de seguridad para el workflow OpenCode
+
+version: "1.0.0"
+
+code_generation_policies:
+  no_secrets_in_code: true
+  no_hardcoded_credentials: true
+  no_hardcoded_api_keys: true
+  use_environment_variables: true
+  sanitize_all_user_input: true
+  validate_all_inputs: true
+  use_prepared_statements: true
+  enable_csrf_protection: true
+  implement_rate_limiting: true
+  log_security_events: true
+
+file_access_policies:
+  allowed_directories:
+    - "src/main/java"
+    - "src/main/resources"
+    - "src/test/java"
+    - "src/test/resources"
+  forbidden_files:
+    - ".env"
+    - ".env.*"
+    - "*.pem"
+    - "*.key"
+    - "keystore.jks"
+    - "application-prod.properties"
+  forbidden_operations:
+    - "rm -rf"
+    - "DROP DATABASE"
+    - "DROP TABLE"
+    - "TRUNCATE TABLE"
+    - "chmod 777"
+    - "git push --force"
+
+commit_policies:
+  require_conventional_commits: true
+  no_secrets_in_commits: true
+  max_files_per_commit: 20
+  require_test_coverage: true
+  require_build_passing: true
+
+agent_policies:
+  max_concurrent_agents: 5
+  require_authentication_for_external_calls: true
+  log_all_agent_actions: true
+  enforce_timeout_on_all_tasks: true

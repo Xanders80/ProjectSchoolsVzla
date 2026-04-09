@@ -1,0 +1,19 @@
+stage: "02_architecture"
+agent: "architect"
+description: "Design technical architecture for the feature"
+inputs:
+  - prd.md
+  - user_stories.md
+outputs:
+  - tech-spec.md
+  - database-changes.sql
+  - api-contracts.yaml
+gates:
+  - name: "architecture_review"
+    reviewer: "tech-lead"
+    criteria:
+      - follows_layered_architecture
+      - respects_module_boundaries
+      - database_changes_are_safe
+      - security_considered
+      - performance_considered

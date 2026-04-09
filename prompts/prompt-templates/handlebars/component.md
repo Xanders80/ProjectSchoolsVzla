@@ -1,0 +1,2 @@
+{{#> componentTemplate}}
+{{/componentTemplate}}

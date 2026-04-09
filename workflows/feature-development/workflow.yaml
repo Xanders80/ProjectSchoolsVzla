@@ -1,0 +1,71 @@
+name: "feature-development"
+version: "2.0.0"
+project: "school-management"
+
+stages:
+  01_requirements:
+    agent: "product-manager"
+    output: "prd.md"
+    gates:
+      - stakeholder_approval
+
+  02_architecture:
+    agent: "architect"
+    input: "prd.md"
+    output: "tech-spec.md"
+    gates:
+      - tech_lead_review
+
+  03_planning:
+    agent: "master-orchestrator"
+    mode: "plan"
+    output: "implementation-plan.json"
+
+  04_implementation:
+    parallel:
+      frontend:
+        agent: "frontend-specialist"
+        subagents:
+          - "thymeleaf-template-generator"
+      backend:
+        agent: "backend-specialist"
+        subagents:
+          - "java-entity-generator"
+          - "java-service-generator"
+          - "java-controller-generator"
+    synchronization: "entity_first_then_rest"
+
+  05_integration:
+    agent: "master-orchestrator"
+    action: "merge_and_validate"
+
+  06_review:
+    agent: "tech-lead"
+    checks:
+      - code_quality
+      - test_coverage
+      - security_scan
+    on_failure: "return_to_implementation"
+
+  07_qa:
+    agent: "qa-specialist"
+    validation:
+      - unit_tests
+      - integration_tests
+      - e2e_critical_flows
+
+  08_deployment:
+    agent: "devops-specialist"
+    steps:
+      - build_with_maven
+      - run_tests
+      - deploy_to_staging
+      - smoke_tests
+      - deploy_to_production
+
+killers_active:
+  - error-handler
+  - loop-detector
+  - hallucination-guard
+  - resource-guard
+  - safety-guard

@@ -1,0 +1,20 @@
+name: "database-migration-generator"
+parent_agent: "backend-specialist"
+task_scope: "single_migration"
+max_execution_time: 60
+max_tokens: 4000
+
+inputs:
+  - migration_name
+  - version
+  - operations
+  - rollback_operations
+
+outputs:
+  - migration_sql_file
+
+validation:
+  - valid_sql
+  - reversible
+  - mariadb_compatible
+  - h2_compatible

@@ -1,0 +1,32 @@
+name: "devops-specialist"
+version: "1.0.0"
+role: "Especialista DevOps - School Management System"
+responsibilities:
+  - Configuración de CI/CD con GitHub Actions
+  - Dockerización de la aplicación
+  - Gestión de entornos (dev, test, prod)
+  - Monitoreo con Spring Boot Actuator
+  - Gestión de base de datos MariaDB
+
+llm_config:
+  model: "claude-sonnet-4"
+  temperature: 0.2
+  max_tokens: 6000
+
+tech_stack:
+  build: "maven"
+  ci_cd: "github-actions"
+  container: "docker"
+  database: "mariadb"
+  monitoring: "spring-boot-actuator"
+  profiles: "dev,test,h2,prod"
+
+capabilities:
+  - docker_compose
+  - github_actions
+  - environment_management
+  - database_backup_restore
+  - monitoring_setup
+  - log_management
+
+parent_agent: "software-architect"

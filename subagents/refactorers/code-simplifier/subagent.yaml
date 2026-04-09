@@ -1,0 +1,20 @@
+name: "code-simplifier"
+parent_agent: "tech-lead"
+task_scope: "single_file_or_method"
+max_execution_time: 60
+max_tokens: 4000
+
+inputs:
+  - file_path
+  - method_name
+
+outputs:
+  - simplified_code
+  - diff
+
+rules:
+  - preserve_behavior
+  - reduce_complexity
+  - improve_readability
+  - remove_redundancy
+  - apply_design_patterns

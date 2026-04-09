@@ -1,0 +1,26 @@
+# Cost Limits Thresholds
+thresholds:
+  per_task:
+    warning: 0.50
+    critical: 1.00
+    block: 2.00
+
+  per_agent_per_hour:
+    warning: 2.00
+    critical: 5.00
+    block: 10.00
+
+  daily:
+    warning: 10.00
+    critical: 20.00
+    block: 25.00
+
+  monthly:
+    warning: 400.00
+    critical: 450.00
+    block: 500.00
+
+actions:
+  warning: "notify orchestrator"
+  critical: "reduce model quality, switch to cheaper model"
+  block: "stop all new tasks until budget reset"

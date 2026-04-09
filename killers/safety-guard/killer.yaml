@@ -1,0 +1,21 @@
+name: "safety-guard"
+version: "1.0.0"
+type: "killer"
+
+responsibilities:
+  - Detect prompt injection attempts
+  - Prevent secret leakage
+  - Block dangerous operations
+  - Enforce security policies
+
+detection_methods:
+  - prompt_injection_scanning
+  - secret_pattern_matching
+  - dangerous_command_detection
+  - file_access_monitoring
+
+blocklist_categories:
+  - system_commands
+  - credential_patterns
+  - destructive_operations
+  - external_communications

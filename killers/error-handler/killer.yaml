@@ -1,0 +1,40 @@
+name: "error-handler"
+version: "1.0.0"
+type: "killer"
+trigger_conditions:
+  - build_failure
+  - test_failure
+  - runtime_exception
+  - syntax_error
+  - compilation_error
+  - maven_dependency_error
+
+actions:
+  1_diagnose:
+    - analyze_stack_trace
+    - identify_root_cause
+    - classify_error_type
+    - check_related_files
+  
+  2_recover:
+    - attempt_auto_fix: true
+    - max_attempts: 3
+    - rollback_on_failure: true
+    - preserve_context: true
+  
+  3_escalate:
+    - notify: "tech-lead"
+    - create_incident_report: true
+    - preserve_context: true
+
+project_context:
+  build_tool: "maven"
+  framework: "spring-boot-3.5.10"
+  language: "java-21"
+  common_errors:
+    - "LazyInitializationException"
+    - "BeanCreationException"
+    - "ConstraintViolationException"
+    - "DataIntegrityViolationException"
+    - "MethodArgumentNotValidException"
+    - "AccessDeniedException"

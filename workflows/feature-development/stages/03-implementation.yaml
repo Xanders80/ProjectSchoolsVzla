@@ -1,0 +1,25 @@
+stage: "03_implementation"
+agent: "master-orchestrator"
+description: "Coordinate parallel implementation"
+parallel:
+  backend:
+    agent: "backend-specialist"
+    tasks:
+      - create_entities
+      - create_repositories
+      - create_services
+      - create_controllers
+      - create_migrations
+  frontend:
+    agent: "frontend-specialist"
+    tasks:
+      - create_thymeleaf_templates
+      - update_css
+      - update_javascript
+synchronization:
+  - entities_must_exist_before_controllers
+  - api_contract_must_be_defined_before_frontend
+outputs:
+  - implemented_code
+  - migration_files
+  - updated_templates

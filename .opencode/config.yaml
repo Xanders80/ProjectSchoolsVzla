@@ -1,0 +1,70 @@
+# OpenCode Core Configuration
+# School Management System - OpenCode Workflow
+
+version: "1.0.0"
+project:
+  name: "school-management"
+  description: "School Management System - Sistema de gestión escolar integral"
+  root: "."
+  language: "java"
+  java_version: "21"
+  framework: "spring-boot"
+  spring_boot_version: "3.5.10"
+  build_tool: "maven"
+  database: "mariadb"
+  test_database: "h2"
+  template_engine: "thymeleaf"
+  ui_framework: "sb-admin-2"
+
+agents:
+  registry_path: "config/agents-registry.yaml"
+  core_path: "agents/core/"
+  specialized_path: "agents/specialized/"
+  orchestrators_path: "agents/orchestrators/"
+
+workflows:
+  path: "workflows/"
+  default: "feature-development"
+
+memory:
+  path: "memory/"
+  short_term: "memory/short-term/"
+  long_term: "memory/long-term/"
+  episodic: "memory/episodic/"
+
+killers:
+  path: "killers/"
+  enabled: true
+
+tools:
+  path: "tools/"
+  shared: "tools/shared/"
+  integrations: "tools/integrations/"
+  code_execution: "tools/code-execution/"
+
+prompts:
+  path: "prompts/"
+  system: "prompts/system-prompts/"
+  tasks: "prompts/task-prompts/"
+  few_shot: "prompts/few-shot-examples/"
+
+logs:
+  path: "logs/"
+  agent_logs: "logs/agent-logs/"
+  execution_traces: "logs/execution-traces/"
+  performance: "logs/performance-metrics/"
+  audit: "logs/audit-trail/"
+
+llm:
+  config_path: "config/llm-providers.yaml"
+  default_provider: "openai"
+  fallback_provider: "anthropic"
+
+security:
+  policies_path: "config/security-policies.yaml"
+  cost_limits_path: "config/cost-limits.yaml"
+
+session:
+  persistent: true
+  history_path: ".opencode/sessions/"
+  max_history: 50

@@ -1,0 +1,20 @@
+name: "react-component"
+parent_agent: "frontend-specialist"
+task_scope: "single_component"
+max_execution_time: 60
+max_tokens: 4000
+
+inputs:
+  - component_name
+  - props_interface
+  - styling_approach
+
+outputs:
+  - component_file
+  - styles_file
+  - test_file
+
+validation:
+  - valid_jsx
+  - props_typed
+  - accessibility_compliant

@@ -1,0 +1,21 @@
+name: "lint-enforcer"
+parent_agent: "tech-lead"
+task_scope: "single_file_or_module"
+max_execution_time: 30
+max_tokens: 2000
+
+inputs:
+  - file_path
+  - module_name
+
+outputs:
+  - lint_report
+  - auto_fixes
+
+rules:
+  - indentation
+  - naming_conventions
+  - import_ordering
+  - max_line_length
+  - no_wildcard_imports
+  - constructor_injection

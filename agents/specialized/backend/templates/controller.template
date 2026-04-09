@@ -1,0 +1,73 @@
+package com.school.web.controller.{{module}};
+
+import com.school.{{module}}.entity.{{entity}};
+import com.school.{{module}}.service.{{entity}}Service;
+import jakarta.validation.Valid;
+import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.web.PageableDefault;
+import org.springframework.security.access.prepost.PreAuthorize;
+import org.springframework.stereotype.Controller;
+import org.springframework.ui.Model;
+import org.springframework.validation.BindingResult;
+import org.springframework.web.bind.annotation.*;
+import org.springframework.web.servlet.mvc.support.RedirectAttributes;
+
+@Controller
+@RequestMapping("/{{resource}}")
+@PreAuthorize("hasAnyRole({{roles}})")
+@RequiredArgsConstructor
+public class {{entity}}Controller {
+
+    private final {{entity}}Service {{entityLower}}Service;
+
+    @GetMapping
+    public String list(Model model, @PageableDefault(size = 25) Pageable pageable) {
+        model.addAttribute("{{resource}}", {{entityLower}}Service.findAll(pageable));
+        return "{{module}}/{{resource}}/list";
+    }
+
+    @GetMapping("/new")
+    public String newForm(Model model) {
+        model.addAttribute("{{entityLower}}", new {{entity}}());
+        return "{{module}}/{{resource}}/form";
+    }
+
+    @PostMapping
+    public String create(@Valid @ModelAttribute("{{entityLower}}") {{entity}} entity,
+                         BindingResult result, RedirectAttributes redirect) {
+        if (result.hasErrors()) return "{{module}}/{{resource}}/form";
+        {{entityLower}}Service.create(entity);
+        redirect.addFlashAttribute("success", "{{entityLower}}.created");
+        return "redirect:/{{resource}}";
+    }
+
+    @GetMapping("/{id}")
+    public String view(@PathVariable Long id, Model model) {
+        model.addAttribute("{{entityLower}}", {{entityLower}}Service.findById(id));
+        return "{{module}}/{{resource}}/view";
+    }
+
+    @GetMapping("/{id}/edit")
+    public String editForm(@PathVariable Long id, Model model) {
+        model.addAttribute("{{entityLower}}", {{entityLower}}Service.findById(id));
+        return "{{module}}/{{resource}}/form";
+    }
+
+    @PostMapping("/{id}")
+    public String update(@PathVariable Long id,
+                         @Valid @ModelAttribute("{{entityLower}}") {{entity}} entity,
+                         BindingResult result, RedirectAttributes redirect) {
+        if (result.hasErrors()) return "{{module}}/{{resource}}/form";
+        {{entityLower}}Service.update(id, entity);
+        redirect.addFlashAttribute("success", "{{entityLower}}.updated");
+        return "redirect:/{{resource}}";
+    }
+
+    @PostMapping("/{id}/delete")
+    public String delete(@PathVariable Long id, RedirectAttributes redirect) {
+        {{entityLower}}Service.softDelete(id);
+        redirect.addFlashAttribute("success", "{{entityLower}}.deleted");
+        return "redirect:/{{resource}}";
+    }
+}

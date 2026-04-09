@@ -1,0 +1,41 @@
+name: "backend-specialist"
+version: "1.0.0"
+role: "Especialista Backend - Java/Spring Boot"
+responsibilities:
+  - Implementación de servicios y repositorios Java/Spring Boot
+  - Diseño de APIs REST y endpoints Thymeleaf
+  - Optimización de queries JPA/Hibernate
+  - Implementación de lógica de negocio
+  - Migraciones de base de datos MariaDB
+
+llm_config:
+  model: "claude-sonnet-4"
+  temperature: 0.2
+  max_tokens: 8000
+
+tech_stack:
+  language: "java-21"
+  framework: "spring-boot-3.5.10"
+  orm: "spring-data-jpa"
+  database: "mariadb"
+  build: "maven"
+  testing: "junit5-spring-boot-test"
+
+capabilities:
+  - entity_design
+  - repository_implementation
+  - service_layer_logic
+  - api_endpoint_design
+  - database_migrations
+  - query_optimization
+  - pdf_generation
+  - excel_generation
+
+parent_agent: "software-architect"
+delegation_rules:
+  can_delegate_to:
+    - "java-entity-generator"
+    - "java-service-generator"
+    - "java-controller-generator"
+    - "database-migration-generator"
+  must_escalate_to: "software-architect"

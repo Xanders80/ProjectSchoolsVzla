@@ -1,0 +1,38 @@
+# Sensitive Patterns Blocklist
+sensitive_patterns:
+  credentials:
+    - "password\\s*=\\s*['\"][^'\"]+['\"]"
+    - "api[_-]?key\\s*=\\s*['\"][^'\"]+['\"]"
+    - "secret\\s*=\\s*['\"][^'\"]+['\"]"
+    - "token\\s*=\\s*['\"][^'\"]+['\"]"
+    - "access[_-]?token\\s*=\\s*['\"][^'\"]+['\"]"
+    - "auth\\s*=\\s*['\"][^'\"]+['\"]"
+
+  connection_strings:
+    - "jdbc:mariadb://[^'\"]+:[^'\"]+@"
+    - "jdbc:mysql://[^'\"]+:[^'\"]+@"
+    - "mongodb://[^'\"]+:[^'\"]+@"
+    - "postgresql://[^'\"]+:[^'\"]+@"
+    - "redis://:[^'\"]+@"
+
+  private_keys:
+    - "-----BEGIN.*PRIVATE KEY-----"
+    - "-----BEGIN RSA PRIVATE KEY-----"
+    - "-----BEGIN EC PRIVATE KEY-----"
+
+  personal_data:
+    - "\\b\\d{3}-\\d{2}-\\d{4}\\b"  # SSN
+    - "\\b\\d{16}\\b"  # Credit card
+    - "\\b[A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+\\.[A-Z|a-z]{2,}\\b"  # Email (in logs)
+
+  internal_urls:
+    - "http://internal\\."
+    - "http://localhost:\\d+/admin"
+    - "http://10\\.\\d+\\.\\d+\\.\\d+"
+    - "http://192\\.168\\.\\d+\\.\\d+"
+
+actions:
+  on_detection: "block_and_redact"
+  log_incident: true
+  notify: "safety-guard"
+  redact_pattern: "[REDACTED]"

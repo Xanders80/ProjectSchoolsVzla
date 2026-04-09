@@ -1,0 +1,103 @@
+# Agents Registry - School Management System
+# Registro de todos los agentes disponibles
+
+version: "1.0.0"
+
+core_agents:
+  software_architect:
+    path: "agents/core/architect/"
+    file: "agent.yaml"
+    status: "active"
+    priority: "high"
+
+  product_manager:
+    path: "agents/core/product-manager/"
+    file: "agent.yaml"
+    status: "active"
+    priority: "high"
+
+  tech_lead:
+    path: "agents/core/tech-lead/"
+    file: "agent.yaml"
+    status: "active"
+    priority: "high"
+
+specialized_agents:
+  backend_specialist:
+    path: "agents/specialized/backend/"
+    file: "agent.yaml"
+    status: "active"
+    priority: "high"
+    tech_stack: "java-21,spring-boot-3.5,maven,mariadb"
+
+  frontend_specialist:
+    path: "agents/specialized/frontend/"
+    file: "agent.yaml"
+    status: "active"
+    priority: "high"
+    tech_stack: "thymeleaf,bootstrap-4,jquery,datatables,chartjs"
+
+  devops_specialist:
+    path: "agents/specialized/devops/"
+    file: "agent.yaml"
+    status: "active"
+    priority: "medium"
+    tech_stack: "maven,github-actions,docker,mariadb"
+
+  security_specialist:
+    path: "agents/specialized/security/"
+    file: "agent.yaml"
+    status: "active"
+    priority: "high"
+    tech_stack: "spring-security-6,bcrypt,csrf,rate-limiting"
+
+  qa_specialist:
+    path: "agents/specialized/qa/"
+    file: "agent.yaml"
+    status: "active"
+    priority: "high"
+    tech_stack: "junit5,mockito,spring-boot-test,selenium"
+
+orchestrators:
+  master_orchestrator:
+    path: "agents/orchestrators/master/"
+    file: "agent.yaml"
+    status: "active"
+    priority: "critical"
+
+  context_manager:
+    path: "agents/orchestrators/context-manager/"
+    file: "agent.yaml"
+    status: "active"
+    priority: "high"
+
+killers:
+  error_handler:
+    path: "killers/error-handler/"
+    file: "killer.yaml"
+    status: "active"
+
+  loop_detector:
+    path: "killers/loop-detector/"
+    file: "killer.yaml"
+    status: "active"
+
+  hallucination_guard:
+    path: "killers/hallucination-guard/"
+    file: "killer.yaml"
+    status: "active"
+
+  timeout_enforcer:
+    path: "killers/timeout-enforcer/"
+    file: "killer.yaml"
+    status: "active"
+
+  resource_guard:
+    path: "killers/resource-guard/"
+    file: "killer.yaml"
+    status: "active"
+
+  safety_guard:
+    path: "killers/safety-guard/"
+    file: "killer.yaml"
+    status: "active"

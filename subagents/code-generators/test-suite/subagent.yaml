@@ -1,0 +1,18 @@
+name: "test-suite-generator"
+parent_agent: "qa-specialist"
+task_scope: "single_test_suite"
+max_execution_time: 120
+max_tokens: 6000
+
+inputs:
+  - target_class
+  - module
+  - test_type
+
+outputs:
+  - test_files
+
+validation:
+  - tests_compile
+  - tests_pass
+  - coverage_measured

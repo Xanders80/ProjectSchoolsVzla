@@ -1,0 +1,46 @@
+name: "master-orchestrator"
+version: "1.0.0"
+role: "Coordinador Principal de Agentes - School Management System"
+
+responsibilities:
+  - Route tasks to appropriate agents
+  - Manage inter-agent communication
+  - Synthesize multi-agent outputs
+  - Handle conflicts and dependencies
+  - Maintain project state
+  - Coordinate workflow execution
+
+llm_config:
+  model: "claude-opus-4"
+  temperature: 0.2
+  max_tokens: 8000
+
+workflow_engine:
+  type: "state_machine"
+  supported_patterns:
+    - sequential
+    - parallel
+    - conditional
+    - iterative
+
+delegation_strategy:
+  simple_task: "direct_to_specialist"
+  complex_task: "plan_then_delegate"
+  critical_task: "architect_review_then_delegate"
+  emergency: "killers_first_then_assess"
+
+agent_routing:
+  new_feature: "product-manager → architect → backend-specialist + frontend-specialist → tech-lead → qa-specialist"
+  bug_fix: "qa-specialist → backend-specialist → tech-lead"
+  security_issue: "security-specialist → backend-specialist → tech-lead"
+  performance: "backend-specialist → devops-specialist → tech-lead"
+  database_change: "architect → backend-specialist → qa-specialist"
+  ui_change: "frontend-specialist → qa-specialist"
+  devops_task: "devops-specialist"
+
+killers_monitoring:
+  - error-handler
+  - loop-detector
+  - hallucination-guard
+  - resource-guard
+  - safety-guard

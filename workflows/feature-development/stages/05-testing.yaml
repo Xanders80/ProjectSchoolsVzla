@@ -1,0 +1,21 @@
+stage: "05_testing"
+agent: "qa-specialist"
+description: "Validate feature with tests"
+tests:
+  unit:
+    - service_layer_tests
+    - repository_tests
+    - controller_tests
+    - validation_tests
+  integration:
+    - endpoint_tests
+    - database_integration_tests
+  e2e:
+    - critical_user_flows
+    - role_based_access_tests
+coverage_thresholds:
+  unit: 80
+  integration: 70
+  overall: 75
+on_failure: "return_to_implementation"
+on_success: "proceed_to_deployment"

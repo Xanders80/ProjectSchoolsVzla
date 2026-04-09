@@ -1,0 +1,20 @@
+stage: "01_requirements"
+agent: "product-manager"
+description: "Analyze and define requirements for the new feature"
+inputs:
+  - feature_description
+  - target_module
+  - user_roles_affected
+outputs:
+  - prd.md
+  - user_stories.md
+  - acceptance_criteria.md
+gates:
+  - name: "prd_review"
+    reviewer: "tech-lead"
+    criteria:
+      - requirements_are_clear
+      - acceptance_criteria_are_testable
+      - user_stories_follow_invest_format
+      - i18n_requirements_specified
+      - security_requirements_identified

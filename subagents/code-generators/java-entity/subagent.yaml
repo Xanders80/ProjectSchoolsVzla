@@ -1,0 +1,24 @@
+name: "java-entity-generator"
+parent_agent: "backend-specialist"
+task_scope: "single_entity"
+max_execution_time: 60
+max_tokens: 4000
+
+inputs:
+  - entity_name
+  - module
+  - fields
+  - relationships
+  - validation_rules
+
+outputs:
+  - entity_file
+  - repository_file
+  - enum_files_if_needed
+
+validation:
+  - compiles_with_java21
+  - jpa_annotations_correct
+  - validation_annotations_present
+  - soft_delete_fields_included
+  - audit_listener_configured

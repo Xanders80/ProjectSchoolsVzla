@@ -1,0 +1,24 @@
+name: "java-controller-generator"
+parent_agent: "backend-specialist"
+task_scope: "single_controller"
+max_execution_time: 90
+max_tokens: 5000
+
+inputs:
+  - controller_name
+  - module
+  - entity_name
+  - service_name
+  - base_path
+  - required_roles
+  - view_template_path
+
+outputs:
+  - controller_file
+
+validation:
+  - compiles_with_java21
+  - spring_annotations_correct
+  - validation_present
+  - i18n_messages_used
+  - csrf_in_forms

@@ -1,0 +1,22 @@
+stage: "04_review"
+agent: "tech-lead"
+description: "Review implemented code"
+checks:
+  - code_quality
+  - security_scan
+  - convention_compliance
+  - test_coverage
+  - performance_review
+criteria:
+  - follows_java21_best_practices
+  - spring_boot_annotations_correct
+  - jpa_relationships_valid
+  - soft_delete_implemented
+  - audit_logging_present
+  - i18n_messages_used
+  - csrf_protected_forms
+  - input_sanitized
+  - no_n_plus_1_queries
+  - pagination_implemented
+on_failure: "return_to_implementation"
+on_success: "proceed_to_testing"

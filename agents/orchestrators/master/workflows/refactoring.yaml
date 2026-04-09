@@ -1,0 +1,19 @@
+workflow: "refactoring"
+orchestrator: "master-orchestrator"
+
+execution_mode: "sequential"
+
+phases:
+  analysis:
+    - tech-lead: identify_smells_and_plan
+
+  implementation:
+    - backend-specialist: apply_refactoring
+
+  validation:
+    - qa-specialist: verify_no_regression
+    - tech-lead: verify_complexity_improved
+
+error_handling:
+  on_failure: "revert_all_changes"
+  max_retries: 1

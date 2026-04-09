@@ -1,0 +1,25 @@
+# Test Failure Trigger
+trigger: "test_failure"
+condition: "mvn test exits with non-zero code"
+severity: "high"
+
+actions:
+  1_capture:
+    - run: "mvn test 2>&1 | tee /tmp/test-output.log"
+    - parse_failures: true
+    - extract_stack_traces: true
+
+  2_diagnose:
+    - classify: "assertion_error | null_pointer | mock_error | transaction_error"
+    - identify_test: true
+    - identify_cause: true
+    - suggest_fix: true
+
+  3_recover:
+    - attempt_fix: true
+    - max_attempts: 3
+    - verify: "mvn test -Dtest=TestName -q"
+
+  4_escalate:
+    - if_fix_failed: "notify qa-specialist with test-output.log"
+    - create_incident: true

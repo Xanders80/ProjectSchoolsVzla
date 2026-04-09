@@ -1,0 +1,19 @@
+name: "dead-code-eliminator"
+parent_agent: "tech-lead"
+task_scope: "full_project"
+max_execution_time: 90
+max_tokens: 5000
+
+inputs:
+  - module_filter
+
+outputs:
+  - dead_code_report
+  - removal_suggestions
+
+detection:
+  - unused_methods
+  - unused_classes
+  - unused_imports
+  - unused_variables
+  - unreachable_code

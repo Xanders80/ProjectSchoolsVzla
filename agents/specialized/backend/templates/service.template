@@ -1,0 +1,60 @@
+package com.school.{{module}}.service.impl;
+
+import com.school.{{module}}.entity.{{entity}};
+import com.school.{{module}}.repository.{{entity}}Repository;
+import com.school.{{module}}.service.{{entity}}Service;
+import com.school.core.exception.BusinessValidationException;
+import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
+import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
+
+import java.time.LocalDateTime;
+
+@Service
+@RequiredArgsConstructor
+@Slf4j
+public class {{entity}}ServiceImpl implements {{entity}}Service {
+
+    private final {{entity}}Repository repository;
+
+    @Override
+    @Transactional(readOnly = true)
+    public Page<{{entity}}> findAll(Pageable pageable) {
+        return repository.findByDeletedFalse(pageable);
+    }
+
+    @Override
+    @Transactional(readOnly = true)
+    public {{entity}} findById(Long id) {
+        return repository.findByIdAndDeletedFalse(id)
+            .orElseThrow(() -> new BusinessValidationException("{{entityLower}}.not.found"));
+    }
+
+    @Override
+    @Transactional
+    public {{entity}} create({{entity}} entity) {
+        log.info("Creating new {{entityLower}}");
+        return repository.save(entity);
+    }
+
+    @Override
+    @Transactional
+    public {{entity}} update(Long id, {{entity}} entity) {
+        {{entity}} existing = findById(id);
+        // Update fields
+        return repository.save(existing);
+    }
+
+    @Override
+    @Transactional
+    public void softDelete(Long id) {
+        {{entity}} entity = findById(id);
+        entity.setDeleted(true);
+        entity.setDeletedAt(LocalDateTime.now());
+        repository.save(entity);
+        log.info("Soft deleted {{entityLower}} with id: {}", id);
+    }
+}

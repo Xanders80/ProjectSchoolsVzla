@@ -1,0 +1,39 @@
+name: "bug-fix"
+version: "1.0.0"
+
+stages:
+  01_analysis:
+    agent: "qa-specialist"
+    actions:
+      - reproduce_bug
+      - identify_root_cause
+      - assess_impact
+    output: "bug-report.md"
+
+  02_fix:
+    agent: "backend-specialist"
+    input: "bug-report.md"
+    actions:
+      - implement_fix
+      - add_regression_test
+    output: "fix-implementation"
+
+  03_review:
+    agent: "tech-lead"
+    checks:
+      - fix_addresses_root_cause
+      - no_regression_risk
+      - regression_test_added
+    on_failure: "return_to_fix"
+
+  04_verification:
+    agent: "qa-specialist"
+    actions:
+      - verify_bug_fixed
+      - run_regression_tests
+      - check_related_functionality
+
+killers_active:
+  - error-handler
+  - loop-detector
+  - hallucination-guard

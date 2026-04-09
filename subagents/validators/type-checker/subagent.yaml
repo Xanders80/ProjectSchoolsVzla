@@ -1,0 +1,21 @@
+name: "type-checker"
+parent_agent: "tech-lead"
+task_scope: "single_file_or_module"
+max_execution_time: 60
+max_tokens: 3000
+
+inputs:
+  - file_path
+  - module_name
+
+outputs:
+  - type_check_result
+  - type_errors
+  - fix_suggestions
+
+checks:
+  - method_signatures
+  - generic_types
+  - return_types
+  - parameter_types
+  - field_types

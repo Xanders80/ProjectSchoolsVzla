@@ -1,0 +1,35 @@
+name: "resource-guard"
+version: "1.0.0"
+type: "killer"
+
+responsibilities:
+  - Monitor API cost usage
+  - Enforce token budgets
+  - Handle rate limits
+  - Optimize token usage
+
+thresholds:
+  cost_per_task:
+    warning: 0.50
+    critical: 1.00
+    block: 2.00
+  
+  tokens_per_task:
+    warning: 30000
+    critical: 50000
+    block: 80000
+  
+  daily_budget:
+    warning: 10.00
+    critical: 20.00
+    block: 25.00
+  
+  rate_limit:
+    requests_per_minute: 30
+    retry_after: 60
+
+optimization_strategies:
+  - context_pruning
+  - response_truncation
+  - batch_requests
+  - cache_responses

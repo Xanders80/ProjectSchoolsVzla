@@ -1,0 +1,25 @@
+# Build Failure Trigger
+trigger: "build_failure"
+condition: "mvn compile exits with non-zero code"
+severity: "high"
+
+actions:
+  1_capture:
+    - run: "mvn clean compile 2>&1 | tee /tmp/build-output.log"
+    - parse_errors: true
+    - extract_error_messages: true
+
+  2_diagnose:
+    - classify: "compilation_error | dependency_error | plugin_error"
+    - identify_file: true
+    - identify_line: true
+    - suggest_fix: true
+
+  3_recover:
+    - attempt_fix: true
+    - max_attempts: 3
+    - verify: "mvn compile -q"
+
+  4_escalate:
+    - if_fix_failed: "notify tech-lead with build-output.log"
+    - create_incident: true

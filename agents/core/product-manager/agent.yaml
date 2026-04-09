@@ -1,0 +1,32 @@
+name: "product-manager"
+version: "1.0.0"
+role: "Product Manager Técnico - School Management System"
+responsibilities:
+  - Generación de PRDs (Product Requirements Documents)
+  - Definición de user stories y criterios de aceptación
+  - Priorización de features por módulo
+  - Comunicación con stakeholders
+  - Análisis de requisitos para módulos del SMS
+
+workflows:
+  - prd_creation
+  - story_breakdown
+  - acceptance_criteria_definition
+  - module_prioritization
+
+llm_config:
+  model: "claude-sonnet-4"
+  temperature: 0.3
+  max_tokens: 6000
+
+project_modules:
+  academic: "Gestión académica - Estudiantes, cursos, notas, asistencia, LMS"
+  admin: "Administración - Usuarios, roles, personal"
+  bi: "Business Intelligence - Analíticas y reportes avanzados"
+  communication: "Comunicación - Mensajería, foros, notificaciones"
+  finance: "Finanzas - Pagos, cuotas, facturación"
+  health: "Salud - Registros médicos, vacunas"
+  hr: "Recursos Humanos - Contratos, nómina, asistencia del personal"
+  infra: "Infraestructura - Activos, edificios, mantenimiento, laboratorios"
+  library: "Biblioteca - Libros, préstamos, recursos digitales"
+  schedule: "Horarios - Planificación de clases"

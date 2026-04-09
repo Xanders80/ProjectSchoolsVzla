@@ -1,0 +1,26 @@
+# Batch L Final Plan
+
+- Objective: finalize prompts/template consolidation, extend caching/observability coverage, and finalize UI templates with examples.
+- Scope:
+  - Deduplicate and consolidate prompts across prompts/, prompts/task-prompts/, prompts/analyze/, prompts/prompt-templates/, prompts/system-prompts/, prompts/integrations/
+  - Extend caching/observability prompts with concrete scenarios and dashboards
+  - Expand few-shot examples for React components, API endpoints, and database queries
+  - Expand Handlebars templates (story, navigation, grid, data, table, chart, dialog)
+  - Expand system prompts (runbooks, incident templates, deploy/runbooks)
+  - Extend integration prompts (GitHub PR automation, Notion/Jira/Slack/Linear as needed)
+- Plan & Timeline:
+  - Week 1: final dedup consolidation and canonical versioning
+  - Week 1-2: extend caching/observability prompts and dashboards
+  - Week 2: extend handful of few-shot examples and handlebars templates
+  - Week 2-3: finalize PRD/Tech Spec consolidation
+- Deliverables:
+  - Consolidated prompts and templates with non-duplicated canonical versions
+  - Final progress report with routes and statuses
+  - Plan for Batch M (final deployment/production roll-out)
+- Risks & Mitigations:
+  - Risk: duplication still present; Mitigation: central dedupe pass and manual review
+  - Risk: feature creep; Mitigation: strict scope and review gates
+- Acceptance Criteria:
+  - All prompts/templates have a single canonical version per topic
+  - All critical areas (caching, observability, system health) are addressed
+  - A complete Batch L report is produced

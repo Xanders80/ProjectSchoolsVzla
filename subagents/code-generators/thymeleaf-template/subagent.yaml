@@ -1,0 +1,22 @@
+name: "thymeleaf-template-generator"
+parent_agent: "frontend-specialist"
+task_scope: "single_template"
+max_execution_time: 90
+max_tokens: 6000
+
+inputs:
+  - template_name
+  - module
+  - template_type
+  - entity_name
+  - fields
+
+outputs:
+  - thymeleaf_template_file
+
+validation:
+  - valid_thymeleaf_syntax
+  - i18n_messages_used
+  - csrf_in_forms
+  - responsive_design
+  - accessibility_compliant

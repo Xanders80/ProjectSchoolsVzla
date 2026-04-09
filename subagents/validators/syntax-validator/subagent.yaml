@@ -1,0 +1,21 @@
+name: "syntax-validator"
+parent_agent: "tech-lead"
+task_scope: "single_file"
+max_execution_time: 30
+max_tokens: 2000
+
+inputs:
+  - file_path
+  - language
+
+outputs:
+  - validation_result
+  - error_list
+  - fix_suggestions
+
+validation:
+  - java_syntax
+  - thymeleaf_syntax
+  - yaml_syntax
+  - sql_syntax
+  - html_syntax

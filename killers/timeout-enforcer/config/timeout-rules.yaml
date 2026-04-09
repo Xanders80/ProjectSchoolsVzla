@@ -1,0 +1,36 @@
+# Timeout Rules Configuration
+timeout_rules:
+  subagent_task:
+    max_seconds: 120
+    warning_at: 90
+    action: "terminate_and_escalate"
+
+  code_generation:
+    max_seconds: 90
+    warning_at: 67
+    action: "save_partial_and_escalate"
+
+  code_review:
+    max_seconds: 180
+    warning_at: 135
+    action: "save_review_and_escalate"
+
+  test_generation:
+    max_seconds: 120
+    warning_at: 90
+    action: "terminate_and_escalate"
+
+  full_workflow:
+    max_seconds: 600
+    warning_at: 450
+    action: "save_state_and_request_extension"
+
+  quick_task:
+    max_seconds: 30
+    warning_at: 22
+    action: "terminate_and_escalate"
+
+monitoring:
+  check_interval: 10
+  warning_at_percent: 0.75
+  critical_at_percent: 0.90

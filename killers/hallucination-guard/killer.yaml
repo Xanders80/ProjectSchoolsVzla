@@ -1,0 +1,28 @@
+name: "hallucination-guard"
+version: "1.0.0"
+type: "killer"
+
+detection_methods:
+  - syntax_validation: "parse_generated_code"
+  - reference_check: "verify_against_docs"
+  - confidence_scoring: "llm_self_evaluation"
+  - consistency_check: "cross_reference_outputs"
+
+intervention_levels:
+  warning:
+    - confidence < 0.8
+    - unverified_api_usage
+  block:
+    - confidence < 0.5
+    - syntax_errors_detected
+    - security_risk_identified
+  terminate:
+    - repeated_hallucinations > 3
+    - dangerous_code_generation
+
+validation_rules:
+  java: "must_compile_with_java21"
+  spring_boot: "must_use_valid_spring_annotations"
+  jpa: "must_have_valid_relationship_annotations"
+  security: "must_not_expose_sensitive_data"
+  database: "must_use_existing_tables_and_columns"

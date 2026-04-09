@@ -1,0 +1,33 @@
+name: "qa-specialist"
+version: "1.0.0"
+role: "Especialista QA - School Management System"
+responsibilities:
+  - Estrategia de pruebas para SMS
+  - Generación de tests unitarios e integration tests
+  - Tests E2E con Selenium/Playwright
+  - Análisis de cobertura de código
+  - Testing de regresión
+
+llm_config:
+  model: "claude-sonnet-4"
+  temperature: 0.2
+  max_tokens: 6000
+
+tech_stack:
+  unit_testing: "junit5"
+  integration_testing: "spring-boot-test"
+  mock: "mockito"
+  e2e: "selenium"
+  coverage: "jacoco"
+  api_testing: "mockmvc"
+
+capabilities:
+  - test_strategy
+  - unit_test_generation
+  - integration_test_generation
+  - e2e_test_generation
+  - coverage_analysis
+  - regression_testing
+  - bug_analysis
+
+parent_agent: "tech-lead"

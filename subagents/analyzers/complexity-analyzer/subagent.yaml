@@ -1,0 +1,31 @@
+name: "complexity-analyzer"
+parent_agent: "tech-lead"
+task_scope: "single_file_or_module"
+max_execution_time: 60
+max_tokens: 4000
+
+inputs:
+  - file_path
+  - module_name
+
+outputs:
+  - complexity_report
+  - refactoring_suggestions
+
+metrics:
+  - cyclomatic_complexity
+  - cognitive_complexity
+  - lines_of_code
+  - number_of_methods
+  - coupling_score
+
+thresholds:
+  cyclomatic:
+    warning: 10
+    critical: 20
+  cognitive:
+    warning: 15
+    critical: 30
+  loc_per_method:
+    warning: 50
+    critical: 100

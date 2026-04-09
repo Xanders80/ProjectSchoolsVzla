@@ -1,0 +1,15 @@
+.{{componentName}} {
+  /* Component styles */
+}
+
+.{{componentName}}__header {
+  /* Header styles */
+}
+
+.{{componentName}}__body {
+  /* Body styles */
+}
+
+.{{componentName}}__footer {
+  /* Footer styles */
+}

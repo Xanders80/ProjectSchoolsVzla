@@ -1,0 +1,23 @@
+name: "api-endpoint-generator"
+parent_agent: "backend-specialist"
+task_scope: "single_endpoint"
+max_execution_time: 60
+max_tokens: 4000
+
+inputs:
+  - endpoint_path
+  - http_method
+  - request_body
+  - response_type
+  - required_roles
+
+outputs:
+  - controller_method
+  - dto_if_needed
+  - openapi_annotations
+
+validation:
+  - compiles_with_java21
+  - openapi_documented
+  - security_configured
+  - validation_present

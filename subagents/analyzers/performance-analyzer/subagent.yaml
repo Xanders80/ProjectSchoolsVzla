@@ -1,0 +1,31 @@
+name: "performance-analyzer"
+parent_agent: "backend-specialist"
+task_scope: "single_file_or_module"
+max_execution_time: 90
+max_tokens: 5000
+
+inputs:
+  - file_path
+  - module_name
+
+outputs:
+  - performance_report
+  - optimization_suggestions
+
+metrics:
+  - query_complexity
+  - n_plus_1_detection
+  - memory_usage
+  - response_time
+  - database_connections
+
+thresholds:
+  query_time_ms:
+    warning: 100
+    critical: 500
+  response_time_ms:
+    warning: 500
+    critical: 2000
+  memory_mb:
+    warning: 256
+    critical: 512

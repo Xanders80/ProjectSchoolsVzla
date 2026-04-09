@@ -1,0 +1,23 @@
+# Max Iterations Configuration
+max_iterations:
+  subagent_task: 10
+  code_generation: 8
+  code_review: 5
+  bug_fix: 10
+  test_generation: 8
+  full_workflow: 20
+
+similarity_threshold: 0.95
+
+time_limits:
+  subagent_task: 120
+  code_generation: 90
+  code_review: 180
+  bug_fix: 300
+  test_generation: 120
+  full_workflow: 600
+
+action_on_limit:
+  warning: "notify orchestrator"
+  critical: "interrupt and escalate"
+  termination: "save state and stop"

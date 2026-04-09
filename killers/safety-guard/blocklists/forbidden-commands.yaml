@@ -1,0 +1,35 @@
+# Forbidden Commands Blocklist
+forbidden_commands:
+  - "rm -rf"
+  - "rm -f"
+  - "rmdir"
+  - "DROP DATABASE"
+  - "DROP TABLE"
+  - "TRUNCATE TABLE"
+  - "DELETE FROM"
+  - "chmod 777"
+  - "chmod 666"
+  - "curl.*password"
+  - "wget.*secret"
+  - "git push --force"
+  - "git reset --hard origin"
+  - "mkfs"
+  - "dd if="
+  - "shutdown"
+  - "reboot"
+  - "kill -9"
+  - "iptables"
+  - "ufw"
+
+forbidden_patterns:
+  - "password.*=.*['\"]"
+  - "api_key.*=.*['\"]"
+  - "secret.*=.*['\"]"
+  - "token.*=.*['\"]"
+  - "-----BEGIN.*PRIVATE KEY-----"
+  - "jdbc:.*:.*@.*"
+
+actions:
+  on_detection: "block_and_notify"
+  log_incident: true
+  notify: "safety-guard"

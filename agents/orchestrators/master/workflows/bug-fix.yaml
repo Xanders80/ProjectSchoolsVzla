@@ -1,0 +1,20 @@
+workflow: "bug-fix"
+orchestrator: "master-orchestrator"
+
+execution_mode: "sequential"
+
+phases:
+  analysis:
+    - qa-specialist: reproduce_and_diagnose
+
+  fix:
+    - backend-specialist: implement_fix
+    - OR frontend-specialist: if_ui_bug
+
+  validation:
+    - tech-lead: review
+    - qa-specialist: verify_fix
+
+error_handling:
+  on_failure: "escalate_to_human"
+  max_retries: 3

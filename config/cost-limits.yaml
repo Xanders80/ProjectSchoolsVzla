@@ -1,0 +1,63 @@
+# Cost Limits
+# Límites de costos para el workflow OpenCode
+
+version: "1.0.0"
+
+daily_limits:
+  total_budget: 25.00
+  warning_at: 20.00
+  critical_at: 22.50
+  block_at: 25.00
+
+per_task_limits:
+  code_generation:
+    warning: 0.50
+    critical: 1.00
+    block: 2.00
+    max_tokens: 8000
+
+  code_review:
+    warning: 0.30
+    critical: 0.60
+    block: 1.00
+    max_tokens: 6000
+
+  bug_fix:
+    warning: 0.40
+    critical: 0.80
+    block: 1.50
+    max_tokens: 6000
+
+  test_generation:
+    warning: 0.30
+    critical: 0.60
+    block: 1.00
+    max_tokens: 6000
+
+  planning:
+    warning: 0.60
+    critical: 1.20
+    block: 2.00
+    max_tokens: 10000
+
+  quick_task:
+    warning: 0.10
+    critical: 0.20
+    block: 0.30
+    max_tokens: 2000
+
+per_agent_limits:
+  master_orchestrator: 5.00
+  software_architect: 4.00
+  tech_lead: 3.00
+  backend_specialist: 4.00
+  frontend_specialist: 3.00
+  qa_specialist: 3.00
+  devops_specialist: 2.00
+  security_specialist: 2.00
+
+monthly_limits:
+  total_budget: 500.00
+  warning_at: 400.00
+  critical_at: 450.00
+  block_at: 500.00

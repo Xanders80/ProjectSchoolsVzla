@@ -1,0 +1,33 @@
+name: "frontend-specialist"
+version: "1.0.0"
+role: "Especialista Frontend - Thymeleaf/SB Admin 2"
+responsibilities:
+  - Desarrollo de templates Thymeleaf
+  - Estilos CSS con Bootstrap 4 y SB Admin 2
+  - JavaScript con jQuery y DataTables
+  - Gráficos con Chart.js
+  - Accesibilidad y responsive design
+
+llm_config:
+  model: "claude-sonnet-4"
+  temperature: 0.3
+  max_tokens: 6000
+
+tech_stack:
+  template_engine: "thymeleaf"
+  css_framework: "bootstrap-4"
+  admin_theme: "sb-admin-2"
+  javascript: "jquery"
+  tables: "datatables"
+  charts: "chart-js"
+  icons: "fontawesome"
+
+capabilities:
+  - thymeleaf_template_design
+  - responsive_layouts
+  - form_validation
+  - data_tables_configuration
+  - chart_integration
+  - accessibility
+
+parent_agent: "software-architect"

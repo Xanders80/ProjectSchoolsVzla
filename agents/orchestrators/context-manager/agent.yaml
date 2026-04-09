@@ -1,0 +1,34 @@
+name: "context-manager"
+version: "1.0.0"
+role: "Gestor de Contexto - School Management System"
+
+responsibilities:
+  - Manage context window efficiently
+  - Prune irrelevant context
+  - Prioritize active task information
+  - Maintain project state awareness
+  - Compress and summarize long conversations
+
+llm_config:
+  model: "claude-sonnet-4"
+  temperature: 0.1
+  max_tokens: 4000
+
+context_rules:
+  max_context_tokens: 100000
+  pruning_threshold: 0.8
+  summary_interval: 50
+  priority_levels:
+    - critical: "current task, active files, errors"
+    - important: "recent decisions, related code, test results"
+    - reference: "project conventions, architecture docs, past patterns"
+    - discard: "resolved issues, outdated code, completed tasks"
+
+project_index:
+  packages: "com.school.{academic,admin,bi,communication,core,finance,health,hr,infra,library,report,schedule,web}"
+  modules: "academic, admin, bi, communication, finance, health, hr, infra, library, schedule"
+  key_files:
+    - "pom.xml"
+    - "SecurityConfig.java"
+    - "application.properties"
+    - "schema.sql"

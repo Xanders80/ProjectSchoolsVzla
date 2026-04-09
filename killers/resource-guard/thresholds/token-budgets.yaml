@@ -1,0 +1,32 @@
+# Token Budgets Configuration
+budgets:
+  per_task:
+    warning: 30000
+    critical: 50000
+    block: 80000
+
+  per_agent_per_hour:
+    warning: 50000
+    critical: 100000
+    block: 150000
+
+  daily:
+    warning: 200000
+    critical: 400000
+    block: 500000
+
+  monthly:
+    warning: 5000000
+    critical: 8000000
+    block: 10000000
+
+actions:
+  warning: "apply context pruning, reduce response length"
+  critical: "switch to cheaper model, summarize context"
+  block: "stop all new tasks until budget reset"
+
+optimization:
+  context_pruning_threshold: 0.75
+  max_response_tokens: 4000
+  batch_requests: true
+  cache_enabled: true

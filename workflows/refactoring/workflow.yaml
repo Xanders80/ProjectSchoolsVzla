@@ -1,0 +1,39 @@
+name: "refactoring"
+version: "1.0.0"
+
+stages:
+  01_analysis:
+    agent: "tech-lead"
+    actions:
+      - identify_code_smells
+      - measure_current_complexity
+      - define_refactoring_scope
+    output: "refactoring-plan.md"
+
+  02_implementation:
+    agent: "backend-specialist"
+    input: "refactoring-plan.md"
+    actions:
+      - apply_refactoring
+      - ensure_tests_still_pass
+    output: "refactored_code"
+
+  03_validation:
+    agent: "qa-specialist"
+    actions:
+      - measure_new_complexity
+      - run_full_test_suite
+      - verify_behavior_unchanged
+    on_failure: "revert_changes"
+
+  04_review:
+    agent: "tech-lead"
+    checks:
+      - complexity_reduced
+      - tests_passing
+      - no_behavior_changes
+
+killers_active:
+  - error-handler
+  - loop-detector
+  - hallucination-guard

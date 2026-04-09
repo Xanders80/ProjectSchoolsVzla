@@ -1,0 +1,50 @@
+name: "hotfix"
+version: "1.0.0"
+priority: "critical"
+
+stages:
+  01_triage:
+    agent: "error-handler"
+    actions:
+      - assess_severity
+      - identify_affected_users
+      - determine_immediate_mitigation
+    output: "incident-report.md"
+    timeout: 300
+
+  02_fix:
+    agent: "backend-specialist"
+    input: "incident-report.md"
+    actions:
+      - implement_minimal_fix
+      - add_basic_test
+    output: "hotfix-code"
+    timeout: 600
+
+  03_emergency_review:
+    agent: "tech-lead"
+    checks:
+      - fix_addresses_issue
+      - no_new_critical_bugs
+    timeout: 180
+
+  04_deploy:
+    agent: "devops-specialist"
+    actions:
+      - build
+      - deploy_to_production
+      - verify_fix
+    timeout: 300
+
+  05_post_mortem:
+    agent: "qa-specialist"
+    actions:
+      - document_incident
+      - add_comprehensive_tests
+      - update_monitoring
+
+killers_active:
+  - error-handler
+  - loop-detector
+  - timeout-enforcer
+  - safety-guard

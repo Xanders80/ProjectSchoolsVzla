@@ -1,0 +1,15 @@
+stage: "06_deployment"
+agent: "devops-specialist"
+description: "Deploy feature to production"
+steps:
+  - build: "mvn clean package -Pprod -DskipTests"
+  - test: "mvn test -Ptest"
+  - staging_deploy: "deploy to staging environment"
+  - smoke_tests: "run basic smoke tests"
+  - database_migration: "apply pending migrations"
+  - production_deploy: "deploy to production"
+  - post_deploy_verification: "verify feature works in production"
+rollback_plan:
+  - revert_code: "git revert last commit"
+  - revert_database: "run rollback migration"
+  - restart_service: "systemctl restart school-management"

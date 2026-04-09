@@ -1,0 +1,30 @@
+name: "security-analyzer"
+parent_agent: "security-specialist"
+task_scope: "single_file_or_module"
+max_execution_time: 90
+max_tokens: 5000
+
+inputs:
+  - file_path
+  - module_name
+
+outputs:
+  - security_report
+  - vulnerability_list
+  - remediation_suggestions
+
+checks:
+  - sql_injection
+  - xss_vulnerabilities
+  - csrf_protection
+  - authentication_bypass
+  - authorization_gaps
+  - secret_exposure
+  - input_validation
+
+severity_levels:
+  - critical
+  - high
+  - medium
+  - low
+  - info

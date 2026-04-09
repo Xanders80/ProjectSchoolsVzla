@@ -1,0 +1,29 @@
+name: "timeout-enforcer"
+version: "1.0.0"
+type: "killer"
+
+timeout_rules:
+  subagent_task:
+    max_seconds: 120
+    action_on_timeout: "terminate_and_escalate"
+  
+  code_generation:
+    max_seconds: 90
+    action_on_timeout: "save_partial_and_escalate"
+  
+  code_review:
+    max_seconds: 180
+    action_on_timeout: "save_review_and_escalate"
+  
+  test_generation:
+    max_seconds: 120
+    action_on_timeout: "terminate_and_escalate"
+  
+  full_workflow:
+    max_seconds: 600
+    action_on_timeout: "save_state_and_request_extension"
+
+monitoring:
+  check_interval: 10
+  warning_at: 0.75
+  critical_at: 0.90

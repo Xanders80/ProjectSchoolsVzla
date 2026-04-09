@@ -1,0 +1,28 @@
+workflow: "feature-development"
+orchestrator: "master-orchestrator"
+
+execution_mode: "sequential_with_parallel_implementation"
+
+phases:
+  planning:
+    - product-manager: requirements
+    - architect: design
+    - master-orchestrator: plan
+
+  implementation:
+    parallel:
+      - backend-specialist: entities, repos, services, controllers
+      - frontend-specialist: thymeleaf templates, css, js
+    sync_point: "api_contract_validation"
+
+  validation:
+    - tech-lead: code_review
+    - qa-specialist: testing
+
+  deployment:
+    - devops-specialist: build_and_deploy
+
+error_handling:
+  on_failure: "rollback_to_last_stable"
+  max_retries: 2
+  notify_on_failure: true
