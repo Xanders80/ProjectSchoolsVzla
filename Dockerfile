@@ -12,7 +12,7 @@ COPY mvnw .mvnw
 RUN mvn package -DskipTests -B
 
 # Stage 2: Runtime
-FROM eclipse-temurin:21-jre-alpine
+FROM eclipse-temurin:21-jre
 
 RUN addgroup -S appgroup && adduser -S appuser -G appgroup
 
