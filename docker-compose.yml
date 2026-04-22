@@ -21,7 +21,7 @@ services:
       - DB_USERNAME=${DB_USERNAME}
       - DB_PASSWORD=${DB_PASSWORD}
       - DB_URL=jdbc:mariadb://${DB_HOST}:${DB_PORT}/${DB_DATABASE}?useUnicode=yes&characterEncoding=UTF-8&serverTimezone=UTC
-      - JPAHIBERNATE_DDL_AUTO=${JPA_DDL_AUTO:-validate}
+      - DDL_AUTO=${JPA_DDL_AUTO:-update}
       - JPASHOW_SQL=${JPA_SHOW_SQL:-false}
       - SERVER_COMPRESSION_ENABLED=true
       - JAVA_OPTS=-Xms256m -Xmx512m -XX:+UseContainerSupport -Djava.security.egd=file:/dev/./urandom
