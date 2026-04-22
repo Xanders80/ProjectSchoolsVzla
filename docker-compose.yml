@@ -1,66 +1,79 @@
-version: '3.8'
-
 services:
   app:
     build:
       context: .
       dockerfile: Dockerfile
-    container_name: sms-app
-    ports:
-      - "${APP_PORT:-8080}:8080"
-    environment:
-      - SPRING_PROFILES_ACTIVE=${SPRING_PROFILES_ACTIVE:-dev}
-      - DB_URL=jdbc:mariadb://db:3306/${DB_NAME:-dbSchollAdm}
-      - DB_USERNAME=${DB_USERNAME:-root}
-      - DB_PASSWORD=${DB_PASSWORD:-root}
-      - JAVA_OPTS=-Xmx512m -Xms256m
-    depends_on:
-      db:
-        condition: service_healthy
+    container_name: ProjectSchoolsVzla-app
     restart: unless-stopped
-    networks:
-      - sms-network
-    volumes:
-      - sms-logs:/var/log/sms
-
-  db:
-    image: mariadb:11
-    container_name: sms-db
-    environment:
-      MYSQL_ROOT_PASSWORD: ${DB_PASSWORD:-root}
-      MYSQL_DATABASE: ${DB_NAME:-dbSchollAdm}
-      MYSQL_CHARSET: utf8mb4
-      MYSQL_COLLATION: utf8mb4_unicode_ci
-    ports:
-      - "${DB_PORT:-3306}:3306"
-    volumes:
-      - mariadb_data:/var/lib/mysql
-      - ./schema.sql:/docker-entrypoint-initdb.d/01-schema.sql:ro
     healthcheck:
-      test: ["CMD", "healthcheck.sh", "--connect", "--innodb_initialized"]
-      interval: 10s
-      timeout: 5s
-      retries: 5
-      start_period: 30s
-    restart: unless-stopped
+      test: ["CMD", "curl", "-f", "http://localhost:9000/actuator/health"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 120s
+    environment:
+      - SPRING_PROFILES_ACTIVE=${APP_ENV:-production}
+      - APP_ENV=${APP_ENV:-production}
+      - SERVER_PORT=9000
+      - DB_HOST=shared-mariadb
+      - DB_PORT=3306
+      - DB_NAME=${DB_DATABASE}
+      - DB_USERNAME=${DB_USERNAME}
+      - DB_PASSWORD=${DB_PASSWORD}
+      - DB_URL=jdbc:mariadb://${DB_HOST}:${DB_PORT}/${DB_DATABASE}?useUnicode=yes&characterEncoding=UTF-8&serverTimezone=UTC
+      - JPAHIBERNATE_DDL_AUTO=${JPA_DDL_AUTO:-validate}
+      - JPASHOW_SQL=${JPA_SHOW_SQL:-false}
+      - SERVER_COMPRESSION_ENABLED=true
+      - JAVA_OPTS=-Xms256m -Xmx512m -XX:+UseContainerSupport -Djava.security.egd=file:/dev/./urandom
     networks:
-      - sms-network
+      - docker-shared-services_projects-network
+    extra_hosts:
+      - "host.docker.internal:host-gateway"
+    deploy:
+      resources:
+        limits:
+          cpus: '1.0'
+          memory: 512M
+        reservations:
+          memory: 256M
+    volumes:
+      - app-logs:/app/logs
 
-  adminer:
-    image: adminer:latest
-    container_name: sms-adminer
+  nginx:
+    image: nginx:1.25-alpine
+    container_name: ProjectSchoolsVzla-nginx
+    restart: unless-stopped
     ports:
-      - "${ADMINER_PORT:-8081}:8080"
+      - "8081:80"
+    volumes:
+      - ./docker/nginx/nginx.conf:/etc/nginx/nginx.conf:ro
+      - nginx-logs:/var/log/nginx
     depends_on:
-      - db
-    restart: unless-stopped
+      - app
     networks:
-      - sms-network
-
-volumes:
-  mariadb_data:
-  sms-logs:
+      - docker-shared-services_projects-network
+    extra_hosts:
+      - "host.docker.internal:host-gateway"
+    deploy:
+      resources:
+        limits:
+          cpus: '0.5'
+          memory: 128M
+        reservations:
+          memory: 64M
+    healthcheck:
+      test: ["CMD", "wget", "--no-verbose", "--tries=1", "--spider", "http://localhost/"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 10s
 
 networks:
-  sms-network:
-    driver: bridge
+  docker-shared-services_projects-network:
+    external: true
+
+volumes:
+  app-logs:
+    driver: local
+  nginx-logs:
+    driver: local

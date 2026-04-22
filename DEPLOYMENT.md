@@ -4,7 +4,7 @@
 
 ### Prerrequisitos
 - Java 21 LTS
-- MariaDB 10.6+
+- MariaDB 12+
 - Servidor web con HTTPS
 
 ### Pasos de Despliegue

@@ -1,0 +1,19 @@
+# Development Override Configuration
+# Este archivo es para desarrollo local y NO debe ser commitado
+
+services:
+  app:
+    environment:
+      - SPRING_PROFILES_ACTIVE=development
+      - APP_ENV=development
+      - JPA_DDL_AUTO=update
+      - JPA_SHOW_SQL=true
+    ports:
+      - "9000:9000"
+    volumes:
+      - ./src:/app/src
+
+  nginx:
+    ports:
+      - "8081:80"
+      - "8443:443"

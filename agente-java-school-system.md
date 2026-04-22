@@ -34,7 +34,7 @@ core:
 
 persistencia:
   jpa: "Hibernate 6+"
-  db: "MariaDB 11" # Compatible con MySQL, mejor rendimiento en joins complejos.
+  db: "MariaDB 12" # Compatible con MySQL, mejor rendimiento en joins complejos.
   migraciones: "Flyway" # Control de versiones de schema (esencial en datos académicos).
 
 frontend:

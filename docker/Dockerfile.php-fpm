@@ -1,0 +1,40 @@
+# Optimized PHP-FPM configuration
+FROM php:8.2-fpm-alpine
+
+# Security: Non-root user setup
+RUN addgroup -S appgroup && adduser -S appuser -G appgroup
+
+# Install required extensions and clean up in single layer
+RUN docker-php-ext-install pdo_mysql && \
+    apk add --no-cache \
+    curl-dev \
+    libpng-dev \
+    libxml2-dev && \
+    docker-php-ext-install gd && \
+    # Security: Configure PHP for production
+    docker-php-ext-configure gd --with-jpeg && \
+    pecl install redis && \
+    rm -rf /tmp/*
+
+# Copy custom PHP configuration
+COPY docker/php.ini /usr/local/etc/php/conf.d/custom.ini
+
+# Security: Set proper permissions and non-root user
+RUN chown -R appuser:appgroup /var/www/html && \
+    chmod 755 /var/www/html
+
+# Switch to non-root user before exposing ports
+USER appuser
+
+# Healthcheck
+HEALTHCHECK --interval=30s --timeout=10s --retries=3 --start-period=10s \
+  CMD php -r "file_get_contents('http://localhost/health');" || exit 1
+
+# Security settings
+ENV PHP_FPM_CHILDREN=2
+ENV PHP_FPM_MAX_REQUESTS=500
+
+WORKDIR /var/www/html
+
+# Expose FPM port
+EXPOSE 9000

@@ -1,0 +1,34 @@
+# Optimized nginx configuration
+FROM nginx:1.25-alpine
+
+# Security: Drop privileges
+RUN addgroup -S nginxgroup && adduser -S nginxuser -G nginxgroup
+
+# Install required modules and clean up
+RUN apk add --no-cache curl
+
+# Security settings
+RUN sed -i 's/# server_tokens off/server_tokens off/' /etc/nginx/nginx.conf && \
+    echo "daemon off;" >> /etc/nginx/nginx.conf && \
+    # Remove default server config
+    rm -f /etc/nginx/conf.d/default.conf && \
+    # Create secure tmp
+    mkdir -p /var/run/nginx && \
+    chown -R nginxuser:nginxgroup /var/run/nginx /var/cache/nginx /var/log/nginx
+
+# Copy custom nginx configuration
+COPY docker/nginx.conf /etc/nginx/conf.d/default.conf
+
+# Switch to non-root user
+USER nginxuser
+
+# Healthcheck
+HEALTHCHECK --interval=30s --timeout=5s --retries=3 \
+  CMD wget --no-verbose --tries=1 --spiker http://localhost/ || exit 1
+
+EXPOSE 80 443
+
+# Optimize performance
+WORKDIR /var/www/html
+
+# Security headers are defined in nginx.conf
