@@ -13,317 +13,317 @@
     <title>SB Admin 2 - Sidebar</title>
   </head>
   <body>
-    <!-- Sidebar -->
-    <ul
-      class="navbar-nav bg-gradient-primary sidebar sidebar-dark accordion"
-      id="accordionSidebar"
-      th:fragment="sidebar"
-      role="navigation"
-      aria-label="Menú lateral principal"
+<!-- Sidebar -->
+<ul
+  class="navbar-nav bg-gradient-primary sidebar sidebar-dark accordion"
+  id="accordionSidebar"
+  th:fragment="sidebar"
+  role="navigation"
+  aria-label="Menú lateral principal"
+>
+  <!-- Sidebar - Brand -->
+  <a
+    class="sidebar-brand d-flex align-items-center justify-content-center"
+    th:href="@{/}"
+    aria-label="Inicio Sistema Escolar"
+  >
+    <div class="sidebar-brand-icon rotate-n-15">
+      <i class="fas fa-school"></i>
+    </div>
+    <div class="sidebar-brand-text mx-3">Sistema Escolar</div>
+  </a>
+
+  <!-- Divider -->
+  <hr class="sidebar-divider my-0" />
+
+  <!-- Nav Item - Dashboard -->
+  <li class="nav-item active" role="none">
+    <a class="nav-link" th:href="@{/}" role="menuitem" tabindex="0">
+      <i class="fas fa-fw fa-tachometer-alt" aria-hidden="true"></i>
+      <span>Panel Principal</span>
+    </a>
+  </li>
+
+  <!-- Divider -->
+  <hr class="sidebar-divider" />
+
+  <!-- Heading -->
+  <div class="sidebar-heading" aria-label="Gestión">Gestión</div>
+
+  <!-- Nav Item - Academic -->
+  <li class="nav-item" role="none">
+    <a
+      class="nav-link collapsed"
+      href="javascript:void(0);"
+      data-toggle="collapse"
+      data-target="#collapseAcademic"
+      aria-expanded="true"
+      aria-controls="collapseAcademic"
+      role="menuitem"
+      tabindex="0"
+      aria-label="Menú Académico"
     >
-      <!-- Sidebar - Brand -->
-      <a
-        class="sidebar-brand d-flex align-items-center justify-content-center"
-        href="/"
-        aria-label="Inicio Sistema Escolar"
-      >
-        <div class="sidebar-brand-icon rotate-n-15">
-          <i class="fas fa-school"></i>
-        </div>
-        <div class="sidebar-brand-text mx-3">Sistema Escolar</div>
-      </a>
-
-      <!-- Divider -->
-      <hr class="sidebar-divider my-0" />
-
-      <!-- Nav Item - Dashboard -->
-      <li class="nav-item active" role="none">
-        <a class="nav-link" href="/" role="menuitem" tabindex="0">
-          <i class="fas fa-fw fa-tachometer-alt" aria-hidden="true"></i>
-          <span>Panel Principal</span>
-        </a>
-      </li>
-
-      <!-- Divider -->
-      <hr class="sidebar-divider" />
-
-      <!-- Heading -->
-      <div class="sidebar-heading" aria-label="Gestión">Gestión</div>
-
-      <!-- Nav Item - Academic -->
-      <li class="nav-item" role="none">
-        <a
-          class="nav-link collapsed"
-          href="javascript:void(0);"
-          data-toggle="collapse"
-          data-target="#collapseAcademic"
-          aria-expanded="true"
-          aria-controls="collapseAcademic"
-          role="menuitem"
-          tabindex="0"
-          aria-label="Menú Académico"
+      <i class="fas fa-fw fa-graduation-cap" aria-hidden="true"></i>
+      <span>Académico</span>
+    </a>
+    <div
+      id="collapseAcademic"
+      class="collapse"
+      aria-labelledby="headingAcademic"
+      data-parent="#accordionSidebar"
+    >
+      <div class="bg-white py-2 collapse-inner rounded">
+        <h6 class="collapse-header">Gestión Académica:</h6>
+        <a class="collapse-item" th:href="@{/academic/dashboard}">Dashboard</a>
+        <a class="collapse-item" th:href="@{/students}">Estudiantes</a>
+        <a class="collapse-item" th:href="@{/academic/teachers}">Docentes</a>
+        <a class="collapse-item" th:href="@{/courses}">Cursos</a>
+        <a class="collapse-item" th:href="@{/academic/study-plans}"
+          >Planes de Estudio</a
         >
-          <i class="fas fa-fw fa-graduation-cap" aria-hidden="true"></i>
-          <span>Académico</span>
-        </a>
-        <div
-          id="collapseAcademic"
-          class="collapse"
-          aria-labelledby="headingAcademic"
-          data-parent="#accordionSidebar"
+        <a class="collapse-item" th:href="@{/academic/curriculum}"
+          >Mallas Curriculares</a
         >
-          <div class="bg-white py-2 collapse-inner rounded">
-            <h6 class="collapse-header">Gestión Académica:</h6>
-            <a class="collapse-item" href="/academic/dashboard">Dashboard</a>
-            <a class="collapse-item" href="/students">Estudiantes</a>
-            <a class="collapse-item" href="/academic/teachers">Docentes</a>
-            <a class="collapse-item" href="/courses">Cursos</a>
-            <a class="collapse-item" href="/academic/study-plans"
-              >Planes de Estudio</a
-            >
-            <a class="collapse-item" href="/academic/curriculum"
-              >Mallas Curriculares</a
-            >
-            <a class="collapse-item" href="/academic/admissions">Admisiones</a>
-            <a class="collapse-item" href="/sections">Secciones</a>
-            <a class="collapse-item" href="/grades">Calificaciones</a>
-            <a class="collapse-item" href="/grades/bulk">Carga Masiva</a>
-            <a class="collapse-item" href="/attendance">Asistencia</a>
-            <a class="collapse-item" href="/academic-periods">Periodos</a>
-            <a class="collapse-item" href="/reports/cards">Boletines</a>
-            <h6 class="collapse-header">LMS & Comunicación:</h6>
-            <a class="collapse-item" href="/academic/lms/course/1"
-              >Mi Aula Virtual</a
-            >
-            <a class="collapse-item" th:href="@{/academic/forum/1}"
-              >Foros Académicos</a
-            >
-            <h6 class="collapse-header">Desarrollo:</h6>
-            <a class="collapse-item" href="/academic/material-didactico"
-              >Material Didáctico</a
-            >
-            <a class="collapse-item" href="/academic/desarrollo-docente"
-              >Desarrollo Docente</a
-            >
-            <a class="collapse-item" href="/academic/promotions/evaluate/1"
-              >Promociones</a
-            >
-          </div>
-        </div>
-      </li>
-
-      <!-- Nav Item - Reports -->
-      <li class="nav-item" role="none">
-        <a
-          class="nav-link"
-          href="/reports/dashboard"
-          role="menuitem"
-          tabindex="0"
+        <a class="collapse-item" th:href="@{/academic/admissions}">Admisiones</a>
+        <a class="collapse-item" th:href="@{/sections}">Secciones</a>
+        <a class="collapse-item" th:href="@{/grades}">Calificaciones</a>
+        <a class="collapse-item" th:href="@{/grades/bulk}">Carga Masiva</a>
+        <a class="collapse-item" th:href="@{/attendance}">Asistencia</a>
+        <a class="collapse-item" th:href="@{/academic-periods}">Periodos</a>
+        <a class="collapse-item" th:href="@{/reports/cards}">Boletines</a>
+        <h6 class="collapse-header">LMS & Comunicación:</h6>
+        <a class="collapse-item" th:href="@{/academic/lms/course/1}"
+          >Mi Aula Virtual</a
         >
-          <i class="fas fa-fw fa-chart-line" aria-hidden="true"></i>
-          <span>Reportes</span>
-        </a>
-      </li>
-
-      <!-- Nav Item - Finance -->
-      <li class="nav-item">
-        <a
-          class="nav-link collapsed"
-          href="javascript:void(0);"
-          data-toggle="collapse"
-          data-target="#collapseFinance"
-          aria-expanded="true"
-          aria-controls="collapseFinance"
+        <a class="collapse-item" th:href="@{/academic/forum/1}"
+          >Foros Académicos</a
         >
-          <i class="fas fa-fw fa-dollar-sign"></i>
-          <span>Finanzas</span>
-        </a>
-        <div
-          id="collapseFinance"
-          class="collapse"
-          aria-labelledby="headingFinance"
-          data-parent="#accordionSidebar"
+        <h6 class="collapse-header">Desarrollo:</h6>
+        <a class="collapse-item" th:href="@{/academic/material-didactico}"
+          >Material Didáctico</a
         >
-          <div class="bg-white py-2 collapse-inner rounded">
-            <h6 class="collapse-header">Gestión Financiera:</h6>
-            <a class="collapse-item" href="/finance/fees">Cobros</a>
-          </div>
-        </div>
-      </li>
-
-      <!-- Nav Item - Library -->
-      <li class="nav-item">
-        <a
-          class="nav-link collapsed"
-          href="javascript:void(0);"
-          data-toggle="collapse"
-          data-target="#collapseLibrary"
-          aria-expanded="true"
-          aria-controls="collapseLibrary"
+        <a class="collapse-item" th:href="@{/academic/desarrollo-docente}"
+          >Desarrollo Docente</a
         >
-          <i class="fas fa-fw fa-book"></i>
-          <span>Biblioteca</span>
-        </a>
-        <div
-          id="collapseLibrary"
-          class="collapse"
-          aria-labelledby="headingLibrary"
-          data-parent="#accordionSidebar"
+        <a class="collapse-item" th:href="@{/academic/promotions/evaluate/1}"
+          >Promociones</a
         >
-          <div class="bg-white py-2 collapse-inner rounded">
-            <h6 class="collapse-header">Gestión Biblioteca:</h6>
-            <a class="collapse-item" href="/library/books">Libros</a>
-            <a class="collapse-item" href="/library/loans">Préstamos</a>
-            <a class="collapse-item" href="/library/resources"
-              >Recursos Digitales</a
-            >
-          </div>
-        </div>
-      </li>
-
-      <!-- Nav Item - Infrastructure -->
-      <li
-        class="nav-item"
-        sec:authorize="hasAnyRole('ADMIN', 'DIRECTOR', 'STAFF')"
-      >
-        <a
-          class="nav-link collapsed"
-          href="javascript:void(0);"
-          data-toggle="collapse"
-          data-target="#collapseInfra"
-          aria-expanded="true"
-          aria-controls="collapseInfra"
-        >
-          <i class="fas fa-fw fa-building"></i>
-          <span>Infraestructura</span>
-        </a>
-        <div
-          id="collapseInfra"
-          class="collapse"
-          aria-labelledby="headingInfra"
-          data-parent="#accordionSidebar"
-        >
-          <div class="bg-white py-2 collapse-inner rounded">
-            <h6 class="collapse-header">Gestión de Infra:</h6>
-            <a class="collapse-item" href="/infra/buildings">Edificios</a>
-            <a class="collapse-item" href="/infra/rooms">Salas</a>
-            <a class="collapse-item" href="/infra/labs/reservations"
-              >Reserva de Labs</a
-            >
-            <h6 class="collapse-header">Gestión de Activos:</h6>
-            <a class="collapse-item" href="/infra/assets/dashboard"
-              >Dash. Activos</a
-            >
-            <a class="collapse-item" href="/infra/assets">Inventario</a>
-            <a class="collapse-item" href="/infra/maintenance/dashboard"
-              >Dash. Mant.</a
-            >
-            <a class="collapse-item" href="/infra/maintenance">Mantenimiento</a>
-          </div>
-        </div>
-      </li>
-
-      <!-- Nav Item - Health -->
-      <li class="nav-item" sec:authorize="hasAnyRole('ADMIN', 'DIRECTOR')">
-        <a class="nav-link" href="/students">
-          <i class="fas fa-fw fa-heartbeat"></i>
-          <span>Salud (Estudiantes)</span>
-        </a>
-      </li>
-
-      <!-- Nav Item - Communication -->
-      <li class="nav-item">
-        <a
-          class="nav-link collapsed"
-          href="javascript:void(0);"
-          data-toggle="collapse"
-          data-target="#collapseCommunication"
-          aria-expanded="true"
-          aria-controls="collapseCommunication"
-        >
-          <i class="fas fa-fw fa-comments"></i>
-          <span>Comunicación</span>
-        </a>
-        <div
-          id="collapseCommunication"
-          class="collapse"
-          aria-labelledby="headingCommunication"
-          data-parent="#accordionSidebar"
-        >
-          <div class="bg-white py-2 collapse-inner rounded">
-            <h6 class="collapse-header">Mensajería:</h6>
-            <a class="collapse-item" href="/messages">Bandeja de Entrada</a>
-            <a class="collapse-item" href="/messages/sent">Enviados</a>
-            <a class="collapse-item" href="/messages/compose">Redactar</a>
-            <h6 class="collapse-header">Avisos:</h6>
-            <a class="collapse-item" href="/notifications">Mis Avisos</a>
-            <a
-              class="collapse-item"
-              href="/notifications/broadcast"
-              sec:authorize="hasRole('ADMIN')"
-              >Enviar Anuncio</a
-            >
-          </div>
-        </div>
-      </li>
-
-      <!-- Nav Item - Schedule -->
-      <li class="nav-item">
-        <a class="nav-link" href="/schedules">
-          <i class="fas fa-fw fa-calendar"></i>
-          <span>Horarios</span>
-        </a>
-      </li>
-
-      <!-- Divider -->
-      <hr class="sidebar-divider" />
-
-      <!-- Heading -->
-      <div class="sidebar-heading">Administración</div>
-
-      <!-- Nav Item - Admin -->
-      <li class="nav-item" sec:authorize="hasRole('ADMIN')">
-        <a
-          class="nav-link collapsed"
-          href="javascript:void(0);"
-          data-toggle="collapse"
-          data-target="#collapseAdmin"
-          aria-expanded="true"
-          aria-controls="collapseAdmin"
-        >
-          <i class="fas fa-fw fa-cogs"></i>
-          <span>Administración</span>
-        </a>
-        <div
-          id="collapseAdmin"
-          class="collapse"
-          aria-labelledby="headingAdmin"
-          data-parent="#accordionSidebar"
-        >
-          <div class="bg-white py-2 collapse-inner rounded">
-            <h6 class="collapse-header">Opciones Admin:</h6>
-            <a class="collapse-item" href="/admin/users">Usuarios</a>
-            <a class="collapse-item" href="/admin/roles">Roles</a>
-            <a class="collapse-item" href="/staff">Personal</a>
-            <a class="collapse-item" href="/parents">Representantes</a>
-            <h6 class="collapse-header">Recursos Humanos:</h6>
-            <a class="collapse-item" href="/hr/contracts">Contratos</a>
-            <a class="collapse-item" href="/hr/attendance">Asistencia</a>
-            <a class="collapse-item" href="/hr/payroll">Nómina</a>
-            <h6 class="collapse-header">Analítica:</h6>
-            <a class="collapse-item" href="/bi/dashboard">BI Dashboard</a>
-          </div>
-        </div>
-      </li>
-
-      <!-- Divider -->
-      <hr class="sidebar-divider d-none d-md-block" />
-
-      <!-- Sidebar Toggler (Sidebar) -->
-      <div class="text-center d-none d-md-inline">
-        <button class="rounded-circle border-0" id="sidebarToggle"></button>
       </div>
-    </ul>
-    <!-- End of Sidebar -->
+    </div>
+  </li>
+
+  <!-- Nav Item - Reports -->
+  <li class="nav-item" role="none">
+    <a
+      class="nav-link"
+      th:href="@{/reports/dashboard}"
+      role="menuitem"
+      tabindex="0"
+    >
+      <i class="fas fa-fw fa-chart-line" aria-hidden="true"></i>
+      <span>Reportes</span>
+    </a>
+  </li>
+
+  <!-- Nav Item - Finance -->
+  <li class="nav-item">
+    <a
+      class="nav-link collapsed"
+      href="javascript:void(0);"
+      data-toggle="collapse"
+      data-target="#collapseFinance"
+      aria-expanded="true"
+      aria-controls="collapseFinance"
+    >
+      <i class="fas fa-fw fa-dollar-sign"></i>
+      <span>Finanzas</span>
+    </a>
+    <div
+      id="collapseFinance"
+      class="collapse"
+      aria-labelledby="headingFinance"
+      data-parent="#accordionSidebar"
+    >
+      <div class="bg-white py-2 collapse-inner rounded">
+        <h6 class="collapse-header">Gestión Financiera:</h6>
+        <a class="collapse-item" th:href="@{/finance/fees}">Cobros</a>
+      </div>
+    </div>
+  </li>
+
+  <!-- Nav Item - Library -->
+  <li class="nav-item">
+    <a
+      class="nav-link collapsed"
+      href="javascript:void(0);"
+      data-toggle="collapse"
+      data-target="#collapseLibrary"
+      aria-expanded="true"
+      aria-controls="collapseLibrary"
+    >
+      <i class="fas fa-fw fa-book"></i>
+      <span>Biblioteca</span>
+    </a>
+    <div
+      id="collapseLibrary"
+      class="collapse"
+      aria-labelledby="headingLibrary"
+      data-parent="#accordionSidebar"
+    >
+      <div class="bg-white py-2 collapse-inner rounded">
+        <h6 class="collapse-header">Gestión Biblioteca:</h6>
+        <a class="collapse-item" th:href="@{/library/books}">Libros</a>
+        <a class="collapse-item" th:href="@{/library/loans}">Préstamos</a>
+        <a class="collapse-item" th:href="@{/library/resources}"
+          >Recursos Digitales</a
+        >
+      </div>
+    </div>
+  </li>
+
+  <!-- Nav Item - Infrastructure -->
+  <li
+    class="nav-item"
+    sec:authorize="hasAnyRole('ADMIN', 'DIRECTOR', 'STAFF')"
+  >
+    <a
+      class="nav-link collapsed"
+      href="javascript:void(0);"
+      data-toggle="collapse"
+      data-target="#collapseInfra"
+      aria-expanded="true"
+      aria-controls="collapseInfra"
+    >
+      <i class="fas fa-fw fa-building"></i>
+      <span>Infraestructura</span>
+    </a>
+    <div
+      id="collapseInfra"
+      class="collapse"
+      aria-labelledby="headingInfra"
+      data-parent="#accordionSidebar"
+    >
+      <div class="bg-white py-2 collapse-inner rounded">
+        <h6 class="collapse-header">Gestión de Infra:</h6>
+        <a class="collapse-item" th:href="@{/infra/buildings}">Edificios</a>
+        <a class="collapse-item" th:href="@{/infra/rooms}">Salas</a>
+        <a class="collapse-item" th:href="@{/infra/labs/reservations}"
+          >Reserva de Labs</a
+        >
+        <h6 class="collapse-header">Gestión de Activos:</h6>
+        <a class="collapse-item" th:href="@{/infra/assets/dashboard}"
+          >Dash. Activos</a
+        >
+        <a class="collapse-item" th:href="@{/infra/assets}">Inventario</a>
+        <a class="collapse-item" th:href="@{/infra/maintenance/dashboard}"
+          >Dash. Mant.</a
+        >
+        <a class="collapse-item" th:href="@{/infra/maintenance}">Mantenimiento</a>
+      </div>
+    </div>
+  </li>
+
+  <!-- Nav Item - Health -->
+  <li class="nav-item" sec:authorize="hasAnyRole('ADMIN', 'DIRECTOR')">
+    <a class="nav-link" th:href="@{/students}">
+      <i class="fas fa-fw fa-heartbeat"></i>
+      <span>Salud (Estudiantes)</span>
+    </a>
+  </li>
+
+  <!-- Nav Item - Communication -->
+  <li class="nav-item">
+    <a
+      class="nav-link collapsed"
+      href="javascript:void(0);"
+      data-toggle="collapse"
+      data-target="#collapseCommunication"
+      aria-expanded="true"
+      aria-controls="collapseCommunication"
+    >
+      <i class="fas fa-fw fa-comments"></i>
+      <span>Comunicación</span>
+    </a>
+    <div
+      id="collapseCommunication"
+      class="collapse"
+      aria-labelledby="headingCommunication"
+      data-parent="#accordionSidebar"
+    >
+      <div class="bg-white py-2 collapse-inner rounded">
+        <h6 class="collapse-header">Mensajería:</h6>
+        <a class="collapse-item" th:href="@{/messages}">Bandeja de Entrada</a>
+        <a class="collapse-item" th:href="@{/messages/sent}">Enviados</a>
+        <a class="collapse-item" th:href="@{/messages/compose}">Redactar</a>
+        <h6 class="collapse-header">Avisos:</h6>
+        <a class="collapse-item" th:href="@{/notifications}">Mis Avisos</a>
+        <a
+          class="collapse-item"
+          th:href="@{/notifications/broadcast}"
+          sec:authorize="hasRole('ADMIN')"
+          >Enviar Anuncio</a
+        >
+      </div>
+    </div>
+  </li>
+
+  <!-- Nav Item - Schedule -->
+  <li class="nav-item">
+    <a class="nav-link" th:href="@{/schedules}">
+      <i class="fas fa-fw fa-calendar"></i>
+      <span>Horarios</span>
+    </a>
+  </li>
+
+  <!-- Divider -->
+  <hr class="sidebar-divider" />
+
+  <!-- Heading -->
+  <div class="sidebar-heading">Administración</div>
+
+  <!-- Nav Item - Admin -->
+  <li class="nav-item" sec:authorize="hasRole('ADMIN')">
+    <a
+      class="nav-link collapsed"
+      href="javascript:void(0);"
+      data-toggle="collapse"
+      data-target="#collapseAdmin"
+      aria-expanded="true"
+      aria-controls="collapseAdmin"
+    >
+      <i class="fas fa-fw fa-cogs"></i>
+      <span>Administración</span>
+    </a>
+    <div
+      id="collapseAdmin"
+      class="collapse"
+      aria-labelledby="headingAdmin"
+      data-parent="#accordionSidebar"
+    >
+      <div class="bg-white py-2 collapse-inner rounded">
+        <h6 class="collapse-header">Opciones Admin:</h6>
+        <a class="collapse-item" th:href="@{/admin/users}">Usuarios</a>
+        <a class="collapse-item" th:href="@{/admin/roles}">Roles</a>
+        <a class="collapse-item" th:href="@{/staff}">Personal</a>
+        <a class="collapse-item" th:href="@{/parents}">Representantes</a>
+        <h6 class="collapse-header">Recursos Humanos:</h6>
+        <a class="collapse-item" th:href="@{/hr/contracts}">Contratos</a>
+        <a class="collapse-item" th:href="@{/hr/attendance}">Asistencia</a>
+        <a class="collapse-item" th:href="@{/hr/payroll}">Nómina</a>
+        <h6 class="collapse-header">Analítica:</h6>
+        <a class="collapse-item" th:href="@{/bi/dashboard}">BI Dashboard</a>
+      </div>
+    </div>
+  </li>
+
+  <!-- Divider -->
+  <hr class="sidebar-divider d-none d-md-block" />
+
+  <!-- Sidebar Toggler (Sidebar) -->
+  <div class="text-center d-none d-md-inline">
+    <button class="rounded-circle border-0" id="sidebarToggle"></button>
+  </div>
+</ul>
+<!-- End of Sidebar -->
   </body>
 </html>

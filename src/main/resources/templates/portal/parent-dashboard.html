@@ -1,80 +1,79 @@
 <!DOCTYPE html>
-<html xmlns:th="http://www.thymeleaf.org">
-  <head>
-    <meta charset="UTF-8" />
-    <title>Portal de Padres</title>
-    <link rel="stylesheet" th:href="@{/css/styles.css}" />
-    <link
-      href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap"
-      rel="stylesheet"
-    />
-  </head>
-  <body>
-    <div class="dashboard-layout">
-      <aside
-        class="sidebar"
-        style="background: linear-gradient(135deg, #059669 0%, #047857 100%)"
-      >
-        <div class="sidebar-logo" style="color: white">
-          <span>👨‍👩‍👧‍👦 Parent Portal</span>
-        </div>
-        <nav>
-          <a
-            th:href="@{/portal/parent}"
-            class="nav-link active"
-            style="color: white; background: rgba(255, 255, 255, 0.1)"
-            >Overview</a
-          >
-          <a href="#" class="nav-link" style="color: rgba(255, 255, 255, 0.8)"
-            >Children</a
-          >
-          <a href="#" class="nav-link" style="color: rgba(255, 255, 255, 0.8)"
-            >Fees</a
-          >
-          <a
-            th:href="@{/logout}"
-            class="nav-link"
-            style="color: rgba(255, 255, 255, 0.8); margin-top: auto"
-            >Logout</a
-          >
-        </nav>
-      </aside>
-
-      <main class="main-content">
-        <div class="header">
-          <h2>Panel de Padres</h2>
-        </div>
-
-        <div class="card glass" style="padding: 1.5rem">
-          <h3>Sus Hijos</h3>
-          <div
-            style="
-              display: grid;
-              grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
-              gap: 1rem;
-              margin-top: 1rem;
-            "
-          >
-            <div
-              style="
-                padding: 1rem;
-                background: #f0fdf4;
-                border: 1px solid #bbf7d0;
-                border-radius: 0.5rem;
-              "
-            >
-              <h4 style="color: #166534">John Doe (Grade 10)</h4>
-              <p style="color: #15803d; margin-top: 0.5rem">Attendance: 98%</p>
-              <button
-                class="btn-primary"
-                style="margin-top: 1rem; background: #166534"
-              >
-                View Report
-              </button>
-            </div>
-          </div>
-        </div>
-      </main>
+<html xmlns:th="http://www.thymeleaf.org"
+      xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
+<head>
+  <meta charset="UTF-8" />
+  <title>Portal de Padres</title>
+  <link rel="stylesheet" th:href="@{/css/styles.css}" />
+  <link
+    href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap"
+    rel="stylesheet"
+  />
+</head>
+<body>
+<div class="dashboard-layout">
+  <aside
+    class="sidebar"
+    style="background: linear-gradient(135deg, #059669 0%, #047857 100%)"
+  >
+    <div class="sidebar-logo" style="color: white">
+      <span>👨‍👩‍👧‍👦 Parent Portal</span>
     </div>
-  </body>
+    <nav>
+      <a
+        th:href="@{/portal}"
+        class="nav-link active"
+        style="color: white; background: rgba(255, 255, 255, 0.1)"
+        >Overview</a
+      >
+      <a
+        th:href="@{/portal/student}"
+        class="nav-link"
+        style="color: rgba(255, 255, 255, 0.8)"
+        >Children</a
+      >
+      <a
+        th:href="@{/finance/fees}"
+        class="nav-link"
+        style="color: rgba(255, 255, 255, 0.8)"
+        >Fees</a
+      >
+      <a
+        th:href="@{/logout}"
+        class="nav-link"
+        style="color: rgba(255, 255, 255, 0.8); margin-top: auto"
+        >Logout</a
+      >
+    </nav>
+  </aside>
+
+  <main class="main-content">
+    <div class="header">
+      <h2>Panel de Padres</h2>
+    </div>
+
+    <div class="card glass" style="padding: 1.5rem">
+      <h3>Sus Hijos</h3>
+      <div th:if="${parent == null or #lists.isEmpty(parent.children)}"
+           style="padding: 1rem; color: #6b7280;">
+        No hay hijos asociados a su cuenta.
+      </div>
+      <div th:if="${parent != null and !#lists.isEmpty(parent.children)}"
+           style="display: grid; grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); gap: 1rem; margin-top: 1rem">
+        <div th:each="child : ${parent.children}"
+             style="padding: 1rem; background: #f0fdf4; border: 1px solid #bbf7d0; border-radius: 0.5rem">
+          <h4 style="color: #166534">
+            <span th:text="${child.firstName + ' ' + child.lastName}">Nombre</span>
+          </h4>
+          <a th:href="@{/portal/student/{id}(id=${child.id})}"
+             class="btn-primary"
+             style="display: inline-block; margin-top: 1rem; background: #166534; color: white; padding: 0.5rem 1rem; border-radius: 0.25rem; text-decoration: none">
+            View Report
+          </a>
+        </div>
+      </div>
+    </div>
+  </main>
+</div>
+</body>
 </html>

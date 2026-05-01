@@ -66,8 +66,8 @@ public class SecurityConfig {
                                 .addFilterAfter(rateLimitingFilter, anomalyDetectionFilter.getClass())
                                 .addFilterAfter(deleteRateLimitFilter, rateLimitingFilter.getClass())
                                 .addFilterAfter(auditLoggingFilter, deleteRateLimitFilter.getClass())
-                                .csrf(csrf -> csrf
-                                                .ignoringRequestMatchers("/h2-console/**"))
+		.csrf(csrf -> csrf
+		)
                                 .sessionManagement(session -> session
                                                 .sessionCreationPolicy(
                                                                 org.springframework.security.config.http.SessionCreationPolicy.IF_REQUIRED)
@@ -82,12 +82,9 @@ public class SecurityConfig {
                                                                 "/webjars/**", "/favicon.ico", "/error/**", "/error")
                                                 .permitAll()
                                                 // Páginas públicas
-                                                .requestMatchers("/login", "/register", "/forgot-password", "/404")
-                                                .permitAll()
-                                                // Herramientas de desarrollo
-                                                .requestMatchers("/h2-console/**").permitAll()
-                                                .requestMatchers("/swagger-ui/**", "/v3/api-docs/**").permitAll()
-                                                .requestMatchers("/actuator/health").permitAll()
+		.requestMatchers("/login", "/register", "/forgot-password", "/404")
+		.permitAll()
+		.requestMatchers("/actuator/health").permitAll()
                                                 // ENDPOINTS PROTEGIDOS - ORDEN ESPECÍFICO
                                                 .requestMatchers("/admin/**").hasRole("ADMIN")
                                                 .requestMatchers("/students/**").hasAnyRole("ADMIN", "STAFF")

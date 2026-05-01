@@ -16,10 +16,8 @@ jobs:
           java-version: '21'
           distribution: 'temurin'
           cache: maven
-      - name: Build with Maven
-        run: mvn -B package -Pprod -DskipTests --file pom.xml
-      - name: Run tests
-        run: mvn -B test -Ptest
+    - name: Build and test with Maven
+      run: mvn -B package --file pom.xml
       - name: Upload JAR
         uses: actions/upload-artifact@v4
         with:
@@ -46,4 +44,4 @@ jobs:
             systemctl start school-management
             sleep 10
             systemctl status school-management
-            curl -sf http://localhost:8080/actuator/health || exit 1
+            curl -sf http://localhost:9000/actuator/health || exit 1

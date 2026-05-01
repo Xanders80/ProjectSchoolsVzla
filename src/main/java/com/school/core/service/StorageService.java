@@ -28,7 +28,11 @@ public class StorageService {
                 Files.createDirectories(root);
             }
 
-            String filename = UUID.randomUUID().toString() + "_" + file.getOriginalFilename();
+			String originalFilename = file.getOriginalFilename();
+			String safeFilename = (originalFilename != null)
+					? originalFilename.replaceAll("[^a-zA-Z0-9._-]", "_")
+					: "unknown";
+			String filename = UUID.randomUUID().toString() + "_" + safeFilename;
             Path destinationFile = root.resolve(Paths.get(filename))
                     .normalize().toAbsolutePath();
 

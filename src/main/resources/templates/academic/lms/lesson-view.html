@@ -72,7 +72,7 @@
                     <!-- Text Content -->
                     <div th:if="${lesson.content != null}" class="mb-4">
                       <h5>Contenido</h5>
-                      <div th:utext="${lesson.content}"></div>
+		<div th:text="${lesson.content}"></div>
                     </div>
 
                     <!-- PDF Preview -->

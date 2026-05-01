@@ -14,7 +14,7 @@ RUN mvn package -DskipTests -B
 # Stage 2: Runtime
 FROM eclipse-temurin:21-jre
 
-RUN addgroup -S appgroup && adduser -S appuser -G appgroup
+RUN groupadd -r appgroup && useradd -r -g appgroup -d /app -s /sbin/nologin appuser
 
 WORKDIR /app
 

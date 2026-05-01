@@ -48,9 +48,8 @@ public class ScheduleEntry {
     @JoinColumn(name = "section_id", nullable = false)
     private Section section;
 
-    public ScheduleEntry() {
-        this.section = new Section();
-    }
+	public ScheduleEntry() {
+	}
 
     public Long getId() {
         return id;

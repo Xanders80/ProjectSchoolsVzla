@@ -12,7 +12,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import com.school.academic.entity.AcademicPeriod;
-import com.school.academic.repository.AcademicPeriodRepository;
+import com.school.academic.service.AcademicPeriodService;
 
 import jakarta.validation.Valid;
 
@@ -20,49 +20,48 @@ import jakarta.validation.Valid;
 @RequestMapping("/academic-periods")
 public class AcademicPeriodController {
 
-    private final AcademicPeriodRepository periodRepository;
+	private final AcademicPeriodService periodService;
 
-    public AcademicPeriodController(AcademicPeriodRepository periodRepository) {
-        this.periodRepository = periodRepository;
-    }
+	public AcademicPeriodController(AcademicPeriodService periodService) {
+		this.periodService = periodService;
+	}
 
-    @GetMapping
-    public String listPeriods(Model model) {
-        model.addAttribute("periods", periodRepository.findAll());
-        return "academic/period-list";
-    }
+	@GetMapping
+	public String listPeriods(Model model) {
+		model.addAttribute("periods", periodService.findAll());
+		return "academic/period-list";
+	}
 
-    @GetMapping("/new")
-    public String newPeriodForm(Model model) {
-        model.addAttribute("period", new AcademicPeriod());
-        return "academic/period-form";
-    }
+	@GetMapping("/new")
+	public String newPeriodForm(Model model) {
+		model.addAttribute("period", new AcademicPeriod());
+		return "academic/period-form";
+	}
 
-    @SuppressWarnings("null")
-    @PostMapping
-    public String savePeriod(@Valid @ModelAttribute("period") AcademicPeriod period,
-            BindingResult result,
-            RedirectAttributes redirectAttributes) {
-        if (result.hasErrors()) {
-            return "academic/period-form";
-        }
-        periodRepository.save(period);
-        redirectAttributes.addFlashAttribute("success", "Periodo académico guardado exitosamente");
-        return "redirect:/academic-periods";
-    }
+	@PostMapping
+	public String savePeriod(@Valid @ModelAttribute("period") AcademicPeriod period,
+			BindingResult result,
+			RedirectAttributes redirectAttributes) {
+		if (result.hasErrors()) {
+			return "academic/period-form";
+		}
+		periodService.save(period);
+		redirectAttributes.addFlashAttribute("success", "Periodo academico guardado exitosamente");
+		return "redirect:/academic-periods";
+	}
 
-    @GetMapping("/edit/{id}")
-    public String editPeriodForm(@PathVariable @NonNull Long id, Model model) {
-        AcademicPeriod period = periodRepository.findById(id)
-                .orElseThrow(() -> new IllegalArgumentException("ID de periodo inválido: " + id));
-        model.addAttribute("period", period);
-        return "academic/period-form";
-    }
+	@GetMapping("/edit/{id}")
+	public String editPeriodForm(@PathVariable @NonNull Long id, Model model) {
+		AcademicPeriod period = periodService.findById(id)
+				.orElseThrow(() -> new IllegalArgumentException("ID de periodo invalido: " + id));
+		model.addAttribute("period", period);
+		return "academic/period-form";
+	}
 
-    @PostMapping("/delete/{id}")
-    public String deletePeriod(@PathVariable @NonNull Long id, RedirectAttributes redirectAttributes) {
-        periodRepository.deleteById(id);
-        redirectAttributes.addFlashAttribute("success", "Periodo académico eliminado exitosamente");
-        return "redirect:/academic-periods";
-    }
+	@PostMapping("/delete/{id}")
+	public String deletePeriod(@PathVariable @NonNull Long id, RedirectAttributes redirectAttributes) {
+		periodService.deleteById(id);
+		redirectAttributes.addFlashAttribute("success", "Periodo academico eliminado exitosamente");
+		return "redirect:/academic-periods";
+	}
 }

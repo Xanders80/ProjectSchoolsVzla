@@ -34,3 +34,9 @@ build/
 .vscode/
 
 .fake
+
+### Secrets & Environment ###
+.env
+.env.*
+secrets/
+!.env.example

@@ -1,106 +1,157 @@
 package com.school.academic.entity;
 
-import jakarta.persistence.*;
-import org.springframework.data.annotation.CreatedDate;
-import org.springframework.data.annotation.LastModifiedDate;
 import java.time.LocalDateTime;
 import java.util.Objects;
 
+import jakarta.persistence.Column;
+import jakarta.persistence.Entity;
+import jakarta.persistence.EntityListeners;
+import jakarta.persistence.FetchType;
+import jakarta.persistence.GeneratedValue;
+import jakarta.persistence.GenerationType;
+import jakarta.persistence.Id;
+import jakarta.persistence.JoinColumn;
+import jakarta.persistence.ManyToOne;
+import jakarta.persistence.Table;
+import jakarta.validation.constraints.NotNull;
+
+import com.school.core.listener.AuditEntityListener;
+
 @Entity
 @Table(name = "promotion")
-// Auditoría se implementa por listeners globales o en servicios
+@EntityListeners(AuditEntityListener.class)
 public class Promotion {
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long id;
 
-    @Column(nullable = false)
-    private String studentId;
+	@Id
+	@GeneratedValue(strategy = GenerationType.IDENTITY)
+	private Long id;
 
-    @Column(nullable = false)
-    private String previousSection;
+	@NotNull
+	@ManyToOne(fetch = FetchType.LAZY)
+	@JoinColumn(name = "student_id", nullable = false)
+	private Student student;
 
-    @Column(nullable = false)
-    private String newSection;
+	@NotNull
+	@ManyToOne(fetch = FetchType.LAZY)
+	@JoinColumn(name = "previous_section_id", nullable = false)
+	private Section previousSection;
 
-    @Column(nullable = false)
-    private boolean promoted;
+	@NotNull
+	@ManyToOne(fetch = FetchType.LAZY)
+	@JoinColumn(name = "new_section_id", nullable = false)
+	private Section newSection;
 
-    @CreatedDate
-    private LocalDateTime createdAt;
+	@Column(nullable = false)
+	private boolean promoted;
 
-    @LastModifiedDate
-    private LocalDateTime updatedAt;
+	@Column(name = "created_at")
+	private LocalDateTime createdAt;
 
-    // Getters, setters, equals, hashCode
-    public Long getId() {
-        return id;
-    }
+	@Column(name = "updated_at")
+	private LocalDateTime updatedAt;
 
-    public void setId(Long id) {
-        this.id = id;
-    }
+	@Column(name = "deleted", nullable = false)
+	private boolean deleted = false;
 
-    public String getStudentId() {
-        return studentId;
-    }
+	@Column(name = "deleted_at")
+	private LocalDateTime deletedAt;
 
-    public void setStudentId(String studentId) {
-        this.studentId = studentId;
-    }
+	@Column(name = "deleted_by", length = 100)
+	private String deletedBy;
 
-    public String getPreviousSection() {
-        return previousSection;
-    }
+	public Promotion() {
+	}
 
-    public void setPreviousSection(String previousSection) {
-        this.previousSection = previousSection;
-    }
+	public Long getId() {
+		return id;
+	}
 
-    public String getNewSection() {
-        return newSection;
-    }
+	public void setId(Long id) {
+		this.id = id;
+	}
 
-    public void setNewSection(String newSection) {
-        this.newSection = newSection;
-    }
+	public Student getStudent() {
+		return student;
+	}
 
-    public boolean isPromoted() {
-        return promoted;
-    }
+	public void setStudent(Student student) {
+		this.student = student;
+	}
 
-    public void setPromoted(boolean promoted) {
-        this.promoted = promoted;
-    }
+	public Section getPreviousSection() {
+		return previousSection;
+	}
 
-    public LocalDateTime getCreatedAt() {
-        return createdAt;
-    }
+	public void setPreviousSection(Section previousSection) {
+		this.previousSection = previousSection;
+	}
 
-    public void setCreatedAt(LocalDateTime createdAt) {
-        this.createdAt = createdAt;
-    }
+	public Section getNewSection() {
+		return newSection;
+	}
 
-    public LocalDateTime getUpdatedAt() {
-        return updatedAt;
-    }
+	public void setNewSection(Section newSection) {
+		this.newSection = newSection;
+	}
 
-    public void setUpdatedAt(LocalDateTime updatedAt) {
-        this.updatedAt = updatedAt;
-    }
+	public boolean isPromoted() {
+		return promoted;
+	}
 
-    @Override
-    public boolean equals(Object o) {
-        if (this == o)
-            return true;
-        if (o == null || getClass() != o.getClass())
-            return false;
-        Promotion that = (Promotion) o;
-        return Objects.equals(id, that.id);
-    }
+	public void setPromoted(boolean promoted) {
+		this.promoted = promoted;
+	}
 
-    @Override
-    public int hashCode() {
-        return Objects.hash(id);
-    }
+	public LocalDateTime getCreatedAt() {
+		return createdAt;
+	}
+
+	public void setCreatedAt(LocalDateTime createdAt) {
+		this.createdAt = createdAt;
+	}
+
+	public LocalDateTime getUpdatedAt() {
+		return updatedAt;
+	}
+
+	public void setUpdatedAt(LocalDateTime updatedAt) {
+		this.updatedAt = updatedAt;
+	}
+
+	public boolean isDeleted() {
+		return deleted;
+	}
+
+	public void setDeleted(boolean deleted) {
+		this.deleted = deleted;
+	}
+
+	public LocalDateTime getDeletedAt() {
+		return deletedAt;
+	}
+
+	public void setDeletedAt(LocalDateTime deletedAt) {
+		this.deletedAt = deletedAt;
+	}
+
+	public String getDeletedBy() {
+		return deletedBy;
+	}
+
+	public void setDeletedBy(String deletedBy) {
+		this.deletedBy = deletedBy;
+	}
+
+	@Override
+	public boolean equals(Object o) {
+		if (this == o) return true;
+		if (o == null || getClass() != o.getClass()) return false;
+		Promotion that = (Promotion) o;
+		return Objects.equals(id, that.id);
+	}
+
+	@Override
+	public int hashCode() {
+		return Objects.hash(id);
+	}
 }

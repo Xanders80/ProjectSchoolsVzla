@@ -220,8 +220,13 @@ public class LabReservationService {
         }
     }
 
-    @Transactional
-    public void cancelReservation(@NonNull Long id) {
-        reservationRepository.deleteById(id);
-    }
+	@Transactional
+	public void cancelReservation(@NonNull Long id) {
+		LabReservation reservation = reservationRepository.findById(id)
+				.orElseThrow(() -> new IllegalArgumentException("Reserva no encontrada"));
+		reservation.setStatus(ReservationStatus.CANCELLED);
+		reservation.setDeleted(true);
+		reservation.setDeletedAt(LocalDateTime.now());
+		reservationRepository.save(reservation);
+	}
 }

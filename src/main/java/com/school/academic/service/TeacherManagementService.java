@@ -21,10 +21,6 @@ import com.school.communication.enums.NotificationType;
 import java.util.Map;
 import java.util.HashMap;
 import java.util.stream.Collectors;
-import java.nio.charset.StandardCharsets;
-import java.security.MessageDigest;
-import java.security.NoSuchAlgorithmException;
-import java.util.Base64;
 
 @Service
 @Transactional
@@ -36,23 +32,26 @@ public class TeacherManagementService {
     private final TeacherProfileRepository profileRepository;
     private final TeacherProfileService profileService;
     private final AcademicPeriodRepository periodRepository;
-    private final NotificationService notificationService;
+	private final NotificationService notificationService;
+	private final com.school.core.util.DigitalSignatureService signatureService;
 
-    public TeacherManagementService(TeacherEvaluationRepository evaluationRepository,
-            TeacherDevelopmentRepository developmentRepository,
-            DisciplinaryRecordRepository disciplinaryRepository,
-            TeacherProfileRepository profileRepository,
-            TeacherProfileService profileService,
-            AcademicPeriodRepository periodRepository,
-            NotificationService notificationService) {
-        this.evaluationRepository = evaluationRepository;
-        this.developmentRepository = developmentRepository;
-        this.disciplinaryRepository = disciplinaryRepository;
-        this.profileRepository = profileRepository;
-        this.profileService = profileService;
-        this.periodRepository = periodRepository;
-        this.notificationService = notificationService;
-    }
+	public TeacherManagementService(TeacherEvaluationRepository evaluationRepository,
+			TeacherDevelopmentRepository developmentRepository,
+			DisciplinaryRecordRepository disciplinaryRepository,
+			TeacherProfileRepository profileRepository,
+			TeacherProfileService profileService,
+			AcademicPeriodRepository periodRepository,
+			NotificationService notificationService,
+			com.school.core.util.DigitalSignatureService signatureService) {
+		this.evaluationRepository = evaluationRepository;
+		this.developmentRepository = developmentRepository;
+		this.disciplinaryRepository = disciplinaryRepository;
+		this.profileRepository = profileRepository;
+		this.profileService = profileService;
+		this.periodRepository = periodRepository;
+		this.notificationService = notificationService;
+		this.signatureService = signatureService;
+	}
 
     // --- Gestión de Evaluación (Junta Calificadora) ---
 
@@ -107,15 +106,8 @@ public class TeacherManagementService {
         evaluation.setSignedBy(signerName);
         evaluation.setSignatureDate(java.time.LocalDateTime.now());
 
-        // Generate verification hash (Simple SHA-256 for audit)
-        String rawData = evaluation.getId() + "|" + evaluation.getTotalScore() + "|" + signerName;
-        try {
-            MessageDigest digest = MessageDigest.getInstance("SHA-256");
-            byte[] hash = digest.digest(rawData.getBytes(StandardCharsets.UTF_8));
-            evaluation.setVerificationHash(Base64.getEncoder().encodeToString(hash));
-        } catch (NoSuchAlgorithmException e) {
-            evaluation.setVerificationHash("MD5:" + rawData.hashCode()); // Fallback
-        }
+		String rawData = evaluation.getId() + "|" + evaluation.getTotalScore() + "|" + signerName;
+		evaluation.setVerificationHash(signatureService.generateVerificationHash(rawData));
 
         evaluationRepository.save(evaluation);
     }

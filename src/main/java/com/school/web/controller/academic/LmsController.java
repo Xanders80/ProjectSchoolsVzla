@@ -34,7 +34,7 @@ public class LmsController {
     }
 
     @GetMapping("/course/{courseId}")
-    @PreAuthorize("hasRole('ESTUDIANTE') or hasRole('PERSONAL') or hasRole('ADMIN')")
+    @PreAuthorize("hasRole('STUDENT') or hasRole('PERSONAL') or hasRole('ADMIN')")
     public String viewCourse(@PathVariable @NonNull Long courseId, Model model) {
         Course course = courseService.getCourseById(courseId)
                 .orElseThrow(() -> new IllegalArgumentException(COURSE_NOT_FOUND));
@@ -46,7 +46,7 @@ public class LmsController {
     }
 
     @GetMapping("/lesson/{lessonId}")
-    @PreAuthorize("hasRole('ESTUDIANTE') or hasRole('PERSONAL') or hasRole('ADMIN')")
+    @PreAuthorize("hasRole('STUDENT') or hasRole('PERSONAL') or hasRole('ADMIN')")
     public String viewLesson(@PathVariable @NonNull Long lessonId, Model model) {
         LmsLesson lesson = lmsService.getLessonById(lessonId)
                 .orElseThrow(() -> new IllegalArgumentException(LESSON_NOT_FOUND));
@@ -59,7 +59,7 @@ public class LmsController {
     }
 
     @GetMapping("/api/course/{courseId}/modules")
-    @PreAuthorize("hasRole('ESTUDIANTE') or hasRole('PERSONAL') or hasRole('ADMIN')")
+    @PreAuthorize("hasRole('STUDENT') or hasRole('PERSONAL') or hasRole('ADMIN')")
     @ResponseBody
     public List<LmsModule> getCourseModules(@PathVariable @NonNull Long courseId) {
         Course course = courseService.getCourseById(courseId)
@@ -68,7 +68,7 @@ public class LmsController {
     }
 
     @GetMapping("/api/course/{courseId}/search")
-    @PreAuthorize("hasRole('ESTUDIANTE') or hasRole('PERSONAL') or hasRole('ADMIN')")
+    @PreAuthorize("hasRole('STUDENT') or hasRole('PERSONAL') or hasRole('ADMIN')")
     @ResponseBody
     public List<LmsLesson> searchLessons(@PathVariable @NonNull Long courseId, @RequestParam String query) {
         Course course = courseService.getCourseById(courseId)
