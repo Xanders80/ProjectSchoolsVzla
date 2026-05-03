@@ -1,6 +1,5 @@
 package com.school.web.controller;
 
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Controller;
@@ -11,38 +10,42 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import com.school.core.entity.User;
-import com.school.core.repository.UserRepository;
 import com.school.core.service.UserService;
 
 @Controller
 public class ProfileController {
 
-    @Autowired
-    private UserService userService;
+	private static final String MSG_SUCCESS = "successMessage";
+	private static final String MSG_ERROR = "errorMessage";
 
-    @Autowired
-    private UserRepository userRepository;
+	private final UserService userService;
 
-    @Autowired
-    private com.school.core.service.ParentService parentService;
+	private com.school.core.service.ParentService parentService;
 
-    @Autowired
-    private com.school.admin.service.StaffService staffService;
+	private com.school.admin.service.StaffService staffService;
 
-    @Autowired
-    private com.school.academic.service.AcademicService academicService;
+	private com.school.academic.service.AcademicService academicService;
+
+	public ProfileController(UserService userService,
+			com.school.core.service.ParentService parentService,
+			com.school.admin.service.StaffService staffService,
+			com.school.academic.service.AcademicService academicService) {
+		this.userService = userService;
+		this.parentService = parentService;
+		this.staffService = staffService;
+		this.academicService = academicService;
+	}
 
     @GetMapping("/profile")
     public String showProfile(@AuthenticationPrincipal UserDetails userDetails, Model model) {
-        User user = userRepository.findByUsername(userDetails.getUsername())
-                .orElseThrow(() -> new RuntimeException("Usuario no encontrado"));
+		User user = userService.findByUsername(userDetails.getUsername())
+				.orElseThrow(() -> new RuntimeException("Usuario no encontrado"));
 
-        model.addAttribute("user", user);
+		model.addAttribute("user", user);
 
-        // Cargar entidad específica según rol de forma eficiente
-        java.time.LocalDate birthDate = null;
-        switch (user.getRole()) {
-            case PARENT:
+		java.time.LocalDate birthDate = null;
+		switch (user.getRole()) {
+		case PARENT:
                 var parent = parentService.getParentByUserId(user.getId()).orElse(null);
                 if (parent != null) {
                     model.addAttribute("parentInfo", parent);
@@ -98,17 +101,16 @@ public class ProfileController {
             RedirectAttributes redirectAttributes) {
 
         try {
-            User user = userRepository.findByUsername(userDetails.getUsername())
-                    .orElseThrow(() -> new RuntimeException("Usuario no encontrado"));
+		User user = userService.findByUsername(userDetails.getUsername())
+				.orElseThrow(() -> new RuntimeException("Usuario no encontrado"));
 
-            // Actualizar perfil de forma centralizada a través del servicio
-            userService.updateUserProfile(user, firstName, lastName, email, username, dni, phoneNumber, address,
+		userService.updateUserProfile(user, firstName, lastName, email, username, dni, phoneNumber, address,
                     relationship,
                     department, specialization, birthDate);
 
-            redirectAttributes.addFlashAttribute("success", "Perfil actualizado exitosamente");
-        } catch (RuntimeException e) {
-            redirectAttributes.addFlashAttribute("error", e.getMessage());
+		redirectAttributes.addFlashAttribute(MSG_SUCCESS, "Perfil actualizado exitosamente");
+		} catch (RuntimeException e) {
+			redirectAttributes.addFlashAttribute(MSG_ERROR, e.getMessage());
         }
 
         return "redirect:/profile";
@@ -128,23 +130,23 @@ public class ProfileController {
             RedirectAttributes redirectAttributes) {
 
         if (!newPassword.equals(confirmPassword)) {
-            redirectAttributes.addFlashAttribute("error", "Las nuevas contraseñas no coinciden");
+		redirectAttributes.addFlashAttribute(MSG_ERROR, "Las nuevas contraseñas no coinciden");
             return "redirect:/settings";
         }
 
         try {
-            User user = userRepository.findByUsername(userDetails.getUsername())
-                    .orElseThrow(() -> new RuntimeException("Usuario no encontrado"));
+		User user = userService.findByUsername(userDetails.getUsername())
+				.orElseThrow(() -> new RuntimeException("Usuario no encontrado"));
 
-            if (!userService.checkIfValidOldPassword(user, currentPassword)) {
-                redirectAttributes.addFlashAttribute("error", "La contraseña actual es incorrecta");
+			if (!userService.checkIfValidOldPassword(user, currentPassword)) {
+				redirectAttributes.addFlashAttribute(MSG_ERROR, "La contraseña actual es incorrecta");
                 return "redirect:/settings";
             }
 
-            userService.changeUserPassword(user, newPassword);
-            redirectAttributes.addFlashAttribute("success", "Contraseña actualizada exitosamente");
-        } catch (Exception e) {
-            redirectAttributes.addFlashAttribute("error", "Error al cambiar la contraseña");
+			userService.changeUserPassword(user, newPassword);
+			redirectAttributes.addFlashAttribute(MSG_SUCCESS, "Contraseña actualizada exitosamente");
+		} catch (Exception e) {
+			redirectAttributes.addFlashAttribute(MSG_ERROR, "Error al cambiar la contraseña");
         }
 
         return "redirect:/settings";

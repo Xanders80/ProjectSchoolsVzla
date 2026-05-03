@@ -5,6 +5,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.lang.NonNull;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -21,12 +22,16 @@ import com.school.academic.dto.AttendanceDTO;
 import com.school.academic.entity.Enrollment;
 
 @Service
+@Transactional(readOnly = true)
 public class AttendanceService {
 
     private final AttendanceRepository attendanceRepository;
     private final SectionRepository sectionRepository;
     private final StudentRepository studentRepository;
-    private final EnrollmentRepository enrollmentRepository;
+	private final EnrollmentRepository enrollmentRepository;
+
+	@Value("${app.attendance.alert-threshold:5}")
+	private int attendanceAlertThreshold;
 
     public AttendanceService(AttendanceRepository attendanceRepository, SectionRepository sectionRepository,
             StudentRepository studentRepository, EnrollmentRepository enrollmentRepository) {
@@ -112,7 +117,7 @@ public class AttendanceService {
         LocalDate startDate = endDate.minusDays(30);
 
         long absences = attendanceRepository.countAbsencesByStudentAndDateRange(studentId, startDate, endDate);
-        return absences < 5; // Returns true if good, false if alert needed
+		return absences < attendanceAlertThreshold;
     }
 
     public List<com.school.academic.dto.StudentAttendanceStatsDTO> getSectionStats(Long sectionId, int month,

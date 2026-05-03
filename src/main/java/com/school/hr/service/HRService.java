@@ -5,6 +5,7 @@ import java.time.LocalTime;
 import java.util.List;
 import java.util.Optional;
 
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.lang.NonNull;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -19,13 +20,16 @@ import com.school.hr.repository.PayrollRepository;
 import com.school.hr.repository.StaffAttendanceRepository;
 
 @Service
-@Transactional
+@Transactional(readOnly = true)
 public class HRService {
 
     private final ContractRepository contractRepository;
     private final StaffAttendanceRepository attendanceRepository;
     private final PayrollRepository payrollRepository;
-    private final StaffRepository staffRepository;
+	private final StaffRepository staffRepository;
+
+	@Value("${app.hr.late-threshold:09:00}")
+	private String lateThreshold;
 
     public HRService(ContractRepository contractRepository,
             StaffAttendanceRepository attendanceRepository,
@@ -39,12 +43,12 @@ public class HRService {
 
     // --- Contract Management ---
 
-    @Transactional(readOnly = true)
-    public List<Contract> getAllContracts() {
+	public List<Contract> getAllContracts() {
         return contractRepository.findAll();
     }
 
-    public Contract saveContract(@NonNull Contract contract) {
+	@Transactional
+	public Contract saveContract(@NonNull Contract contract) {
         return contractRepository.save(contract);
     }
 
@@ -58,7 +62,8 @@ public class HRService {
         return attendanceRepository.findByDate(date);
     }
 
-    public StaffAttendance markCheckIn(@NonNull Long staffId, LocalTime time) {
+	@Transactional
+	public StaffAttendance markCheckIn(@NonNull Long staffId, LocalTime time) {
         LocalDate today = LocalDate.now();
         Staff staff = staffRepository.findById(staffId)
                 .orElseThrow(() -> new IllegalArgumentException("Personal no encontrado"));
@@ -71,7 +76,7 @@ public class HRService {
         attendance.setCheckInTime(time);
 
         // Simple logic for status: if checkin after 9:00 -> LATE, else PRESENT
-        if (time.isAfter(LocalTime.of(9, 0))) {
+		if (time.isAfter(LocalTime.parse(lateThreshold))) {
             attendance.setStatus(StaffAttendance.AttendanceStatus.LATE);
         } else {
             attendance.setStatus(StaffAttendance.AttendanceStatus.PRESENT);
@@ -80,7 +85,8 @@ public class HRService {
         return attendanceRepository.save(attendance);
     }
 
-    public StaffAttendance markCheckOut(Long staffId, LocalTime time) {
+	@Transactional
+	public StaffAttendance markCheckOut(Long staffId, LocalTime time) {
         LocalDate today = LocalDate.now();
         StaffAttendance attendance = attendanceRepository.findByStaffIdAndDate(staffId, today)
                 .orElseThrow(() -> new IllegalArgumentException("No se encontro registro de check-in para hoy"));
@@ -91,12 +97,12 @@ public class HRService {
 
     // --- Payroll Management ---
 
-    @Transactional(readOnly = true)
-    public List<Payroll> getPayrollByPeriod(String period) {
+	public List<Payroll> getPayrollByPeriod(String period) {
         return payrollRepository.findByPeriod(period);
     }
 
-    public void generatePayrollForPeriod(String period) {
+	@Transactional
+	public void generatePayrollForPeriod(String period) {
         List<Contract> activeContracts = contractRepository.findAll().stream()
                 .filter(Contract::isActive)
                 .toList();
@@ -122,7 +128,8 @@ public class HRService {
         }
     }
 
-    public void payPayroll(@NonNull Long payrollId) {
+	@Transactional
+	public void payPayroll(@NonNull Long payrollId) {
         Payroll payroll = payrollRepository.findById(payrollId)
                 .orElseThrow(() -> new IllegalArgumentException("No se encontro registro de nomina"));
         payroll.setStatus(Payroll.PaymentStatus.PAID);

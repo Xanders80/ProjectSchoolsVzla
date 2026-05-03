@@ -3,6 +3,7 @@ package com.school.academic.service;
 import java.time.LocalDateTime;
 import java.util.List;
 
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.lang.NonNull;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -16,13 +17,22 @@ import com.school.academic.repository.StudentRepository;
 import com.school.core.service.AuditService;
 
 @Service
-@Transactional
+@Transactional(readOnly = true)
 public class PromotionService {
 
 	private final PromotionRepository promotionRepository;
 	private final GradeRepository gradeRepository;
 	private final StudentRepository studentRepository;
 	private final AuditService auditService;
+
+	@Value("${app.promotion.average-threshold:70.0}")
+	private double averageThreshold;
+
+	@Value("${app.promotion.max-failed-courses:2}")
+	private int maxFailedCourses;
+
+	@Value("${app.promotion.max-failed-courses-retain:4}")
+	private int maxFailedCoursesRetain;
 
 	public PromotionService(PromotionRepository promotionRepository,
 			GradeRepository gradeRepository,
@@ -34,15 +44,16 @@ public class PromotionService {
 		this.auditService = auditService;
 	}
 
-	@Transactional(readOnly = true)
 	public List<Promotion> findAll() {
 		return promotionRepository.findAll();
 	}
 
+	@Transactional
 	public Promotion save(Promotion promotion) {
 		return promotionRepository.save(promotion);
 	}
 
+	@Transactional
 	public void delete(Long id) {
 		Promotion promotion = promotionRepository.findById(id)
 				.orElseThrow(() -> new IllegalArgumentException("Promocion no encontrada"));
@@ -65,9 +76,9 @@ public class PromotionService {
 		long failedCourses = grades.stream().filter(g -> g.getScore() < 60.0).count();
 
 		String status;
-		if (average >= 70.0 && failedCourses <= 2) {
+		if (average >= averageThreshold && failedCourses <= maxFailedCourses) {
 			status = "PROMOTED";
-		} else if (failedCourses > 4) {
+		} else if (failedCourses > maxFailedCoursesRetain) {
 			status = "RETAINED";
 		} else {
 			status = "PENDING_RECOVERY";
@@ -76,6 +87,7 @@ public class PromotionService {
 		return new PromotionResult(studentId, status, average, (int) failedCourses);
 	}
 
+	@Transactional
 	public void processMassPromotion(@NonNull Long periodId) {
 		List<Student> activeStudents = studentRepository.findAllActive();
 

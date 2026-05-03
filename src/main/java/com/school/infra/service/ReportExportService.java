@@ -19,304 +19,260 @@ import org.apache.poi.ss.usermodel.Workbook;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 import org.springframework.stereotype.Service;
 
-import com.itextpdf.kernel.colors.ColorConstants;
-import com.itextpdf.kernel.pdf.PdfDocument;
-import com.itextpdf.kernel.pdf.PdfWriter;
-import com.itextpdf.layout.Document;
-import com.itextpdf.layout.element.Paragraph;
-import com.itextpdf.layout.element.Table;
-import com.itextpdf.layout.properties.TextAlignment;
-import com.itextpdf.layout.properties.UnitValue;
+import com.lowagie.text.Document;
+import com.lowagie.text.Element;
+import com.lowagie.text.FontFactory;
+import com.lowagie.text.Paragraph;
+import com.lowagie.text.Phrase;
+import com.lowagie.text.Table;
+import com.lowagie.text.pdf.PdfWriter;
+
 import com.school.infra.dto.LabStatisticsDTO;
 import com.school.infra.dto.TeacherUsageDTO;
 
 @Service
 public class ReportExportService {
 
-    private final LabStatisticsService statisticsService;
+	private final LabStatisticsService statisticsService;
 
-    public ReportExportService(LabStatisticsService statisticsService) {
-        this.statisticsService = statisticsService;
-    }
+	public ReportExportService(LabStatisticsService statisticsService) {
+		this.statisticsService = statisticsService;
+	}
 
-    public byte[] exportToPdf(LocalDate from, LocalDate to) throws Exception {
-        ByteArrayOutputStream baos = new ByteArrayOutputStream();
-        PdfWriter writer = new PdfWriter(baos);
-        PdfDocument pdf = new PdfDocument(writer);
-        Document document = new Document(pdf);
+	public byte[] exportToPdf(LocalDate from, LocalDate to) throws Exception {
+		ByteArrayOutputStream baos = new ByteArrayOutputStream();
+		Document document = new Document();
+		PdfWriter.getInstance(document, baos);
+		document.open();
 
-        // Title
-        Paragraph title = new Paragraph("Reporte de Estadísticas de Laboratorios")
-                .setFontSize(18)
-                .setBold()
-                .setTextAlignment(TextAlignment.CENTER);
-        document.add(title);
+		com.lowagie.text.Font titleFont = FontFactory.getFont(FontFactory.HELVETICA, 18, com.lowagie.text.Font.BOLD);
+		com.lowagie.text.Font normalFont = FontFactory.getFont(FontFactory.HELVETICA, 12);
+		com.lowagie.text.Font headerFont = FontFactory.getFont(FontFactory.HELVETICA, 10, com.lowagie.text.Font.BOLD);
+		com.lowagie.text.Font cellFont = FontFactory.getFont(FontFactory.HELVETICA, 10);
 
-        // Date range
-        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd/MM/yyyy");
-        Paragraph dateRange = new Paragraph(
-                String.format("Período: %s - %s", from.format(formatter), to.format(formatter)))
-                .setFontSize(12)
-                .setTextAlignment(TextAlignment.CENTER)
-                .setMarginBottom(20);
-        document.add(dateRange);
+		Paragraph title = new Paragraph("Reporte de Estadísticas de Laboratorios", titleFont);
+		title.setAlignment(Element.ALIGN_CENTER);
+		document.add(title);
 
-        // General Statistics
-        Map<String, Object> generalStats = statisticsService.getGeneralStatistics(from, to);
-        document.add(new Paragraph("Resumen General").setFontSize(14).setBold().setMarginTop(10));
+		DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd/MM/yyyy");
+		Paragraph dateRange = new Paragraph(
+				String.format("Período: %s - %s", from.format(formatter), to.format(formatter)), normalFont);
+		dateRange.setAlignment(Element.ALIGN_CENTER);
+		dateRange.setSpacingAfter(20);
+		document.add(dateRange);
 
-        Table summaryTable = new Table(UnitValue.createPercentArray(new float[] { 1, 1 }))
-                .useAllAvailableWidth();
-        summaryTable.addCell(createCell("Total de Reservas:", true));
-        summaryTable.addCell(createCell(generalStats.get("totalReservations").toString(), false));
-        summaryTable.addCell(createCell("Reservas Aprobadas:", true));
-        summaryTable.addCell(createCell(generalStats.get("approvedReservations").toString(), false));
-        summaryTable.addCell(createCell("Tasa de Aprobación:", true));
-        summaryTable.addCell(createCell(generalStats.get("approvalRate") + "%", false));
-        summaryTable.addCell(createCell("Total Horas Reservadas:", true));
-        summaryTable.addCell(createCell(generalStats.get("totalHoursReserved").toString(), false));
-        summaryTable.addCell(createCell("Promedio Horas/Reserva:", true));
-        summaryTable.addCell(createCell(generalStats.get("averageHoursPerReservation").toString(), false));
+		Map<String, Object> generalStats = statisticsService.getGeneralStatistics(from, to);
+		document.add(new Paragraph("Resumen General", FontFactory.getFont(FontFactory.HELVETICA, 14, com.lowagie.text.Font.BOLD)));
 
-        document.add(summaryTable);
+		Table summaryTable = new Table(2);
+		summaryTable.setWidth(100);
+		summaryTable.setPadding(5);
+		addPdfRow(summaryTable, "Total de Reservas:", String.valueOf(generalStats.get("totalReservations")), headerFont, cellFont);
+		addPdfRow(summaryTable, "Reservas Aprobadas:", String.valueOf(generalStats.get("approvedReservations")), headerFont, cellFont);
+		addPdfRow(summaryTable, "Tasa de Aprobación:", generalStats.get("approvalRate") + "%", headerFont, cellFont);
+		addPdfRow(summaryTable, "Total Horas Reservadas:", String.valueOf(generalStats.get("totalHoursReserved")), headerFont, cellFont);
+		addPdfRow(summaryTable, "Promedio Horas/Reserva:", String.valueOf(generalStats.get("averageHoursPerReservation")), headerFont, cellFont);
+		document.add(summaryTable);
 
-        // Lab Statistics
-        List<LabStatisticsDTO> labStats = statisticsService.getStatisticsByDateRange(from, to);
-        document.add(new Paragraph("Estadísticas por Laboratorio").setFontSize(14).setBold().setMarginTop(20));
+		List<LabStatisticsDTO> labStats = statisticsService.getStatisticsByDateRange(from, to);
+		document.add(new Paragraph("Estadísticas por Laboratorio", FontFactory.getFont(FontFactory.HELVETICA, 14, com.lowagie.text.Font.BOLD)));
 
-        Table labTable = new Table(UnitValue.createPercentArray(new float[] { 2, 1, 1, 1, 1, 1 }))
-                .useAllAvailableWidth();
+		Table labTable = new Table(6);
+		labTable.setWidth(100);
+		labTable.setPadding(5);
+		labTable.addCell(new Phrase("Laboratorio", headerFont));
+		labTable.addCell(new Phrase("Total", headerFont));
+		labTable.addCell(new Phrase("Aprobadas", headerFont));
+		labTable.addCell(new Phrase("Rechazadas", headerFont));
+		labTable.addCell(new Phrase("Ocupación %", headerFont));
+		labTable.addCell(new Phrase("Horas", headerFont));
 
-        // Header
-        labTable.addHeaderCell(createHeaderCell("Laboratorio"));
-        labTable.addHeaderCell(createHeaderCell("Total"));
-        labTable.addHeaderCell(createHeaderCell("Aprobadas"));
-        labTable.addHeaderCell(createHeaderCell("Rechazadas"));
-        labTable.addHeaderCell(createHeaderCell("Ocupación %"));
-        labTable.addHeaderCell(createHeaderCell("Horas"));
+		for (LabStatisticsDTO stat : labStats) {
+			labTable.addCell(new Phrase(stat.getRoomNumber(), cellFont));
+			labTable.addCell(new Phrase(stat.getTotalReservations().toString(), cellFont));
+			labTable.addCell(new Phrase(stat.getApprovedReservations().toString(), cellFont));
+			labTable.addCell(new Phrase(stat.getRejectedReservations().toString(), cellFont));
+			labTable.addCell(new Phrase(stat.getOccupancyRate().toString(), cellFont));
+			labTable.addCell(new Phrase(stat.getTotalHoursReserved().toString(), cellFont));
+		}
+		document.add(labTable);
 
-        // Data
-        for (LabStatisticsDTO stat : labStats) {
-            labTable.addCell(createCell(stat.getRoomNumber(), false));
-            labTable.addCell(createCell(stat.getTotalReservations().toString(), false));
-            labTable.addCell(createCell(stat.getApprovedReservations().toString(), false));
-            labTable.addCell(createCell(stat.getRejectedReservations().toString(), false));
-            labTable.addCell(createCell(stat.getOccupancyRate().toString(), false));
-            labTable.addCell(createCell(stat.getTotalHoursReserved().toString(), false));
-        }
+		List<TeacherUsageDTO> topTeachers = statisticsService.getTopTeachersByUsage(10, from, to);
+		document.add(new Paragraph("Top 10 Docentes", FontFactory.getFont(FontFactory.HELVETICA, 14, com.lowagie.text.Font.BOLD)));
 
-        document.add(labTable);
+		Table teacherTable = new Table(4);
+		teacherTable.setWidth(100);
+		teacherTable.setPadding(5);
+		teacherTable.addCell(new Phrase("Docente", headerFont));
+		teacherTable.addCell(new Phrase("DNI", headerFont));
+		teacherTable.addCell(new Phrase("Reservas", headerFont));
+		teacherTable.addCell(new Phrase("Horas", headerFont));
 
-        // Top Teachers
-        List<TeacherUsageDTO> topTeachers = statisticsService.getTopTeachersByUsage(10, from, to);
-        document.add(new Paragraph("Top 10 Docentes").setFontSize(14).setBold().setMarginTop(20));
+		for (TeacherUsageDTO teacher : topTeachers) {
+			teacherTable.addCell(new Phrase(teacher.getTeacherName(), cellFont));
+			teacherTable.addCell(new Phrase(teacher.getTeacherDni(), cellFont));
+			teacherTable.addCell(new Phrase(teacher.getReservationCount().toString(), cellFont));
+			teacherTable.addCell(new Phrase(teacher.getTotalHours().toString(), cellFont));
+		}
+		document.add(teacherTable);
 
-        Table teacherTable = new Table(UnitValue.createPercentArray(new float[] { 3, 2, 1, 1 }))
-                .useAllAvailableWidth();
+		Paragraph footer = new Paragraph("Generado el: " + LocalDate.now().format(formatter),
+				FontFactory.getFont(FontFactory.HELVETICA, 10));
+		footer.setAlignment(Element.ALIGN_RIGHT);
+		document.add(footer);
 
-        teacherTable.addHeaderCell(createHeaderCell("Docente"));
-        teacherTable.addHeaderCell(createHeaderCell("DNI"));
-        teacherTable.addHeaderCell(createHeaderCell("Reservas"));
-        teacherTable.addHeaderCell(createHeaderCell("Horas"));
+		document.close();
+		return baos.toByteArray();
+	}
 
-        for (TeacherUsageDTO teacher : topTeachers) {
-            teacherTable.addCell(createCell(teacher.getTeacherName(), false));
-            teacherTable.addCell(createCell(teacher.getTeacherDni(), false));
-            teacherTable.addCell(createCell(teacher.getReservationCount().toString(), false));
-            teacherTable.addCell(createCell(teacher.getTotalHours().toString(), false));
-        }
+	private void addPdfRow(Table table, String label, String value, com.lowagie.text.Font labelFont, com.lowagie.text.Font valueFont) {
+		table.addCell(new Phrase(label, labelFont));
+		table.addCell(new Phrase(value, valueFont));
+	}
 
-        document.add(teacherTable);
+	public byte[] exportToExcel(LocalDate from, LocalDate to) throws Exception {
+		Workbook workbook = new XSSFWorkbook();
 
-        // Footer
-        Paragraph footer = new Paragraph(
-                "Generado el: " + LocalDate.now().format(formatter))
-                .setFontSize(10)
-                .setTextAlignment(TextAlignment.RIGHT)
-                .setMarginTop(30);
-        document.add(footer);
+		CellStyle headerStyle = createHeaderStyle(workbook);
+		CellStyle dataStyle = createDataStyle(workbook);
 
-        document.close();
-        return baos.toByteArray();
-    }
+		Sheet summarySheet = workbook.createSheet("Resumen General");
+		createSummarySheet(summarySheet, from, to, headerStyle, dataStyle);
 
-    public byte[] exportToExcel(LocalDate from, LocalDate to) throws Exception {
-        Workbook workbook = new XSSFWorkbook();
+		Sheet labSheet = workbook.createSheet("Por Laboratorio");
+		createLabStatisticsSheet(labSheet, from, to, headerStyle, dataStyle);
 
-        // Styles
-        CellStyle headerStyle = createHeaderStyle(workbook);
-        CellStyle dataStyle = createDataStyle(workbook);
+		Sheet teacherSheet = workbook.createSheet("Top Docentes");
+		createTeacherStatisticsSheet(teacherSheet, from, to, headerStyle, dataStyle);
 
-        // Sheet 1: General Statistics
-        Sheet summarySheet = workbook.createSheet("Resumen General");
-        createSummarySheet(summarySheet, from, to, headerStyle, dataStyle);
+		for (int i = 0; i < 3; i++) {
+			Sheet sheet = workbook.getSheetAt(i);
+			for (int j = 0; j < 10; j++) {
+				try {
+					sheet.autoSizeColumn(j);
+				} catch (Exception e) {
+					org.slf4j.LoggerFactory.getLogger(ReportExportService.class)
+							.debug("Could not auto-size column {} on sheet {}", j, i);
+				}
+			}
+		}
 
-        // Sheet 2: Lab Statistics
-        Sheet labSheet = workbook.createSheet("Por Laboratorio");
-        createLabStatisticsSheet(labSheet, from, to, headerStyle, dataStyle);
+		ByteArrayOutputStream baos = new ByteArrayOutputStream();
+		workbook.write(baos);
+		workbook.close();
 
-        // Sheet 3: Top Teachers
-        Sheet teacherSheet = workbook.createSheet("Top Docentes");
-        createTeacherStatisticsSheet(teacherSheet, from, to, headerStyle, dataStyle);
+		return baos.toByteArray();
+	}
 
-        // Auto-size columns
-        for (int i = 0; i < 3; i++) {
-            Sheet sheet = workbook.getSheetAt(i);
-            for (int j = 0; j < 10; j++) {
-                try {
-                    sheet.autoSizeColumn(j);
-                } catch (Exception e) {
-                    // Ignore
-                }
-            }
-        }
+	private void createSummarySheet(Sheet sheet, LocalDate from, LocalDate to, CellStyle headerStyle,
+			CellStyle dataStyle) {
+		Map<String, Object> stats = statisticsService.getGeneralStatistics(from, to);
 
-        ByteArrayOutputStream baos = new ByteArrayOutputStream();
-        workbook.write(baos);
-        workbook.close();
+		Row titleRow = sheet.createRow(0);
+		Cell titleCell = titleRow.createCell(0);
+		titleCell.setCellValue("Resumen General de Estadísticas");
+		titleCell.setCellStyle(headerStyle);
 
-        return baos.toByteArray();
-    }
+		int rowNum = 2;
+		createDataRow(sheet, rowNum++, "Total de Reservas", stats.get("totalReservations").toString(), headerStyle, dataStyle);
+		createDataRow(sheet, rowNum++, "Reservas Aprobadas", stats.get("approvedReservations").toString(), headerStyle, dataStyle);
+		createDataRow(sheet, rowNum++, "Reservas Pendientes", stats.get("pendingReservations").toString(), headerStyle, dataStyle);
+		createDataRow(sheet, rowNum++, "Reservas Rechazadas", stats.get("rejectedReservations").toString(), headerStyle, dataStyle);
+		createDataRow(sheet, rowNum++, "Tasa de Aprobación (%)", stats.get("approvalRate").toString(), headerStyle, dataStyle);
+		createDataRow(sheet, rowNum++, "Total Horas Reservadas", stats.get("totalHoursReserved").toString(), headerStyle, dataStyle);
+		createDataRow(sheet, rowNum++, "Promedio Horas/Reserva", stats.get("averageHoursPerReservation").toString(), headerStyle, dataStyle);
+	}
 
-    private void createSummarySheet(Sheet sheet, LocalDate from, LocalDate to, CellStyle headerStyle,
-            CellStyle dataStyle) {
-        Map<String, Object> stats = statisticsService.getGeneralStatistics(from, to);
+	private void createLabStatisticsSheet(Sheet sheet, LocalDate from, LocalDate to, CellStyle headerStyle,
+			CellStyle dataStyle) {
+		List<LabStatisticsDTO> labStats = statisticsService.getStatisticsByDateRange(from, to);
 
-        Row titleRow = sheet.createRow(0);
-        Cell titleCell = titleRow.createCell(0);
-        titleCell.setCellValue("Resumen General de Estadísticas");
-        titleCell.setCellStyle(headerStyle);
+		Row headerRow = sheet.createRow(0);
+		String[] headers = { "Laboratorio", "Total Reservas", "Aprobadas", "Rechazadas", "Pendientes", "Ocupación %", "Horas Totales" };
+		for (int i = 0; i < headers.length; i++) {
+			Cell cell = headerRow.createCell(i);
+			cell.setCellValue(headers[i]);
+			cell.setCellStyle(headerStyle);
+		}
 
-        int rowNum = 2;
-        createDataRow(sheet, rowNum++, "Total de Reservas", stats.get("totalReservations").toString(), headerStyle,
-                dataStyle);
-        createDataRow(sheet, rowNum++, "Reservas Aprobadas", stats.get("approvedReservations").toString(),
-                headerStyle, dataStyle);
-        createDataRow(sheet, rowNum++, "Reservas Pendientes", stats.get("pendingReservations").toString(),
-                headerStyle, dataStyle);
-        createDataRow(sheet, rowNum++, "Reservas Rechazadas", stats.get("rejectedReservations").toString(),
-                headerStyle, dataStyle);
-        createDataRow(sheet, rowNum++, "Tasa de Aprobación (%)", stats.get("approvalRate").toString(), headerStyle,
-                dataStyle);
-        createDataRow(sheet, rowNum++, "Total Horas Reservadas", stats.get("totalHoursReserved").toString(),
-                headerStyle, dataStyle);
-        createDataRow(sheet, rowNum++, "Promedio Horas/Reserva", stats.get("averageHoursPerReservation").toString(),
-                headerStyle, dataStyle);
-    }
+		int rowNum = 1;
+		for (LabStatisticsDTO stat : labStats) {
+			Row row = sheet.createRow(rowNum++);
+			row.createCell(0).setCellValue(stat.getRoomNumber());
+			row.createCell(1).setCellValue(stat.getTotalReservations());
+			row.createCell(2).setCellValue(stat.getApprovedReservations());
+			row.createCell(3).setCellValue(stat.getRejectedReservations());
+			row.createCell(4).setCellValue(stat.getPendingReservations());
+			row.createCell(5).setCellValue(stat.getOccupancyRate());
+			row.createCell(6).setCellValue(stat.getTotalHoursReserved());
 
-    private void createLabStatisticsSheet(Sheet sheet, LocalDate from, LocalDate to, CellStyle headerStyle,
-            CellStyle dataStyle) {
-        List<LabStatisticsDTO> labStats = statisticsService.getStatisticsByDateRange(from, to);
+			for (int i = 0; i < 7; i++) {
+				row.getCell(i).setCellStyle(dataStyle);
+			}
+		}
+	}
 
-        // Header
-        Row headerRow = sheet.createRow(0);
-        String[] headers = { "Laboratorio", "Total Reservas", "Aprobadas", "Rechazadas", "Pendientes", "Ocupación %",
-                "Horas Totales" };
-        for (int i = 0; i < headers.length; i++) {
-            Cell cell = headerRow.createCell(i);
-            cell.setCellValue(headers[i]);
-            cell.setCellStyle(headerStyle);
-        }
+	private void createTeacherStatisticsSheet(Sheet sheet, LocalDate from, LocalDate to, CellStyle headerStyle,
+			CellStyle dataStyle) {
+		List<TeacherUsageDTO> teachers = statisticsService.getTopTeachersByUsage(10, from, to);
 
-        // Data
-        int rowNum = 1;
-        for (LabStatisticsDTO stat : labStats) {
-            Row row = sheet.createRow(rowNum++);
-            row.createCell(0).setCellValue(stat.getRoomNumber());
-            row.createCell(1).setCellValue(stat.getTotalReservations());
-            row.createCell(2).setCellValue(stat.getApprovedReservations());
-            row.createCell(3).setCellValue(stat.getRejectedReservations());
-            row.createCell(4).setCellValue(stat.getPendingReservations());
-            row.createCell(5).setCellValue(stat.getOccupancyRate());
-            row.createCell(6).setCellValue(stat.getTotalHoursReserved());
+		Row headerRow = sheet.createRow(0);
+		String[] headers = { "Docente", "DNI", "Total Reservas", "Reservas Aprobadas", "Horas Totales" };
+		for (int i = 0; i < headers.length; i++) {
+			Cell cell = headerRow.createCell(i);
+			cell.setCellValue(headers[i]);
+			cell.setCellStyle(headerStyle);
+		}
 
-            for (int i = 0; i < 7; i++) {
-                row.getCell(i).setCellStyle(dataStyle);
-            }
-        }
-    }
+		int rowNum = 1;
+		for (TeacherUsageDTO teacher : teachers) {
+			Row row = sheet.createRow(rowNum++);
+			row.createCell(0).setCellValue(teacher.getTeacherName());
+			row.createCell(1).setCellValue(teacher.getTeacherDni());
+			row.createCell(2).setCellValue(teacher.getReservationCount());
+			row.createCell(3).setCellValue(teacher.getApprovedCount());
+			row.createCell(4).setCellValue(teacher.getTotalHours());
 
-    private void createTeacherStatisticsSheet(Sheet sheet, LocalDate from, LocalDate to, CellStyle headerStyle,
-            CellStyle dataStyle) {
-        List<TeacherUsageDTO> teachers = statisticsService.getTopTeachersByUsage(10, from, to);
+			for (int i = 0; i < 5; i++) {
+				row.getCell(i).setCellStyle(dataStyle);
+			}
+		}
+	}
 
-        // Header
-        Row headerRow = sheet.createRow(0);
-        String[] headers = { "Docente", "DNI", "Total Reservas", "Reservas Aprobadas", "Horas Totales" };
-        for (int i = 0; i < headers.length; i++) {
-            Cell cell = headerRow.createCell(i);
-            cell.setCellValue(headers[i]);
-            cell.setCellStyle(headerStyle);
-        }
+	private void createDataRow(Sheet sheet, int rowNum, String label, String value, CellStyle headerStyle,
+			CellStyle dataStyle) {
+		Row row = sheet.createRow(rowNum);
+		Cell labelCell = row.createCell(0);
+		labelCell.setCellValue(label);
+		labelCell.setCellStyle(headerStyle);
 
-        // Data
-        int rowNum = 1;
-        for (TeacherUsageDTO teacher : teachers) {
-            Row row = sheet.createRow(rowNum++);
-            row.createCell(0).setCellValue(teacher.getTeacherName());
-            row.createCell(1).setCellValue(teacher.getTeacherDni());
-            row.createCell(2).setCellValue(teacher.getReservationCount());
-            row.createCell(3).setCellValue(teacher.getApprovedCount());
-            row.createCell(4).setCellValue(teacher.getTotalHours());
+		Cell valueCell = row.createCell(1);
+		valueCell.setCellValue(value);
+		valueCell.setCellStyle(dataStyle);
+	}
 
-            for (int i = 0; i < 5; i++) {
-                row.getCell(i).setCellStyle(dataStyle);
-            }
-        }
-    }
+	private CellStyle createHeaderStyle(Workbook workbook) {
+		CellStyle style = workbook.createCellStyle();
+		Font font = workbook.createFont();
+		font.setBold(true);
+		font.setColor(IndexedColors.WHITE.getIndex());
+		style.setFont(font);
+		style.setFillForegroundColor(IndexedColors.DARK_BLUE.getIndex());
+		style.setFillPattern(FillPatternType.SOLID_FOREGROUND);
+		style.setBorderBottom(BorderStyle.THIN);
+		style.setBorderTop(BorderStyle.THIN);
+		style.setBorderLeft(BorderStyle.THIN);
+		style.setBorderRight(BorderStyle.THIN);
+		style.setAlignment(HorizontalAlignment.CENTER);
+		return style;
+	}
 
-    private void createDataRow(Sheet sheet, int rowNum, String label, String value, CellStyle headerStyle,
-            CellStyle dataStyle) {
-        Row row = sheet.createRow(rowNum);
-        Cell labelCell = row.createCell(0);
-        labelCell.setCellValue(label);
-        labelCell.setCellStyle(headerStyle);
-
-        Cell valueCell = row.createCell(1);
-        valueCell.setCellValue(value);
-        valueCell.setCellStyle(dataStyle);
-    }
-
-    private CellStyle createHeaderStyle(Workbook workbook) {
-        CellStyle style = workbook.createCellStyle();
-        Font font = workbook.createFont();
-        font.setBold(true);
-        font.setColor(IndexedColors.WHITE.getIndex());
-        style.setFont(font);
-        style.setFillForegroundColor(IndexedColors.DARK_BLUE.getIndex());
-        style.setFillPattern(FillPatternType.SOLID_FOREGROUND);
-        style.setBorderBottom(BorderStyle.THIN);
-        style.setBorderTop(BorderStyle.THIN);
-        style.setBorderLeft(BorderStyle.THIN);
-        style.setBorderRight(BorderStyle.THIN);
-        style.setAlignment(HorizontalAlignment.CENTER);
-        return style;
-    }
-
-    private CellStyle createDataStyle(Workbook workbook) {
-        CellStyle style = workbook.createCellStyle();
-        style.setBorderBottom(BorderStyle.THIN);
-        style.setBorderTop(BorderStyle.THIN);
-        style.setBorderLeft(BorderStyle.THIN);
-        style.setBorderRight(BorderStyle.THIN);
-        return style;
-    }
-
-    // PDF Helper methods
-    private com.itextpdf.layout.element.Cell createCell(String content, boolean isBold) {
-        com.itextpdf.layout.element.Cell cell = new com.itextpdf.layout.element.Cell()
-                .add(new Paragraph(content));
-        if (isBold) {
-            cell.setBold();
-        }
-        return cell;
-    }
-
-    private com.itextpdf.layout.element.Cell createHeaderCell(String content) {
-        return new com.itextpdf.layout.element.Cell()
-                .add(new Paragraph(content))
-                .setBold()
-                .setBackgroundColor(ColorConstants.LIGHT_GRAY)
-                .setTextAlignment(TextAlignment.CENTER);
-    }
+	private CellStyle createDataStyle(Workbook workbook) {
+		CellStyle style = workbook.createCellStyle();
+		style.setBorderBottom(BorderStyle.THIN);
+		style.setBorderTop(BorderStyle.THIN);
+		style.setBorderLeft(BorderStyle.THIN);
+		style.setBorderRight(BorderStyle.THIN);
+		return style;
+	}
 }

@@ -14,7 +14,7 @@ import com.school.academic.entity.Student;
 import com.school.academic.repository.StudentRepository;
 
 @Service
-@Transactional
+@Transactional(readOnly = true)
 public class StudentService {
 
     private final StudentRepository studentRepository;
@@ -35,7 +35,8 @@ public class StudentService {
         return studentRepository.findByDni(dni);
     }
 
-    public Student saveStudent(Student student) {
+	@Transactional
+	public Student saveStudent(Student student) {
         // Validation: Verify unique DNI
         if (student.getDni() != null) {
             studentRepository.findByDni(student.getDni())
@@ -68,7 +69,8 @@ public class StudentService {
         return studentRepository.save(student);
     }
 
-    public void deleteStudent(@NonNull Long id) {
+	@Transactional
+	public void deleteStudent(@NonNull Long id) {
         Student student = studentRepository.findById(id)
                 .orElseThrow(() -> new IllegalArgumentException("Estudiante no encontrado"));
         student.setDeleted(true);

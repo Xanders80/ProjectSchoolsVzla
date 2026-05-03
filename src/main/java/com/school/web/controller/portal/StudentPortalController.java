@@ -12,10 +12,9 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 
 import com.school.academic.entity.Student;
-import com.school.academic.repository.StudentRepository;
 import com.school.academic.service.AcademicService;
 import com.school.core.entity.User;
-import com.school.core.repository.UserRepository;
+import com.school.core.service.UserService;
 import com.school.schedule.service.ScheduleService;
 
 @Controller
@@ -23,18 +22,15 @@ import com.school.schedule.service.ScheduleService;
 @PreAuthorize("hasRole('STUDENT')")
 public class StudentPortalController {
 
-	private final StudentRepository studentRepository;
-	private final UserRepository userRepository;
 	private final AcademicService academicService;
+	private final UserService userService;
 	private final ScheduleService scheduleService;
 
-	public StudentPortalController(StudentRepository studentRepository,
-			UserRepository userRepository,
-			AcademicService academicService,
+	public StudentPortalController(AcademicService academicService,
+			UserService userService,
 			ScheduleService scheduleService) {
-		this.studentRepository = studentRepository;
-		this.userRepository = userRepository;
 		this.academicService = academicService;
+		this.userService = userService;
 		this.scheduleService = scheduleService;
 	}
 
@@ -73,9 +69,9 @@ public class StudentPortalController {
 		if (auth == null || !auth.isAuthenticated()) return null;
 
 		String username = auth.getName();
-		User user = userRepository.findByUsername(username).orElse(null);
+		User user = userService.findByUsername(username).orElse(null);
 		if (user == null) return null;
 
-		return studentRepository.findByUserId(user.getId()).orElse(null);
+		return academicService.getStudentByUserId(user.getId()).orElse(null);
 	}
 }

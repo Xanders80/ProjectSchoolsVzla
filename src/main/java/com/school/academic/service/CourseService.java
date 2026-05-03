@@ -90,8 +90,13 @@ public class CourseService {
         }
     }
 
-    @NonNull
-    private String getCurrentUser() {
+	@Transactional(readOnly = true)
+	public long countActiveCourses() {
+		return courseRepository.findByDeletedFalse().size();
+	}
+
+	@NonNull
+	private String getCurrentUser() {
         org.springframework.security.core.Authentication auth = org.springframework.security.core.context.SecurityContextHolder
                 .getContext().getAuthentication();
         if (auth != null) {

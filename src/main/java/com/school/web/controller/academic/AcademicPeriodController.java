@@ -46,7 +46,7 @@ public class AcademicPeriodController {
 			return "academic/period-form";
 		}
 		periodService.save(period);
-		redirectAttributes.addFlashAttribute("success", "Periodo academico guardado exitosamente");
+		redirectAttributes.addFlashAttribute("successMessage", "Periodo academico guardado exitosamente");
 		return "redirect:/academic-periods";
 	}
 
@@ -61,7 +61,7 @@ public class AcademicPeriodController {
 	@PostMapping("/delete/{id}")
 	public String deletePeriod(@PathVariable @NonNull Long id, RedirectAttributes redirectAttributes) {
 		periodService.deleteById(id);
-		redirectAttributes.addFlashAttribute("success", "Periodo academico eliminado exitosamente");
+		redirectAttributes.addFlashAttribute("successMessage", "Periodo academico eliminado exitosamente");
 		return "redirect:/academic-periods";
 	}
 }

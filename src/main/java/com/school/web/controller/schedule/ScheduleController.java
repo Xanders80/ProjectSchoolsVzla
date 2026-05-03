@@ -15,7 +15,7 @@ import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import jakarta.validation.Valid;
 
-import com.school.academic.repository.SectionRepository;
+import com.school.academic.service.SectionService;
 import com.school.academic.service.BatchScheduleService;
 import com.school.schedule.entity.ScheduleEntry;
 import com.school.schedule.service.ScheduleService;
@@ -24,89 +24,99 @@ import com.school.schedule.service.ScheduleService;
 @RequestMapping("/schedules")
 public class ScheduleController {
 
-    private final ScheduleService scheduleService;
-    private final SectionRepository sectionRepository;
-    private final BatchScheduleService batchService;
+	private static final String MSG_SUCCESS = "successMessage";
+	private static final String MSG_ERROR = "errorMessage";
 
-    public ScheduleController(ScheduleService scheduleService,
-            SectionRepository sectionRepository,
-            BatchScheduleService batchService) {
-        this.scheduleService = scheduleService;
-        this.sectionRepository = sectionRepository;
-        this.batchService = batchService;
-    }
+	private final ScheduleService scheduleService;
+	private final SectionService sectionService;
+	private final BatchScheduleService batchService;
 
-    @GetMapping
-    public String listSchedules(Model model) {
-        model.addAttribute("scheduleEntries", scheduleService.getAllSchedules());
-        return "schedule/schedule-list";
-    }
+	public ScheduleController(ScheduleService scheduleService,
+			SectionService sectionService,
+			BatchScheduleService batchService) {
+		this.scheduleService = scheduleService;
+		this.sectionService = sectionService;
+		this.batchService = batchService;
+	}
 
-    @GetMapping("/new")
-    public String newScheduleForm(Model model) {
-        model.addAttribute("scheduleEntry", new ScheduleEntry());
-        model.addAttribute("sections",
-                sectionRepository.findByDeletedFalse(org.springframework.data.domain.Pageable.unpaged()).getContent());
-        model.addAttribute("days", DayOfWeek.values());
-        return "schedule/schedule-form";
-    }
+	@GetMapping
+	public String listSchedules(Model model) {
+		model.addAttribute("scheduleEntries", scheduleService.getAllSchedules());
+		return "schedule/schedule-list";
+	}
 
-    @PostMapping
-    public String saveSchedule(@Valid @ModelAttribute ScheduleEntry scheduleEntry,
-            org.springframework.validation.BindingResult result,
-            RedirectAttributes redirectAttributes,
-            Model model) {
+	@GetMapping("/new")
+	public String newScheduleForm(Model model) {
+		model.addAttribute("scheduleEntry", new ScheduleEntry());
+		model.addAttribute("sections",
+				sectionService.getAllActiveSections(org.springframework.data.domain.Pageable.unpaged()).getContent());
+		model.addAttribute("days", DayOfWeek.values());
+		return "schedule/schedule-form";
+	}
 
-        if (result.hasErrors()) {
-            model.addAttribute("sections",
-                    sectionRepository.findByDeletedFalse(org.springframework.data.domain.Pageable.unpaged())
-                            .getContent());
-            model.addAttribute("days", DayOfWeek.values());
-            return "schedule/schedule-form";
-        }
+	@PostMapping
+	public String saveSchedule(@Valid @ModelAttribute ScheduleEntry scheduleEntry,
+			org.springframework.validation.BindingResult result,
+			RedirectAttributes redirectAttributes,
+			Model model) {
 
-        try {
-            // Hydrate Section
-            if (scheduleEntry.getSection() != null && scheduleEntry.getSection().getId() != null) {
-                sectionRepository.findById(scheduleEntry.getSection().getId())
-                        .ifPresent(scheduleEntry::setSection);
-            }
+		if (result.hasErrors()) {
+			model.addAttribute("sections",
+					sectionService.getAllActiveSections(org.springframework.data.domain.Pageable.unpaged())
+							.getContent());
+			model.addAttribute("days", DayOfWeek.values());
+			return "schedule/schedule-form";
+		}
 
-            scheduleService.saveSchedule(scheduleEntry);
-        } catch (IllegalStateException e) {
-            model.addAttribute("error", e.getMessage());
-            model.addAttribute("sections",
-                    sectionRepository.findByDeletedFalse(org.springframework.data.domain.Pageable.unpaged())
-                            .getContent());
-            model.addAttribute("days", DayOfWeek.values());
-            return "schedule/schedule-form";
-        }
-        return "redirect:/schedules";
-    }
+		try {
+			if (scheduleEntry.getSection() != null && scheduleEntry.getSection().getId() != null) {
+				sectionService.findById(scheduleEntry.getSection().getId())
+						.ifPresent(scheduleEntry::setSection);
+			}
 
-    @GetMapping("/edit/{id}")
-    public String editScheduleForm(@PathVariable @NonNull Long id, Model model) {
-        model.addAttribute("scheduleEntry", scheduleService.getScheduleById(id)
-                .orElseThrow(() -> new IllegalArgumentException("Invalid schedule Id:" + id)));
-        model.addAttribute("sections",
-                sectionRepository.findByDeletedFalse(org.springframework.data.domain.Pageable.unpaged()).getContent());
-        model.addAttribute("days", DayOfWeek.values());
-        return "schedule/schedule-form";
-    }
+			scheduleService.saveSchedule(scheduleEntry);
+			redirectAttributes.addFlashAttribute(MSG_SUCCESS, "Horario guardado exitosamente");
+		} catch (IllegalArgumentException | IllegalStateException e) {
+			model.addAttribute(MSG_ERROR, e.getMessage());
+			model.addAttribute("sections",
+					sectionService.getAllActiveSections(org.springframework.data.domain.Pageable.unpaged())
+							.getContent());
+			model.addAttribute("days", DayOfWeek.values());
+			return "schedule/schedule-form";
+		}
+		return "redirect:/schedules";
+	}
 
-    @RequestMapping(value = "/delete/{id}", method = { RequestMethod.POST, RequestMethod.DELETE })
-    public String deleteSchedule(@PathVariable @NonNull Long id) {
-        scheduleService.deleteSchedule(id);
-        return "redirect:/schedules";
-    }
+	@GetMapping("/edit/{id}")
+	public String editScheduleForm(@PathVariable @NonNull Long id, Model model) {
+		model.addAttribute("scheduleEntry", scheduleService.getScheduleById(id)
+				.orElseThrow(() -> new IllegalArgumentException("Invalid schedule Id:" + id)));
+		model.addAttribute("sections",
+				sectionService.getAllActiveSections(org.springframework.data.domain.Pageable.unpaged()).getContent());
+		model.addAttribute("days", DayOfWeek.values());
+		return "schedule/schedule-form";
+	}
 
-    @PostMapping("/batch/start")
-    public String startBatchProcess(RedirectAttributes redirectAttributes) {
-        // Obtenemos todos los horarios actuales para re-procesar/validar masivamente
-        var entries = scheduleService.getAllSchedules();
-        batchService.processBulkSchedules(entries);
+	@RequestMapping(value = "/delete/{id}", method = { RequestMethod.POST, RequestMethod.DELETE })
+	public String deleteSchedule(@PathVariable @NonNull Long id, RedirectAttributes redirectAttributes) {
+		try {
+			scheduleService.deleteSchedule(id);
+			redirectAttributes.addFlashAttribute(MSG_SUCCESS, "Horario eliminado exitosamente");
+		} catch (IllegalArgumentException e) {
+			redirectAttributes.addFlashAttribute(MSG_ERROR, e.getMessage());
+		}
+		return "redirect:/schedules";
+	}
 
-        redirectAttributes.addFlashAttribute("successMessage", "Proceso masivo de horarios iniciado en segundo plano");
-        return "redirect:/schedules";
-    }
+	@PostMapping("/batch/start")
+	public String startBatchProcess(RedirectAttributes redirectAttributes) {
+		try {
+			var entries = scheduleService.getAllSchedules();
+			batchService.processBulkSchedules(entries);
+			redirectAttributes.addFlashAttribute(MSG_SUCCESS, "Proceso masivo de horarios iniciado en segundo plano");
+		} catch (Exception e) {
+			redirectAttributes.addFlashAttribute(MSG_ERROR, "Error al iniciar proceso masivo: " + e.getMessage());
+		}
+		return "redirect:/schedules";
+	}
 }

@@ -66,8 +66,8 @@ public class SecurityConfig {
                                 .addFilterAfter(rateLimitingFilter, anomalyDetectionFilter.getClass())
                                 .addFilterAfter(deleteRateLimitFilter, rateLimitingFilter.getClass())
                                 .addFilterAfter(auditLoggingFilter, deleteRateLimitFilter.getClass())
-		.csrf(csrf -> csrf
-		)
+.csrf(csrf -> {
+                })
                                 .sessionManagement(session -> session
                                                 .sessionCreationPolicy(
                                                                 org.springframework.security.config.http.SessionCreationPolicy.IF_REQUIRED)

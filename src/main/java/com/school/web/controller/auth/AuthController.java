@@ -10,13 +10,11 @@ import java.time.LocalDate;
 @Controller
 public class AuthController {
 
-    @GetMapping("/login")
-    public String login() {
-        return "login";
-    }
+	private static final String MSG_SUCCESS = "successMessage";
+	private static final String MSG_ERROR = "errorMessage";
 
-    @org.springframework.beans.factory.annotation.Autowired
-    private com.school.core.service.UserService userService;
+	@org.springframework.beans.factory.annotation.Autowired
+	private com.school.core.service.UserService userService;
 
     @org.springframework.beans.factory.annotation.Autowired
     private com.school.core.validation.InputSanitizer inputSanitizer;
@@ -49,20 +47,20 @@ public class AuthController {
         email = inputSanitizer.sanitizeForDatabase(email);
         username = inputSanitizer.sanitizeForDatabase(username);
 
-        if (!password.equals(confirmPassword)) {
-            redirectAttributes.addFlashAttribute("error", "Las contraseñas no coinciden");
-            return "redirect:/register?error";
-        }
+		if (!password.equals(confirmPassword)) {
+			redirectAttributes.addFlashAttribute(MSG_ERROR, "Las contraseñas no coinciden");
+			return "redirect:/register?error";
+		}
 
-        try {
-            userService.registerNewUserWithType(firstName, lastName, email, username, password,
-                    userType, dni, phoneNumber, address, relationship, birthDate);
-            redirectAttributes.addFlashAttribute("success", "Cuenta creada exitosamente. Por favor inicie sesión.");
-            return "redirect:/login";
-        } catch (RuntimeException e) {
-            redirectAttributes.addFlashAttribute("error", e.getMessage());
-            return "redirect:/register?error";
-        }
+		try {
+			userService.registerNewUserWithType(firstName, lastName, email, username, password,
+					userType, dni, phoneNumber, address, relationship, birthDate);
+			redirectAttributes.addFlashAttribute(MSG_SUCCESS, "Cuenta creada exitosamente. Por favor inicie sesión.");
+			return "redirect:/login";
+		} catch (RuntimeException e) {
+			redirectAttributes.addFlashAttribute(MSG_ERROR, e.getMessage());
+			return "redirect:/register?error";
+		}
     }
 
     @GetMapping("/404")
@@ -75,28 +73,32 @@ public class AuthController {
         return "forgot-password";
     }
 
-    @PostMapping("/forgot-password")
-    public String processForgotPassword(
-            @RequestParam String email,
-            RedirectAttributes redirectAttributes) {
+	@PostMapping("/forgot-password")
+	public String processForgotPassword(
+			@RequestParam String email,
+			RedirectAttributes redirectAttributes) {
 
-        java.util.Optional<com.school.core.entity.User> userOptional = userService.findByEmail(email);
+		try {
+			java.util.Optional<com.school.core.entity.User> userOptional = userService.findByEmail(email);
 
-        if (!userOptional.isPresent()) {
-            redirectAttributes.addFlashAttribute("error", "No se encontró ninguna cuenta con ese correo electrónico.");
-            return "redirect:/forgot-password?error";
-        }
+			if (!userOptional.isPresent()) {
+				redirectAttributes.addFlashAttribute(MSG_ERROR, "No se encontró ninguna cuenta con ese correo electrónico.");
+				return "redirect:/forgot-password?error";
+			}
 
-        com.school.core.entity.User user = userOptional.get();
-        String token = java.util.UUID.randomUUID().toString();
-        userService.createPasswordResetTokenForUser(user, token);
+			com.school.core.entity.User user = userOptional.get();
+			String token = java.util.UUID.randomUUID().toString();
+			userService.createPasswordResetTokenForUser(user, token);
 
-        // Log seguro sin exponer tokens
-        org.slf4j.LoggerFactory.getLogger(AuthController.class)
-                .info("Password reset requested for user: {}", email.replaceAll("@.*", "@***"));
+			org.slf4j.LoggerFactory.getLogger(AuthController.class)
+					.info("Password reset requested for user: {}", email.replaceAll("@.*", "@***"));
 
-        redirectAttributes.addFlashAttribute("success",
-                "Se ha enviado un enlace de recuperación a su correo electrónico (Revise la consola del servidor).");
-        return "redirect:/forgot-password?success";
-    }
+			redirectAttributes.addFlashAttribute(MSG_SUCCESS,
+					"Se ha enviado un enlace de recuperación a su correo electrónico (Revise la consola del servidor).");
+			return "redirect:/forgot-password?success";
+		} catch (Exception e) {
+			redirectAttributes.addFlashAttribute(MSG_ERROR, "Error al procesar la solicitud. Intente de nuevo.");
+			return "redirect:/forgot-password?error";
+		}
+	}
 }

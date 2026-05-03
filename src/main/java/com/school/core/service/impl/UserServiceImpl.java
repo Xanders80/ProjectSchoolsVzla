@@ -6,6 +6,8 @@ import java.util.List;
 import java.util.Optional;
 import java.util.regex.Pattern;
 
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -24,7 +26,7 @@ import com.school.core.service.ParentService;
 import com.school.core.service.UserService;
 
 @Service
-@Transactional
+@Transactional(readOnly = true)
 public class UserServiceImpl implements UserService {
 
     private final UserRepository userRepository;
@@ -51,8 +53,9 @@ public class UserServiceImpl implements UserService {
         this.academicService = academicService;
     }
 
-    @Override
-    public User registerNewUser(String firstName, String lastName, String email, String username, String password) {
+	@Override
+	@Transactional
+	public User registerNewUser(String firstName, String lastName, String email, String username, String password) {
         if (userRepository.findByUsername(username).isPresent()) {
             throw new IllegalArgumentException("El nombre de usuario ya existe: " + username);
         }
@@ -74,8 +77,9 @@ public class UserServiceImpl implements UserService {
         return userRepository.save(user);
     }
 
-    @Override
-    public User registerNewUserWithType(String firstName, String lastName, String email, String username,
+	@Override
+	@Transactional
+	public User registerNewUserWithType(String firstName, String lastName, String email, String username,
             String password,
             String userType, String dni, String phoneNumber, String address, String relationship, LocalDate birthDate) {
 
@@ -185,8 +189,9 @@ public class UserServiceImpl implements UserService {
         return userRepository.findByUsername(username);
     }
 
-    @Override
-    public void createPasswordResetTokenForUser(User user, String token) {
+	@Override
+	@Transactional
+	public void createPasswordResetTokenForUser(User user, String token) {
         // Eliminar token anterior si existe
         passwordResetTokenRepository.findByUser(user).ifPresent(passwordResetTokenRepository::delete);
 
@@ -199,8 +204,9 @@ public class UserServiceImpl implements UserService {
         return passwordResetTokenRepository.findByToken(token);
     }
 
-    @Override
-    public void changeUserPassword(User user, String password) {
+	@Override
+	@Transactional
+	public void changeUserPassword(User user, String password) {
         if (!isValidPassword(password)) {
             throw new IllegalArgumentException("La contraseña no cumple con los requisitos de seguridad.");
         }
@@ -217,8 +223,9 @@ public class UserServiceImpl implements UserService {
         return passwordEncoder.matches(oldPassword, user.getPassword());
     }
 
-    @Override
-    public User updateUserProfile(User user, String firstName, String lastName, String email, String username,
+	@Override
+	@Transactional
+	public User updateUserProfile(User user, String firstName, String lastName, String email, String username,
             String dni,
             String phoneNumber, String address, String relationship, String department, String specialization,
             java.time.LocalDate birthDate) {
@@ -317,8 +324,30 @@ public class UserServiceImpl implements UserService {
         return userRepository.findById(id);
     }
 
-    @Override
-    public List<User> findAllUsers() {
-        return userRepository.findAll();
-    }
+	@Override
+	public List<User> findAllUsers() {
+		return userRepository.findAll();
+	}
+
+	@Override
+	public Page<User> findByDeletedFalse(Pageable pageable) {
+		return userRepository.findByDeletedFalse(pageable);
+	}
+
+	@Override
+	@Transactional
+	public User save(User user) {
+		return userRepository.save(user);
+	}
+
+	@Override
+	@Transactional
+	public void softDelete(Long id, String deletedBy) {
+		User user = userRepository.findById(id)
+				.orElseThrow(() -> new IllegalArgumentException("Usuario no encontrado"));
+		user.setDeleted(true);
+		user.setDeletedAt(LocalDateTime.now());
+		user.setDeletedBy(deletedBy);
+		userRepository.save(user);
+	}
 }

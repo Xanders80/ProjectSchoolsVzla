@@ -5,86 +5,88 @@ import static org.mockito.Mockito.*;
 
 import java.time.LocalDate;
 import java.util.Collections;
+import java.util.List;
 
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
+import org.mockito.MockitoAnnotations;
 import org.mockito.junit.jupiter.MockitoExtension;
 
-import com.school.academic.entity.Attendance;
 import com.school.academic.entity.Student;
 import com.school.academic.enums.AttendanceStatus;
 import com.school.academic.repository.AttendanceRepository;
-import com.school.communication.entity.Notification;
-import com.school.communication.repository.NotificationRepository;
+import com.school.academic.repository.StudentRepository;
+import com.school.communication.service.NotificationService;
 import com.school.core.entity.User;
 
 @ExtendWith(MockitoExtension.class)
 public class AttendanceAlertJobTest {
 
-        @Mock
-        private AttendanceRepository attendanceRepository;
-        @Mock
-        private NotificationRepository notificationRepository;
+	@Mock
+	private AttendanceRepository attendanceRepository;
+	@Mock
+	private StudentRepository studentRepository;
+	@Mock
+	private NotificationService notificationService;
 
-        @InjectMocks
-        private AttendanceAlertJob attendanceAlertJob;
+	@InjectMocks
+	private AttendanceAlertJob attendanceAlertJob;
 
-        @Test
-        @SuppressWarnings("null")
-        @DisplayName("Should create alert when absences exceed threshold")
-        void testCheckAttendanceAndNotify() {
-                // Arrange
-                Student student = new Student();
-                student.setId(1L);
-                student.setRegistrationNumber("ST-001");
+	@Test
+	@DisplayName("Should create alert when absences exceed threshold")
+	void testCheckAttendanceAndNotify() {
+		Student student = new Student();
+		student.setId(1L);
+		student.setFirstName("Juan");
+		student.setLastName("Perez");
 
-                User user = new User();
-                user.setId(10L);
-                student.setUser(user);
+		User user = new User();
+		user.setId(10L);
+		student.setUser(user);
 
-                Attendance todayAbsence = new Attendance();
-                todayAbsence.setStudent(student);
-                todayAbsence.setStatus(AttendanceStatus.ABSENT);
+		when(studentRepository.findStudentsWithAbsencesMoreThan(any(LocalDate.class), any(LocalDate.class), eq(3L)))
+				.thenReturn(List.of(student));
+		when(attendanceRepository.countAbsencesByStudentAndDateRange(eq(1L), any(LocalDate.class), any(LocalDate.class)))
+				.thenReturn(3L);
 
-                when(attendanceRepository.findByDateAndStatus(any(LocalDate.class), eq(AttendanceStatus.ABSENT)))
-                                .thenReturn(Collections.singletonList(todayAbsence));
+		attendanceAlertJob.checkAttendanceAlerts();
 
-                // Threshold is 3. Let's return 3.
-                when(attendanceRepository.countByStudentIdAndStatusAndDateAfter(eq(1L), eq(AttendanceStatus.ABSENT),
-                                any(LocalDate.class)))
-                                .thenReturn(3L);
+		verify(notificationService).createNotification(
+				eq("Alerta de Asistencia Crítica"), anyString(),
+				eq(com.school.communication.enums.NotificationType.ATTENDANCE_ALERT), eq(user));
+	}
 
-                // Act
-                attendanceAlertJob.checkAttendanceAlerts();
+	@Test
+	@DisplayName("Should NOT create alert when no students exceed threshold")
+	void testCheckAttendanceAndNotifyBelowThreshold() {
+		when(studentRepository.findStudentsWithAbsencesMoreThan(any(LocalDate.class), any(LocalDate.class), eq(3L)))
+				.thenReturn(Collections.emptyList());
 
-                // Assert
-                verify(notificationRepository, times(1)).save(any(Notification.class));
-        }
+		attendanceAlertJob.checkAttendanceAlerts();
 
-        @Test
-        @SuppressWarnings("null")
-        @DisplayName("Should NOT create alert when absences are below threshold")
-        void testCheckAttendanceAndNotifyBelowThreshold() {
-                // Arrange
-                Student student = new Student();
-                student.setId(2L);
+		verify(notificationService, never()).createNotification(anyString(), anyString(), any(), any());
+	}
 
-                Attendance todayAbsence = new Attendance();
-                todayAbsence.setStudent(student);
+	@Test
+	@DisplayName("Should skip notification when student has no user")
+	void testSkipNotificationWhenNoUser() {
+		Student student = new Student();
+		student.setId(1L);
+		student.setFirstName("Ana");
+		student.setLastName("Garcia");
+		student.setUser(null);
 
-                when(attendanceRepository.findByDateAndStatus(any(LocalDate.class), eq(AttendanceStatus.ABSENT)))
-                                .thenReturn(Collections.singletonList(todayAbsence));
+		when(studentRepository.findStudentsWithAbsencesMoreThan(any(LocalDate.class), any(LocalDate.class), eq(3L)))
+				.thenReturn(List.of(student));
+		when(attendanceRepository.countAbsencesByStudentAndDateRange(eq(1L), any(LocalDate.class), any(LocalDate.class)))
+				.thenReturn(4L);
 
-                when(attendanceRepository.countByStudentIdAndStatusAndDateAfter(any(), any(), any()))
-                                .thenReturn(2L); // 2 < 3
+		attendanceAlertJob.checkAttendanceAlerts();
 
-                // Act
-                attendanceAlertJob.checkAttendanceAlerts();
-
-                // Assert
-                verify(notificationRepository, times(0)).save(any(Notification.class));
-        }
+		verify(notificationService, never()).createNotification(anyString(), anyString(), any(), any());
+	}
 }

@@ -12,7 +12,7 @@ import com.school.finance.entity.StudentFee;
 import com.school.finance.repository.StudentFeeRepository;
 
 @Service
-@Transactional
+@Transactional(readOnly = true)
 public class FinanceService {
 
     private final StudentFeeRepository studentFeeRepository;
@@ -27,11 +27,13 @@ public class FinanceService {
         this.paymentRepository = paymentRepository;
     }
 
-    public StudentFee createFee(@org.springframework.lang.NonNull StudentFee fee) {
+	@Transactional
+	public StudentFee createFee(@org.springframework.lang.NonNull StudentFee fee) {
         return studentFeeRepository.save(fee);
     }
 
-    public com.school.finance.entity.Payment registerPayment(
+	@Transactional
+	public com.school.finance.entity.Payment registerPayment(
             @org.springframework.lang.NonNull com.school.finance.entity.Payment payment) {
         @SuppressWarnings("null")
         StudentFee fee = studentFeeRepository.findById(payment.getStudentFee().getId())
@@ -80,7 +82,8 @@ public class FinanceService {
         return studentFeeRepository.findById(id);
     }
 
-    public void deleteFee(@org.springframework.lang.NonNull Long id) {
+	@Transactional
+	public void deleteFee(@org.springframework.lang.NonNull Long id) {
         StudentFee fee = studentFeeRepository.findById(id)
                 .orElseThrow(() -> new IllegalArgumentException("No se encontro registro de cuota"));
         fee.setDeleted(true);

@@ -90,7 +90,17 @@ public class GradeService {
         }
     }
 
-    public String getLetterGrade(Double score, Course course) {
+	@Transactional(readOnly = true)
+	public List<Grade> findByCourseId(Long courseId) {
+		return gradeRepository.findByCourseId(courseId);
+	}
+
+	@Transactional(readOnly = true)
+	public List<Grade> findAll() {
+		return gradeRepository.findByDeletedFalse();
+	}
+
+	public String getLetterGrade(Double score, Course course) {
         if (score == null)
             return "-";
 

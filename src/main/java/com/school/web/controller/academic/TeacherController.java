@@ -132,12 +132,12 @@ public class TeacherController {
 
             var profileOpt = teacherProfileService.getProfileById(profileId);
             if (profileOpt.isEmpty() || profileOpt.get().getStaff() == null) {
-                redirectAttributes.addFlashAttribute("errorMessage", PROFILE_NOT_FOUND_MSG);
-                return REDIRECT_TEACHERS;
-            }
-            return "redirect:/academic/teachers/" + profileOpt.get().getStaff().getId() + "/profile";
-        } catch (Exception e) {
-            redirectAttributes.addFlashAttribute("errorMessage", "Error al firmar evaluación: " + e.getMessage());
+			redirectAttributes.addFlashAttribute(ERROR_MESSAGE, PROFILE_NOT_FOUND_MSG);
+			return REDIRECT_TEACHERS;
+		}
+		return "redirect:/academic/teachers/" + profileOpt.get().getStaff().getId() + "/profile";
+	} catch (Exception e) {
+		redirectAttributes.addFlashAttribute(ERROR_MESSAGE, "Error al firmar evaluación: " + e.getMessage());
             return REDIRECT_TEACHERS;
         }
     }
@@ -158,12 +158,12 @@ public class TeacherController {
 
             var profileOpt = teacherProfileService.getProfileById(profileId);
             if (profileOpt.isEmpty() || profileOpt.get().getStaff() == null) {
-                redirectAttributes.addFlashAttribute("errorMessage", PROFILE_NOT_FOUND_MSG);
-                return REDIRECT_TEACHERS;
-            }
-            return "redirect:/academic/teachers/" + profileOpt.get().getStaff().getId() + "/profile";
-        } catch (Exception e) {
-            redirectAttributes.addFlashAttribute("errorMessage", "Error al reportar incidente: " + e.getMessage());
+			redirectAttributes.addFlashAttribute(ERROR_MESSAGE, PROFILE_NOT_FOUND_MSG);
+			return REDIRECT_TEACHERS;
+		}
+		return "redirect:/academic/teachers/" + profileOpt.get().getStaff().getId() + "/profile";
+	} catch (Exception e) {
+		redirectAttributes.addFlashAttribute(ERROR_MESSAGE, "Error al reportar incidente: " + e.getMessage());
             return REDIRECT_TEACHERS;
         }
     }

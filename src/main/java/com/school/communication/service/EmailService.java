@@ -30,45 +30,48 @@ public class EmailService {
         this.mailSender = mailSender;
     }
 
-    public void sendSimpleEmail(String to, String subject, String text) {
-        if (!emailEnabled) {
-            log.info("Correo electrónico deshabilitado. Se enviará a: {} - Asunto: {}", to, subject);
-            return;
-        }
+	public boolean sendSimpleEmail(String to, String subject, String text) {
+		if (!emailEnabled) {
+			log.info("Correo electrónico deshabilitado. Se enviará a: {} - Asunto: {}", to, subject);
+			return false;
+		}
 
-        try {
-            SimpleMailMessage message = new SimpleMailMessage();
-            message.setFrom(fromEmail);
-            message.setTo(to);
-            message.setSubject(subject);
-            message.setText(text);
-            mailSender.send(message);
-            log.info("Correo electrónico enviado exitosamente a: {}", to);
-        } catch (Exception e) {
-            log.error("No se pudo enviar el correo electrónico a: {}", to, e);
-        }
-    }
+		try {
+			SimpleMailMessage message = new SimpleMailMessage();
+			message.setFrom(fromEmail);
+			message.setTo(to);
+			message.setSubject(subject);
+			message.setText(text);
+			mailSender.send(message);
+			log.info("Correo electrónico enviado exitosamente a: {}", to);
+			return true;
+		} catch (Exception e) {
+			log.error("No se pudo enviar el correo electrónico a: {}", to, e);
+			return false;
+		}
+	}
 
-    public void sendHtmlEmail(String to, String subject, String htmlContent) {
-        if (!emailEnabled) {
-            log.info("Correo electrónico deshabilitado. Se enviará HTML a: {} - Asunto: {}", to, subject);
-            return;
-        }
+	public boolean sendHtmlEmail(String to, String subject, String htmlContent) {
+		if (!emailEnabled) {
+			log.info("Correo electrónico deshabilitado. Se enviará HTML a: {} - Asunto: {}", to, subject);
+			return false;
+		}
 
-        try {
-            MimeMessage message = mailSender.createMimeMessage();
-            MimeMessageHelper helper = new MimeMessageHelper(message, true, "UTF-8");
-            helper.setFrom(org.springframework.lang.NonNullApi.class.isAssignableFrom(fromEmail.getClass()) ? fromEmail
-                    : java.util.Objects.requireNonNull(fromEmail, "fromEmail no puede ser null"));
-            helper.setTo(java.util.Objects.requireNonNull(to, "to no puede ser null"));
-            helper.setSubject(java.util.Objects.requireNonNull(subject, "subject no puede ser null"));
-            helper.setText(java.util.Objects.requireNonNull(htmlContent, "htmlContent no puede ser null"), true);
-            mailSender.send(message);
-            log.info("HTML email sent successfully to: {}", to);
-        } catch (MessagingException e) {
-            log.error("Failed to send HTML email to: {}", to, e);
-        }
-    }
+		try {
+			MimeMessage message = mailSender.createMimeMessage();
+			MimeMessageHelper helper = new MimeMessageHelper(message, true, "UTF-8");
+			helper.setFrom(java.util.Objects.requireNonNull(fromEmail, "fromEmail no puede ser null"));
+			helper.setTo(java.util.Objects.requireNonNull(to, "to no puede ser null"));
+			helper.setSubject(java.util.Objects.requireNonNull(subject, "subject no puede ser null"));
+			helper.setText(java.util.Objects.requireNonNull(htmlContent, "htmlContent no puede ser null"), true);
+			mailSender.send(message);
+			log.info("HTML email sent successfully to: {}", to);
+			return true;
+		} catch (MessagingException e) {
+			log.error("Failed to send HTML email to: {}", to, e);
+			return false;
+		}
+	}
 
     public void sendReservationCreatedEmail(LabReservation reservation) {
         String to = reservation.getTeacher().getEmail();

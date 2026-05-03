@@ -10,6 +10,7 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import com.school.finance.entity.StudentFee;
 import com.school.finance.service.FinanceService;
@@ -18,8 +19,10 @@ import com.school.finance.service.FinanceService;
 @RequestMapping("/finance")
 public class FinanceController {
 
-    private static final String FEE_FORM_VIEW = "finance/fee-form";
-    private static final String PAYMENT_FORM_VIEW = "finance/payment-form";
+	private static final String FEE_FORM_VIEW = "finance/fee-form";
+	private static final String PAYMENT_FORM_VIEW = "finance/payment-form";
+	private static final String MSG_SUCCESS = "successMessage";
+	private static final String MSG_ERROR = "errorMessage";
     private final FinanceService financeService;
 
     public FinanceController(FinanceService financeService) {
@@ -44,16 +47,21 @@ public class FinanceController {
         return FEE_FORM_VIEW;
     }
 
-    @PostMapping("/fees")
-    public String saveFee(@jakarta.validation.Valid @ModelAttribute @NonNull StudentFee fee,
-            org.springframework.validation.BindingResult result, Model model) {
-        if (result.hasErrors()) {
-            model.addAttribute("students", financeService.getAllStudents());
-            return FEE_FORM_VIEW;
-        }
-        financeService.createFee(fee);
-        return "redirect:/finance/fees";
-    }
+	@PostMapping("/fees")
+	public String saveFee(@jakarta.validation.Valid @ModelAttribute @NonNull StudentFee fee,
+			org.springframework.validation.BindingResult result, Model model, RedirectAttributes redirectAttributes) {
+		if (result.hasErrors()) {
+			model.addAttribute("students", financeService.getAllStudents());
+			return FEE_FORM_VIEW;
+		}
+		try {
+			financeService.createFee(fee);
+			redirectAttributes.addFlashAttribute(MSG_SUCCESS, "Cuota creada exitosamente");
+		} catch (IllegalArgumentException e) {
+			redirectAttributes.addFlashAttribute(MSG_ERROR, e.getMessage());
+		}
+		return "redirect:/finance/fees";
+	}
 
     @GetMapping("/fees/edit/{id}")
     public String editFeeForm(@PathVariable @NonNull Long id, Model model) {
@@ -63,11 +71,16 @@ public class FinanceController {
         return FEE_FORM_VIEW;
     }
 
-    @RequestMapping(value = "/fees/delete/{id}", method = { RequestMethod.POST, RequestMethod.DELETE })
-    public String deleteFee(@PathVariable @NonNull Long id) {
-        financeService.deleteFee(id);
-        return "redirect:/finance/fees";
-    }
+	@RequestMapping(value = "/fees/delete/{id}", method = { RequestMethod.POST, RequestMethod.DELETE })
+	public String deleteFee(@PathVariable @NonNull Long id, RedirectAttributes redirectAttributes) {
+		try {
+			financeService.deleteFee(id);
+			redirectAttributes.addFlashAttribute(MSG_SUCCESS, "Cuota eliminada exitosamente");
+		} catch (IllegalArgumentException e) {
+			redirectAttributes.addFlashAttribute(MSG_ERROR, e.getMessage());
+		}
+		return "redirect:/finance/fees";
+	}
 
     @GetMapping("/payments/new")
     public String newPaymentForm(@RequestParam @NonNull Long feeId, Model model) {
@@ -84,38 +97,39 @@ public class FinanceController {
         return PAYMENT_FORM_VIEW;
     }
 
-    @PostMapping("/payments")
-    public String savePayment(
-            @jakarta.validation.Valid @ModelAttribute @NonNull com.school.finance.entity.Payment payment,
-            org.springframework.validation.BindingResult result, Model model) {
+	@PostMapping("/payments")
+	public String savePayment(
+			@jakarta.validation.Valid @ModelAttribute @NonNull com.school.finance.entity.Payment payment,
+			org.springframework.validation.BindingResult result, Model model, RedirectAttributes redirectAttributes) {
 
-        if (result.hasErrors()) {
-            // Verificación de nulabilidad para payment.getStudentFee()
-            com.school.finance.entity.StudentFee studentFee = payment.getStudentFee();
-            if (studentFee == null) {
-                // Manejo del caso donde studentFee es null
-                model.addAttribute("errorMessage", "La tarifa del estudiante es requerida");
-                model.addAttribute("paymentMethods", com.school.finance.enums.PaymentMethod.values());
-                return PAYMENT_FORM_VIEW;
-            }
+		if (result.hasErrors()) {
+			com.school.finance.entity.StudentFee studentFee = payment.getStudentFee();
+			if (studentFee == null) {
+				model.addAttribute(MSG_ERROR, "La tarifa del estudiante es requerida");
+				model.addAttribute("paymentMethods", com.school.finance.enums.PaymentMethod.values());
+				return PAYMENT_FORM_VIEW;
+			}
 
-            // Verificación de nulabilidad para studentFee.getId()
-            Long feeId = studentFee.getId();
-            if (feeId == null) {
-                // Manejo del caso donde el ID de la tarifa es null
-                model.addAttribute("errorMessage", "La tarifa del estudiante no tiene un ID válido");
-                model.addAttribute("paymentMethods", com.school.finance.enums.PaymentMethod.values());
-                return PAYMENT_FORM_VIEW;
-            }
+			Long feeId = studentFee.getId();
+			if (feeId == null) {
+				model.addAttribute(MSG_ERROR, "La tarifa del estudiante no tiene un ID válido");
+				model.addAttribute("paymentMethods", com.school.finance.enums.PaymentMethod.values());
+				return PAYMENT_FORM_VIEW;
+			}
 
-            StudentFee fee = financeService.getFeeById(feeId)
-                    .orElseThrow(() -> new IllegalArgumentException("Invalid Fee ID"));
-            model.addAttribute("fee", fee);
-            model.addAttribute("paymentMethods", com.school.finance.enums.PaymentMethod.values());
-            return PAYMENT_FORM_VIEW;
-        }
+			StudentFee fee = financeService.getFeeById(feeId)
+					.orElseThrow(() -> new IllegalArgumentException("Invalid Fee ID"));
+			model.addAttribute("fee", fee);
+			model.addAttribute("paymentMethods", com.school.finance.enums.PaymentMethod.values());
+			return PAYMENT_FORM_VIEW;
+		}
 
-        financeService.registerPayment(payment);
-        return "redirect:/finance/fees";
-    }
+		try {
+			financeService.registerPayment(payment);
+			redirectAttributes.addFlashAttribute(MSG_SUCCESS, "Pago registrado exitosamente");
+		} catch (IllegalArgumentException e) {
+			redirectAttributes.addFlashAttribute(MSG_ERROR, e.getMessage());
+		}
+		return "redirect:/finance/fees";
+	}
 }

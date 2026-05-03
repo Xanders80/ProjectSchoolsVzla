@@ -7,6 +7,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
 
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.lang.NonNull;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -23,7 +24,10 @@ public class DocumentService {
     private final StudentRepository studentRepository;
     private final GradeRepository gradeRepository;
     private final GradeService gradeService;
-    private final com.school.core.util.DigitalSignatureService digitalSignatureService;
+	private final com.school.core.util.DigitalSignatureService digitalSignatureService;
+
+	@Value("${app.school.name:Escuela}")
+	private String schoolName;
 
     public DocumentService(StudentRepository studentRepository,
             GradeRepository gradeRepository,
@@ -66,7 +70,7 @@ public class DocumentService {
         data.put("registrationNumber", student.getRegistrationNumber());
         data.put("courses", coursesList);
         data.put("issueDate", LocalDate.now());
-        data.put("schoolName", "COLEGIO DE PRUEBA");
+		data.put("schoolName", schoolName);
 
         // Digital Signature for integrity
         String rawData = student.getDni() + "|" + student.getRegistrationNumber() + "|" + LocalDate.now();

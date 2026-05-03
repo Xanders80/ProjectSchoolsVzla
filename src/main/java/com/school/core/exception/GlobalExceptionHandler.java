@@ -46,7 +46,7 @@ public class GlobalExceptionHandler {
         String errorId = UUID.randomUUID().toString();
         logger.warn("Validation error - Error ID: {} - URL: {}", errorId, request.getRequestURL());
 
-        redirectAttributes.addFlashAttribute("error", "Datos inválidos. Verifique los campos.");
+		redirectAttributes.addFlashAttribute("errorMessage", "Datos inválidos. Verifique los campos.");
         redirectAttributes.addFlashAttribute("errorId", errorId);
         return "redirect:" + request.getHeader("Referer");
     }
@@ -63,7 +63,7 @@ public class GlobalExceptionHandler {
                 .map(jakarta.validation.ConstraintViolation::getMessage)
                 .collect(java.util.stream.Collectors.joining(", "));
 
-        redirectAttributes.addFlashAttribute("error", "Error de validación: " + errorMessage);
+		redirectAttributes.addFlashAttribute("errorMessage", "Error de validación: " + errorMessage);
         redirectAttributes.addFlashAttribute("errorId", errorId);
         return "redirect:" + (request.getHeader("Referer") != null ? request.getHeader("Referer") : "/");
     }

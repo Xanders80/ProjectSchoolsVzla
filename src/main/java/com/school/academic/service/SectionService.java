@@ -40,10 +40,20 @@ public class SectionService {
         return sectionRepository.findByDeletedFalse(pageable);
     }
 
-    @Transactional(readOnly = true)
-    public Optional<Section> getSectionById(@NonNull Long id) {
-        return sectionRepository.findByIdAndDeletedFalse(id);
-    }
+	@Transactional(readOnly = true)
+	public Optional<Section> getSectionById(@NonNull Long id) {
+		return sectionRepository.findByIdAndDeletedFalse(id);
+	}
+
+	@Transactional(readOnly = true)
+	public java.util.List<Section> findAll() {
+		return sectionRepository.findAll();
+	}
+
+	@Transactional(readOnly = true)
+	public Optional<Section> findById(@NonNull Long id) {
+		return sectionRepository.findById(id);
+	}
 
     public Section saveSection(@NonNull Section section) {
         return sectionRepository.save(section);

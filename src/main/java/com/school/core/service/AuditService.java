@@ -1,72 +1,83 @@
 package com.school.core.service;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.lang.NonNull;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Propagation;
+import org.springframework.transaction.annotation.Transactional;
 
 import com.school.core.entity.AuditLog;
 import com.school.core.repository.AuditLogRepository;
 
 @Service
+@Transactional(propagation = Propagation.REQUIRES_NEW)
 public class AuditService {
 
-  private final AuditLogRepository auditLogRepository;
+	private static final Logger log = LoggerFactory.getLogger(AuditService.class);
 
-  public AuditService(AuditLogRepository auditLogRepository) {
-    this.auditLogRepository = auditLogRepository;
-  }
+	private final AuditLogRepository auditLogRepository;
 
-  public void saveAuditLog(@NonNull AuditLog auditLog) {
-    auditLogRepository.save(auditLog);
-  }
+	public AuditService(AuditLogRepository auditLogRepository) {
+		this.auditLogRepository = auditLogRepository;
+	}
 
-  public void logStudentDeletion(@NonNull Long studentId, @NonNull String currentUser) {
-    AuditLog log = new AuditLog();
-    log.setAction("STUDENT_DELETION");
-    log.setEntityName("Student");
-    log.setEntityId(studentId.toString());
-    log.setPerformedBy(currentUser);
-    log.setTimestamp(java.time.LocalDateTime.now());
-    auditLogRepository.save(log);
-  }
+	public void saveAuditLog(@NonNull AuditLog auditLog) {
+		try {
+			auditLogRepository.save(auditLog);
+		} catch (Exception e) {
+			log.error("Failed to save audit log: action={}, entity={}", auditLog.getAction(), auditLog.getEntityName(), e);
+		}
+	}
 
-  public void logSectionDeletion(@NonNull Long sectionId, @NonNull String currentUser) {
-    AuditLog log = new AuditLog();
-    log.setAction("SECTION_DELETION");
-    log.setEntityName("Section");
-    log.setEntityId(sectionId.toString());
-    log.setPerformedBy(currentUser);
-    log.setTimestamp(java.time.LocalDateTime.now());
-    auditLogRepository.save(log);
-  }
+	public void logStudentDeletion(@NonNull Long studentId, @NonNull String currentUser) {
+		AuditLog logEntry = new AuditLog();
+		logEntry.setAction("STUDENT_DELETION");
+		logEntry.setEntityName("Student");
+		logEntry.setEntityId(studentId.toString());
+		logEntry.setPerformedBy(currentUser);
+		logEntry.setTimestamp(java.time.LocalDateTime.now());
+		saveAuditLog(logEntry);
+	}
 
-  public void logCourseDeletion(@NonNull Long courseId, @NonNull String currentUser) {
-    AuditLog log = new AuditLog();
-    log.setAction("COURSE_DELETION");
-    log.setEntityName("Course");
-    log.setEntityId(courseId.toString());
-    log.setPerformedBy(currentUser);
-    log.setTimestamp(java.time.LocalDateTime.now());
-    auditLogRepository.save(log);
-  }
+	public void logSectionDeletion(@NonNull Long sectionId, @NonNull String currentUser) {
+		AuditLog logEntry = new AuditLog();
+		logEntry.setAction("SECTION_DELETION");
+		logEntry.setEntityName("Section");
+		logEntry.setEntityId(sectionId.toString());
+		logEntry.setPerformedBy(currentUser);
+		logEntry.setTimestamp(java.time.LocalDateTime.now());
+		saveAuditLog(logEntry);
+	}
 
-  public void logStaffDeletion(@NonNull Long staffId, @NonNull String currentUser) {
-    AuditLog log = new AuditLog();
-    log.setAction("STAFF_DELETION");
-    log.setEntityName("Staff");
-    log.setEntityId(staffId.toString());
-    log.setPerformedBy(currentUser);
-    log.setTimestamp(java.time.LocalDateTime.now());
-    auditLogRepository.save(log);
-  }
+	public void logCourseDeletion(@NonNull Long courseId, @NonNull String currentUser) {
+		AuditLog logEntry = new AuditLog();
+		logEntry.setAction("COURSE_DELETION");
+		logEntry.setEntityName("Course");
+		logEntry.setEntityId(courseId.toString());
+		logEntry.setPerformedBy(currentUser);
+		logEntry.setTimestamp(java.time.LocalDateTime.now());
+		saveAuditLog(logEntry);
+	}
 
-  public void logGenericAction(@NonNull String action, @NonNull String details, @NonNull String currentUser) {
-    AuditLog log = new AuditLog();
-    log.setAction(action);
-    log.setEntityName("System");
-    log.setEntityId("0");
-    log.setPerformedBy(currentUser);
-    log.setTimestamp(java.time.LocalDateTime.now());
-    log.setDetails(details); // Assuming AuditLog has a details field, let's check
-    auditLogRepository.save(log);
-  }
+	public void logStaffDeletion(@NonNull Long staffId, @NonNull String currentUser) {
+		AuditLog logEntry = new AuditLog();
+		logEntry.setAction("STAFF_DELETION");
+		logEntry.setEntityName("Staff");
+		logEntry.setEntityId(staffId.toString());
+		logEntry.setPerformedBy(currentUser);
+		logEntry.setTimestamp(java.time.LocalDateTime.now());
+		saveAuditLog(logEntry);
+	}
+
+	public void logGenericAction(@NonNull String action, @NonNull String details, @NonNull String currentUser) {
+		AuditLog logEntry = new AuditLog();
+		logEntry.setAction(action);
+		logEntry.setEntityName("System");
+		logEntry.setEntityId("0");
+		logEntry.setPerformedBy(currentUser);
+		logEntry.setTimestamp(java.time.LocalDateTime.now());
+		logEntry.setDetails(details);
+		saveAuditLog(logEntry);
+	}
 }

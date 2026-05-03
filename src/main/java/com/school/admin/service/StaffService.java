@@ -111,7 +111,11 @@ public class StaffService {
         return staffRepository.findByEmail(email);
     }
 
-    public Optional<Staff> getStaffByUserId(Long userId) {
-        return staffRepository.findByUserId(userId);
-    }
+	public Optional<Staff> getStaffByUserId(Long userId) {
+		return staffRepository.findByUserId(userId);
+	}
+
+	public List<Staff> findAll() {
+		return staffRepository.findAll();
+	}
 }

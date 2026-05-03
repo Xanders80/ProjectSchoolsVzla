@@ -22,11 +22,12 @@ public class AdmissionExamRepositoryTest {
     @DisplayName("Should save and find AdmissionExam by DNI")
     void testSaveAndFind() {
         // Arrange
-        AdmissionExam exam = new AdmissionExam();
-        exam.setApplicantDni("12345678");
-        exam.setApplicantName("Juan Perez");
-        exam.setExamDate(LocalDate.now());
-        exam.setStatus("PENDING");
+	AdmissionExam exam = new AdmissionExam();
+		exam.setApplicantDni("12345678");
+		exam.setApplicantName("Juan Perez");
+		exam.setApplicantEmail("juan@test.com");
+		exam.setExamDate(LocalDate.now());
+		exam.setStatus("PENDING");
 
         // Act
         admissionExamRepository.save(exam);

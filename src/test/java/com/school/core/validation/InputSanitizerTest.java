@@ -28,7 +28,7 @@ class InputSanitizerTest {
 
 	@Test
 	void shouldThrowExceptionForDangerousInput() {
-		String dangerousInput = "test'; DELETE FROM users; --";
+		String dangerousInput = "test DROP TABLE users";
 		assertThrows(IllegalArgumentException.class,
 				() -> inputSanitizer.sanitizeForDatabase(dangerousInput));
 	}

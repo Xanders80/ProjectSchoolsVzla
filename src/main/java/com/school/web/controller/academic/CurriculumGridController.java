@@ -89,9 +89,9 @@ public class CurriculumGridController {
             // However, StudyPlan is ManyToOne and definitely needs hydration.
 
             curriculumGridService.save(curriculumGrid);
-            redirectAttributes.addFlashAttribute("success", "Malla curricular guardada exitosamente");
-        } catch (Exception e) {
-            redirectAttributes.addFlashAttribute("error", "Error al guardar: " + e.getMessage());
+		redirectAttributes.addFlashAttribute("successMessage", "Malla curricular guardada exitosamente");
+		} catch (Exception e) {
+			redirectAttributes.addFlashAttribute("errorMessage", "Error al guardar: " + e.getMessage());
         }
         return "redirect:/academic/curriculum";
     }

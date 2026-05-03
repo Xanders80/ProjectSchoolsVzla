@@ -12,7 +12,7 @@ import com.school.academic.entity.Student;
 import com.school.academic.repository.StudentRepository;
 
 @Service
-@Transactional
+@Transactional(readOnly = true)
 public class AcademicService {
 
     private final StudentRepository studentRepository;
@@ -53,7 +53,8 @@ public class AcademicService {
         return attendanceRepository.findBySectionIdAndDate(sectionId, date);
     }
 
-    public void saveAttendanceList(@NonNull java.util.List<com.school.academic.entity.Attendance> attendanceList) {
+	@Transactional
+	public void saveAttendanceList(@NonNull java.util.List<com.school.academic.entity.Attendance> attendanceList) {
         attendanceRepository.saveAll(attendanceList);
     }
 
@@ -62,7 +63,8 @@ public class AcademicService {
     }
 
     // Grade Ops
-    public com.school.academic.entity.Grade saveGrade(@NonNull com.school.academic.entity.Grade grade) {
+	@Transactional
+	public com.school.academic.entity.Grade saveGrade(@NonNull com.school.academic.entity.Grade grade) {
         return gradeRepository.save(grade);
     }
 
@@ -70,7 +72,8 @@ public class AcademicService {
         return gradeRepository.findByStudentIdAndDeletedFalseOrderByDateDesc(studentId);
     }
 
-    public void deleteGrade(@NonNull Long id) {
+	@Transactional
+	public void deleteGrade(@NonNull Long id) {
         com.school.academic.entity.Grade grade = gradeRepository.findById(id)
                 .orElseThrow(() -> new IllegalArgumentException("Grade not found"));
         grade.setDeleted(true);
@@ -93,11 +96,13 @@ public class AcademicService {
     }
 
     // Section Ops - Delegated to SectionService
-    public com.school.academic.entity.Section saveSection(@NonNull com.school.academic.entity.Section section) {
+	@Transactional
+	public com.school.academic.entity.Section saveSection(@NonNull com.school.academic.entity.Section section) {
         return sectionService.saveSection(section);
     }
 
-    public void deleteSection(@NonNull Long id) {
+	@Transactional
+	public void deleteSection(@NonNull Long id) {
         sectionService.deleteSection(id);
     }
 
@@ -118,13 +123,15 @@ public class AcademicService {
         return studentRepository.findById(id);
     }
 
-    public Student saveStudent(@NonNull Student student) {
+	@Transactional
+	public Student saveStudent(@NonNull Student student) {
         // Delegate to StudentService which handles logic like auto-generation of
         // registration number
         return studentService.saveStudent(student);
     }
 
-    public void deleteStudent(@NonNull Long id) {
+	@Transactional
+	public void deleteStudent(@NonNull Long id) {
         // Verificar enrollments existentes
         if (enrollmentRepository.existsByStudentId(id)) {
             throw new IllegalStateException("No se puede eliminar el estudiante con inscripciones existentes");
@@ -141,7 +148,8 @@ public class AcademicService {
         auditService.logStudentDeletion(id, getCurrentUser());
     }
 
-    public void hardDeleteStudent(@NonNull Long id) {
+	@Transactional
+	public void hardDeleteStudent(@NonNull Long id) {
         // 1. Delete health data
         healthService.deleteStudentHealthData(id);
 
@@ -162,7 +170,8 @@ public class AcademicService {
         return enrollmentRepository.findBySectionIdAndStudentDeletedFalse(sectionId);
     }
 
-    public void enrollStudent(@NonNull Long studentId, @NonNull Long sectionId) {
+	@Transactional
+	public void enrollStudent(@NonNull Long studentId, @NonNull Long sectionId) {
         Section section = sectionService.getSectionById(sectionId)
                 .orElseThrow(() -> new IllegalArgumentException("Sección no encontrada"));
         Student student = studentRepository.findById(studentId)
@@ -187,7 +196,8 @@ public class AcademicService {
                 getCurrentUser());
     }
 
-    public void unenrollStudent(@NonNull Long enrollmentId) {
+	@Transactional
+	public void unenrollStudent(@NonNull Long enrollmentId) {
         Enrollment enrollment = enrollmentRepository.findById(enrollmentId)
                 .orElseThrow(() -> new IllegalArgumentException("Inscripcion no encontrada"));
 
@@ -210,7 +220,8 @@ public class AcademicService {
     /**
      * Transfiere un estudiante de una sección a otra en una operación atómica.
      */
-    public void transferStudent(@NonNull Long studentId, @NonNull Long fromSectionId, @NonNull Long toSectionId) {
+	@Transactional
+	public void transferStudent(@NonNull Long studentId, @NonNull Long fromSectionId, @NonNull Long toSectionId) {
         if (fromSectionId.equals(toSectionId)) {
             throw new IllegalArgumentException("La sección de origen y destino deben ser diferentes.");
         }
@@ -243,7 +254,8 @@ public class AcademicService {
     /**
      * Reinscribe estudiantes de forma masiva para un nuevo periodo académico.
      */
-    public void batchReenroll(@NonNull Long nextSectionId, @NonNull java.util.List<Long> studentIds) {
+	@Transactional
+	public void batchReenroll(@NonNull Long nextSectionId, @NonNull java.util.List<Long> studentIds) {
         Section section = sectionService.getSectionById(nextSectionId)
                 .orElseThrow(() -> new IllegalArgumentException("Sección no encontrada"));
 
